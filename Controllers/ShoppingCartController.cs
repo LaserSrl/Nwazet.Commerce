@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using Nwazet.Commerce.Models;
+﻿using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels;
 using Orchard;
@@ -15,6 +11,10 @@ using Orchard.Mvc;
 using Orchard.Themes;
 using Orchard.UI.Notify;
 using Orchard.Workflows.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Commerce")]
@@ -26,10 +26,11 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IEnumerable<ICheckoutService> _checkoutServices;
         private readonly IEnumerable<IShippingMethodProvider> _shippingMethodProviders;
         private readonly IEnumerable<IExtraCartInfoProvider> _extraCartInfoProviders;
-        private readonly IWorkflowManager _workflowManager;
         private readonly INotifier _notifier;
         private readonly IEnumerable<IProductAttributeExtensionProvider> _attributeExtensionProviders;
         private readonly ICurrencyProvider _currencyProvider;
+        private readonly ILocalStorageSettings _localStorageSettings;
+        private readonly IEnumerable<ICartLifeCycleEventHandler> _cartLifeCycleEventHandlers;
 
         public Localizer T { get; set; }
 
@@ -47,7 +48,9 @@ namespace Nwazet.Commerce.Controllers {
             IWorkflowManager workflowManager,
             INotifier notifier,
             IEnumerable<IProductAttributeExtensionProvider> attributeExtensionProviders,
-            ICurrencyProvider currencyProvider) {
+            ICurrencyProvider currencyProvider,
+            ILocalStorageSettings localStorageSettings,
+            IEnumerable<ICartLifeCycleEventHandler> cartLifeCycleEventHandlers) {
 
             _shippingMethodProviders = shippingMethodProviders;
             _shoppingCart = shoppingCart;
@@ -56,10 +59,11 @@ namespace Nwazet.Commerce.Controllers {
             _wca = wca;
             _checkoutServices = checkoutServices;
             _extraCartInfoProviders = extraCartInfoProviders;
-            _workflowManager = workflowManager;
             _notifier = notifier;
             _attributeExtensionProviders = attributeExtensionProviders;
             _currencyProvider = currencyProvider;
+            _localStorageSettings = localStorageSettings;
+            _cartLifeCycleEventHandlers = cartLifeCycleEventHandlers;
 
             T = NullLocalizer.Instance;
         }
@@ -104,8 +108,7 @@ namespace Nwazet.Commerce.Controllers {
                     quantity = productPart.MinimumOrderQuantity;
                     if (productMessages.ContainsKey(id)) {
                         productMessages[id].Add(T("Quantity increased to match minimum possible for {0}.", productTitle).Text);
-                    }
-                    else {
+                    } else {
                         productMessages.Add(id, new List<string>() { T("Quantity increased to match minimum possible for {0}.", productTitle).Text });
                     }
                 }
@@ -116,8 +119,7 @@ namespace Nwazet.Commerce.Controllers {
                     quantity = productPart.Inventory;
                     if (productMessages.ContainsKey(id)) {
                         productMessages[id].Add(T("Quantity decreased to match inventory for {0}.", productTitle).Text);
-                    }
-                    else {
+                    } else {
                         productMessages.Add(id, new List<string>() { T("Quantity decreased to match inventory for {0}.", productTitle).Text });
                     }
                 }
@@ -125,11 +127,10 @@ namespace Nwazet.Commerce.Controllers {
 
             _shoppingCart.Add(id, quantity, productattributes);
 
-            _workflowManager.TriggerEvent("CartUpdated",
-                _wca.GetContext().CurrentSite,
-                () => new Dictionary<string, object> {
-                    {"Cart", _shoppingCart}
-                });
+            var newItem = new ShoppingCartItem(id, quantity, productattributes);
+            foreach (var handler in _cartLifeCycleEventHandlers) {
+                handler.ItemAdded(newItem);
+            }
 
             // Test isAjaxRequest too because iframe posts won't return true for Request.IsAjaxRequest()
             if (Request.IsAjaxRequest() || isAjaxRequest) {
@@ -153,8 +154,7 @@ namespace Nwazet.Commerce.Controllers {
                         _shoppingCart.ZipCode,
                         _shoppingCart.ShippingOption,
                         productMessages));
-            }
-            catch (ShippingException ex) {
+            } catch (ShippingException ex) {
                 _shoppingCart.Country = null;
                 _shoppingCart.ZipCode = null;
                 _shoppingCart.ShippingOption = null;
@@ -228,7 +228,7 @@ namespace Nwazet.Commerce.Controllers {
             }
             if (displayCheckoutButtons) {
                 //check whether back-order is allowed for products whose inventory is less than the requested quantity
-                displayCheckoutButtons = !productQuantities.Any(pq => 
+                displayCheckoutButtons = !productQuantities.Any(pq =>
                     pq.Quantity > pq.Product.Inventory && !pq.Product.AllowBackOrder &&
                     (!pq.Product.IsDigital || (pq.Product.IsDigital && pq.Product.ConsiderInventory)));
             }
@@ -279,10 +279,10 @@ namespace Nwazet.Commerce.Controllers {
                     ShippingCost: productQuantity.Product.ShippingCost,
                     Weight: productQuantity.Product.Weight,
                     MinimumOrderQuantity: productQuantity.Product.MinimumOrderQuantity,
-                    Messages: productMessages == null ? 
-                        (string)null : 
-                        productMessages.ContainsKey(productQuantity.Product.Id) ? 
-                            string.Join(Environment.NewLine, productMessages[productQuantity.Product.Id]) : 
+                    Messages: productMessages == null ?
+                        (string)null :
+                        productMessages.ContainsKey(productQuantity.Product.Id) ?
+                            string.Join(Environment.NewLine, productMessages[productQuantity.Product.Id]) :
                             (string)null,
                     Inventory: productQuantity.Product.Inventory,
                     AllowBackOrder: productQuantity.Product.AllowBackOrder
@@ -298,14 +298,19 @@ namespace Nwazet.Commerce.Controllers {
                         true,
                         _shoppingCart.Country,
                         _shoppingCart.ZipCode));
-            }
-            catch (ShippingException ex) {
+            } catch (ShippingException ex) {
                 _shoppingCart.Country = null;
                 _shoppingCart.ZipCode = null;
                 _shoppingCart.ShippingOption = null;
                 _notifier.Error(new LocalizedString(ex.Message));
                 return RedirectToAction("Index");
             }
+        }
+
+        [HttpPost]
+        public JsonResult UseLocalStorage() {
+            bool response = _localStorageSettings.UseLocalStorage();
+            return (JsonResult)Json(new { Response = response });
         }
 
         [HttpPost]
@@ -342,8 +347,7 @@ namespace Nwazet.Commerce.Controllers {
                         true,
                         _shoppingCart.Country,
                         _shoppingCart.ZipCode));
-            }
-            catch (ShippingException ex) {
+            } catch (ShippingException ex) {
                 _shoppingCart.Country = null;
                 _shoppingCart.ZipCode = null;
                 _shoppingCart.ShippingOption = null;
@@ -373,10 +377,21 @@ namespace Nwazet.Commerce.Controllers {
         }
 
         private void UpdateShoppingCart(IEnumerable<UpdateShoppingCartItemViewModel> items) {
+            var oldItems = new List<ShoppingCartItem>();
+            oldItems.AddRange(_shoppingCart.Items); //create a copy for analysis
             _shoppingCart.Clear();
 
-            if (items == null)
+            if (items == null) {
+                //removed all items
+                foreach (var handler in _cartLifeCycleEventHandlers) {
+                    //we raise the ItemRemoved event for all the removed items.
+                    //The ShoppingCartItem objects also contain the quantity of the variation
+                    handler.Updated(new List<ShoppingCartItem>(0), oldItems);
+                }
                 return;
+            }
+
+
 
             var minimumOrderQuantities = GetMinimumOrderQuantities(items);
 
@@ -390,12 +405,44 @@ namespace Nwazet.Commerce.Controllers {
                 );
 
             _shoppingCart.UpdateItems();
+            //analyze update to raise events
+            var addedItems = new List<ShoppingCartItem>();
+            var removedItems = new List<ShoppingCartItem>();
+            var newItems = new List<ShoppingCartItem>();
+            newItems.AddRange(_shoppingCart.Items);
+            //we use a KeyValuePair because item.QUantity is not alowed to be negative
+            var itemsInBoth = new List<KeyValuePair<int,ShoppingCartItem>>(); //quantity variation, item
+            itemsInBoth.AddRange(
+                newItems
+                .Select(newSci => {
+                    var oldSci = oldItems
+                        .FirstOrDefault(sci => ShoppingCartItem.ItemsAreEqual(sci, newSci)); //item was in cart already
+                    int quantityVariation = 0;
+                    if (oldSci != null) {
+                        quantityVariation = newSci.Quantity - oldSci.Quantity;
+                        oldSci.Quantity = Math.Abs(quantityVariation);
+                    }
+                    return new KeyValuePair<int, ShoppingCartItem>(quantityVariation, oldSci);
+                })
+                .Where(kvp => kvp.Value != null));
+            foreach (var item in itemsInBoth.Where(kvp => kvp.Key != 0)) {
+                if (item.Key > 0) { //increase in quantity
+                    addedItems.Add(item.Value);
+                } else if (item.Key < 0) { //decrease in quantity
+                    removedItems.Add(item.Value);
+                }
+                //if quantity has not changed, we do not raise an event for that item
+            }
+            addedItems.AddRange(
+                newItems.Where(sci => !itemsInBoth.Any(isci => ShoppingCartItem.ItemsAreEqual(isci.Value, sci)))
+                );
+            removedItems.AddRange(
+                oldItems.Where(sci => !itemsInBoth.Any(isci => ShoppingCartItem.ItemsAreEqual(isci.Value, sci)))
+                );
 
-            _workflowManager.TriggerEvent("CartUpdated",
-                _wca.GetContext().CurrentSite,
-                () => new Dictionary<string, object> {
-                    {"Cart", _shoppingCart}
-                });
+            foreach (var handler in _cartLifeCycleEventHandlers) {
+                handler.Updated(addedItems, removedItems);
+            }
         }
 
         private Dictionary<int, int> GetMinimumOrderQuantities(IEnumerable<UpdateShoppingCartItemViewModel> items) {
@@ -413,8 +460,7 @@ namespace Nwazet.Commerce.Controllers {
                         var product = products.Where(p => p.Id == item.ProductId).FirstOrDefault();
                         if (product != null) {
                             minimumOrderQuantites.Add(product.Id, product.MinimumOrderQuantity);
-                        }
-                        else {
+                        } else {
                             // This ensures the dictionary will have all the keys needed for the items
                             minimumOrderQuantites.Add(item.ProductId, defaultMinimumQuantity);
                         }
