@@ -19,11 +19,15 @@ namespace Nwazet.Commerce.Migrations {
                 .Column<int>("Id", col => col.Identity().PrimaryKey())
                 .Column<string>("Name"));
 
+            SchemaBuilder.CreateTable("TerritoryHierarchyPartRecord", table => table
+                .ContentPartRecord());
+
             SchemaBuilder.CreateTable("TerritoryPartRecord", table => table
                 .ContentPartRecord()
                 .Column<int>("TerritoryInternalRecord_Id")
-                .Column<int>("ParentTerritory_Id"));
-
+                .Column<int>("ParentTerritory_Id")
+                .Column<int>("Hierarchy_Id"));
+            
             ContentDefinitionManager.AlterPartDefinition(TerritoryHierarchyPart.PartName, builder => builder.Attachable());
 
             ContentDefinitionManager.AlterTypeDefinition("TerritoryHierarchy", cfg => cfg

@@ -1,4 +1,5 @@
 ﻿using Orchard.ContentManagement;
+using Orchard.ContentManagement.Utilities;
 using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,16 @@ using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Territories")]
-    public class TerritoryHierarchyPart : ContentPart {
+    public class TerritoryHierarchyPart : ContentPart<TerritoryHierarchyPartRecord> {
 
         public static string PartName = "TerritoryHierarchyPart";
+
+        private readonly LazyField<IEnumerable<IContent>> _territories = 
+            new LazyField<IEnumerable<IContent>>();
+
+        public IEnumerable<IContent> Territories {
+            get { return _territories.Value; }
+            set { _territories.Value = value; }
+        }
     }
 }

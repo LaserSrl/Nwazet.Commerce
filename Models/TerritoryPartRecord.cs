@@ -13,5 +13,7 @@ namespace Nwazet.Commerce.Models {
         public virtual TerritoryInternalRecord TerritoryInternalRecord { get; set; }
 
         public virtual TerritoryPartRecord ParentTerritory { get; set; }
+
+        public virtual TerritoryHierarchyPartRecord Hierarchy { get; set; }
     }
 }

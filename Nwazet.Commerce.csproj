@@ -264,6 +264,7 @@
     <Compile Include="Handlers\ProductPartVersioningHandler.cs" />
     <Compile Include="Handlers\ProductSettingsPartHandler.cs" />
     <Compile Include="Handlers\StateOrCountryTaxPartHandler.cs" />
+    <Compile Include="Handlers\TerritoryHierarchyPartHandler.cs" />
     <Compile Include="Handlers\TerritoryPartHandler.cs" />
     <Compile Include="Handlers\UspsShippingMethodPartHandler.cs" />
     <Compile Include="Handlers\UspsSettingsPartHandler.cs" />
@@ -322,6 +323,7 @@
     <Compile Include="Models\Reporting\TimePeriod.cs" />
     <Compile Include="Models\ShoppingCartBase.cs" />
     <Compile Include="Models\TerritoryHierarchyPart.cs" />
+    <Compile Include="Models\TerritoryHierarchyPartRecord.cs" />
     <Compile Include="Models\TerritoryInternalRecord.cs" />
     <Compile Include="Models\TerritoryPart.cs" />
     <Compile Include="Models\TerritoryPartRecord.cs" />

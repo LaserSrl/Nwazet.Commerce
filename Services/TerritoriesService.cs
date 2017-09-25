@@ -40,7 +40,7 @@ namespace Nwazet.Commerce.Services {
                 .Select(ctd => GetTerritoryPermission(ctd));
         }
 
-        public Permission GetTerritoryPermission(ContentTypeDefinition typeDefinition) {
+        private Permission GetTerritoryPermission(ContentTypeDefinition typeDefinition) {
             return new Permission {
                 Name = string.Format(TerritoriesPermissions.ManageTerritory.Name, typeDefinition.Name),
                 Description = string.Format(TerritoriesPermissions.ManageTerritory.Description, typeDefinition.Name),
@@ -62,7 +62,7 @@ namespace Nwazet.Commerce.Services {
                 .Select(ctd => GetHierarchyPermission(ctd));
         }
 
-        public Permission GetHierarchyPermission(ContentTypeDefinition typeDefinition) {
+        private Permission GetHierarchyPermission(ContentTypeDefinition typeDefinition) {
             return new Permission {
                 Name = string.Format(TerritoriesPermissions.ManageTerritoryHierarchy.Name, typeDefinition.Name),
                 Description = string.Format(TerritoriesPermissions.ManageTerritoryHierarchy.Description, typeDefinition.Name),
