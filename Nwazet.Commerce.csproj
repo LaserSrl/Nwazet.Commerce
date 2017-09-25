@@ -212,6 +212,7 @@
     <Compile Include="Controllers\OrderSslController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\TaxAdminController.cs" />
+    <Compile Include="Controllers\TerritoriesAdminController.cs" />
     <Compile Include="Controllers\UspsAdminController.cs" />
     <Compile Include="Controllers\PromotionAdminController.cs" />
     <Compile Include="Controllers\ProductAdminController.cs" />
@@ -263,6 +264,7 @@
     <Compile Include="Handlers\ProductPartVersioningHandler.cs" />
     <Compile Include="Handlers\ProductSettingsPartHandler.cs" />
     <Compile Include="Handlers\StateOrCountryTaxPartHandler.cs" />
+    <Compile Include="Handlers\TerritoryPartHandler.cs" />
     <Compile Include="Handlers\UspsShippingMethodPartHandler.cs" />
     <Compile Include="Handlers\UspsSettingsPartHandler.cs" />
     <Compile Include="Handlers\StripeSettingsPartHandler.cs" />
@@ -289,6 +291,7 @@
     <Compile Include="Migrations\OrderMigrations.cs" />
     <Compile Include="Migrations\PersistentCartMigrations.cs" />
     <Compile Include="Migrations\TaxMigrations.cs" />
+    <Compile Include="Migrations\TerritoriesMigrations.cs" />
     <Compile Include="Migrations\UspsMigrations.cs" />
     <Compile Include="Migrations\DiscountMigrations.cs" />
     <Compile Include="Migrations\ShippingMigrations.cs" />
@@ -318,6 +321,10 @@
     <Compile Include="Models\Reporting\ReportDataPoint.cs" />
     <Compile Include="Models\Reporting\TimePeriod.cs" />
     <Compile Include="Models\ShoppingCartBase.cs" />
+    <Compile Include="Models\TerritoryHierarchyPart.cs" />
+    <Compile Include="Models\TerritoryInternalRecord.cs" />
+    <Compile Include="Models\TerritoryPart.cs" />
+    <Compile Include="Models\TerritoryPartRecord.cs" />
     <Compile Include="Models\WishListItemPart.cs" />
     <Compile Include="Models\WishListItemPartRecord.cs" />
     <Compile Include="Models\WishListListPartRecord.cs" />
@@ -360,6 +367,7 @@
     <Compile Include="Permissions\CommercePermissions.cs" />
     <Compile Include="Permissions\ReportPermissions.cs" />
     <Compile Include="Permissions\OrderPermissions.cs" />
+    <Compile Include="Permissions\TerritoriesPermissions.cs" />
     <Compile Include="Permissions\WishListPermissions.cs" />
     <Compile Include="Reports\AverageSaleAmountReport.cs" />
     <Compile Include="Reports\BaseSalesReport.cs" />
@@ -394,6 +402,7 @@
     <Compile Include="Services\IProductInventoryService.cs" />
     <Compile Include="Services\ISKUGenerationServices.cs" />
     <Compile Include="Services\ISKUUniquenessHelper.cs" />
+    <Compile Include="Services\ITerritoriesService.cs" />
     <Compile Include="Services\IWishListExtensionProvider.cs" />
     <Compile Include="Services\IWishListServices.cs" />
     <Compile Include="Services\IWishListsPermissionsService.cs" />
@@ -429,6 +438,7 @@
     <Compile Include="Services\ShippingService.cs" />
     <Compile Include="Services\ShoppingCartInfosetPartStorage.cs" />
     <Compile Include="Services\SKUGenerationServices.cs" />
+    <Compile Include="Services\TerritoriesService.cs" />
     <Compile Include="Services\TextProductAttributeExtensionProvider.cs" />
     <Compile Include="Services\UseCurrencyFromSiteCultureProvider.cs" />
     <Compile Include="Services\UseCurrencyFromSiteSettingsProvider.cs" />
