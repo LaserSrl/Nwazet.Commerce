@@ -26,8 +26,8 @@ namespace Nwazet.Commerce.Services {
         IEnumerable<Permission> ListHierarchyTypePermissions();
 
         /// <summary>
-        /// Returns the type definitions  for the types of territories that
-        /// the user is allowed to maange.
+        /// Returns the type definitions for the types of territories that
+        /// the user is allowed to manage.
         /// </summary>
         /// <returns>An Enumerable of the ContentTypeDefinitions for all types 
         /// that the current user is allowed to manage</returns>

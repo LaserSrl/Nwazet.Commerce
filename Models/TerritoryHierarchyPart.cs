@@ -16,6 +16,10 @@ namespace Nwazet.Commerce.Models {
         private readonly LazyField<IEnumerable<IContent>> _territories = 
             new LazyField<IEnumerable<IContent>>();
 
+        public LazyField<IEnumerable<IContent>> TerritoriesField {
+            get { return _territories; }
+        }
+
         public IEnumerable<IContent> Territories {
             get { return _territories.Value; }
             set { _territories.Value = value; }

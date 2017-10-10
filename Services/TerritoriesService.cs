@@ -30,7 +30,7 @@ namespace Nwazet.Commerce.Services {
             return _contentDefinitionManager.ListTypeDefinitions()
                 .Where(ctd => ctd.Parts.Any(pa => pa
                     .PartDefinition.Name.Equals(TerritoryPart.PartName, StringComparison.InvariantCultureIgnoreCase)) &&
-                    _authorizer.Authorize(GetTerritoryPermission(ctd)));
+                        _authorizer.Authorize(GetTerritoryPermission(ctd)));
         }
 
         public IEnumerable<Permission> ListTerritoryTypePermissions() {
@@ -52,7 +52,7 @@ namespace Nwazet.Commerce.Services {
             return _contentDefinitionManager.ListTypeDefinitions()
                 .Where(ctd => ctd.Parts.Any(pa => pa
                     .PartDefinition.Name.Equals(TerritoryHierarchyPart.PartName, StringComparison.InvariantCultureIgnoreCase)) && 
-                    _authorizer.Authorize(GetHierarchyPermission(ctd)));
+                        _authorizer.Authorize(GetHierarchyPermission(ctd)));
         }
 
         public IEnumerable<Permission> ListHierarchyTypePermissions() {
