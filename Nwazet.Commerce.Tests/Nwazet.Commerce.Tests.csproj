@@ -57,11 +57,19 @@
     <Reference Include="Orchard.Framework">
       <HintPath>..\..\Orchard.Sources\src\Orchard.Web\bin\Orchard.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="Orchard.Framework.Tests, Version=1.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Orchard.Sources\src\Orchard.Tests\bin\Debug\Orchard.Framework.Tests.dll</HintPath>
+    </Reference>
     <Reference Include="Orchard.Roles">
       <HintPath>..\..\Orchard.Sources\src\Orchard.Web\Modules\Orchard.Roles\bin\Orchard.Roles.dll</HintPath>
     </Reference>
     <Reference Include="Orchard.Tests.Modules">
       <HintPath>..\..\Orchard.Sources\src\Orchard.Tests.Modules\bin\Debug\Orchard.Tests.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="Orchard.Users, Version=1.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Orchard.Sources\src\Orchard.Web\Modules\Orchard.Users\bin\Orchard.Users.dll</HintPath>
     </Reference>
     <Reference Include="pnunit.framework, Version=1.0.4109.34242, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Laser.Sources\Laser.Orchard\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
@@ -70,6 +78,8 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="System.Web" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
@@ -82,6 +92,9 @@
     <Compile Include="PriceServiceTieredPricingTests.cs" />
     <Compile Include="ProductAttributePricingTests.cs" />
     <Compile Include="ShippingServiceTest.cs" />
+    <Compile Include="Stubs\AuthorizationServiceStub.cs" />
+    <Compile Include="Stubs\ContentDefinitionManagerStub.cs" />
+    <Compile Include="Stubs\FakeUser.cs" />
     <Compile Include="Stubs\ShapeFactoryStub.cs" />
     <Compile Include="Stubs\SiteStub.cs" />
     <Compile Include="TaxByZipTests.cs" />
