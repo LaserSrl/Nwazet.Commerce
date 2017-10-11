@@ -27,7 +27,6 @@ namespace Nwazet.Commerce.Tests.Territories {
     public class TerritoriesServiceTests : DatabaseEnabledTestsBase {
 
         private ITerritoriesService _territoriesService;
-        private IWorkContextAccessor _workContextAccessor;
 
         public override void Register(ContainerBuilder builder) {
 
@@ -38,31 +37,39 @@ namespace Nwazet.Commerce.Tests.Territories {
             builder.RegisterType<Authorizer>().As<IAuthorizer>();
 
             //for Authorizer
-            builder.RegisterType<StubWorkContextAccessor>().As<IWorkContextAccessor>();
             builder.RegisterInstance(new Mock<INotifier>().Object);
             builder.RegisterType<AuthorizationServiceStub>().As<IAuthorizationService>();
+
+            var _workContext = new Mock<WorkContext>();
+            _workContext.Setup(w => 
+                w.GetState<IUser>(It.Is<string>(s => s == "CurrentUser"))).Returns(() => { return _currentUser; });
+
+            var _workContextAccessor = new Mock<IWorkContextAccessor>();
+            _workContextAccessor.Setup(w => w.GetContext()).Returns(_workContext.Object);
+            builder.RegisterInstance(_workContextAccessor.Object).As<IWorkContextAccessor>();
         }
 
         public override void Init() {
             base.Init();
 
             _territoriesService = _container.Resolve<ITerritoriesService>();
-            _workContextAccessor = _container.Resolve<IWorkContextAccessor>();
         }
 
+        private IUser _currentUser;
         [Test]
         public void HierarchyManagePermissionsAreSameNumberAsHierarchyTypesForAdmin() {
 
-            _workContextAccessor.GetContext().CurrentUser = new FakeUser() { UserName = "admin" };
-
-
+            _currentUser = new FakeUser() { UserName = "admin" };
+            
             Assert.That(_territoriesService.GetHierarchyTypes().Count(), Is.EqualTo(3));
             Assert.That(_territoriesService.ListHierarchyTypePermissions().Count(), Is.EqualTo(3));
         }
 
         [Test]
         public void TerritoryManagePermissionsAreSameNumberAsTerritoryTypesForAdmin() {
-            
+
+            _currentUser = new FakeUser() { UserName = "admin" };
+
             Assert.That(_territoriesService.GetTerritoryTypes().Count(), Is.EqualTo(3));
             Assert.That(_territoriesService.ListTerritoryTypePermissions().Count(), Is.EqualTo(3));
         }
@@ -70,21 +77,19 @@ namespace Nwazet.Commerce.Tests.Territories {
         [Test]
         public void HierarchyManagePermissionsAreNotSameNumberAsHierarchyTypes() {
 
-            var user = new FakeUser() { UserName = "user1" };
-            _workContextAccessor.GetContext().CurrentUser = user;
+            _currentUser = new FakeUser() { UserName = "user1" };
 
-            Assert.That(_territoriesService.GetHierarchyTypes().Count(), Is.EqualTo(3));
-            Assert.That(_territoriesService.ListHierarchyTypePermissions().Count(), Is.EqualTo(1));
+            Assert.That(_territoriesService.GetHierarchyTypes().Count(), Is.EqualTo(1));
+            Assert.That(_territoriesService.ListHierarchyTypePermissions().Count(), Is.EqualTo(3));
         }
 
         [Test]
         public void TerritoryManagePermissionsAreNotSameNumberAsTerritoryTypes() {
 
-            var user = new FakeUser() { UserName = "user1" };
-            _workContextAccessor.GetContext().CurrentUser = user;
+            _currentUser = new FakeUser() { UserName = "user1" };
 
-            Assert.That(_territoriesService.GetTerritoryTypes().Count(), Is.EqualTo(3));
-            Assert.That(_territoriesService.ListTerritoryTypePermissions().Count(), Is.EqualTo(1));
+            Assert.That(_territoriesService.GetTerritoryTypes().Count(), Is.EqualTo(1));
+            Assert.That(_territoriesService.ListTerritoryTypePermissions().Count(), Is.EqualTo(3));
         }
     }
 }
