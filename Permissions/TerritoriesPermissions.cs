@@ -34,6 +34,11 @@ namespace Nwazet.Commerce.Permissions {
             Name = "ManageTerritoryHierarchies_{0}",
             ImpliedBy = new[] { ManageTerritoryHierarchies }
         };
+
+        public static readonly Permission ManageInternalTerritories = new Permission {
+            Description = "Manage the Territories' internal structure",
+            Name = "ManageInternalTerritories"
+        };
         #endregion
 
         private readonly ITerritoriesService _territoriesService;

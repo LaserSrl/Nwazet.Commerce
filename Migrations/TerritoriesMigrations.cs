@@ -17,7 +17,7 @@ namespace Nwazet.Commerce.Migrations {
 
             SchemaBuilder.CreateTable("TerritoryInternalRecord", table => table
                 .Column<int>("Id", col => col.Identity().PrimaryKey())
-                .Column<string>("Name"));
+                .Column<string>("Name", col => col.Unique()));
 
             SchemaBuilder.CreateTable("TerritoryHierarchyPartRecord", table => table
                 .ContentPartRecord());
@@ -38,7 +38,8 @@ namespace Nwazet.Commerce.Migrations {
 
             ContentDefinitionManager.AlterTypeDefinition("Territory", cfg => cfg
                 .WithIdentity()
-                .WithPart("TitlePart"));
+                .WithPart("TitlePart")
+                .WithPart(TerritoryPart.PartName));
 
             return 1;
         }

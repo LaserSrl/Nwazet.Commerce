@@ -1,0 +1,59 @@
+﻿using Nwazet.Commerce.Permissions;
+using Nwazet.Commerce.Services;
+using Orchard.Environment.Extensions;
+using Orchard.Localization;
+using Orchard.UI.Navigation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Nwazet.Commerce.Menus {
+    [OrchardFeature("Territories")]
+    public class TerritoriesAdminMenu : INavigationProvider {
+
+        private readonly ITerritoriesService _territoriesService;
+
+        public TerritoriesAdminMenu(
+            ITerritoriesService territoriesService) {
+
+            _territoriesService = territoriesService;
+
+            T = NullLocalizer.Instance;
+        }
+
+        public Localizer T { get; set; }
+
+        public string MenuName {
+            get { return "admin"; }
+        }
+
+
+        public void GetNavigation(NavigationBuilder builder) {
+            builder.Add(item => item
+                .Caption(T("Territories"))
+                .Position("3")
+                .LinkToFirstChild(false)
+                
+                .Add(subItem => {
+                    subItem = subItem
+                        .Caption(T("Hierarchies"))
+                        .Position("1")
+                        .Action("HierarchiesIndex", "TerritoriesAdmin", new { area = "Nwazet.Commerce" })
+                        .Permission(TerritoriesPermissions.ManageTerritoryHierarchies);
+                    foreach (var permission in _territoriesService.ListHierarchyTypePermissions()) {
+                        subItem = subItem.Permission(permission);
+                    }
+                })
+
+                .Add(subItem =>  subItem
+                    .Caption(T("Territories"))
+                    .Position("2")
+                    .Action("TerritoriesIndex", "TerritoriesAdmin", new { area = "Nwazet.Commerce" })
+                    .Permission(TerritoriesPermissions.ManageInternalTerritories)
+                )
+            );
+        }
+    }
+}

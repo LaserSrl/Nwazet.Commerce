@@ -10,20 +10,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Orchard.ContentManagement;
+using Orchard.Data;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Territories")]
     public class TerritoriesService : ITerritoriesService {
+
         private readonly IAuthorizer _authorizer;
         private readonly IContentDefinitionManager _contentDefinitionManager;
+        private readonly IContentManager _contentManager;
+        private readonly IRepository<TerritoryInternalRecord> _territoryInternalRecord;
 
         public TerritoriesService(
             IAuthorizer authorizer,
-            IContentDefinitionManager contentDefinitionManager
+            IContentDefinitionManager contentDefinitionManager,
+            IContentManager contentManager,
+            IRepository<TerritoryInternalRecord> territoryInternalRecord
             ) {
 
             _authorizer = authorizer;
             _contentDefinitionManager = contentDefinitionManager;
+            _contentManager = contentManager;
+            _territoryInternalRecord = territoryInternalRecord;
         }
 
         public IEnumerable<ContentTypeDefinition> GetTerritoryTypes() {
@@ -68,6 +77,26 @@ namespace Nwazet.Commerce.Services {
                 Description = string.Format(TerritoriesPermissions.ManageTerritoryHierarchy.Description, typeDefinition.Name),
                 ImpliedBy = TerritoriesPermissions.ManageTerritoryHierarchy.ImpliedBy
             };
+        }
+
+        public IContentQuery<TerritoryHierarchyPart, TerritoryHierarchyPartRecord> GetHierarchiesQuery() {
+            return GetHierarchiesQuery(VersionOptions.Latest);
+        }
+
+        public IContentQuery<TerritoryHierarchyPart, TerritoryHierarchyPartRecord> GetHierarchiesQuery(VersionOptions versionOptions) {
+            return _contentManager
+                .Query<TerritoryHierarchyPart, TerritoryHierarchyPartRecord>()
+                .ForVersion(versionOptions);
+        }
+
+        public IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart) {
+            return GetTerritoriesQuery(hierarchyPart, VersionOptions.Latest);
+        }
+
+        public IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart, VersionOptions versionOptions) {
+            return _contentManager
+                .Query<TerritoryPart, TerritoryPartRecord>()
+                .ForVersion(versionOptions);
         }
     }
 }

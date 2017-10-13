@@ -54,5 +54,6 @@ namespace Nwazet.Commerce.Handlers {
                         VersionOptions.Latest, null);
             });
         }
+
     }
 }

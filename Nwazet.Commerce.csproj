@@ -284,6 +284,7 @@
     <Compile Include="Menus\PromotionAdminMenu.cs" />
     <Compile Include="Menus\ProductAdminMenu.cs" />
     <Compile Include="Menus\ShippingAdminMenu.cs" />
+    <Compile Include="Menus\TerritoriesAdminMenu.cs" />
     <Compile Include="Migrations\AttributesLocalizationExtensionsMigrations.cs" />
     <Compile Include="Migrations\BundleMigrations.cs" />
     <Compile Include="Migrations\BundlesLocalizationExtensionsMigrations.cs" />
@@ -492,6 +493,8 @@
     <Compile Include="ViewModels\ECommerceCurrencySiteSettingsViewModel.cs" />
     <Compile Include="ViewModels\ECommerceSettingsViewModel.cs" />
     <Compile Include="ViewModels\AttributeLocalizationProductAttributesPartEditViewModel.cs" />
+    <Compile Include="ViewModels\HierarchyAdminIndexViewModel.cs" />
+    <Compile Include="ViewModels\HierarchyIndexEntry.cs" />
     <Compile Include="ViewModels\InventoryBySKUProductEditorViewModel.cs" />
     <Compile Include="ViewModels\InventoryBySKUSiteSettingsPartViewModel.cs" />
     <Compile Include="ViewModels\ProductAttributePartDisplayViewModel.cs" />
@@ -616,6 +619,8 @@
     <None Include="app.config" />
     <None Include="bundleconfig.json" />
     <None Include="packages.config" />
+    <None Include="Views\TerritoriesAdmin\HierarchiesIndex.cshtml" />
+    <None Include="Views\TerritoriesAdmin\TerritoriesIndex.cshtml" />
     <None Include="Views\WishListEditor.cshtml" />
     <None Include="Views\DefinitionTemplates\BundleProductSettings.cshtml" />
     <None Include="Views\EditorTemplates\Parts\BundleAutocomplete.cshtml" />
