@@ -72,5 +72,6 @@ namespace Nwazet.Commerce.Services {
         /// falling back to Latest.</param>
         /// <returns></returns>
         IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart, VersionOptions versionOptions);
+
     }
 }

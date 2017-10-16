@@ -12,34 +12,32 @@ using System.Text;
 using System.Threading.Tasks;
 using Orchard.ContentManagement;
 using Orchard.Data;
+using Orchard;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Territories")]
     public class TerritoriesService : ITerritoriesService {
-
-        private readonly IAuthorizer _authorizer;
+        
+        private readonly IOrchardServices _orchardServices;
         private readonly IContentDefinitionManager _contentDefinitionManager;
         private readonly IContentManager _contentManager;
-        private readonly IRepository<TerritoryInternalRecord> _territoryInternalRecord;
 
         public TerritoriesService(
-            IAuthorizer authorizer,
+            IOrchardServices orchardServices,
             IContentDefinitionManager contentDefinitionManager,
-            IContentManager contentManager,
-            IRepository<TerritoryInternalRecord> territoryInternalRecord
+            IContentManager contentManager
             ) {
 
-            _authorizer = authorizer;
+            _orchardServices = orchardServices;
             _contentDefinitionManager = contentDefinitionManager;
             _contentManager = contentManager;
-            _territoryInternalRecord = territoryInternalRecord;
         }
 
         public IEnumerable<ContentTypeDefinition> GetTerritoryTypes() {
             return _contentDefinitionManager.ListTypeDefinitions()
                 .Where(ctd => ctd.Parts.Any(pa => pa
                     .PartDefinition.Name.Equals(TerritoryPart.PartName, StringComparison.InvariantCultureIgnoreCase)) &&
-                        _authorizer.Authorize(GetTerritoryPermission(ctd)));
+                        _orchardServices.Authorizer.Authorize(GetTerritoryPermission(ctd)));
         }
 
         public IEnumerable<Permission> ListTerritoryTypePermissions() {
@@ -60,8 +58,8 @@ namespace Nwazet.Commerce.Services {
         public IEnumerable<ContentTypeDefinition> GetHierarchyTypes() {
             return _contentDefinitionManager.ListTypeDefinitions()
                 .Where(ctd => ctd.Parts.Any(pa => pa
-                    .PartDefinition.Name.Equals(TerritoryHierarchyPart.PartName, StringComparison.InvariantCultureIgnoreCase)) && 
-                        _authorizer.Authorize(GetHierarchyPermission(ctd)));
+                    .PartDefinition.Name.Equals(TerritoryHierarchyPart.PartName, StringComparison.InvariantCultureIgnoreCase)) &&
+                         _orchardServices.Authorizer.Authorize(GetHierarchyPermission(ctd)));
         }
 
         public IEnumerable<Permission> ListHierarchyTypePermissions() {
@@ -98,5 +96,6 @@ namespace Nwazet.Commerce.Services {
                 .Query<TerritoryPart, TerritoryPartRecord>()
                 .ForVersion(versionOptions);
         }
+
     }
 }

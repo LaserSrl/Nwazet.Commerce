@@ -195,6 +195,7 @@
       <DependentUpon>order-admin.less</DependentUpon>
     </Content>
     <None Include="Views\Parts\WishListsActions.cshtml" />
+    <None Include="Views\TerritoriesAdmin\EditorTemplates\TerritoryInternalRecord.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Scripts\Web.config" />
     <Content Include="Properties\AssemblyInfo.cs" />
@@ -247,6 +248,7 @@
     <Compile Include="Drivers\ShoppingCartWidgetDriver.cs" />
     <Compile Include="Drivers\WeightBasedShippingMethodPartDriver.cs" />
     <Compile Include="Exceptions\StripeException.cs" />
+    <Compile Include="Exceptions\TerritoryInternalDuplicateException.cs" />
     <Compile Include="Extensions\AttributeNameUtilities.cs" />
     <Compile Include="Extensions\DefaultHqlExpressionFactoryExtension.cs" />
     <Compile Include="Features\CurrencyProviderBySiteSettingFeature.cs" />
@@ -405,6 +407,7 @@
     <Compile Include="Services\IProductInventoryService.cs" />
     <Compile Include="Services\ISKUGenerationServices.cs" />
     <Compile Include="Services\ISKUUniquenessHelper.cs" />
+    <Compile Include="Services\ITerritoriesRepositoryService.cs" />
     <Compile Include="Services\ITerritoriesService.cs" />
     <Compile Include="Services\IWishListExtensionProvider.cs" />
     <Compile Include="Services\IWishListServices.cs" />
@@ -442,6 +445,7 @@
     <Compile Include="Services\ShoppingCartInfosetPartStorage.cs" />
     <Compile Include="Services\SKUGenerationServices.cs" />
     <Compile Include="Services\TerritoriesService.cs" />
+    <Compile Include="Services\TerritoryRepositoryService.cs" />
     <Compile Include="Services\TextProductAttributeExtensionProvider.cs" />
     <Compile Include="Services\UseCurrencyFromSiteCultureProvider.cs" />
     <Compile Include="Services\UseCurrencyFromSiteSettingsProvider.cs" />
@@ -619,8 +623,10 @@
     <None Include="app.config" />
     <None Include="bundleconfig.json" />
     <None Include="packages.config" />
+    <None Include="Views\TerritoriesAdmin\AddTerritory.cshtml" />
     <None Include="Views\TerritoriesAdmin\HierarchiesIndex.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesIndex.cshtml" />
+    <None Include="Views\TerritoriesAdmin\TerritoriesListPartial.cshtml" />
     <None Include="Views\WishListEditor.cshtml" />
     <None Include="Views\DefinitionTemplates\BundleProductSettings.cshtml" />
     <None Include="Views\EditorTemplates\Parts\BundleAutocomplete.cshtml" />

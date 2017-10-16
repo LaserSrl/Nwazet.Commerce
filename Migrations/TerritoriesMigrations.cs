@@ -17,7 +17,7 @@ namespace Nwazet.Commerce.Migrations {
 
             SchemaBuilder.CreateTable("TerritoryInternalRecord", table => table
                 .Column<int>("Id", col => col.Identity().PrimaryKey())
-                .Column<string>("Name", col => col.Unique()));
+                .Column<string>("Name", col => col.NotNull().Unique().Unlimited()));
 
             SchemaBuilder.CreateTable("TerritoryHierarchyPartRecord", table => table
                 .ContentPartRecord());

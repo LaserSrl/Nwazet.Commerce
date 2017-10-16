@@ -16,6 +16,7 @@ using Nwazet.Commerce.ViewModels;
 using Nwazet.Commerce.Models;
 using Orchard.Security;
 using Nwazet.Commerce.Permissions;
+using Orchard.Data;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Territories")]
@@ -26,18 +27,24 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ITerritoriesService _territoriesService;
         private readonly ISiteService _siteService;
         private readonly IAuthorizer _authorizer;
+        private readonly ITerritoriesRepositoryService _territoryRepositoryService;
+        private readonly ITransactionManager _transactionManager;
 
         public TerritoriesAdminController(
             IContentManager contentManager,
             ITerritoriesService territoriesService,
             ISiteService siteService,
             IShapeFactory shapeFactory,
-            IAuthorizer authorizer) {
+            IAuthorizer authorizer,
+            ITerritoriesRepositoryService territoryRepositoryService,
+            ITransactionManager transactionManager) {
 
             _contentManager = contentManager;
             _territoriesService = territoriesService;
             _siteService = siteService;
             _authorizer = authorizer;
+            _territoryRepositoryService = territoryRepositoryService;
+            _transactionManager = transactionManager;
 
             _shapeFactory = shapeFactory;
         }
@@ -49,6 +56,7 @@ namespace Nwazet.Commerce.Controllers {
         /// This is the entry Action to the section to manage hierarchies of territories and the territory ContentItems. 
         /// From here, users will not directly go and handle the records with the unique territory definitions.
         /// </summary>
+        [HttpGet]
         public ActionResult HierarchiesIndex(PagerParameters pagerParameters) {
             var allowedTypes = _territoriesService.GetHierarchyTypes();
             if (!allowedTypes.Any() && //no dynamic permissions
@@ -91,28 +99,65 @@ namespace Nwazet.Commerce.Controllers {
         #endregion
 
         #region Manage the unique territory records
+        private readonly string[] _territoryIncludeProperties = { "Name" };
         /// <summary>
         /// This is the entry Action to the section to manage The TerritoryIntenalRecords. These are the
         /// unique records that exist behind TerritoryPartRecords, and that are used to relate "same"
         /// TerritoryParts, also across hierarchies. For example, they can uniquely match "Cyprus" from a
         /// fiscal hierarchy with "Cyprus" from a shipping hierarchy.
         /// </summary>
-        /// <param name="pagerParameters"></param>
-        /// <returns></returns>
+        [HttpGet]
         public ActionResult TerritoriesIndex(PagerParameters pagerParameters) {
             if (!_authorizer.Authorize(TerritoriesPermissions.ManageInternalTerritories)) {
                 return new HttpUnauthorizedResult();
             }
 
             var pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
+            var pagerShape = _shapeFactory.Pager(pager)
+                .TotalItemCount(_territoryRepositoryService.GetTerritoriesCount());
 
+            var items = _territoryRepositoryService.GetTerritories(pager.GetStartIndex(), pager.PageSize);
+
+            dynamic viewModel = _shapeFactory.ViewModel()
+                .Territories(items)
+                .Pager(pagerShape);
+            //TODO: Add bulk actions: None, Delete Selected, Delete All, Export
+
+            return View((object)viewModel);
+        }
+
+        [HttpGet]
+        public ActionResult AddTerritory() {
             return View();
+        }
+
+        [HttpPost, ActionName("AddTerritory")]
+        public ActionResult AddTerritoryPost() {
+            var tir = new TerritoryInternalRecord();
+
+            if (!TryUpdateModel(tir, _territoryIncludeProperties)) {
+                _transactionManager.Cancel();
+                return View(tir);
+            }
+
+            try {
+                _territoryRepositoryService.AddTerritory(tir);
+            } catch (Exception ex) {
+                AddModelError("", ex.Message);
+                return View(tir);
+            }
+
+            return RedirectToAction("Index");
         }
         #endregion
 
         #region IUpdateModel implementation
         public void AddModelError(string key, LocalizedString errorMessage) {
             ModelState.AddModelError(key, errorMessage.ToString());
+        }
+
+        public void AddModelError(string key, string errorMessage) {
+            ModelState.AddModelError(key, errorMessage);
         }
 
         bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties) {

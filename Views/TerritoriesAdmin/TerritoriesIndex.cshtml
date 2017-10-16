@@ -1,1 +1,7 @@
-﻿
+﻿<h1>@T("Territories")</h1>
+
+<div class="manage">
+    @Html.ActionLink(T("Add").Text, "AddTerritory", "TerritoriessAdmin", null, new { @class = "button primaryAction" })
+</div>
+
+@Html.Partial("TerritoriesListPartial")
