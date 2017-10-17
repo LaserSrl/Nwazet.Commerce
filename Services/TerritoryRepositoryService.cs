@@ -72,7 +72,7 @@ namespace Nwazet.Commerce.Services {
             ValidateTir(tir);
             tir.Name = tir.Name.Trim();
             if (GetSameNameIds(tir).Any()) {
-                throw new TerritoryInternalDuplicateException(T("Territories with same Name are not valid."));
+                throw new TerritoryInternalDuplicateException(T("Cannot create duplicate names. A territory with the same name already exists."));
             }
             _territoryInternalRecord.Create(tir);
             return TerritoryInternalRecord.Copy(tir);
@@ -83,7 +83,7 @@ namespace Nwazet.Commerce.Services {
             tir.Name = tir.Name.Trim();
             var samNameIds = GetSameNameIds(tir).Where(id => id != tir.Id); //allow the update to do nothing
             if (samNameIds.Any()) {
-                throw new TerritoryInternalDuplicateException(T("Territories with same Name are not valid."));
+                throw new TerritoryInternalDuplicateException(T("A territory with the same name already exists."));
             }
             _territoryInternalRecord.Update(tir);
             return TerritoryInternalRecord.Copy(tir);

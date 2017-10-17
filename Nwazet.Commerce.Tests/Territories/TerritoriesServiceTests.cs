@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using Nwazet.Commerce.Exceptions;
 using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services;
 using Nwazet.Commerce.Tests.Stubs;
 using Orchard;
@@ -31,6 +32,7 @@ namespace Nwazet.Commerce.Tests.Territories {
 
         private ITerritoriesService _territoriesService;
         private ITerritoriesRepositoryService _territoryRepositoryService;
+        private ITerritoriesPermissionProvider _permissionProvider;
         private Mock<IOrchardServices> _mockServices;
 
         public override void Init() {
@@ -41,12 +43,14 @@ namespace Nwazet.Commerce.Tests.Territories {
 
             _territoriesService = _container.Resolve<ITerritoriesService>();
             _territoryRepositoryService = _container.Resolve<ITerritoriesRepositoryService>();
+            _permissionProvider= _container.Resolve<ITerritoriesPermissionProvider>();
         }
 
         public override void Register(ContainerBuilder builder) {
 
             builder.RegisterType<TerritoriesService>().As<ITerritoriesService>();
             builder.RegisterType<TerritoryRepositoryService>().As<ITerritoriesRepositoryService>();
+            builder.RegisterType<TerritoriesPermissions>().As<ITerritoriesPermissionProvider>();
 
             //for TerritoriesService
             builder.RegisterType<ContentDefinitionManagerStub>().As<IContentDefinitionManager>();
@@ -91,7 +95,7 @@ namespace Nwazet.Commerce.Tests.Territories {
             _currentUser = new FakeUser() { UserName = "admin" };
 
             Assert.That(_territoriesService.GetHierarchyTypes().Count(), Is.EqualTo(3));
-            Assert.That(_territoriesService.ListHierarchyTypePermissions().Count(), Is.EqualTo(3));
+            Assert.That(_permissionProvider.ListHierarchyTypePermissions().Count(), Is.EqualTo(3));
         }
 
         [Test]
@@ -100,7 +104,7 @@ namespace Nwazet.Commerce.Tests.Territories {
             _currentUser = new FakeUser() { UserName = "admin" };
 
             Assert.That(_territoriesService.GetTerritoryTypes().Count(), Is.EqualTo(3));
-            Assert.That(_territoriesService.ListTerritoryTypePermissions().Count(), Is.EqualTo(3));
+            Assert.That(_permissionProvider.ListTerritoryTypePermissions().Count(), Is.EqualTo(3));
         }
 
         [Test]
@@ -109,7 +113,7 @@ namespace Nwazet.Commerce.Tests.Territories {
             _currentUser = new FakeUser() { UserName = "user1" };
 
             Assert.That(_territoriesService.GetHierarchyTypes().Count(), Is.EqualTo(1));
-            Assert.That(_territoriesService.ListHierarchyTypePermissions().Count(), Is.EqualTo(3));
+            Assert.That(_permissionProvider.ListHierarchyTypePermissions().Count(), Is.EqualTo(3));
         }
 
         [Test]
@@ -118,7 +122,7 @@ namespace Nwazet.Commerce.Tests.Territories {
             _currentUser = new FakeUser() { UserName = "user1" };
 
             Assert.That(_territoriesService.GetTerritoryTypes().Count(), Is.EqualTo(1));
-            Assert.That(_territoriesService.ListTerritoryTypePermissions().Count(), Is.EqualTo(3));
+            Assert.That(_permissionProvider.ListTerritoryTypePermissions().Count(), Is.EqualTo(3));
         }
 
         private void PopulateTable(int numberOfRecords, int startId = 0) {

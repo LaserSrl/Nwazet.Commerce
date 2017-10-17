@@ -21,62 +21,35 @@ namespace Nwazet.Commerce.Services {
         private readonly IOrchardServices _orchardServices;
         private readonly IContentDefinitionManager _contentDefinitionManager;
         private readonly IContentManager _contentManager;
+        private readonly ITerritoriesPermissionProvider _permissionProvider;
 
         public TerritoriesService(
             IOrchardServices orchardServices,
             IContentDefinitionManager contentDefinitionManager,
-            IContentManager contentManager
+            IContentManager contentManager,
+            ITerritoriesPermissionProvider permissionProvider
             ) {
 
             _orchardServices = orchardServices;
             _contentDefinitionManager = contentDefinitionManager;
             _contentManager = contentManager;
+            _permissionProvider = permissionProvider;
         }
 
         public IEnumerable<ContentTypeDefinition> GetTerritoryTypes() {
             return _contentDefinitionManager.ListTypeDefinitions()
                 .Where(ctd => ctd.Parts.Any(pa => pa
                     .PartDefinition.Name.Equals(TerritoryPart.PartName, StringComparison.InvariantCultureIgnoreCase)) &&
-                        _orchardServices.Authorizer.Authorize(GetTerritoryPermission(ctd)));
-        }
-
-        public IEnumerable<Permission> ListTerritoryTypePermissions() {
-            return _contentDefinitionManager.ListTypeDefinitions()
-                .Where(ctd => ctd.Parts.Any(pa => pa
-                    .PartDefinition.Name.Equals(TerritoryPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
-                .Select(ctd => GetTerritoryPermission(ctd));
-        }
-
-        private Permission GetTerritoryPermission(ContentTypeDefinition typeDefinition) {
-            return new Permission {
-                Name = string.Format(TerritoriesPermissions.ManageTerritory.Name, typeDefinition.Name),
-                Description = string.Format(TerritoriesPermissions.ManageTerritory.Description, typeDefinition.Name),
-                ImpliedBy = TerritoriesPermissions.ManageTerritory.ImpliedBy
-            };
+                        _orchardServices.Authorizer.Authorize(_permissionProvider.GetTerritoryPermission(ctd)));
         }
         
         public IEnumerable<ContentTypeDefinition> GetHierarchyTypes() {
             return _contentDefinitionManager.ListTypeDefinitions()
                 .Where(ctd => ctd.Parts.Any(pa => pa
                     .PartDefinition.Name.Equals(TerritoryHierarchyPart.PartName, StringComparison.InvariantCultureIgnoreCase)) &&
-                         _orchardServices.Authorizer.Authorize(GetHierarchyPermission(ctd)));
+                         _orchardServices.Authorizer.Authorize(_permissionProvider.GetHierarchyPermission(ctd)));
         }
-
-        public IEnumerable<Permission> ListHierarchyTypePermissions() {
-            return _contentDefinitionManager.ListTypeDefinitions()
-                .Where(ctd => ctd.Parts.Any(pa => pa
-                    .PartDefinition.Name.Equals(TerritoryHierarchyPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
-                .Select(ctd => GetHierarchyPermission(ctd));
-        }
-
-        private Permission GetHierarchyPermission(ContentTypeDefinition typeDefinition) {
-            return new Permission {
-                Name = string.Format(TerritoriesPermissions.ManageTerritoryHierarchy.Name, typeDefinition.Name),
-                Description = string.Format(TerritoriesPermissions.ManageTerritoryHierarchy.Description, typeDefinition.Name),
-                ImpliedBy = TerritoriesPermissions.ManageTerritoryHierarchy.ImpliedBy
-            };
-        }
-
+        
         public IContentQuery<TerritoryHierarchyPart, TerritoryHierarchyPartRecord> GetHierarchiesQuery() {
             return GetHierarchiesQuery(VersionOptions.Latest);
         }

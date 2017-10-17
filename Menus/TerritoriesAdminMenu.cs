@@ -14,11 +14,14 @@ namespace Nwazet.Commerce.Menus {
     public class TerritoriesAdminMenu : INavigationProvider {
 
         private readonly ITerritoriesService _territoriesService;
+        private readonly ITerritoriesPermissionProvider _permissionProvider;
 
         public TerritoriesAdminMenu(
-            ITerritoriesService territoriesService) {
+            ITerritoriesService territoriesService,
+            ITerritoriesPermissionProvider permissionProvider) {
 
             _territoriesService = territoriesService;
+            _permissionProvider = permissionProvider;
 
             T = NullLocalizer.Instance;
         }
@@ -42,7 +45,7 @@ namespace Nwazet.Commerce.Menus {
                         .Position("1")
                         .Action("HierarchiesIndex", "TerritoriesAdmin", new { area = "Nwazet.Commerce" })
                         .Permission(TerritoriesPermissions.ManageTerritoryHierarchies);
-                    foreach (var permission in _territoriesService.ListHierarchyTypePermissions()) {
+                    foreach (var permission in _permissionProvider.ListHierarchyTypePermissions()) {
                         subItem = subItem.Permission(permission);
                     }
                 })

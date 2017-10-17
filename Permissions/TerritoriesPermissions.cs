@@ -7,10 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Orchard.Environment.Extensions.Models;
 using Nwazet.Commerce.Services;
+using Orchard.ContentManagement.MetaData;
+using Nwazet.Commerce.Models;
+using Orchard.ContentManagement.MetaData.Models;
 
 namespace Nwazet.Commerce.Permissions {
     [OrchardFeature("Territories")]
-    public class TerritoriesPermissions : IPermissionProvider {
+    public class TerritoriesPermissions : ITerritoriesPermissionProvider {
 
         #region Base Permissions definitions
         public static readonly Permission ManageTerritories = new Permission {
@@ -40,13 +43,13 @@ namespace Nwazet.Commerce.Permissions {
             Name = "ManageInternalTerritories"
         };
         #endregion
-
-        private readonly ITerritoriesService _territoriesService;
+        
+        private readonly IContentDefinitionManager _contentDefinitionManager;
 
         public TerritoriesPermissions(
-            ITerritoriesService territoriesService) {
-
-            _territoriesService = territoriesService;
+            IContentDefinitionManager contentDefinitionManager) {
+            
+            _contentDefinitionManager = contentDefinitionManager;
         }
 
         public Feature Feature { get; }
@@ -62,12 +65,42 @@ namespace Nwazet.Commerce.Permissions {
             permissions.Add(ManageTerritoryHierarchies);
             //Dynamic permissions are defined per type of hierarchy (not per single hierarchy, as
             //is the case for example in menus)
-            permissions.AddRange(_territoriesService.ListHierarchyTypePermissions());
-            permissions.AddRange(_territoriesService.ListTerritoryTypePermissions());
+            permissions.AddRange(ListHierarchyTypePermissions());
+            permissions.AddRange(ListTerritoryTypePermissions());
 
             return permissions;
         }
 
+        public IEnumerable<Permission> ListTerritoryTypePermissions() {
+            return _contentDefinitionManager.ListTypeDefinitions()
+                .Where(ctd => ctd.Parts.Any(pa => pa
+                    .PartDefinition.Name.Equals(TerritoryPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
+                .Select(ctd => GetTerritoryPermission(ctd));
+        }
+
+        public IEnumerable<Permission> ListHierarchyTypePermissions() {
+            return _contentDefinitionManager.ListTypeDefinitions()
+                .Where(ctd => ctd.Parts.Any(pa => pa
+                    .PartDefinition.Name.Equals(TerritoryHierarchyPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
+                .Select(ctd => GetHierarchyPermission(ctd));
+        }
+
+        public Permission GetTerritoryPermission(ContentTypeDefinition typeDefinition) {
+            return new Permission {
+                Name = string.Format(TerritoriesPermissions.ManageTerritory.Name, typeDefinition.Name),
+                Description = string.Format(TerritoriesPermissions.ManageTerritory.Description, typeDefinition.Name),
+                ImpliedBy = TerritoriesPermissions.ManageTerritory.ImpliedBy
+            };
+        }
+
+
+        public Permission GetHierarchyPermission(ContentTypeDefinition typeDefinition) {
+            return new Permission {
+                Name = string.Format(TerritoriesPermissions.ManageTerritoryHierarchy.Name, typeDefinition.Name),
+                Description = string.Format(TerritoriesPermissions.ManageTerritoryHierarchy.Description, typeDefinition.Name),
+                ImpliedBy = TerritoriesPermissions.ManageTerritoryHierarchy.ImpliedBy
+            };
+        }
 
     }
 }

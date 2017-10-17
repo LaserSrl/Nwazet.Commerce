@@ -17,9 +17,11 @@ using Nwazet.Commerce.Models;
 using Orchard.Security;
 using Nwazet.Commerce.Permissions;
 using Orchard.Data;
+using Orchard.UI.Admin;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Territories")]
+    [Admin]
     [ValidateInput(false)]
     public class TerritoriesAdminController : Controller, IUpdateModel {
 
@@ -147,7 +149,7 @@ namespace Nwazet.Commerce.Controllers {
                 return View(tir);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("TerritoriesIndex");
         }
         #endregion
 

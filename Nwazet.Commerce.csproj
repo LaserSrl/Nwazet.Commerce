@@ -370,6 +370,7 @@
     <Compile Include="Models\ShoppingCartQuantityProduct.cs" />
     <Compile Include="Models\ShoppingCartWidgetPart.cs" />
     <Compile Include="Permissions\CommercePermissions.cs" />
+    <Compile Include="Permissions\ITerritoriesPermissionProvider.cs" />
     <Compile Include="Permissions\ReportPermissions.cs" />
     <Compile Include="Permissions\OrderPermissions.cs" />
     <Compile Include="Permissions\TerritoriesPermissions.cs" />
