@@ -18,6 +18,7 @@ using Orchard.Security;
 using Nwazet.Commerce.Permissions;
 using Orchard.Data;
 using Orchard.UI.Admin;
+using Orchard.ContentManagement.MetaData.Models;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Territories")]
@@ -49,8 +50,11 @@ namespace Nwazet.Commerce.Controllers {
             _transactionManager = transactionManager;
 
             _shapeFactory = shapeFactory;
+
+            T = NullLocalizer.Instance;
         }
 
+        public Localizer T;
         dynamic _shapeFactory;
 
         #region Manage the contents for territories and hierarches
@@ -60,10 +64,8 @@ namespace Nwazet.Commerce.Controllers {
         /// </summary>
         [HttpGet]
         public ActionResult HierarchiesIndex(PagerParameters pagerParameters) {
-            var allowedTypes = _territoriesService.GetHierarchyTypes();
-            if (!allowedTypes.Any() && //no dynamic permissions
-                !_authorizer.Authorize(TerritoriesPermissions.ManageTerritoryHierarchies)) {
-
+            var allowedTypes = AllowedHierarchyTypes();
+            if (allowedTypes == null) {
                 return new HttpUnauthorizedResult();
             }
 
@@ -85,18 +87,75 @@ namespace Nwazet.Commerce.Controllers {
                         .Select(CreateEntry)
                         .ToList();
 
-                model = new HierarchyAdminIndexViewModel { Hierarchies = entries, Pager = pagerShape };
+                model = new HierarchyAdminIndexViewModel {
+                    Hierarchies = entries,
+                    AllowedHierarchyTypes = allowedTypes.ToList(),
+                    Pager = pagerShape };
             } else {
                 //No ContentType has been defined that contains the TerritoryHierarchyPart
-                //TODO: handle this condition in its own way
                 var pagerShape = _shapeFactory
                     .Pager(pager)
                     .TotalItemCount(0);
 
-                model = new HierarchyAdminIndexViewModel { Hierarchies = new List<HierarchyIndexEntry>(), Pager = pagerShape };
+                model = new HierarchyAdminIndexViewModel {
+                    Hierarchies = new List<HierarchyIndexEntry>(),
+                    AllowedHierarchyTypes = allowedTypes.ToList(),
+                    Pager = pagerShape };
+                //For now we handle this by simply pointing out that the user should create types
+                AddModelError("", T("There are no Hierarchy types that the user is allowed to manage."));
             }
 
             return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult CreateHierarchy(string typeName) {
+            var allowedTypes = AllowedHierarchyTypes();
+            if (allowedTypes == null) {
+                return new HttpUnauthorizedResult();
+            }
+
+            if (!allowedTypes.Any()) { //nothing to do
+                return RedirectToAction("HierarchiesIndex");
+            }
+
+            if (!string.IsNullOrWhiteSpace(typeName)) { //specific type requested
+                var typeDefinition = allowedTypes.FirstOrDefault(ctd => ctd.Name == typeName);
+                if (typeDefinition != null) {
+                    return CreateHierarchy(typeDefinition);
+                }
+            }
+            if (allowedTypes.Count() == 1) {
+                return CreateHierarchy(allowedTypes.FirstOrDefault());
+            } else {
+                return CreatableHierarchiesList(allowedTypes);
+            }
+        }
+
+        private ActionResult CreateHierarchy(ContentTypeDefinition typeDefinition) {
+            //TODO
+            return null;
+        }
+
+        private ActionResult CreatableHierarchiesList(IEnumerable<ContentTypeDefinition> typeDefinitions) {
+            //TODO
+            return null;
+        }
+
+        /// <summary>
+        /// This method gets all the hierarchy types the current user is allowed to manage.
+        /// </summary>
+        /// <returns>Returns the types the user is allwoed to manage. Returns null if the user lacks the correct 
+        /// permissions to be invoking these actions.</returns>
+        private IEnumerable<ContentTypeDefinition> AllowedHierarchyTypes() {
+            var allowedTypes = _territoriesService.GetHierarchyTypes();
+            if (!allowedTypes.Any() && //no dynamic permissions
+                !_authorizer.Authorize(TerritoriesPermissions.ManageTerritoryHierarchies)) {
+
+                return null;
+            }
+
+            return allowedTypes;
         }
         #endregion
 
@@ -123,7 +182,7 @@ namespace Nwazet.Commerce.Controllers {
             dynamic viewModel = _shapeFactory.ViewModel()
                 .Territories(items)
                 .Pager(pagerShape);
-            //TODO: Add bulk actions: None, Delete Selected, Delete All, Export
+            //TODO: Add bulk actions: None, Delete Selected, Delete All, Export...
 
             return View((object)viewModel);
         }

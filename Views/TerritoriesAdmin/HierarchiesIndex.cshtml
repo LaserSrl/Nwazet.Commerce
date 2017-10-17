@@ -1,4 +1,6 @@
-﻿@model Nwazet.Commerce.ViewModels.HierarchyAdminIndexViewModel
+﻿@using Orchard.ContentManagement.MetaData.Models
+
+@model Nwazet.Commerce.ViewModels.HierarchyAdminIndexViewModel
 
 @{ 
     Layout.Title(T("Manage Territory Hierarchies"));
@@ -7,10 +9,17 @@
 @using (Html.BeginFormAntiForgeryPost()) {
     @Html.ValidationSummary();
 
-    <div class="manage">@Html.ActionLink(T("Add a Hierarchy").Text, "Create", new { Area = "Nwazet.Commerce", ReturnUrl = Request.RawUrl }, new { @class = "button primaryAction" })</div>
+    if (Model.AllowedHierarchyTypes.Any()) {
+        <div class="manage">
+            @Html.ActionLink(T("Add a Hierarchy").Text, 
+                "CreateHierarchy", 
+                new { Area = "Nwazet.Commerce", ReturnUrl = Request.RawUrl, typeName = Model.AllowedHierarchyTypes.Count() == 1 ? Model.AllowedHierarchyTypes.FirstOrDefault().Name : ""}, 
+                new { @class = "button primaryAction" })
+        </div>
+    }
 
     <fieldset>
-        <table class="items" summary="@T("This is a table of the Hierarchies you are allowed to manage.")">
+        <table class="items" summary="@T("This is a table of the Hierarchy items you are allowed to manage.")">
 
         </table>
     </fieldset>
