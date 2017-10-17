@@ -129,12 +129,20 @@ namespace Nwazet.Commerce.Controllers {
         }
 
         [HttpGet]
-        public ActionResult AddTerritory() {
+        public ActionResult AddTerritoryInternal() {
+            if (!_authorizer.Authorize(TerritoriesPermissions.ManageInternalTerritories)) {
+                return new HttpUnauthorizedResult();
+            }
+
             return View();
         }
 
-        [HttpPost, ActionName("AddTerritory")]
-        public ActionResult AddTerritoryPost() {
+        [HttpPost, ActionName("AddTerritoryInternal")]
+        public ActionResult AddTerritoryInternalPost() {
+            if (!_authorizer.Authorize(TerritoriesPermissions.ManageInternalTerritories)) {
+                return new HttpUnauthorizedResult();
+            }
+
             var tir = new TerritoryInternalRecord();
 
             if (!TryUpdateModel(tir, _territoryIncludeProperties)) {
@@ -148,6 +156,64 @@ namespace Nwazet.Commerce.Controllers {
                 AddModelError("", ex.Message);
                 return View(tir);
             }
+
+            return RedirectToAction("TerritoriesIndex");
+        }
+
+        [HttpGet]
+        public ActionResult EditTerritoryInternal(int id) {
+            if (!_authorizer.Authorize(TerritoriesPermissions.ManageInternalTerritories)) {
+                return new HttpUnauthorizedResult();
+            }
+
+            var tir = _territoryRepositoryService.GetTerritoryInternal(id);
+            if (tir == null) {
+                return HttpNotFound();
+            }
+
+            return View(tir);
+        }
+
+        [HttpPost, ActionName("EditTerritoryInternal")]
+        public ActionResult EditTerritoryInternalPost(int id) {
+            if (!_authorizer.Authorize(TerritoriesPermissions.ManageInternalTerritories)) {
+                return new HttpUnauthorizedResult();
+            }
+
+            var tir = _territoryRepositoryService.GetTerritoryInternal(id);
+            if (tir == null) {
+                return HttpNotFound();
+            }
+
+            if (!TryUpdateModel(tir, _territoryIncludeProperties)) {
+                _transactionManager.Cancel();
+                return View(tir);
+            }
+
+            try {
+                _territoryRepositoryService.Update(tir);
+            } catch (Exception ex) {
+                AddModelError("", ex.Message);
+                return View(tir);
+            }
+
+            return View(tir);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteTerritoryInternal(int id) {
+            if (!_authorizer.Authorize(TerritoriesPermissions.ManageInternalTerritories)) {
+                return new HttpUnauthorizedResult();
+            }
+
+            var tir = _territoryRepositoryService.GetTerritoryInternal(id);
+            if (tir == null) {
+                return HttpNotFound();
+            }
+
+            //TODO: handle TerritoryParts that may "contain" the Territory we are trying to delete
+
+            _territoryRepositoryService.Delete(id);
 
             return RedirectToAction("TerritoriesIndex");
         }

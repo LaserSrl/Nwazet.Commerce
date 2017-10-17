@@ -81,8 +81,7 @@ namespace Nwazet.Commerce.Services {
         public TerritoryInternalRecord Update(TerritoryInternalRecord tir) {
             ValidateTir(tir);
             tir.Name = tir.Name.Trim();
-            var samNameIds = GetSameNameIds(tir).Where(id => id != tir.Id); //allow the update to do nothing
-            if (samNameIds.Any()) {
+            if (GetSameNameIds(tir).Any()) {
                 throw new TerritoryInternalDuplicateException(T("A territory with the same name already exists."));
             }
             _territoryInternalRecord.Update(tir);
@@ -106,17 +105,17 @@ namespace Nwazet.Commerce.Services {
             var name = tir.Name.Trim();
             try {
                 return _territoryInternalRecord.Table
-                    .Where(x => x.Name == name)
+                    .Where(x => x.Name == name && (tir.Id == 0 || tir.Id != x.Id)) //can have same name as its own self
                     .ToList() //force execution of the query so it can fail in sqlCE
                     .Select(x => x.Id);
-            } catch (Exception) {
+            } catch (Exception ex) {
                 //sqlCE doe not support using strings properly when their length is such that the column
                 //in the record is of type ntext.
                 var tirs = _territoryInternalRecord.Fetch(x =>
                     x.Name.StartsWith(name) && x.Name.EndsWith(name));
                 return tirs
                     .ToList() //force execution so that Linq happens on in-memory objects
-                    .Where(x => x.Name == name)
+                    .Where(x => x.Name == name && (tir.Id == 0 || tir.Id != x.Id))
                     .Select(x => x.Id);
             }
         }

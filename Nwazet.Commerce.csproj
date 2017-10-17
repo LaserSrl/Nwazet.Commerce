@@ -624,7 +624,8 @@
     <None Include="app.config" />
     <None Include="bundleconfig.json" />
     <None Include="packages.config" />
-    <None Include="Views\TerritoriesAdmin\AddTerritory.cshtml" />
+    <None Include="Views\TerritoriesAdmin\AddTerritoryInternal.cshtml" />
+    <None Include="Views\TerritoriesAdmin\EditTerritoryInternal.cshtml" />
     <None Include="Views\TerritoriesAdmin\HierarchiesIndex.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesIndex.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesListPartial.cshtml" />
