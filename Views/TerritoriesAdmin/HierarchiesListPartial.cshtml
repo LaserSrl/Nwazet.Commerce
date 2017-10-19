@@ -12,12 +12,12 @@
                 <tr>
                     <th scope="col"><input type="checkbox" class="check-all" /></th>
                     <th scope="col">@T("Name")</th>
+                    <th scope="col">@T("Territories")</th>
                     <th scope="col">@T("Actions")</th>
                 </tr>
             </thead>
             @foreach (var entry in entries) {
-                var linkText = entry.DisplayText + " " + 
-                    T("contains {0} territories.", entry.TerritoriesCount).Text +
+                var linkText = entry.DisplayText +
                     (entry.IsDraft ? " " + T("(draft)").Text : "");
 
                 <tr>
@@ -25,6 +25,7 @@
                     <td>
                         @Html.ActionLink(linkText, "EditHierarchy", "TerritoriesAdmin", new { id = entry.Id }, null)
                     </td>
+                    <td>@entry.TerritoriesCount</td>
                     <td>
                         @Html.ActionLink(T("Edit").Text, "EditHierarchy", "TerritoriesAdmin", new { id = entry.Id }, null) |
                         @Html.ActionLink(T("Delete").Text, "DeleteHierarchy", "TerritoriesAdmin", new { id = entry.Id }, new { itemprop = "RemoveUrl UnsafeUrl" })

@@ -22,7 +22,7 @@ namespace Nwazet.Commerce.Drivers {
         protected override DriverResult Display(TerritoryHierarchyPart part, string displayType, dynamic shapeHelper) {
             return Combined(
                 ContentShape("Parts_TerritoryHierarchy_SummaryAdmin",
-                    () => shapeHelper.Parts_TerritoryHierarchy_SummaryAdmin()
+                    () => shapeHelper.Parts_TerritoryHierarchy_SummaryAdmin(part)
                     ));
         }
 
