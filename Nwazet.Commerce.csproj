@@ -194,6 +194,7 @@
     <Content Include="Styles\order-admin.min.css">
       <DependentUpon>order-admin.less</DependentUpon>
     </Content>
+    <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />
     <None Include="Views\Parts\WishListsActions.cshtml" />
     <None Include="Views\TerritoriesAdmin\CreatableTypeList.cshtml" />
     <None Include="Views\TerritoriesAdmin\CreateHierarchy.cshtml" />
@@ -631,6 +632,7 @@
     <None Include="Views\TerritoriesAdmin\AddTerritoryInternal.cshtml" />
     <None Include="Views\TerritoriesAdmin\EditTerritoryInternal.cshtml" />
     <None Include="Views\TerritoriesAdmin\HierarchiesIndex.cshtml" />
+    <None Include="Views\TerritoriesAdmin\HierarchiesListPartial.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesIndex.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesListPartial.cshtml" />
     <None Include="Views\WishListEditor.cshtml" />

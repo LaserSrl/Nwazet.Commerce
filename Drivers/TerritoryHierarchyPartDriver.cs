@@ -15,16 +15,25 @@ namespace Nwazet.Commerce.Drivers {
 
         public TerritoryHierarchyPartDriver() { }
 
-        protected override DriverResult Display(TerritoryHierarchyPart part, string displayType, [Dynamic] dynamic shapeHelper) {
-            return base.Display(part, displayType, shapeHelper);
+        protected override string Prefix {
+            get { return "TerritoryHierarchyPart"; }
         }
 
-        protected override DriverResult Editor(TerritoryHierarchyPart part, [Dynamic] dynamic shapeHelper) {
-            return base.Editor(part, shapeHelper);
+        protected override DriverResult Display(TerritoryHierarchyPart part, string displayType, dynamic shapeHelper) {
+            return Combined(
+                ContentShape("Parts_TerritoryHierarchy_SummaryAdmin",
+                    () => shapeHelper.Parts_TerritoryHierarchy_SummaryAdmin()
+                    ));
         }
 
-        protected override DriverResult Editor(TerritoryHierarchyPart part, IUpdateModel updater, [Dynamic] dynamic shapeHelper) {
-            return base.Editor(part, updater, shapeHelper);
+        protected override DriverResult Editor(TerritoryHierarchyPart part, dynamic shapeHelper) {
+            //TODO
+            return null;
+        }
+
+        protected override DriverResult Editor(TerritoryHierarchyPart part, IUpdateModel updater, dynamic shapeHelper) {
+            //TODO
+            return null;
         }
     }
 }

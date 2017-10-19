@@ -12,7 +12,7 @@ namespace Nwazet.Commerce.ViewModels {
 
         public IList<ContentTypeDefinition> AllowedHierarchyTypes { get; set; }
 
-        public IList<dynamic> Hierarchies { get; set; }
+        public IList<HierarchyIndexEntry> HierarchyEntries { get; set; }
 
         public dynamic Pager { get; set; }
     }

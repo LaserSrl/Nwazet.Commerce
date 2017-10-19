@@ -49,9 +49,14 @@ namespace Nwazet.Commerce.Handlers {
             LoadContentContext context, TerritoryHierarchyPart part) {
 
             part.TerritoriesField.Loader(() => {
-                return _contentManager
-                    .GetMany<IContent>(part.Record.Territories.Select(tpr => tpr.ContentItemRecord.Id),
-                        VersionOptions.Latest, null);
+                if (part.Record.Territories != null && part.Record.Territories.Any()) {
+                    return _contentManager
+                        .GetMany<IContent>(part.Record.Territories.Select(tpr => tpr.ContentItemRecord.Id),
+                            VersionOptions.Latest, null);
+                } else {
+                    return Enumerable.Empty<ContentItem>();
+                }
+
             });
         }
 

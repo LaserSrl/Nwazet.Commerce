@@ -1,28 +1,27 @@
-﻿@using Orchard.ContentManagement.MetaData.Models
+﻿
 
 @model Nwazet.Commerce.ViewModels.HierarchyAdminIndexViewModel
 
-@{ 
+@{
     Layout.Title(T("Manage Territory Hierarchies"));
 }
 
-@using (Html.BeginFormAntiForgeryPost()) {
-    @Html.ValidationSummary();
+<h1>@T("Territory Hierarchies")</h1>
 
-    if (Model.AllowedHierarchyTypes.Any()) {
-        <div class="manage">
-            @Html.ActionLink(T("Add a Hierarchy").Text,
+@Html.ValidationSummary()
+
+@if (Model.AllowedHierarchyTypes.Any()) {
+    <div class="manage">
+        @Html.ActionLink(T("Add a Hierarchy").Text,
                 "CreateHierarchy",
                 new {
                     Area = "Nwazet.Commerce",
                     ReturnUrl = Request.RawUrl,
-                    id = Model.AllowedHierarchyTypes.Count() == 1 ? Model.AllowedHierarchyTypes.FirstOrDefault().Name : ""},
+                    id = Model.AllowedHierarchyTypes.Count() == 1 ? Model.AllowedHierarchyTypes.FirstOrDefault().Name : ""
+                },
                 new { @class = "button primaryAction" })
-        </div>
-    }
-    
-    <fieldset class="contentItems bulk-items">
-        @Display(Model.Hierarchies)
-    </fieldset>
-    @Display(Model.Pager)
+    </div>
 }
+
+
+@Html.Partial("HierarchiesListPartial")

@@ -34,11 +34,26 @@ namespace Nwazet.Commerce.Services {
         IContentQuery<TerritoryHierarchyPart, TerritoryHierarchyPartRecord> GetHierarchiesQuery();
 
         /// <summary>
+        /// Provides an IContentQuery for the latest versions of TerritoryHierarchyParts from the specific ContentTypes.
+        /// </summary>
+        /// <param name="contentTypes">The names of the ContentTypes.</param>
+        /// <returns></returns>
+        IContentQuery<TerritoryHierarchyPart> GetHierarchiesQuery(params string[] contentTypes);
+
+        /// <summary>
         /// Provides an IContentQuery for the specific versions of TerritoryHierarchyParts
         /// </summary>
         /// <param name="versionOptions">The version for the items. Defaults at Latest.</param>
         /// <returns></returns>
         IContentQuery<TerritoryHierarchyPart, TerritoryHierarchyPartRecord> GetHierarchiesQuery(VersionOptions versionOptions);
+
+        /// <summary>
+        /// Provides an IContentQuery for the specific versions of TerritoryHierarchyParts from the specific ContentTypes.
+        /// </summary>
+        /// <param name="versionOptions">The version for the items.</param>
+        /// <param name="contentTypes">Teh names of the ContentTypes.</param>
+        /// <returns></returns>
+        IContentQuery<TerritoryHierarchyPart> GetHierarchiesQuery(VersionOptions versionOptions, params string[] contentTypes);
 
         /// <summary>
         /// Provides an IContentQuery for the TerritoryParts in a given hierarchy. The version of the territories is the

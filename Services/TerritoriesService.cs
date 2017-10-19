@@ -52,10 +52,22 @@ namespace Nwazet.Commerce.Services {
             return GetHierarchiesQuery(VersionOptions.Latest);
         }
 
+        public IContentQuery<TerritoryHierarchyPart> GetHierarchiesQuery(params string[] contentTypes) {
+            return GetHierarchiesQuery(VersionOptions.Latest, contentTypes);
+        }
+
         public IContentQuery<TerritoryHierarchyPart, TerritoryHierarchyPartRecord> GetHierarchiesQuery(VersionOptions versionOptions) {
             return _contentManager
                 .Query<TerritoryHierarchyPart, TerritoryHierarchyPartRecord>()
                 .ForVersion(versionOptions);
+        }
+
+        public IContentQuery<TerritoryHierarchyPart> GetHierarchiesQuery(
+            VersionOptions versionOptions, params string[] contentTypes) {
+            if (contentTypes != null && contentTypes.Any()) {
+                return GetHierarchiesQuery(versionOptions).ForType(contentTypes);
+            }
+            return GetHierarchiesQuery(versionOptions);
         }
 
         public IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart) {

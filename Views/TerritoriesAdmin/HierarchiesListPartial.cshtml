@@ -1,0 +1,40 @@
+﻿@using Nwazet.Commerce.ViewModels
+
+@model Nwazet.Commerce.ViewModels.HierarchyAdminIndexViewModel
+@{ 
+    var entries = (IList<HierarchyIndexEntry>)Model.HierarchyEntries;
+}
+
+@using (Html.BeginFormAntiForgeryPost()) {
+    <fieldset class="contentItems bulk-items">
+        <table class="items" summary="@T("This is a table of the taxonomies in your application")">
+            <thead>
+                <tr>
+                    <th scope="col"><input type="checkbox" class="check-all" /></th>
+                    <th scope="col">@T("Name")</th>
+                    <th scope="col">@T("Actions")</th>
+                </tr>
+            </thead>
+            @foreach (var entry in entries) {
+                var linkText = entry.DisplayText + " " + 
+                    T("contains {0} territories.", entry.TerritoriesCount).Text +
+                    (entry.IsDraft ? " " + T("(draft)").Text : "");
+
+                <tr>
+                    <td><input type="checkbox" value="@entry.Id" name="itemIds" /></td>
+                    <td>
+                        @Html.ActionLink(linkText, "EditHierarchy", "TerritoriesAdmin", new { id = entry.Id }, null)
+                    </td>
+                    <td>
+                        @Html.ActionLink(T("Edit").Text, "EditHierarchy", "TerritoriesAdmin", new { id = entry.Id }, null) |
+                        @Html.ActionLink(T("Delete").Text, "DeleteHierarchy", "TerritoriesAdmin", new { id = entry.Id }, new { itemprop = "RemoveUrl UnsafeUrl" })
+                    </td>
+                </tr>
+            }
+        </table>
+    </fieldset>
+}
+
+@Display(Model.Pager)
+
+@Html.AntiForgeryTokenOrchard()

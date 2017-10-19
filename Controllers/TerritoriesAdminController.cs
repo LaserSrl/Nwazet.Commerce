@@ -87,22 +87,22 @@ namespace Nwazet.Commerce.Controllers {
 
             HierarchyAdminIndexViewModel model;
             if (AllowedHierarchyTypes.Any()) {
+                var typeNames = AllowedHierarchyTypes.Select(ctd => ctd.Name).ToArray();
 
                 var hierarchies = _territoriesService
-                    .GetHierarchiesQuery()
-                    .ForType(AllowedHierarchyTypes.Select(ctd => ctd.Name).ToArray())
+                    .GetHierarchiesQuery(typeNames)
                     .Slice(pager.GetStartIndex(), pager.PageSize);
 
                 var pagerShape = _shapeFactory
                     .Pager(pager)
-                    .TotalItemCount(_territoriesService.GetHierarchiesQuery().Count());
+                    .TotalItemCount(_territoriesService.GetHierarchiesQuery(typeNames).Count());
 
-                var entries = _shapeFactory.List();
-                entries.AddRange(hierarchies
-                    .Select(th => _contentManager.BuildDisplay(th.ContentItem, "SuymmaryAdmin")));
+                var entries = hierarchies
+                    .Select(CreateEntry)
+                    .ToList();
 
                 model = new HierarchyAdminIndexViewModel {
-                    Hierarchies = entries,
+                    HierarchyEntries = entries,
                     AllowedHierarchyTypes = AllowedHierarchyTypes.ToList(),
                     Pager = pagerShape };
             } else {
@@ -112,7 +112,7 @@ namespace Nwazet.Commerce.Controllers {
                     .TotalItemCount(0);
 
                 model = new HierarchyAdminIndexViewModel {
-                    Hierarchies = _shapeFactory.List(),
+                    HierarchyEntries = new List<HierarchyIndexEntry>(),
                     AllowedHierarchyTypes = AllowedHierarchyTypes.ToList(),
                     Pager = pagerShape };
                 //For now we handle this by simply pointing out that the user should create types
