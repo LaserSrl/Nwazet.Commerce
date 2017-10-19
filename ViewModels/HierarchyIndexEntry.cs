@@ -11,7 +11,7 @@ namespace Nwazet.Commerce.ViewModels {
 
         public int Id { get; set; }
 
-        public string DisplayTest { get; set; }
+        public string DisplayText { get; set; }
 
         public ContentItem ContentItem { get; set; }
 

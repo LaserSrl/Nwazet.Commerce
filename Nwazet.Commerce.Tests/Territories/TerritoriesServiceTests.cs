@@ -312,5 +312,6 @@ namespace Nwazet.Commerce.Tests.Territories {
             Assert.That(tir4.Id, Is.EqualTo(1));
             Assert.That(tir4.Name, Is.EqualTo("Name0"));
         }
+        
     }
 }

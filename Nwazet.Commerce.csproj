@@ -195,6 +195,8 @@
       <DependentUpon>order-admin.less</DependentUpon>
     </Content>
     <None Include="Views\Parts\WishListsActions.cshtml" />
+    <None Include="Views\TerritoriesAdmin\CreatableTypeList.cshtml" />
+    <None Include="Views\TerritoriesAdmin\CreateHierarchy.cshtml" />
     <None Include="Views\TerritoriesAdmin\EditorTemplates\TerritoryInternalRecord.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Scripts\Web.config" />
@@ -233,6 +235,7 @@
     <Compile Include="Drivers\ProductPartWishListDriver.cs" />
     <Compile Include="Drivers\ProductSettingsPartDriver.cs" />
     <Compile Include="Drivers\ProductsListPartDriver.cs" />
+    <Compile Include="Drivers\TerritoryHierarchyPartDriver.cs" />
     <Compile Include="Drivers\WishListItemPartDriver.cs" />
     <Compile Include="Drivers\WishListListPartDriver.cs" />
     <Compile Include="Drivers\ZipCodeTaxPartDriver.cs" />
@@ -387,6 +390,7 @@
     <Compile Include="Routes\OrderRoutes.cs" />
     <Compile Include="Routes\CommerceRoutes.cs" />
     <Compile Include="Routes\WishListRoutes.cs" />
+    <Compile Include="Security\HierachiesAuthorizationEventHandler.cs" />
     <Compile Include="Security\WishListsAuthorizationEventHandler.cs" />
     <Compile Include="Services\BundleAutocompleteService.cs" />
     <Compile Include="Services\BundleProductLocalizationBundleService.cs" />

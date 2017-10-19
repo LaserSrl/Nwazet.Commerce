@@ -11,16 +11,18 @@
 
     if (Model.AllowedHierarchyTypes.Any()) {
         <div class="manage">
-            @Html.ActionLink(T("Add a Hierarchy").Text, 
-                "CreateHierarchy", 
-                new { Area = "Nwazet.Commerce", ReturnUrl = Request.RawUrl, typeName = Model.AllowedHierarchyTypes.Count() == 1 ? Model.AllowedHierarchyTypes.FirstOrDefault().Name : ""}, 
+            @Html.ActionLink(T("Add a Hierarchy").Text,
+                "CreateHierarchy",
+                new {
+                    Area = "Nwazet.Commerce",
+                    ReturnUrl = Request.RawUrl,
+                    id = Model.AllowedHierarchyTypes.Count() == 1 ? Model.AllowedHierarchyTypes.FirstOrDefault().Name : ""},
                 new { @class = "button primaryAction" })
         </div>
     }
-
-    <fieldset>
-        <table class="items" summary="@T("This is a table of the Hierarchy items you are allowed to manage.")">
-
-        </table>
+    
+    <fieldset class="contentItems bulk-items">
+        @Display(Model.Hierarchies)
     </fieldset>
+    @Display(Model.Pager)
 }

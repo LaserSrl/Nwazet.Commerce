@@ -23,21 +23,6 @@ namespace Nwazet.Commerce.Permissions {
         /// <remarks>This method does not filter out the permissions that the current user does not have. 
         /// Rather, it returns all possible permissions for the types of territory hierarchies.</remarks>
         IEnumerable<Permission> ListHierarchyTypePermissions();
-
-        /// <summary>
-        /// Returns the dynamic permission computed for the type passed as parameter and considered
-        /// as a Territory.
-        /// </summary>
-        /// <param name="typeDefinition">The type for whom the permission will be created.</param>
-        /// <returns>The computed dynamic permission.</returns>
-        Permission GetTerritoryPermission(ContentTypeDefinition typeDefinition);
-
-        /// <summary>
-        /// Returns the dynamic permission computed for the type passed as parameter and considered
-        /// as a Hierarchy.
-        /// </summary>
-        /// <param name="typeDefinition">The type for whom the permission will be created.</param>
-        /// <returns>The computed dynamic permission.</returns>
-        Permission GetHierarchyPermission(ContentTypeDefinition typeDefinition);
+        
     }
 }

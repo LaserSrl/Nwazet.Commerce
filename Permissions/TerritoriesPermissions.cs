@@ -85,16 +85,27 @@ namespace Nwazet.Commerce.Permissions {
                 .Select(ctd => GetHierarchyPermission(ctd));
         }
 
-        public Permission GetTerritoryPermission(ContentTypeDefinition typeDefinition) {
+        /// <summary>
+        /// Returns the dynamic permission computed for the type passed as parameter and considered
+        /// as a Territory.
+        /// </summary>
+        /// <param name="typeDefinition">The type for whom the permission will be created.</param>
+        /// <returns>The computed dynamic permission.</returns>
+        public static Permission GetTerritoryPermission(ContentTypeDefinition typeDefinition) {
             return new Permission {
                 Name = string.Format(TerritoriesPermissions.ManageTerritory.Name, typeDefinition.Name),
                 Description = string.Format(TerritoriesPermissions.ManageTerritory.Description, typeDefinition.Name),
                 ImpliedBy = TerritoriesPermissions.ManageTerritory.ImpliedBy
             };
         }
-
-
-        public Permission GetHierarchyPermission(ContentTypeDefinition typeDefinition) {
+        
+        /// <summary>
+        /// Returns the dynamic permission computed for the type passed as parameter and considered
+        /// as a Hierarchy.
+        /// </summary>
+        /// <param name="typeDefinition">The type for whom the permission will be created.</param>
+        /// <returns>The computed dynamic permission.</returns>
+        public static Permission GetHierarchyPermission(ContentTypeDefinition typeDefinition) {
             return new Permission {
                 Name = string.Format(TerritoriesPermissions.ManageTerritoryHierarchy.Name, typeDefinition.Name),
                 Description = string.Format(TerritoriesPermissions.ManageTerritoryHierarchy.Description, typeDefinition.Name),

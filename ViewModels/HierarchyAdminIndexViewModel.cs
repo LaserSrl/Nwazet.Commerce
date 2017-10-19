@@ -11,7 +11,8 @@ namespace Nwazet.Commerce.ViewModels {
     public class HierarchyAdminIndexViewModel {
 
         public IList<ContentTypeDefinition> AllowedHierarchyTypes { get; set; }
-        public IList<HierarchyIndexEntry> Hierarchies { get; set; }
+
+        public IList<dynamic> Hierarchies { get; set; }
 
         public dynamic Pager { get; set; }
     }
