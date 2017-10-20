@@ -2,14 +2,18 @@
 using Moq;
 using NUnit.Framework;
 using Nwazet.Commerce.Exceptions;
+using Nwazet.Commerce.Handlers;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services;
 using Nwazet.Commerce.Tests.Stubs;
+using Nwazet.Commerce.Tests.Territories.Handlers;
 using Orchard;
 using Orchard.Caching;
 using Orchard.ContentManagement;
+using Orchard.ContentManagement.Handlers;
 using Orchard.ContentManagement.MetaData;
+using Orchard.ContentManagement.MetaData.Models;
 using Orchard.ContentManagement.Records;
 using Orchard.Core.Settings.Metadata;
 using Orchard.Data;
@@ -34,6 +38,7 @@ namespace Nwazet.Commerce.Tests.Territories {
         private ITerritoriesRepositoryService _territoryRepositoryService;
         private ITerritoriesPermissionProvider _permissionProvider;
         private Mock<IOrchardServices> _mockServices;
+        private IContentManager _contentManager;
 
         public override void Init() {
             _mockServices = new Mock<IOrchardServices>();
@@ -44,6 +49,7 @@ namespace Nwazet.Commerce.Tests.Territories {
             _territoriesService = _container.Resolve<ITerritoriesService>();
             _territoryRepositoryService = _container.Resolve<ITerritoriesRepositoryService>();
             _permissionProvider= _container.Resolve<ITerritoriesPermissionProvider>();
+            _contentManager = _container.Resolve<IContentManager>();
         }
 
         public override void Register(ContainerBuilder builder) {
@@ -53,7 +59,12 @@ namespace Nwazet.Commerce.Tests.Territories {
             builder.RegisterType<TerritoriesPermissions>().As<ITerritoriesPermissionProvider>();
 
             //for TerritoriesService
-            builder.RegisterType<ContentDefinitionManagerStub>().As<IContentDefinitionManager>();
+            var mockDefinitionManager = new Mock<IContentDefinitionManager>();
+            mockDefinitionManager
+                .Setup<IEnumerable<ContentTypeDefinition>>(mdm => mdm.ListTypeDefinitions())
+                .Returns(MockTypeDefinitions);
+            builder.RegisterInstance(mockDefinitionManager.Object);
+
             builder.RegisterType<Authorizer>().As<IAuthorizer>();
             builder.RegisterType<DefaultContentManager>().As<IContentManager>();
             builder.RegisterInstance(_mockServices.Object);
@@ -70,6 +81,7 @@ namespace Nwazet.Commerce.Tests.Territories {
             builder.RegisterType<DefaultContentManagerSession>().As<IContentManagerSession>();
             builder.RegisterInstance(new Mock<IContentDisplay>().Object);
             builder.RegisterType<Signals>().As<ISignals>();
+            builder.RegisterType<DefaultContentQuery>().As<IContentQuery>();
 
             var _workContext = new Mock<WorkContext>();
             _workContext.Setup(w =>
@@ -78,12 +90,58 @@ namespace Nwazet.Commerce.Tests.Territories {
             var _workContextAccessor = new Mock<IWorkContextAccessor>();
             _workContextAccessor.Setup(w => w.GetContext()).Returns(_workContext.Object);
             builder.RegisterInstance(_workContextAccessor.Object).As<IWorkContextAccessor>();
+
+            //Handlers
+            builder.RegisterType<TerritoryHierarchyPartHandler>().As<IContentHandler>();
+            builder.RegisterType<TerritoryHierachyMockHandler>().As<IContentHandler>();
+            builder.RegisterType<TerritoryPartHandler>().As<IContentHandler>();
+            builder.RegisterType<TerritoryMockHandler>().As<IContentHandler>();
+        }
+
+        private List<ContentTypeDefinition> MockTypeDefinitions() {
+            var typeDefinitions = new List<ContentTypeDefinition>();
+            //generate some dummy definitions for the tests of the Territories feature
+            for (int i = 0; i < 3; i++) {
+                var typeDefinition = new ContentTypeDefinition(
+                    name: "HierarchyType" + i.ToString(),
+                    displayName: "HierarchyType" + i.ToString(),
+                    parts: new ContentTypePartDefinition[] {
+                        new ContentTypePartDefinition(
+                            contentPartDefinition: new ContentPartDefinition(TerritoryHierarchyPart.PartName, Enumerable.Empty<ContentPartFieldDefinition>(), null),
+                            settings: null
+                            )
+                    },
+                    settings: null
+                    );
+                typeDefinitions.Add(typeDefinition);
+            }
+            for (int i = 0; i < 3; i++) {
+                var typeDefinition = new ContentTypeDefinition(
+                    name: "TerritoryType" + i.ToString(),
+                    displayName: "TerritoryType" + i.ToString(),
+                    parts: new ContentTypePartDefinition[] {
+                        new ContentTypePartDefinition(
+                            contentPartDefinition: new ContentPartDefinition(TerritoryPart.PartName, Enumerable.Empty<ContentPartFieldDefinition>(), null),
+                            settings: null
+                            )
+                    },
+                    settings: null
+                    );
+                typeDefinitions.Add(typeDefinition);
+            }
+
+            return typeDefinitions;
         }
         
         protected override IEnumerable<Type> DatabaseTypes {
             get {
                 return new[] {
                     typeof(TerritoryInternalRecord),
+                    typeof(ContentItemVersionRecord),
+                    typeof(ContentItemRecord),
+                    typeof(ContentTypeRecord),
+                    typeof(TerritoryHierarchyPartRecord),
+                    typeof(TerritoryPartRecord)
                 };
             }
         }
@@ -314,17 +372,58 @@ namespace Nwazet.Commerce.Tests.Territories {
             Assert.That(tir4.Name, Is.EqualTo("Name0"));
         }
 
+        private List<IContent> AddSampleData() {
+            var items = new List<IContent> {
+                _contentManager.Create<TerritoryHierarchyPart>("HierarchyType1", VersionOptions.Published),
+                _contentManager.Create<TerritoryHierarchyPart>("HierarchyType2", VersionOptions.Draft),
+                _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0", VersionOptions.Published),
+                _contentManager.Create<TerritoryHierarchyPart>("HierarchyType1", VersionOptions.Draft)
+            };
+
+            return items;
+        }
+
         [Test]
         public void ParameterlessGetHierarchiesQueryReturnsAllLatestVersions() {
+            var created = AddSampleData();
             //verify draft vs published
+
+            var gotten = _territoriesService.GetHierarchiesQuery().List();
+            Assert.That(gotten.Count() == created.Count());
+            Assert.That(gotten
+                .Select(pa => pa.ContentItem)
+                .Where(ci => ci.IsPublished())
+                .Count(), Is.EqualTo(2));
+            Assert.That(gotten
+                .Select(pa => pa.ContentItem)
+                .Where(ci => !ci.IsPublished())
+                .Count(), Is.EqualTo(2));
         }
 
         [Test]
         public void GetHierarchiesQueryReturnsSpecificVersions() {
+            var created = AddSampleData();
             //try published separately from draft
+
+            var gottenDraft = _territoriesService.GetHierarchiesQuery(VersionOptions.Draft).List();
+            Assert.That(gottenDraft.Count(), Is.EqualTo(2));
+
+            var gottenPub = _territoriesService.GetHierarchiesQuery(VersionOptions.Published).List();
+            Assert.That(gottenPub.Count(), Is.EqualTo(2));
         }
 
         [Test]
-        public void GetHierarchiesQueryDiscriminatesOnContentType() { }
+        public void GetHierarchiesQueryDiscriminatesOnContentType() {
+            var created = AddSampleData();
+
+            var gotten0 = _territoriesService.GetHierarchiesQuery("HierarchyType0").List();
+            Assert.That(gotten0.Count(), Is.EqualTo(1));
+
+            var gotten1 = _territoriesService.GetHierarchiesQuery("HierarchyType1").List();
+            Assert.That(gotten1.Count(), Is.EqualTo(2));
+
+            var gotten02 = _territoriesService.GetHierarchiesQuery("HierarchyType0", "HierarchyType2").List();
+            Assert.That(gotten02.Count(), Is.EqualTo(2));
+        }
     }
 }

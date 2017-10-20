@@ -27,8 +27,8 @@
                     </td>
                     <td>@entry.TerritoriesCount</td>
                     <td>
-                        @Html.ActionLink(T("Edit").Text, "EditHierarchy", "TerritoriesAdmin", new { id = entry.Id }, null) |
-                        @Html.ActionLink(T("Delete").Text, "DeleteHierarchy", "TerritoriesAdmin", new { id = entry.Id }, new { itemprop = "RemoveUrl UnsafeUrl" })
+                        @Html.ActionLink(T("Edit").Text, "EditHierarchy", "TerritoriesAdmin", new { id = entry.Id, ReturnUrl = Request.RawUrl }, null) |
+                        @Html.ActionLink(T("Delete").Text, "DeleteHierarchy", "TerritoriesAdmin", new { id = entry.Id, ReturnUrl = Request.RawUrl }, new { itemprop = "RemoveUrl UnsafeUrl" })
                     </td>
                 </tr>
             }

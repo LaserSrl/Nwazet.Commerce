@@ -93,12 +93,13 @@
     <Compile Include="ProductAttributePricingTests.cs" />
     <Compile Include="ShippingServiceTest.cs" />
     <Compile Include="Stubs\AuthorizationServiceStub.cs" />
-    <Compile Include="Stubs\ContentDefinitionManagerStub.cs" />
     <Compile Include="Stubs\FakeUser.cs" />
     <Compile Include="Stubs\ShapeFactoryStub.cs" />
     <Compile Include="Stubs\SiteStub.cs" />
     <Compile Include="TaxByZipTests.cs" />
     <Compile Include="TaxTests.cs" />
+    <Compile Include="Territories\Handlers\TerritoryHierachyMockHandler.cs" />
+    <Compile Include="Territories\Handlers\TerritoryMockHandler.cs" />
     <Compile Include="Territories\TerritoriesServiceTests.cs" />
     <Compile Include="TimePeriodTests.cs" />
     <Compile Include="UspsServiceInternationalTests.cs" />

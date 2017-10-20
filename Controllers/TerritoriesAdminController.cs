@@ -23,6 +23,11 @@ using Orchard.UI.Notify;
 using Orchard.Mvc.Extensions;
 using Orchard.ContentManagement.Aspects;
 using Orchard.Core.Contents.Settings;
+using Orchard.ContentManagement.MetaData;
+using Orchard.Utility.Extensions;
+using Orchard.Mvc.Html;
+using System.Web.Routing;
+using Orchard.Security.Permissions;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Territories")]
@@ -37,6 +42,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ITerritoriesRepositoryService _territoryRepositoryService;
         private readonly ITransactionManager _transactionManager;
         private readonly INotifier _notifier;
+        private readonly IContentDefinitionManager _contentDefinitionManager;
 
         public TerritoriesAdminController(
             IContentManager contentManager,
@@ -46,7 +52,8 @@ namespace Nwazet.Commerce.Controllers {
             IAuthorizer authorizer,
             ITerritoriesRepositoryService territoryRepositoryService,
             ITransactionManager transactionManager,
-            INotifier notifier) {
+            INotifier notifier,
+            IContentDefinitionManager contentDefinitionManager) {
 
             _contentManager = contentManager;
             _territoriesService = territoriesService;
@@ -55,6 +62,7 @@ namespace Nwazet.Commerce.Controllers {
             _territoryRepositoryService = territoryRepositoryService;
             _transactionManager = transactionManager;
             _notifier = notifier;
+            _contentDefinitionManager = contentDefinitionManager;
 
             _shapeFactory = shapeFactory;
 
@@ -64,6 +72,8 @@ namespace Nwazet.Commerce.Controllers {
 
             default401HierarchyMessage = T("Not authorized to manage hierarchies.").Text;
             creation401HierarchyMessage = T("Couldn't create hierarchy");
+            edit401HierarchyMessage = T("Couldn't edit hierarchy");
+            delete401HierarchyMessage = T("Couldn't delete hierarchy");
         }
 
         public Localizer T;
@@ -71,6 +81,8 @@ namespace Nwazet.Commerce.Controllers {
 
         string default401HierarchyMessage; //displayed for HttpUnauthorizedResults
         LocalizedString creation401HierarchyMessage;
+        LocalizedString edit401HierarchyMessage;
+        LocalizedString delete401HierarchyMessage;
 
         #region Manage the contents for territories and hierarches
         /// <summary>
@@ -104,7 +116,8 @@ namespace Nwazet.Commerce.Controllers {
                 model = new HierarchyAdminIndexViewModel {
                     HierarchyEntries = entries,
                     AllowedHierarchyTypes = AllowedHierarchyTypes.ToList(),
-                    Pager = pagerShape };
+                    Pager = pagerShape
+                };
             } else {
                 //No ContentType has been defined that contains the TerritoryHierarchyPart
                 var pagerShape = _shapeFactory
@@ -114,7 +127,8 @@ namespace Nwazet.Commerce.Controllers {
                 model = new HierarchyAdminIndexViewModel {
                     HierarchyEntries = new List<HierarchyIndexEntry>(),
                     AllowedHierarchyTypes = AllowedHierarchyTypes.ToList(),
-                    Pager = pagerShape };
+                    Pager = pagerShape
+                };
                 //For now we handle this by simply pointing out that the user should create types
                 AddModelError("", T("There are no Hierarchy types that the user is allowed to manage."));
             }
@@ -125,7 +139,7 @@ namespace Nwazet.Commerce.Controllers {
         #region Creation
         [HttpGet]
         public ActionResult CreateHierarchy(string id) {
-            //id is the Name of the ContentTYpe we are trying to create. Calling that id allows us to use standard 
+            //id is the Name of the ContentType we are trying to create. Calling that id allows us to use standard 
             //MVC routing (i.e. controller/action/id?querystring. This is especially nice for the post calls.
             if (AllowedHierarchyTypes == null) {
                 return new HttpUnauthorizedResult(default401HierarchyMessage);
@@ -152,7 +166,7 @@ namespace Nwazet.Commerce.Controllers {
         [Orchard.Mvc.FormValueRequired("submit.Save")]
         public ActionResult CreateHierarchyPost(string id, string returnUrl) {
             return CreateHierarchyPost(id, returnUrl, contentItem => {
-                if (!contentItem.Has< IPublishingControlAspect>() && !contentItem.TypeDefinition.Settings.GetModel<ContentTypeSettings>().Draftable) {
+                if (!contentItem.Has<IPublishingControlAspect>() && !contentItem.TypeDefinition.Settings.GetModel<ContentTypeSettings>().Draftable) {
                     _contentManager.Publish(contentItem);
                 }
             });
@@ -185,7 +199,7 @@ namespace Nwazet.Commerce.Controllers {
             var model = _contentManager.BuildEditor(hierarchyItem);
             return View(model);
         }
-        
+
         private ActionResult CreatableHierarchiesList() {
             if (AllowedHierarchyTypes == null) {
                 return new HttpUnauthorizedResult(default401HierarchyMessage);
@@ -197,56 +211,164 @@ namespace Nwazet.Commerce.Controllers {
         }
 
         private ActionResult CreateHierarchyPost(string typeName, string returnUrl, Action<ContentItem> conditionallyPublish) {
-            //this method replicates what is done in the corresponding CreatePOST In Orchard.Core.Contents AdminController
-            var hierarchyItem = _contentManager.New(typeName);
+            return ExecuteHierarchyPost(new TerritoriesAdminHierarchyExecutionContext {
+                HierarchyItem = _contentManager.New(typeName),
+                Message = creation401HierarchyMessage,
+                AdditionalPermissions = new Permission[] { Orchard.Core.Contents.Permissions.EditContent },
+                ExecutionAction = item => {
+                    _contentManager.Create(item, VersionOptions.Draft);
 
-            if (!_authorizer.Authorize(TerritoriesPermissions.ManageTerritoryHierarchies, hierarchyItem, creation401HierarchyMessage))
-                return new HttpUnauthorizedResult();
-            if (!_authorizer.Authorize(Orchard.Core.Contents.Permissions.EditContent, hierarchyItem, creation401HierarchyMessage))
-                return new HttpUnauthorizedResult();
+                    var model = _contentManager.UpdateEditor(item, this);
 
-            _contentManager.Create(hierarchyItem, VersionOptions.Draft);
+                    if (!ModelState.IsValid) {
+                        _transactionManager.Cancel();
+                        return View(model);
+                    }
 
-            var model = _contentManager.UpdateEditor(hierarchyItem, this);
+                    conditionallyPublish(item);
 
-            if (!ModelState.IsValid) {
-                _transactionManager.Cancel();
-                return View(model);
-            }
+                    _notifier.Information(string.IsNullOrWhiteSpace(item.TypeDefinition.DisplayName)
+                        ? T("Your content has been created.")
+                        : T("Your {0} has been created.", item.TypeDefinition.DisplayName));
 
-            conditionallyPublish(hierarchyItem);
-
-            _notifier.Information(string.IsNullOrWhiteSpace(hierarchyItem.TypeDefinition.DisplayName)
-                ? T("Your content has been created.")
-                : T("Your {0} has been created.", hierarchyItem.TypeDefinition.DisplayName));
-            if (!string.IsNullOrEmpty(returnUrl)) {
-                return this.RedirectLocal(returnUrl);
-            }
-            var adminRouteValues = _contentManager.GetItemMetadata(hierarchyItem).AdminRouteValues;
-            return RedirectToRoute(adminRouteValues);
+                    return this.RedirectLocal(returnUrl, () => RedirectToAction("EditHierarchy", new RouteValueDictionary { { "Id", item.Id } }));
+                }
+            });
         }
 
         #endregion
 
-        private Lazy<IEnumerable<ContentTypeDefinition>> _allowedHierarchyTypes;
-        private IEnumerable<ContentTypeDefinition> AllowedHierarchyTypes {
-            get { return _allowedHierarchyTypes.Value; }
-        }
-
-        /// <summary>
-        /// This method gets all the hierarchy types the current user is allowed to manage.
-        /// </summary>
-        /// <returns>Returns the types the user is allwoed to manage. Returns null if the user lacks the correct 
-        /// permissions to be invoking these actions.</returns>
-        private IEnumerable<ContentTypeDefinition> GetAllowedHierarchyTypes() {
-            var allowedTypes = _territoriesService.GetHierarchyTypes();
-            if (!allowedTypes.Any() && //no dynamic permissions
-                !_authorizer.Authorize(TerritoriesPermissions.ManageTerritoryHierarchies)) {
-
-                return null;
+        #region Edit
+        [HttpGet]
+        public ActionResult EditHierarchy(int id) {
+            if (AllowedHierarchyTypes == null) {
+                return new HttpUnauthorizedResult(default401HierarchyMessage);
             }
 
-            return allowedTypes;
+            var hierarchyItem = _contentManager.Get(id, VersionOptions.Latest);
+
+            if (hierarchyItem == null)
+                return HttpNotFound();
+
+            var typeName = hierarchyItem.ContentType;
+            var typeDefinition = _contentDefinitionManager.GetTypeDefinition(typeName);
+            if (!typeDefinition.Parts.Any(pa => pa.PartDefinition.Name == TerritoryHierarchyPart.PartName)) {
+                AddModelError("", T("The requested type \"{0}\" is not a Hierarchy type.", typeDefinition.Name));
+                return RedirectToAction("HierarchiesIndex");
+            }
+            typeDefinition = AllowedHierarchyTypes.FirstOrDefault(ctd => ctd.Name == typeName);
+
+            if (typeDefinition == null) {
+                return new HttpUnauthorizedResult(T("Not authorized to manage hierarchies of type \"{0}\"", typeName).Text);
+            }
+
+            if (!_authorizer.Authorize(Orchard.Core.Contents.Permissions.EditContent, hierarchyItem, edit401HierarchyMessage))
+                return new HttpUnauthorizedResult();
+
+            //We should have filtered out the cases where we cannot or should not be editing the new item here
+            var model = _contentManager.BuildEditor(hierarchyItem);
+            return View(model);
+        }
+
+        [HttpPost, ActionName("EditHierarchy")]
+        [Orchard.Mvc.FormValueRequired("submit.Save")]
+        public ActionResult EditHierarchyPost(int id, string returnUrl) {
+            return EditHierarchyPost(id, returnUrl, contentItem => {
+                if (!contentItem.Has<IPublishingControlAspect>() && !contentItem.TypeDefinition.Settings.GetModel<ContentTypeSettings>().Draftable)
+                    _contentManager.Publish(contentItem);
+            });
+        }
+
+        [HttpPost, ActionName("EditHierarchy")]
+        [Orchard.Mvc.FormValueRequired("submit.Publish")]
+        public ActionResult EditAndPublishHierarchyPost(int id, string returnUrl) {
+            var content = _contentManager.Get(id, VersionOptions.Latest);
+
+            if (content == null)
+                return HttpNotFound();
+
+            if (!_authorizer.Authorize(Orchard.Core.Contents.Permissions.PublishContent, content, edit401HierarchyMessage))
+                return new HttpUnauthorizedResult();
+
+            return EditHierarchyPost(id, returnUrl, contentItem => _contentManager.Publish(contentItem));
+        }
+
+        private ActionResult EditHierarchyPost(int id, string returnUrl, Action<ContentItem> conditionallyPublish) {
+            return ExecuteHierarchyPost(new TerritoriesAdminHierarchyExecutionContext {
+                HierarchyItem = _contentManager.Get(id, VersionOptions.DraftRequired),
+                Message = edit401HierarchyMessage,
+                AdditionalPermissions = new Permission[] { Orchard.Core.Contents.Permissions.EditContent },
+                ExecutionAction = item => {
+                    var model = _contentManager.UpdateEditor(item, this);
+
+                    if (!ModelState.IsValid) {
+                        _transactionManager.Cancel();
+                        return View(model);
+                    }
+
+                    conditionallyPublish(item);
+
+                    _notifier.Information(string.IsNullOrWhiteSpace(item.TypeDefinition.DisplayName)
+                        ? T("Your content has been saved.")
+                        : T("Your {0} has been saved.", item.TypeDefinition.DisplayName));
+
+                    return this.RedirectLocal(returnUrl, () => RedirectToAction("EditHierarchy", new RouteValueDictionary { { "Id", item.Id } }));
+                }
+            });
+        }
+
+        #endregion
+
+        [HttpPost]
+        public ActionResult DeleteHierarchy(int id, string returnUrl) {
+            return ExecuteHierarchyPost(new TerritoriesAdminHierarchyExecutionContext {
+                HierarchyItem = _contentManager.Get(id, VersionOptions.Latest),
+                Message = delete401HierarchyMessage,
+                AdditionalPermissions = new Permission[] { Orchard.Core.Contents.Permissions.DeleteContent },
+                ExecutionAction = item => {
+                    if (item != null) {
+                        _contentManager.Remove(item);
+                        _notifier.Information(string.IsNullOrWhiteSpace(item.TypeDefinition.DisplayName)
+                            ? T("That content has been removed.")
+                            : T("That {0} has been removed.", item.TypeDefinition.DisplayName));
+                    }
+
+                    return this.RedirectLocal(returnUrl, () => RedirectToAction("HierarchiesIndex"));
+                }
+            });
+        }
+
+        private ActionResult ExecuteHierarchyPost(
+            TerritoriesAdminHierarchyExecutionContext context) {
+            var hierarchyItem = context.HierarchyItem;
+            if (hierarchyItem == null)
+                return HttpNotFound();
+
+            #region Authorize
+            if (AllowedHierarchyTypes == null) {
+                return new HttpUnauthorizedResult(default401HierarchyMessage);
+            }
+            var typeName = hierarchyItem.ContentType;
+            var typeDefinition = _contentDefinitionManager.GetTypeDefinition(typeName);
+            if (!typeDefinition.Parts.Any(pa => pa.PartDefinition.Name == TerritoryHierarchyPart.PartName)) {
+                AddModelError("", T("The requested type \"{0}\" is not a Hierarchy type.", typeDefinition.Name));
+                return RedirectToAction("HierarchiesIndex");
+            }
+            typeDefinition = AllowedHierarchyTypes.FirstOrDefault(ctd => ctd.Name == typeName);
+            if (typeDefinition == null) {
+                return new HttpUnauthorizedResult(T("Not authorized to manage hierarchies of type \"{0}\"", typeName).Text);
+            }
+
+            if (!_authorizer.Authorize(TerritoriesPermissions.ManageTerritoryHierarchies, hierarchyItem, context.Message))
+                return new HttpUnauthorizedResult();
+
+            foreach (var permission in context.AdditionalPermissions) {
+                if (!_authorizer.Authorize(permission, hierarchyItem, context.Message))
+                    return new HttpUnauthorizedResult();
+            }
+            #endregion
+
+            return context.ExecutionAction(hierarchyItem);
         }
         #endregion
 
@@ -383,7 +505,7 @@ namespace Nwazet.Commerce.Controllers {
         }
         #endregion
 
-        public HierarchyIndexEntry CreateEntry(TerritoryHierarchyPart part) {
+        private HierarchyIndexEntry CreateEntry(TerritoryHierarchyPart part) {
             return new HierarchyIndexEntry {
                 Id = part.ContentItem.Id,
                 DisplayText = _contentManager.GetItemMetadata(part.ContentItem).DisplayText,
@@ -392,5 +514,27 @@ namespace Nwazet.Commerce.Controllers {
                 TerritoriesCount = part.Territories.Count()
             };
         }
+
+        private Lazy<IEnumerable<ContentTypeDefinition>> _allowedHierarchyTypes;
+        private IEnumerable<ContentTypeDefinition> AllowedHierarchyTypes {
+            get { return _allowedHierarchyTypes.Value; }
+        }
+
+        /// <summary>
+        /// This method gets all the hierarchy types the current user is allowed to manage.
+        /// </summary>
+        /// <returns>Returns the types the user is allwoed to manage. Returns null if the user lacks the correct 
+        /// permissions to be invoking these actions.</returns>
+        private IEnumerable<ContentTypeDefinition> GetAllowedHierarchyTypes() {
+            var allowedTypes = _territoriesService.GetHierarchyTypes();
+            if (!allowedTypes.Any() && //no dynamic permissions
+                !_authorizer.Authorize(TerritoriesPermissions.ManageTerritoryHierarchies)) {
+
+                return null;
+            }
+
+            return allowedTypes;
+        }
+
     }
 }

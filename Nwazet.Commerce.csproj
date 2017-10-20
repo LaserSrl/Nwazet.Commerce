@@ -198,6 +198,7 @@
     <None Include="Views\Parts\WishListsActions.cshtml" />
     <None Include="Views\TerritoriesAdmin\CreatableTypeList.cshtml" />
     <None Include="Views\TerritoriesAdmin\CreateHierarchy.cshtml" />
+    <None Include="Views\TerritoriesAdmin\EditHierarchy.cshtml" />
     <None Include="Views\TerritoriesAdmin\EditorTemplates\TerritoryInternalRecord.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Scripts\Web.config" />
@@ -217,6 +218,7 @@
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\TaxAdminController.cs" />
     <Compile Include="Controllers\TerritoriesAdminController.cs" />
+    <Compile Include="Controllers\TerritoriesAdminHierarchyExecutionContext.cs" />
     <Compile Include="Controllers\UspsAdminController.cs" />
     <Compile Include="Controllers\PromotionAdminController.cs" />
     <Compile Include="Controllers\ProductAdminController.cs" />
