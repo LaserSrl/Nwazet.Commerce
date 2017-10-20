@@ -26,6 +26,8 @@ namespace Nwazet.Commerce.Handlers {
             //Lazyfield setters
             OnInitializing<TerritoryHierarchyPart>(PropertySetHandlers);
             OnLoaded<TerritoryHierarchyPart>(LazyLoadHandlers);
+            //Handle the presence of territories in a hierarchy
+            //OnRemoved<TerritoryHierarchyPart>(//TODO);
         }
 
         static void PropertySetHandlers(

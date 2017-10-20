@@ -84,7 +84,7 @@ namespace Nwazet.Commerce.Controllers {
         LocalizedString edit401HierarchyMessage;
         LocalizedString delete401HierarchyMessage;
 
-        #region Manage the contents for territories and hierarches
+        #region Manage the contents for hierarches
         /// <summary>
         /// This is the entry Action to the section to manage hierarchies of territories and the territory ContentItems. 
         /// From here, users will not directly go and handle the records with the unique territory definitions.

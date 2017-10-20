@@ -27,6 +27,10 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         protected override DriverResult Editor(TerritoryHierarchyPart part, dynamic shapeHelper) {
+            //part.Id == 0: new item
+            if (part.Id != 0) {
+                //let's also add a shape that allows managing the territories in the hierarchy
+            }
             //TODO
             return null;
         }
