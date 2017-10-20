@@ -89,6 +89,7 @@ namespace Nwazet.Commerce.Tests.Territories {
         }
 
         private IUser _currentUser;
+
         [Test]
         public void HierarchyManagePermissionsAreSameNumberAsHierarchyTypesForAdmin() {
 
@@ -312,6 +313,18 @@ namespace Nwazet.Commerce.Tests.Territories {
             Assert.That(tir4.Id, Is.EqualTo(1));
             Assert.That(tir4.Name, Is.EqualTo("Name0"));
         }
-        
+
+        [Test]
+        public void ParameterlessGetHierarchiesQueryReturnsAllLatestVersions() {
+            //verify draft vs published
+        }
+
+        [Test]
+        public void GetHierarchiesQueryReturnsSpecificVersions() {
+            //try published separately from draft
+        }
+
+        [Test]
+        public void GetHierarchiesQueryDiscriminatesOnContentType() { }
     }
 }
