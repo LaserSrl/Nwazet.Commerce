@@ -15,5 +15,7 @@ namespace Nwazet.Commerce.Models {
         }
 
         public virtual IList<TerritoryPartRecord> Territories { get; set; }
+
+        public virtual string TerritoryType { get; set; }
     }
 }

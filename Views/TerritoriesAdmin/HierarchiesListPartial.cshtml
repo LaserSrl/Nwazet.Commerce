@@ -12,7 +12,9 @@
                 <tr>
                     <th scope="col"><input type="checkbox" class="check-all" /></th>
                     <th scope="col">@T("Name")</th>
+                    <th scope="col">@T("Hierarchy Type")</th>
                     <th scope="col">@T("Territories")</th>
+                    <th scope="col">@T("Territory Type")</th>
                     <th scope="col">@T("Actions")</th>
                 </tr>
             </thead>
@@ -25,7 +27,9 @@
                     <td>
                         @Html.ActionLink(linkText, "EditHierarchy", "TerritoriesAdmin", new { id = entry.Id }, null)
                     </td>
+                    <td>@entry.TypeDisplayName</td>
                     <td>@entry.TerritoriesCount</td>
+                    <td>@entry.TerritoryTypeDisplayName</td>
                     <td>
                         @Html.ActionLink(T("Edit").Text, "EditHierarchy", "TerritoriesAdmin", new { id = entry.Id, ReturnUrl = Request.RawUrl }, null) |
                         @Html.ActionLink(T("Delete").Text, "DeleteHierarchy", "TerritoriesAdmin", new { id = entry.Id, ReturnUrl = Request.RawUrl }, new { itemprop = "RemoveUrl UnsafeUrl" })

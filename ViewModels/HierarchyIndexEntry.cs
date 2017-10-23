@@ -15,8 +15,12 @@ namespace Nwazet.Commerce.ViewModels {
 
         public ContentItem ContentItem { get; set; }
 
+        public string TypeDisplayName { get; set; }
+
         public bool IsDraft { get; set; }
 
         public int TerritoriesCount { get; set; }
+
+        public string TerritoryTypeDisplayName { get; set; }
     }
 }

@@ -506,12 +506,22 @@ namespace Nwazet.Commerce.Controllers {
         #endregion
 
         private HierarchyIndexEntry CreateEntry(TerritoryHierarchyPart part) {
+            var hierarchyType = _contentDefinitionManager.GetTypeDefinition(part.ContentItem.ContentType);
+            var typeDisplayName = hierarchyType != null ?
+                hierarchyType.DisplayName : T("ERROR: impossible to find hierarchy type.").Text;
+
+            var territoryType = _contentDefinitionManager.GetTypeDefinition(part.TerritoryType);
+            var territoryDisplayName = territoryType != null ?
+                territoryType.DisplayName : T("ERROR: impossible to find territory type.").Text;
+
             return new HierarchyIndexEntry {
                 Id = part.ContentItem.Id,
                 DisplayText = _contentManager.GetItemMetadata(part.ContentItem).DisplayText,
                 ContentItem = part.ContentItem,
+                TypeDisplayName = typeDisplayName,
                 IsDraft = !part.ContentItem.IsPublished(),
-                TerritoriesCount = part.Territories.Count()
+                TerritoriesCount = part.Territories.Count(),
+                TerritoryTypeDisplayName = territoryDisplayName
             };
         }
 

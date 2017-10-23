@@ -20,7 +20,8 @@ namespace Nwazet.Commerce.Migrations {
                 .Column<string>("Name", col => col.NotNull().Unlimited()));
 
             SchemaBuilder.CreateTable("TerritoryHierarchyPartRecord", table => table
-                .ContentPartRecord());
+                .ContentPartRecord()
+                .Column<string>("TerritoryType"));
 
             SchemaBuilder.CreateTable("TerritoryPartRecord", table => table
                 .ContentPartRecord()
@@ -29,6 +30,7 @@ namespace Nwazet.Commerce.Migrations {
                 .Column<int>("Hierarchy_Id"));
             
             ContentDefinitionManager.AlterPartDefinition(TerritoryHierarchyPart.PartName, builder => builder.Attachable());
+            ContentDefinitionManager.AlterPartDefinition(TerritoryPart.PartName, builder => builder.Attachable());
 
             ContentDefinitionManager.AlterTypeDefinition("TerritoryHierarchy", cfg => cfg
                 .WithIdentity()

@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Settings;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
@@ -22,10 +23,20 @@ namespace Nwazet.Commerce.Handlers {
             _contentManager = contentManager;
 
             Filters.Add(StorageFilter.For(repository));
-            
+
+            // TerritoryHierarchyPart.TerritoryType must be populated
+            OnInitializing<TerritoryHierarchyPart>((ctx, part) => 
+                part.TerritoryType = part.Settings.GetModel<TerritoryHierarchyPartSettings>().TerritoryType);
+            OnLoaded<TerritoryHierarchyPart>((ctx, part) =>
+                part.TerritoryType = string.IsNullOrWhiteSpace(part.TerritoryType) ? 
+                    part.Settings.GetModel<TerritoryHierarchyPartSettings>().TerritoryType : 
+                    part.TerritoryType);
+
             //Lazyfield setters
             OnInitializing<TerritoryHierarchyPart>(PropertySetHandlers);
-            OnLoaded<TerritoryHierarchyPart>(LazyLoadHandlers);
+            OnInitializing<TerritoryHierarchyPart>(LazyLoadHandlers);
+            OnLoaded<TerritoryHierarchyPart>((ctx, part) => LazyLoadHandlers(null, part));
+
             //Handle the presence of territories in a hierarchy
             //OnRemoved<TerritoryHierarchyPart>(//TODO);
         }
@@ -48,7 +59,7 @@ namespace Nwazet.Commerce.Handlers {
         }
 
         void LazyLoadHandlers(
-            LoadContentContext context, TerritoryHierarchyPart part) {
+            InitializingContentContext context, TerritoryHierarchyPart part) {
 
             part.TerritoriesField.Loader(() => {
                 if (part.Record.Territories != null && part.Record.Territories.Any()) {

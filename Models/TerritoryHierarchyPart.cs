@@ -25,5 +25,10 @@ namespace Nwazet.Commerce.Models {
             get { return _territories.Value; }
             set { _territories.Value = value; }
         }
+
+        public string TerritoryType {
+            get { return Retrieve(r => r.TerritoryType); }
+            set { Store(r => r.TerritoryType, value); }
+        }
     }
 }

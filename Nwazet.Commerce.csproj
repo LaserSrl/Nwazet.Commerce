@@ -194,6 +194,8 @@
     <Content Include="Styles\order-admin.min.css">
       <DependentUpon>order-admin.less</DependentUpon>
     </Content>
+    <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryTypeSelection.cshtml" />
     <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />
     <None Include="Views\Parts\WishListsActions.cshtml" />
     <None Include="Views\TerritoriesAdmin\CreatableTypeList.cshtml" />
@@ -496,6 +498,8 @@
     <Compile Include="Settings\BundleProductSettings.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationEditorEvents.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationSettings.cs" />
+    <Compile Include="Settings\TerritoryHierarchyPartEditorEvents.cs" />
+    <Compile Include="Settings\TerritoryHierarchyPartSettings.cs" />
     <Compile Include="Shapes\ProductAttributesLocalizationAdminShapeProvider.cs" />
     <Compile Include="Tokens\CartTokens.cs" />
     <Compile Include="Tokens\OrderTokens.cs" />
@@ -524,6 +528,8 @@
     <Compile Include="ViewModels\PromotionIndexViewModel.cs" />
     <Compile Include="ViewModels\ShippingMethodIndexViewModel.cs" />
     <Compile Include="ViewModels\StripeCheckoutViewModel.cs" />
+    <Compile Include="ViewModels\TerritoryHierarchyPartSettingsViewModel.cs" />
+    <Compile Include="ViewModels\TerritoryHierarchyTypeSelectionViewModel.cs" />
     <Compile Include="ViewModels\UpdateShoppingCartItemViewModel.cs" />
     <Compile Include="Models\WishListListPart.cs" />
     <Compile Include="ViewModels\WishListElementViewModel.cs" />
