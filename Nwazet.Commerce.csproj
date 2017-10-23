@@ -530,6 +530,7 @@
     <Compile Include="ViewModels\ShippingMethodIndexViewModel.cs" />
     <Compile Include="ViewModels\StripeCheckoutViewModel.cs" />
     <Compile Include="ViewModels\TerritoryHierarchyPartSettingsViewModel.cs" />
+    <Compile Include="ViewModels\TerritoryHierarchyTerritoriesViewModel.cs" />
     <Compile Include="ViewModels\TerritoryHierarchyTerritoryManagerViewModel.cs" />
     <Compile Include="ViewModels\TerritoryHierarchyTypeSelectionViewModel.cs" />
     <Compile Include="ViewModels\UpdateShoppingCartItemViewModel.cs" />

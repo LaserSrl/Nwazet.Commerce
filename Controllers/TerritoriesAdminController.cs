@@ -199,10 +199,10 @@ namespace Nwazet.Commerce.Controllers {
                 return new HttpUnauthorizedResult(default401HierarchyMessage);
             }
             if (!AllowedHierarchyTypes.Any(ty => ty.Name == typeDefinition.Name)) {
-                return new HttpUnauthorizedResult(T("Not authorized to manage hierarchies of type \"{0}\"", typeDefinition.Name).Text);
+                return new HttpUnauthorizedResult(T("Not authorized to manage hierarchies of type \"{0}\"", typeDefinition.DisplayName).Text);
             }
             if (!typeDefinition.Parts.Any(pa => pa.PartDefinition.Name == TerritoryHierarchyPart.PartName)) {
-                AddModelError("", T("The requested type \"{0}\" is not a Hierarchy type.", typeDefinition.Name));
+                AddModelError("", T("The requested type \"{0}\" is not a Hierarchy type.", typeDefinition.DisplayName));
                 return RedirectToAction("HierarchiesIndex");
             }
             //We should have filtered out the cases where we cannot or should not be creating the new item here
@@ -264,7 +264,7 @@ namespace Nwazet.Commerce.Controllers {
             var typeName = hierarchyItem.ContentType;
             var typeDefinition = _contentDefinitionManager.GetTypeDefinition(typeName);
             if (!typeDefinition.Parts.Any(pa => pa.PartDefinition.Name == TerritoryHierarchyPart.PartName)) {
-                AddModelError("", T("The requested type \"{0}\" is not a Hierarchy type.", typeDefinition.Name));
+                AddModelError("", T("The requested type \"{0}\" is not a Hierarchy type.", typeDefinition.DisplayName));
                 return RedirectToAction("HierarchiesIndex");
             }
             typeDefinition = AllowedHierarchyTypes.FirstOrDefault(ctd => ctd.Name == typeName);
@@ -362,7 +362,7 @@ namespace Nwazet.Commerce.Controllers {
             var typeName = hierarchyItem.ContentType;
             var typeDefinition = _contentDefinitionManager.GetTypeDefinition(typeName);
             if (!typeDefinition.Parts.Any(pa => pa.PartDefinition.Name == TerritoryHierarchyPart.PartName)) {
-                AddModelError("", T("The requested type \"{0}\" is not a Hierarchy type.", typeDefinition.Name));
+                AddModelError("", T("The requested type \"{0}\" is not a Hierarchy type.", typeDefinition.DisplayName));
                 return RedirectToAction("HierarchiesIndex");
             }
             typeDefinition = AllowedHierarchyTypes.FirstOrDefault(ctd => ctd.Name == typeName);
@@ -508,8 +508,27 @@ namespace Nwazet.Commerce.Controllers {
             if (AllowedHierarchyTypes == null) {
                 return new HttpUnauthorizedResult(default401HierarchyMessage);
             }
+            if (AllowedTerritoryTypes == null) {
+                return new HttpUnauthorizedResult(default401TerritoryMessage);
+            }
 
             var hierarchyItem = _contentManager.Get(id, VersionOptions.Latest);
+            if (hierarchyItem == null) {
+                return HttpNotFound();
+            }
+            var hierarchyPart = hierarchyItem.As<TerritoryHierarchyPart>();
+            if (hierarchyPart == null) {
+                return HttpNotFound();
+            }
+
+            if (!AllowedHierarchyTypes.Any(ty => ty.Name == hierarchyItem.ContentType)) {
+                var typeName = _contentDefinitionManager.GetTypeDefinition(hierarchyItem.ContentType).DisplayName;
+                return new HttpUnauthorizedResult(T("Not authorized to manage hierarchies of type \"{0}\"", typeName).Text);
+            }
+            if (!AllowedTerritoryTypes.Any(ty => ty.Name == hierarchyPart.TerritoryType)) {
+                var typeName = _contentDefinitionManager.GetTypeDefinition(hierarchyPart.TerritoryType).DisplayName;
+                return new HttpUnauthorizedResult(T("Not authorized to manage hierarchies of type \"{0}\"", typeName).Text);
+            }
 
             return null;
         }
@@ -575,7 +594,7 @@ namespace Nwazet.Commerce.Controllers {
         }
 
         /// <summary>
-        /// This method gets all the hierarchy types the current user is allowed to manage.
+        /// This method gets all the territory types the current user is allowed to manage.
         /// </summary>
         /// <returns>Returns the types the user is allwoed to manage. Returns null if the user lacks the correct 
         /// permissions to be invoking these actions.</returns>
@@ -589,5 +608,7 @@ namespace Nwazet.Commerce.Controllers {
 
             return allowedTypes;
         }
+
+
     }
 }
