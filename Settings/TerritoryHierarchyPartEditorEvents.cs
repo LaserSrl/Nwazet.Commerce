@@ -52,7 +52,7 @@ namespace Nwazet.Commerce.Settings {
             if (updateModel.TryUpdateModel(vm, "TerritoryHierarchyPartSettingsViewModel", null, null)) {
                 var settings = vm.Settings;
                 if (!_territoriesService.GetTerritoryTypes().Select(tt => tt.Name).Contains(settings.TerritoryType)) {
-                    // we are not allowed to maange the type we are trying to assign so error things out
+                    // we are not allowed to manage the type we are trying to assign so error things out
                     updateModel.AddModelError("TerritoryType", T("The type {0} is not allowed.", settings.TerritoryType));
                 } else {
                     builder

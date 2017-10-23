@@ -33,7 +33,8 @@
   <Place Parts_ProductAttributes_Edit="Content:3.3"/>
   <Place Parts_Order_Edit="Content:1"/>
   <Place Parts_TerritoryHierarchy_SummaryAdmin="-"/>
-  <Place Parts_TerritoryHierarchy_TerritoryTypeSelection="Content:2"/>
+  <Place Parts_TerritoryHierarchy_TerritoryManager="Content:2.1"/>
+  <Place Parts_TerritoryHierarchy_TerritoryTypeSelection="Content:2.2"/>
   <Match DisplayType="SummaryAdmin">
     <Place Parts_Product="Content:2;Alternate=ProductSummaryAdmin"/>
     <Place Parts_Product_AddButton="-"/>

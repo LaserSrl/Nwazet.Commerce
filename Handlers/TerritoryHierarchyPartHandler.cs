@@ -37,7 +37,7 @@ namespace Nwazet.Commerce.Handlers {
             OnInitializing<TerritoryHierarchyPart>(LazyLoadHandlers);
             OnLoaded<TerritoryHierarchyPart>((ctx, part) => LazyLoadHandlers(null, part));
 
-            //Handle the presence of territories in a hierarchy
+            //Handle the presence of territories in a hierarchy: recursive deletion may need to run asynchronously
             //OnRemoved<TerritoryHierarchyPart>(//TODO);
         }
 

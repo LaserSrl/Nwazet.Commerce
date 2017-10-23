@@ -48,11 +48,20 @@ namespace Nwazet.Commerce.Drivers {
             var shapes = new List<DriverResult>();
             //part.Id == 0: new item
             if (part.Id != 0) {
-                //TODO: if the part is fully configured
-                //add a shape that allows managing the territories in the hierarchy
+                //if the part is fully configured add a shape that allows managing the territories in the hierarchy
                 if (!string.IsNullOrWhiteSpace(part.TerritoryType)) {
                     if (_territoriesService.GetTerritoryTypes().Any(tt => tt.Name == part.TerritoryType)) {
                         // add the shape for the territories in the hierachy
+                        shapes.Add(ContentShape("Parts_TerritoryHierarchy_TerritoryManager",
+                            () => shapeHelper.EditorTemplate(
+                                TemplateName: "Parts/TerritoryHierarchyTerritoryManager",
+                                Model: new TerritoryHierarchyTerritoryManagerViewModel(part) {
+                                    FirstLevelCount = _territoriesService
+                                        .GetTerritoriesQuery(part, null, VersionOptions.Latest)
+                                        .Count()
+                                },
+                                Prefix: Prefix
+                                )));
                     } else {
                         _notifier.Warning(T("You are not allowed to manage the territories for this hierarchy."));
                     }

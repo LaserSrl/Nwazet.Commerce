@@ -72,5 +72,27 @@ namespace Nwazet.Commerce.Services {
         /// <returns></returns>
         IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart, VersionOptions versionOptions);
 
+        /// <summary>
+        /// Provides an IContentQuery for the TerritoryParts in a given hierarchy, whose parent is the one specified. 
+        /// The version of the territories is the version of the hierarchy, or Latest.
+        /// </summary>
+        /// <param name="hierarchyPart">The hierarchy that the territories belong to</param>
+        /// <param name="territoryPart">The parent territory whose children will be returned by the query. If this is null,
+        /// the query will return the first level of the hierarchy.</param>
+        /// <returns></returns>
+        IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart, TerritoryPart territoryPart);
+
+        /// <summary>
+        /// Provides an IContentQuery for the TerritoryParts in a given hierarchy, whose parent is the one specified. 
+        /// The version of the territories is the version of the hierarchy, or Latest.
+        /// </summary>
+        /// <param name="hierarchyPart">The hierarchy that the territories belong to</param>
+        /// <param name="territoryPart">The parent territory whose children will be returned by the query. If this is null,
+        /// the query will return the first level of the hierarchy.</param>
+        /// <param name="versionOptions">The version for the items. Defaults to the version of the item of the hierarchyPart,
+        /// falling back to Latest.</param>
+        /// <returns></returns>
+        IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart, TerritoryPart territoryPart, VersionOptions versionOptions);
+
     }
 }

@@ -69,11 +69,17 @@ namespace Nwazet.Commerce.Controllers {
             T = NullLocalizer.Instance;
 
             _allowedHierarchyTypes = new Lazy<IEnumerable<ContentTypeDefinition>>(GetAllowedHierarchyTypes);
+            _allowedTerritoryTypes = new Lazy<IEnumerable<ContentTypeDefinition>>(GetAllowedTerritoryTypes);
 
             default401HierarchyMessage = T("Not authorized to manage hierarchies.").Text;
             creation401HierarchyMessage = T("Couldn't create hierarchy");
             edit401HierarchyMessage = T("Couldn't edit hierarchy");
             delete401HierarchyMessage = T("Couldn't delete hierarchy");
+
+            default401TerritoryMessage = T("Not authorized to manage territories.").Text;
+            creation401TerritoryMessage = T("Couldn't create territory");
+            edit401TerritoryMessage = T("Couldn't edit territory");
+            delete401TerritoryMessage = T("Couldn't delete territory");
         }
 
         public Localizer T;
@@ -83,6 +89,11 @@ namespace Nwazet.Commerce.Controllers {
         LocalizedString creation401HierarchyMessage;
         LocalizedString edit401HierarchyMessage;
         LocalizedString delete401HierarchyMessage;
+
+        string default401TerritoryMessage; //displayed for HttpUnauthorizedResults
+        LocalizedString creation401TerritoryMessage;
+        LocalizedString edit401TerritoryMessage;
+        LocalizedString delete401TerritoryMessage;
 
         #region Manage the contents for hierarches
         /// <summary>
@@ -491,6 +502,18 @@ namespace Nwazet.Commerce.Controllers {
         }
         #endregion
 
+        [HttpGet]
+        public ActionResult HierarchyTerritoriesIndex(int id) {
+            // list the first level of territories for the selected hierarchy
+            if (AllowedHierarchyTypes == null) {
+                return new HttpUnauthorizedResult(default401HierarchyMessage);
+            }
+
+            var hierarchyItem = _contentManager.Get(id, VersionOptions.Latest);
+
+            return null;
+        }
+
         #region IUpdateModel implementation
         public void AddModelError(string key, LocalizedString errorMessage) {
             ModelState.AddModelError(key, errorMessage.ToString());
@@ -546,5 +569,25 @@ namespace Nwazet.Commerce.Controllers {
             return allowedTypes;
         }
 
+        private Lazy<IEnumerable<ContentTypeDefinition>> _allowedTerritoryTypes;
+        private IEnumerable<ContentTypeDefinition> AllowedTerritoryTypes {
+            get { return _allowedTerritoryTypes.Value; }
+        }
+
+        /// <summary>
+        /// This method gets all the hierarchy types the current user is allowed to manage.
+        /// </summary>
+        /// <returns>Returns the types the user is allwoed to manage. Returns null if the user lacks the correct 
+        /// permissions to be invoking these actions.</returns>
+        private IEnumerable<ContentTypeDefinition> GetAllowedTerritoryTypes() {
+            var allowedTypes = _territoriesService.GetTerritoryTypes();
+            if (!allowedTypes.Any() && //no dynamic permissions
+                !_authorizer.Authorize(TerritoriesPermissions.ManageTerritories)) {
+
+                return null;
+            }
+
+            return allowedTypes;
+        }
     }
 }

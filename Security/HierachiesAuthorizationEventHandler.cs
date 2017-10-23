@@ -18,9 +18,14 @@ namespace Nwazet.Commerce.Security {
 
                 var typeDefinition = context.Content.ContentItem.TypeDefinition;
                 //replace permission if there is one specific for the content type
-                if (context.Permission == TerritoriesPermissions.ManageTerritoryHierarchies) {
+                if (typeDefinition.Parts.Any(ctpd => ctpd.PartDefinition.Name == TerritoryHierarchyPart.PartName) &&
+                    context.Permission == TerritoriesPermissions.ManageTerritoryHierarchies) {
                     context.Adjusted = true;
                     context.Permission = TerritoriesPermissions.GetHierarchyPermission(typeDefinition);
+                } else if (typeDefinition.Parts.Any(ctpd => ctpd.PartDefinition.Name == TerritoryPart.PartName) &&
+                    context.Permission == TerritoriesPermissions.ManageTerritories) {
+                    context.Adjusted = true;
+                    context.Permission = TerritoriesPermissions.GetTerritoryPermission(typeDefinition);
                 }
             }
         }
