@@ -14,16 +14,17 @@ namespace Nwazet.Commerce.Models {
 
         public static string PartName = "TerritoryHierarchyPart";
 
-        private readonly LazyField<IEnumerable<IContent>> _territories = 
-            new LazyField<IEnumerable<IContent>>();
+        private readonly LazyField<IEnumerable<ContentItem>> _territories = 
+            new LazyField<IEnumerable<ContentItem>>();
 
-        public LazyField<IEnumerable<IContent>> TerritoriesField {
+        public LazyField<IEnumerable<ContentItem>> TerritoriesField {
             get { return _territories; }
         }
 
-        public IEnumerable<IContent> Territories {
+        public IEnumerable<ContentItem> Territories {
             get { return _territories.Value; }
-            set { _territories.Value = value; }
+            // no setter, because this is "filled" thatnks to a 1-to-n relationship to TerritoryPartRecords 
+            //set { _territories.Value = value; }
         }
 
         public string TerritoryType {

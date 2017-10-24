@@ -43,7 +43,7 @@ namespace Nwazet.Commerce.Menus {
                     subItem = subItem
                         .Caption(T("Hierarchies"))
                         .Position("1")
-                        .Action("HierarchiesIndex", "TerritoryHierarchiesAdmin", new { area = "Nwazet.Commerce" })
+                        .Action("Index", "TerritoryHierarchiesAdmin", new { area = "Nwazet.Commerce" })
                         .Permission(TerritoriesPermissions.ManageTerritoryHierarchies);
                     foreach (var permission in _permissionProvider.ListHierarchyTypePermissions()) {
                         subItem = subItem.Permission(permission);

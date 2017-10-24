@@ -197,6 +197,7 @@
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryManager.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryTypeSelection.cshtml" />
+    <None Include="Views\HierarchyTerritoriesAdmin\Index.cshtml" />
     <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />
     <None Include="Views\Parts\WishListsActions.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\CreatableTypeList.cshtml" />
@@ -421,6 +422,7 @@
     <Compile Include="Services\IProductInventoryService.cs" />
     <Compile Include="Services\ISKUGenerationServices.cs" />
     <Compile Include="Services\ISKUUniquenessHelper.cs" />
+    <Compile Include="Services\ITerritoriesHierarchyService.cs" />
     <Compile Include="Services\ITerritoriesRepositoryService.cs" />
     <Compile Include="Services\ITerritoriesService.cs" />
     <Compile Include="Services\IWishListExtensionProvider.cs" />
@@ -458,6 +460,7 @@
     <Compile Include="Services\ShippingService.cs" />
     <Compile Include="Services\ShoppingCartInfosetPartStorage.cs" />
     <Compile Include="Services\SKUGenerationServices.cs" />
+    <Compile Include="Services\TerritoriesHierarchyService.cs" />
     <Compile Include="Services\TerritoriesService.cs" />
     <Compile Include="Services\TerritoryRepositoryService.cs" />
     <Compile Include="Services\TextProductAttributeExtensionProvider.cs" />
@@ -535,6 +538,7 @@
     <Compile Include="ViewModels\TerritoryHierarchyPartSettingsViewModel.cs" />
     <Compile Include="ViewModels\TerritoryHierarchyTerritoriesViewModel.cs" />
     <Compile Include="ViewModels\TerritoryHierarchyTerritoryManagerViewModel.cs" />
+    <Compile Include="ViewModels\TerritoryHierarchyTreeNode.cs" />
     <Compile Include="ViewModels\TerritoryHierarchyTypeSelectionViewModel.cs" />
     <Compile Include="ViewModels\UpdateShoppingCartItemViewModel.cs" />
     <Compile Include="Models\WishListListPart.cs" />
@@ -645,7 +649,7 @@
     <None Include="packages.config" />
     <None Include="Views\TerritoriesAdmin\AddTerritoryInternal.cshtml" />
     <None Include="Views\TerritoriesAdmin\EditTerritoryInternal.cshtml" />
-    <None Include="Views\TerritoryHierarchiesAdmin\HierarchiesIndex.cshtml" />
+    <None Include="Views\TerritoryHierarchiesAdmin\Index.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\HierarchiesListPartial.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesIndex.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesListPartial.cshtml" />

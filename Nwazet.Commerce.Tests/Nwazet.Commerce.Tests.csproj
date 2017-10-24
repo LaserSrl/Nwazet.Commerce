@@ -100,6 +100,8 @@
     <Compile Include="TaxTests.cs" />
     <Compile Include="Territories\Handlers\TerritoryHierachyMockHandler.cs" />
     <Compile Include="Territories\Handlers\TerritoryMockHandler.cs" />
+    <Compile Include="Territories\TerritoriesHierarchyServiceTests.cs" />
+    <Compile Include="Territories\TerritoriesRepositoryServiceTests.cs" />
     <Compile Include="Territories\TerritoriesServiceTests.cs" />
     <Compile Include="TimePeriodTests.cs" />
     <Compile Include="UspsServiceInternationalTests.cs" />

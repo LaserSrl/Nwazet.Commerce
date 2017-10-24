@@ -90,7 +90,9 @@ namespace Nwazet.Commerce.Services {
         public IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(
             TerritoryHierarchyPart hierarchyPart, TerritoryPart territoryPart, VersionOptions versionOptions) {
             return GetTerritoriesQuery(hierarchyPart, versionOptions)
-                .Where(tpr => tpr.ParentTerritory.Id == territoryPart.Record.Id);
+                .Where(tpr => territoryPart == null ?
+                    tpr.ParentTerritory == null :
+                    tpr.ParentTerritory.Id == territoryPart.Record.Id);
         }
     }
 }

@@ -1,0 +1,24 @@
+﻿@model Nwazet.Commerce.ViewModels.TerritoryHierarchyTerritoriesViewModel
+
+@{
+    Layout.Title(T("Manage Hierarchy"));
+
+    var hierarchyItem = Model.HierarchyItem;
+    var itemDisplayText = hierarchyItem.ContentManager.GetItemMetadata(hierarchyItem).DisplayText;
+}
+
+<h1>@T("Territories for {0}", itemDisplayText)</h1>
+
+@Html.ValidationSummary()
+
+<div class="manage">
+    @Html.ItemEditLink(T("Back to Hierarchy").Text, hierarchyItem)
+    @Html.ActionLink(T("Add a Territory").Text,
+                "CreateHierarchy",
+                new {
+                    Area = "Nwazet.Commerce",
+                    ReturnUrl = Request.RawUrl,
+                    id = Model.HierarchyPart.TerritoryType
+                },
+                new { @class = "button primaryAction" })
+</div>

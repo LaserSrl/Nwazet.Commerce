@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Models;
+using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
@@ -11,5 +12,10 @@ namespace Nwazet.Commerce.ViewModels {
     public class TerritoryHierarchyTerritoriesViewModel {
 
         public TerritoryHierarchyPart HierarchyPart { get; set; }
+        public ContentItem HierarchyItem { get; set; }
+
+        // First level of the tree of territories in this hierarchy
+        // It may contain further levels, as each node's Nodes property gets populated.
+        public IList<TerritoryHierarchyTreeNode> Nodes { get; set; }
     }
 }

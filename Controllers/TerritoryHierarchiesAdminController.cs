@@ -75,7 +75,7 @@ namespace Nwazet.Commerce.Controllers {
         /// From here, users will not directly go and handle the records with the unique territory definitions.
         /// </summary>
         [HttpGet]
-        public ActionResult HierarchiesIndex(PagerParameters pagerParameters) {
+        public ActionResult Index(PagerParameters pagerParameters) {
             if (AllowedHierarchyTypes == null) {
                 return new HttpUnauthorizedResult(TerritoriesUtilities.Default401HierarchyMessage);
             }
@@ -131,7 +131,7 @@ namespace Nwazet.Commerce.Controllers {
             }
 
             if (!AllowedHierarchyTypes.Any()) { //nothing to do
-                return RedirectToAction("HierarchiesIndex");
+                return RedirectToAction("Index");
             }
 
             if (!string.IsNullOrWhiteSpace(id)) { //specific type requested
@@ -177,7 +177,7 @@ namespace Nwazet.Commerce.Controllers {
             }
             if (!typeDefinition.Parts.Any(pa => pa.PartDefinition.Name == TerritoryHierarchyPart.PartName)) {
                 AddModelError("", T("The requested type \"{0}\" is not a Hierarchy type.", typeDefinition.DisplayName));
-                return RedirectToAction("HierarchiesIndex");
+                return RedirectToAction("Index");
             }
             //We should have filtered out the cases where we cannot or should not be creating the new item here
             var hierarchyItem = _contentManager.New(typeDefinition.Name);
@@ -239,7 +239,7 @@ namespace Nwazet.Commerce.Controllers {
             var typeDefinition = _contentDefinitionManager.GetTypeDefinition(typeName);
             if (!typeDefinition.Parts.Any(pa => pa.PartDefinition.Name == TerritoryHierarchyPart.PartName)) {
                 AddModelError("", T("The requested type \"{0}\" is not a Hierarchy type.", typeDefinition.DisplayName));
-                return RedirectToAction("HierarchiesIndex");
+                return RedirectToAction("Index");
             }
             typeDefinition = AllowedHierarchyTypes.FirstOrDefault(ctd => ctd.Name == typeName);
 
@@ -318,7 +318,7 @@ namespace Nwazet.Commerce.Controllers {
                             : T("That {0} has been removed.", item.TypeDefinition.DisplayName));
                     }
 
-                    return this.RedirectLocal(returnUrl, () => RedirectToAction("HierarchiesIndex"));
+                    return this.RedirectLocal(returnUrl, () => RedirectToAction("Index"));
                 }
             });
         }
@@ -337,7 +337,7 @@ namespace Nwazet.Commerce.Controllers {
             var typeDefinition = _contentDefinitionManager.GetTypeDefinition(typeName);
             if (!typeDefinition.Parts.Any(pa => pa.PartDefinition.Name == TerritoryHierarchyPart.PartName)) {
                 AddModelError("", T("The requested type \"{0}\" is not a Hierarchy type.", typeDefinition.DisplayName));
-                return RedirectToAction("HierarchiesIndex");
+                return RedirectToAction("Index");
             }
             typeDefinition = AllowedHierarchyTypes.FirstOrDefault(ctd => ctd.Name == typeName);
             if (typeDefinition == null) {

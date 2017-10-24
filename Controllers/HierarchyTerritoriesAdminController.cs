@@ -2,6 +2,7 @@
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services;
+using Nwazet.Commerce.ViewModels;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.MetaData;
 using Orchard.ContentManagement.MetaData.Models;
@@ -48,7 +49,7 @@ namespace Nwazet.Commerce.Controllers {
         public Localizer T;
 
         [HttpGet]
-        public ActionResult HierarchyTerritoriesIndex(int id) {
+        public ActionResult Index(int id) {
             // list the first level of territories for the selected hierarchy
             if (AllowedHierarchyTypes == null) {
                 return new HttpUnauthorizedResult(TerritoriesUtilities.Default401HierarchyMessage);
@@ -75,7 +76,16 @@ namespace Nwazet.Commerce.Controllers {
                 return new HttpUnauthorizedResult(TerritoriesUtilities.SpecificTerritory401Message(typeName));
             }
 
-            return null;
+            var firstLevelOfHierarchy = _territoriesService
+                .GetTerritoriesQuery(hierarchyPart, null, VersionOptions.Latest)
+                .List().ToList();
+
+            var model = new TerritoryHierarchyTerritoriesViewModel {
+                HierarchyPart = hierarchyPart,
+                HierarchyItem = hierarchyItem
+            };
+
+            return View(model);
         }
 
         private Lazy<IEnumerable<ContentTypeDefinition>> _allowedTerritoryTypes;
