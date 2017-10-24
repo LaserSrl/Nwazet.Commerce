@@ -34,7 +34,7 @@ namespace Nwazet.Commerce.Controllers {
     [Admin]
     [ValidateInput(false)]
     public class TerritoriesAdminController : Controller, IUpdateModel {
-        
+
         private readonly ISiteService _siteService;
         private readonly IAuthorizer _authorizer;
         private readonly ITerritoriesRepositoryService _territoryRepositoryService;
@@ -47,7 +47,7 @@ namespace Nwazet.Commerce.Controllers {
             ITerritoriesRepositoryService territoryRepositoryService,
             ITransactionManager transactionManager,
             IContentDefinitionManager contentDefinitionManager) {
-            
+
             _siteService = siteService;
             _authorizer = authorizer;
             _territoryRepositoryService = territoryRepositoryService;
@@ -56,24 +56,12 @@ namespace Nwazet.Commerce.Controllers {
             _shapeFactory = shapeFactory;
 
             T = NullLocalizer.Instance;
-
-            //_allowedTerritoryTypes = new Lazy<IEnumerable<ContentTypeDefinition>>(GetAllowedTerritoryTypes);
-
-
-            default401TerritoryMessage = T("Not authorized to manage territories.").Text;
-            creation401TerritoryMessage = T("Couldn't create territory");
-            edit401TerritoryMessage = T("Couldn't edit territory");
-            delete401TerritoryMessage = T("Couldn't delete territory");
         }
 
         public Localizer T;
         dynamic _shapeFactory;
-        
-        string default401TerritoryMessage; //displayed for HttpUnauthorizedResults
-        LocalizedString creation401TerritoryMessage;
-        LocalizedString edit401TerritoryMessage;
-        LocalizedString delete401TerritoryMessage;
-        
+
+
         #region Manage the unique territory records
         private readonly string[] _territoryIncludeProperties = { "Name" };
         /// <summary>
@@ -193,37 +181,6 @@ namespace Nwazet.Commerce.Controllers {
         }
         #endregion
 
-        //[HttpGet]
-        //public ActionResult HierarchyTerritoriesIndex(int id) {
-        //    // list the first level of territories for the selected hierarchy
-        //    if (AllowedHierarchyTypes == null) {
-        //        return new HttpUnauthorizedResult(default401HierarchyMessage);
-        //    }
-        //    if (AllowedTerritoryTypes == null) {
-        //        return new HttpUnauthorizedResult(default401TerritoryMessage);
-        //    }
-
-        //    var hierarchyItem = _contentManager.Get(id, VersionOptions.Latest);
-        //    if (hierarchyItem == null) {
-        //        return HttpNotFound();
-        //    }
-        //    var hierarchyPart = hierarchyItem.As<TerritoryHierarchyPart>();
-        //    if (hierarchyPart == null) {
-        //        return HttpNotFound();
-        //    }
-
-        //    if (!AllowedHierarchyTypes.Any(ty => ty.Name == hierarchyItem.ContentType)) {
-        //        var typeName = _contentDefinitionManager.GetTypeDefinition(hierarchyItem.ContentType).DisplayName;
-        //        return new HttpUnauthorizedResult(T("Not authorized to manage hierarchies of type \"{0}\"", typeName).Text);
-        //    }
-        //    if (!AllowedTerritoryTypes.Any(ty => ty.Name == hierarchyPart.TerritoryType)) {
-        //        var typeName = _contentDefinitionManager.GetTypeDefinition(hierarchyPart.TerritoryType).DisplayName;
-        //        return new HttpUnauthorizedResult(T("Not authorized to manage hierarchies of type \"{0}\"", typeName).Text);
-        //    }
-
-        //    return null;
-        //}
-
         #region IUpdateModel implementation
         public void AddModelError(string key, LocalizedString errorMessage) {
             ModelState.AddModelError(key, errorMessage.ToString());
@@ -237,28 +194,6 @@ namespace Nwazet.Commerce.Controllers {
             return TryUpdateModel(model, prefix, includeProperties, excludeProperties);
         }
         #endregion
-
-        //private Lazy<IEnumerable<ContentTypeDefinition>> _allowedTerritoryTypes;
-        //private IEnumerable<ContentTypeDefinition> AllowedTerritoryTypes {
-        //    get { return _allowedTerritoryTypes.Value; }
-        //}
-
-        ///// <summary>
-        ///// This method gets all the territory types the current user is allowed to manage.
-        ///// </summary>
-        ///// <returns>Returns the types the user is allwoed to manage. Returns null if the user lacks the correct 
-        ///// permissions to be invoking these actions.</returns>
-        //private IEnumerable<ContentTypeDefinition> GetAllowedTerritoryTypes() {
-        //    var allowedTypes = _territoriesService.GetTerritoryTypes();
-        //    if (!allowedTypes.Any() && //no dynamic permissions
-        //        !_authorizer.Authorize(TerritoriesPermissions.ManageTerritories)) {
-
-        //        return null;
-        //    }
-
-        //    return allowedTypes;
-        //}
-
 
     }
 }

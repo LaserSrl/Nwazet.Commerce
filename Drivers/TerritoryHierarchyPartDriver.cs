@@ -76,7 +76,6 @@ namespace Nwazet.Commerce.Drivers {
                     Model: TypeSelectionVM(part),
                     Prefix: Prefix
                     )));
-            //TODO
             return Combined(shapes.ToArray());
         }
 
