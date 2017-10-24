@@ -199,9 +199,9 @@
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryTypeSelection.cshtml" />
     <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />
     <None Include="Views\Parts\WishListsActions.cshtml" />
-    <None Include="Views\TerritoriesAdmin\CreatableTypeList.cshtml" />
-    <None Include="Views\TerritoriesAdmin\CreateHierarchy.cshtml" />
-    <None Include="Views\TerritoriesAdmin\EditHierarchy.cshtml" />
+    <None Include="Views\TerritoryHierarchiesAdmin\CreatableTypeList.cshtml" />
+    <None Include="Views\TerritoryHierarchiesAdmin\CreateHierarchy.cshtml" />
+    <None Include="Views\TerritoryHierarchiesAdmin\EditHierarchy.cshtml" />
     <None Include="Views\TerritoriesAdmin\EditorTemplates\TerritoryInternalRecord.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Scripts\Web.config" />
@@ -222,6 +222,7 @@
     <Compile Include="Controllers\TaxAdminController.cs" />
     <Compile Include="Controllers\TerritoriesAdminController.cs" />
     <Compile Include="Controllers\TerritoriesAdminHierarchyExecutionContext.cs" />
+    <Compile Include="Controllers\TerritoryHierarchiesAdminController.cs" />
     <Compile Include="Controllers\UspsAdminController.cs" />
     <Compile Include="Controllers\PromotionAdminController.cs" />
     <Compile Include="Controllers\ProductAdminController.cs" />
@@ -642,8 +643,8 @@
     <None Include="packages.config" />
     <None Include="Views\TerritoriesAdmin\AddTerritoryInternal.cshtml" />
     <None Include="Views\TerritoriesAdmin\EditTerritoryInternal.cshtml" />
-    <None Include="Views\TerritoriesAdmin\HierarchiesIndex.cshtml" />
-    <None Include="Views\TerritoriesAdmin\HierarchiesListPartial.cshtml" />
+    <None Include="Views\TerritoryHierarchiesAdmin\HierarchiesIndex.cshtml" />
+    <None Include="Views\TerritoryHierarchiesAdmin\HierarchiesListPartial.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesIndex.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesListPartial.cshtml" />
     <None Include="Views\WishListEditor.cshtml" />
