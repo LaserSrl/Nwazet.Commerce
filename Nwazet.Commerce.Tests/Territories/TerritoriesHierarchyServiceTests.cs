@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using Nwazet.Commerce.Handlers;
+using Nwazet.Commerce.Migrations;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
 using Nwazet.Commerce.Tests.Territories.Handlers;
@@ -12,6 +13,11 @@ using Orchard.ContentManagement.MetaData;
 using Orchard.ContentManagement.MetaData.Models;
 using Orchard.ContentManagement.Records;
 using Orchard.Data;
+using Orchard.Data.Migration;
+using Orchard.Data.Migration.Interpreters;
+using Orchard.Data.Migration.Records;
+using Orchard.Environment.Extensions;
+using Orchard.Environment.Extensions.Models;
 using Orchard.Tests;
 using Orchard.Tests.Stubs;
 using System;
@@ -28,11 +34,17 @@ namespace Nwazet.Commerce.Tests.Territories {
         private ITerritoriesHierarchyService _territoriesHierarchyService;
         private IContentManager _contentManager;
 
+        private IDataMigrationManager _dataMigrationManager;
+
         public override void Init() {
             base.Init();
 
             _territoriesHierarchyService = _container.Resolve<ITerritoriesHierarchyService>();
             _contentManager = _container.Resolve<IContentManager>();
+
+            _dataMigrationManager = _container.Resolve<IDataMigrationManager>();
+
+            _dataMigrationManager.Update("Territories");
         }
 
         public override void Register(ContainerBuilder builder) {
@@ -45,6 +57,9 @@ namespace Nwazet.Commerce.Tests.Territories {
             mockDefinitionManager
                 .Setup<IEnumerable<ContentTypeDefinition>>(mdm => mdm.ListTypeDefinitions())
                 .Returns(MockTypeDefinitions);
+            mockDefinitionManager // this is required to create the test items
+                .Setup(mdm => mdm.GetTypeDefinition(It.IsAny<string>()))
+                .Returns<string>(name => MockTypeDefinitions().FirstOrDefault(ctd => ctd.Name == name));
             builder.RegisterInstance(mockDefinitionManager.Object);
             
             builder.RegisterType<DefaultContentManager>().As<IContentManager>();
@@ -60,7 +75,29 @@ namespace Nwazet.Commerce.Tests.Territories {
             builder.RegisterType<TerritoryHierachyMockHandler>().As<IContentHandler>();
             builder.RegisterType<TerritoryPartHandler>().As<IContentHandler>();
             builder.RegisterType<TerritoryMockHandler>().As<IContentHandler>();
+
+            // We need the migrations to have the 1-to-many relationships
+            builder.RegisterType<DataMigrationManager>().As<IDataMigrationManager>();
+            builder.RegisterType<ExtensionManager>().As<IExtensionManager>();
+            var mockInterpreter = new Mock<IDataMigrationInterpreter>();
+            mockInterpreter
+                .Setup(mi => mi.PrefixTableName(It.IsAny<string>()))
+                .Returns<string>(ptn => ptn);
+            mockInterpreter
+                .Setup(mi => mi.RemovePrefixFromTableName(It.IsAny<string>()))
+                .Returns<string>(ptn => ptn);
+            builder.RegisterInstance(mockInterpreter.Object);
+            builder.RegisterType<StubParallelCacheContext>().As<IParallelCacheContext>();
+            builder.RegisterType<StubAsyncTokenProvider>().As<IAsyncTokenProvider>();
+
+            var mockMigration = new Mock<TerritoriesMigrations>() { CallBase = true};
+            mockMigration
+                .Setup(mi => mi.Feature)
+                .Returns(new Feature() { Descriptor = new FeatureDescriptor { Id = "Territories", Extension = new ExtensionDescriptor { Id = "Nwazet.Commerce" } } });
+            builder.RegisterInstance(mockMigration.Object).As<IDataMigration>(); //TODO
+
         }
+        
 
         protected override IEnumerable<Type> DatabaseTypes {
             get {
@@ -70,7 +107,8 @@ namespace Nwazet.Commerce.Tests.Territories {
                     typeof(TerritoryPartRecord),
                     typeof(ContentItemVersionRecord),
                     typeof(ContentItemRecord),
-                    typeof(ContentTypeRecord)
+                    typeof(ContentTypeRecord),
+                    typeof(DataMigrationRecord)
                 };
             }
         }
@@ -145,7 +183,6 @@ namespace Nwazet.Commerce.Tests.Territories {
             Assert.Throws<ArgumentNullException>(() => _territoriesHierarchyService.AddTerritory(territory, hierarchy, parent));
 
             // Sanity check: the following should succeed
-            //TODO: Currently failing because default TerritoryType is not set
             parent = _contentManager.Create<TerritoryPart>("TerritoryType0");
             _territoriesHierarchyService.AddTerritory(parent, hierarchy);
             Assert.That(parent.Record.Hierarchy.Id, Is.EqualTo(hierarchy.Record.Id));
@@ -157,8 +194,15 @@ namespace Nwazet.Commerce.Tests.Territories {
         public void AddTerritoryFailsOnWrongTerritoryType() {
             // Check the expected ArrayTypeMismatchExceptions
             // 1. the ContentType of territory does not match hierarchy.TerritoryType
+            var territory = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            var hierarchy1 = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType1");
+            Assert.Throws<ArrayTypeMismatchException>(() => _territoriesHierarchyService.AddTerritory(territory, hierarchy1));
             // For AddTerritory(TerritoryPart, TerritoryHierarchyPart, TerritoryPart):
             // 2. the parent belongs to a different hierarchy
+            var parent = _contentManager.Create<TerritoryPart>("TerritoryType1");
+            _territoriesHierarchyService.AddTerritory(parent, hierarchy1);
+            var hierarchy0 = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
+            Assert.Throws<ArrayTypeMismatchException>(() => _territoriesHierarchyService.AddTerritory(territory, hierarchy0, parent));
         }
 
         [Test]
@@ -172,6 +216,18 @@ namespace Nwazet.Commerce.Tests.Territories {
         [Test]
         public void AddTerritoryAlsoAssignsParent() {
             // this tests AddTerritory(TerritoryPart, TerritoryHierarchyPart, TerritoryPart)
+            var territory = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            var hierarchy = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
+            var parent = _contentManager.Create<TerritoryPart>("TerritoryType0");
+
+            _territoriesHierarchyService.AddTerritory(parent, hierarchy);
+            Assert.That(parent.Record.Hierarchy.Id, Is.EqualTo(hierarchy.Record.Id));
+
+            _territoriesHierarchyService.AddTerritory(territory, hierarchy, parent);
+            Assert.That(territory.Record.Hierarchy.Id, Is.EqualTo(hierarchy.Record.Id));
+            Assert.That(territory.Record.ParentTerritory.Id, Is.EqualTo(parent.Record.Id));
+            Assert.That(parent.Record.Children.Count, Is.EqualTo(1));
+            Assert.That(parent.Record.Children.First().Id, Is.EqualTo(territory.Record.Id));
         }
 
         [Test]

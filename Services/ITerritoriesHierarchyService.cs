@@ -13,7 +13,8 @@ namespace Nwazet.Commerce.Services {
         /// Assigns the territory to the hierarchy, at its root level, and also assigns
         /// all child-territories to the hierarchy. This method will fail if the ContentItem
         /// for the TerritoryPart is not of a type corresponding to the one allowed for the
-        /// hierarchy. This method allows moving a territory between two hierarchies.
+        /// hierarchy. This method allows moving a territory between two hierarchies, as long as
+        /// there is no mismatch between territory types.
         /// </summary>
         /// <param name="territory">The territory being assigned to the hierarchy.</param>
         /// <param name="hierarchy">The hierarchy the territory is being assigned to.</param>
@@ -44,7 +45,8 @@ namespace Nwazet.Commerce.Services {
         /// Assigns the territory to the hierarchy, under the specified parent, and also assigns
         /// all child-territories to the hierarchy. This method will fail if the ContentItem
         /// for the TerritoryPart is not of a type corresponding to the one allowed for the
-        /// hierarchy. This method allows moving a territory between two hierarchies.
+        /// hierarchy. This method allows moving a territory between two hierarchies, as long as
+        /// there is no mismatch between territory types.
         /// </summary>
         /// <param name="territory">The territory being assigned to the hierarchy.</param>
         /// <param name="hierarchy">The hierarchy the territory is being assigned to.</param>
@@ -56,7 +58,7 @@ namespace Nwazet.Commerce.Services {
         /// if the type for the territory does not match the TerritoryType expected for the 
         /// hierarchy.</exception>
         /// <exception cref="ArrayTypeMismatchException">Throws an ArrayTypeMismatchException
-        /// if the parent belong to a different hierarchy.</exception>
+        /// if the parent belongs to a different hierarchy.</exception>
         /// <exception cref="ArgumentNullException">Throws an ArgumentNullException if either
         /// of the arguments is null or has a null underlying record.</exception>
         void AddTerritory(TerritoryPart territory, TerritoryHierarchyPart hierarchy, TerritoryPart parent);
