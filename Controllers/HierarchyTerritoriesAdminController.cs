@@ -3,6 +3,7 @@ using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels;
+using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.MetaData;
 using Orchard.ContentManagement.MetaData.Models;
@@ -16,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Territories")]
@@ -27,17 +29,23 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IContentDefinitionManager _contentDefinitionManager;
         private readonly ITerritoriesService _territoriesService;
         private readonly IAuthorizer _authorizer;
+        private readonly IWorkContextAccessor _workContextAccessor;
+        private readonly RouteCollection _routeCollection;
 
         public HierarchyTerritoriesAdminController(
             IContentManager contentManager,
             IContentDefinitionManager contentDefinitionManager,
             ITerritoriesService territoriesService,
-            IAuthorizer authorizer) {
+            IAuthorizer authorizer,
+            IWorkContextAccessor workContextAccessor,
+            RouteCollection routeCollection) {
 
             _contentManager = contentManager;
             _contentDefinitionManager = contentDefinitionManager;
             _territoriesService = territoriesService;
             _authorizer = authorizer;
+            _workContextAccessor = workContextAccessor;
+            _routeCollection = routeCollection;
 
             T = NullLocalizer.Instance;
 
@@ -79,10 +87,12 @@ namespace Nwazet.Commerce.Controllers {
             var firstLevelOfHierarchy = _territoriesService
                 .GetTerritoriesQuery(hierarchyPart, null, VersionOptions.Latest)
                 .List().ToList();
+                       
 
             var model = new TerritoryHierarchyTerritoriesViewModel {
                 HierarchyPart = hierarchyPart,
-                HierarchyItem = hierarchyItem
+                HierarchyItem = hierarchyItem,
+                Nodes = firstLevelOfHierarchy.Select(MakeANode).ToList()
             };
 
             return View(model);
@@ -130,6 +140,16 @@ namespace Nwazet.Commerce.Controllers {
             return allowedTypes;
         }
 
+        private TerritoryHierarchyTreeNode MakeANode(TerritoryPart territoryPart) {
+            var metadata = _contentManager.GetItemMetadata(territoryPart.ContentItem);
+            var requestContext = _workContextAccessor.GetContext().HttpContext.Request.RequestContext;
+            return new TerritoryHierarchyTreeNode {
+                Id = territoryPart.ContentItem.Id,
+                EditUrl = _routeCollection.GetVirtualPath(requestContext, metadata.EditorRouteValues).VirtualPath,
+                DisplayText = metadata.DisplayText
+            };
+        }
+        
         #region IUpdateModel implementation
         public void AddModelError(string key, LocalizedString errorMessage) {
             ModelState.AddModelError(key, errorMessage.ToString());

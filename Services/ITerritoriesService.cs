@@ -56,11 +56,13 @@ namespace Nwazet.Commerce.Services {
         IContentQuery<TerritoryHierarchyPart> GetHierarchiesQuery(VersionOptions versionOptions, params string[] contentTypes);
 
         /// <summary>
-        /// Provides an IContentQuery for the TerritoryParts in a given hierarchy. The version of the territories is the
-        /// version of the hierarchy, or Latest.
+        /// Provides an IContentQuery for the TerritoryParts in a given hierarchy. If the hierarchy is Published, this
+        /// returns Published territories. Otherwise it returns the Latest version.
         /// </summary>
         /// <param name="hierarchyPart">The hierarchy that the territories belong to.</param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Throws an ArgumentNullException if the TerritoryHierarchyPart
+        /// argument is null or has a null underlying record.</exception>
         IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart);
 
         /// <summary>
@@ -70,6 +72,8 @@ namespace Nwazet.Commerce.Services {
         /// <param name="versionOptions">The version for the items. Defaults to the version of the item of the hierarchyPart,
         /// falling back to Latest.</param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Throws an ArgumentNullException if the TerritoryHierarchyPart
+        /// argument is null or has a null underlying record.</exception>
         IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart, VersionOptions versionOptions);
 
         /// <summary>
@@ -80,6 +84,8 @@ namespace Nwazet.Commerce.Services {
         /// <param name="territoryPart">The parent territory whose children will be returned by the query. If this is null,
         /// the query will return the first level of the hierarchy.</param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Throws an ArgumentNullException if the TerritoryHierarchyPart
+        /// argument is null or has a null underlying record.</exception>
         IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart, TerritoryPart territoryPart);
 
         /// <summary>
@@ -92,6 +98,8 @@ namespace Nwazet.Commerce.Services {
         /// <param name="versionOptions">The version for the items. Defaults to the version of the item of the hierarchyPart,
         /// falling back to Latest.</param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Throws an ArgumentNullException if the TerritoryHierarchyPart
+        /// argument is null or has a null underlying record.</exception>
         IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart, TerritoryPart territoryPart, VersionOptions versionOptions);
 
     }

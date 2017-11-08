@@ -23,5 +23,9 @@ namespace Nwazet.Commerce.ViewModels {
         // This is different than the case where Nodes.Count() == 0, as that means we have
         // loaded the list of children, and it is empty.
         public IList<TerritoryHierarchyTreeNode> Nodes { get; set; }
+
+        public TerritoryHierarchyTreeNode() {
+            Nodes = new List<TerritoryHierarchyTreeNode>();
+        }
     }
 }

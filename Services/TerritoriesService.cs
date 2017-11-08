@@ -18,34 +18,33 @@ namespace Nwazet.Commerce.Services {
     [OrchardFeature("Territories")]
     public class TerritoriesService : ITerritoriesService {
         
-        private readonly IOrchardServices _orchardServices;
         private readonly IContentDefinitionManager _contentDefinitionManager;
         private readonly IContentManager _contentManager;
+        private readonly IAuthorizer _authorizer;
 
         public TerritoriesService(
-            IOrchardServices orchardServices,
             IContentDefinitionManager contentDefinitionManager,
             IContentManager contentManager,
-            ITerritoriesPermissionProvider permissionProvider
+            IAuthorizer authorizer
             ) {
-
-            _orchardServices = orchardServices;
+            
             _contentDefinitionManager = contentDefinitionManager;
             _contentManager = contentManager;
+            _authorizer = authorizer;
         }
 
         public IEnumerable<ContentTypeDefinition> GetTerritoryTypes() {
             return _contentDefinitionManager.ListTypeDefinitions()
                 .Where(ctd => ctd.Parts.Any(pa => pa
                     .PartDefinition.Name.Equals(TerritoryPart.PartName, StringComparison.InvariantCultureIgnoreCase)) &&
-                        _orchardServices.Authorizer.Authorize(TerritoriesPermissions.GetTerritoryPermission(ctd)));
+                        _authorizer.Authorize(TerritoriesPermissions.GetTerritoryPermission(ctd)));
         }
         
         public IEnumerable<ContentTypeDefinition> GetHierarchyTypes() {
             return _contentDefinitionManager.ListTypeDefinitions()
                 .Where(ctd => ctd.Parts.Any(pa => pa
                     .PartDefinition.Name.Equals(TerritoryHierarchyPart.PartName, StringComparison.InvariantCultureIgnoreCase)) &&
-                         _orchardServices.Authorizer.Authorize(TerritoriesPermissions.GetHierarchyPermission(ctd)));
+                         _authorizer.Authorize(TerritoriesPermissions.GetHierarchyPermission(ctd)));
         }
         
         public IContentQuery<TerritoryHierarchyPart, TerritoryHierarchyPartRecord> GetHierarchiesQuery() {
@@ -71,28 +70,43 @@ namespace Nwazet.Commerce.Services {
         }
 
         public IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart) {
-            return GetTerritoriesQuery(hierarchyPart, VersionOptions.Latest);
+            return GetTerritoriesQuery(hierarchyPart, versionOptions: null);
         }
 
         public IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart, VersionOptions versionOptions) {
+            if (hierarchyPart == null || hierarchyPart.Record == null) {
+                throw new ArgumentNullException("hierarchyPart");
+            }
+
+            versionOptions = versionOptions ??
+                (hierarchyPart.ContentItem.IsPublished() ? VersionOptions.Published : VersionOptions.Latest);
+            
             return _contentManager
                 .Query<TerritoryPart, TerritoryPartRecord>()
-                .Where(tpr => tpr.Hierarchy.Id == hierarchyPart.Record.Id)
-                .ForVersion(versionOptions);
+                .WithQueryHints(new QueryHints().ExpandRecords("TerritoryHierarchyPartRecord"))
+                .ForVersion(versionOptions)
+                .Where(tpr => tpr.Hierarchy.Id == hierarchyPart.Record.Id);
         }
 
         public IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(
             TerritoryHierarchyPart hierarchyPart, TerritoryPart territoryPart) {
-            return GetTerritoriesQuery(hierarchyPart)
-                .Where(tpr => tpr.ParentTerritory.Id == territoryPart.Record.Id);
+
+            return GetTerritoriesQuery(hierarchyPart, territoryPart, null);
         }
 
         public IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(
             TerritoryHierarchyPart hierarchyPart, TerritoryPart territoryPart, VersionOptions versionOptions) {
-            return GetTerritoriesQuery(hierarchyPart, versionOptions)
-                .Where(tpr => territoryPart == null ?
-                    tpr.ParentTerritory == null :
-                    tpr.ParentTerritory.Id == territoryPart.Record.Id);
+            
+            var baseQuery = GetTerritoriesQuery(hierarchyPart, versionOptions)
+                .WithQueryHints(new QueryHints().ExpandRecords("TerritoryPartRecord"));
+
+            if (territoryPart == null) {
+                return baseQuery
+                    .Where(tpr => tpr.ParentTerritory == null);
+            } else {
+                return baseQuery
+                    .Where(tpr => tpr.ParentTerritory.Id == territoryPart.Record.Id);
+            }
         }
     }
 }

@@ -38,19 +38,19 @@ namespace Nwazet.Commerce.Tests.Territories {
         private ITerritoriesService _territoriesService;
         private ITerritoriesRepositoryService _territoryRepositoryService;
         private ITerritoriesPermissionProvider _permissionProvider;
-        private Mock<IOrchardServices> _mockServices;
+        private ITerritoriesHierarchyService _territoriesHierarchyService;
         private IContentManager _contentManager;
+        private ITransactionManager _transactionManager;
 
         public override void Init() {
-            _mockServices = new Mock<IOrchardServices>();
             base.Init();
-
-            _mockServices.SetupGet(ms => ms.Authorizer).Returns(_container.Resolve<IAuthorizer>());
 
             _territoriesService = _container.Resolve<ITerritoriesService>();
             _territoryRepositoryService = _container.Resolve<ITerritoriesRepositoryService>();
-            _permissionProvider= _container.Resolve<ITerritoriesPermissionProvider>();
+            _permissionProvider = _container.Resolve<ITerritoriesPermissionProvider>();
             _contentManager = _container.Resolve<IContentManager>();
+            _territoriesHierarchyService = _container.Resolve<ITerritoriesHierarchyService>();
+            _transactionManager = _container.Resolve<ITransactionManager>();
         }
 
         public override void Register(ContainerBuilder builder) {
@@ -58,17 +58,20 @@ namespace Nwazet.Commerce.Tests.Territories {
             builder.RegisterType<TerritoriesService>().As<ITerritoriesService>();
             builder.RegisterType<TerritoryRepositoryService>().As<ITerritoriesRepositoryService>();
             builder.RegisterType<TerritoriesPermissions>().As<ITerritoriesPermissionProvider>();
+            builder.RegisterType<TerritoriesHierarchyService>().As<ITerritoriesHierarchyService>();
 
             //for TerritoriesService
             var mockDefinitionManager = new Mock<IContentDefinitionManager>();
             mockDefinitionManager
                 .Setup<IEnumerable<ContentTypeDefinition>>(mdm => mdm.ListTypeDefinitions())
                 .Returns(MockTypeDefinitions);
+            mockDefinitionManager // this is required to create the test items
+                .Setup(mdm => mdm.GetTypeDefinition(It.IsAny<string>()))
+                .Returns<string>(name => MockTypeDefinitions().FirstOrDefault(ctd => ctd.Name == name));
             builder.RegisterInstance(mockDefinitionManager.Object);
 
             builder.RegisterType<Authorizer>().As<IAuthorizer>();
-            builder.RegisterType<DefaultContentManager>().As<IContentManager>();
-            builder.RegisterInstance(_mockServices.Object);
+            builder.RegisterType<DefaultContentManager>().As<IContentManager>().SingleInstance();
 
             //for TerritoryRepositoryService
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>));
@@ -82,7 +85,7 @@ namespace Nwazet.Commerce.Tests.Territories {
             builder.RegisterType<DefaultContentManagerSession>().As<IContentManagerSession>();
             builder.RegisterInstance(new Mock<IContentDisplay>().Object);
             builder.RegisterType<Signals>().As<ISignals>();
-            builder.RegisterType<DefaultContentQuery>().As<IContentQuery>();
+            builder.RegisterType<DefaultContentQuery>().As<IContentQuery>().InstancePerDependency();
 
             var _workContext = new Mock<WorkContext>();
             _workContext.Setup(w =>
@@ -138,7 +141,7 @@ namespace Nwazet.Commerce.Tests.Territories {
 
             return typeDefinitions;
         }
-        
+
         protected override IEnumerable<Type> DatabaseTypes {
             get {
                 return new[] {
@@ -189,7 +192,7 @@ namespace Nwazet.Commerce.Tests.Territories {
             Assert.That(_territoriesService.GetTerritoryTypes().Count(), Is.EqualTo(1));
             Assert.That(_permissionProvider.ListTerritoryTypePermissions().Count(), Is.EqualTo(3));
         }
-        
+
         private List<IContent> AddSampleHierarchiesData() {
             var items = new List<IContent> {
                 _contentManager.Create<TerritoryHierarchyPart>("HierarchyType1", VersionOptions.Published),
@@ -197,7 +200,7 @@ namespace Nwazet.Commerce.Tests.Territories {
                 _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0", VersionOptions.Published),
                 _contentManager.Create<TerritoryHierarchyPart>("HierarchyType1", VersionOptions.Draft)
             };
-
+            _transactionManager.RequireNew();
             return items;
         }
 
@@ -244,12 +247,91 @@ namespace Nwazet.Commerce.Tests.Territories {
             Assert.That(gotten02.Count(), Is.EqualTo(2));
         }
 
-        private void AddSampleTerritoriesData() {
-            var hierarchies = AddSampleHierarchiesData().ToArray();
-            for (int i = 0; i < hierarchies.Length; i++) {
-                var currentHierarchy = hierarchies[i].As<TerritoryHierarchyPart>();
+        [Test]
+        public void GetHierarchiesQueryFiltersBothVersionAndContentTypes() {
+            var created = AddSampleHierarchiesData();
+
+            var gotten0 = _territoriesService.GetHierarchiesQuery(VersionOptions.Draft, "HierarchyType0").List();
+            Assert.That(gotten0.Count(), Is.EqualTo(0));
+
+            var gotten1 = _territoriesService.GetHierarchiesQuery(VersionOptions.Published, "HierarchyType0").List();
+            Assert.That(gotten1.Count(), Is.EqualTo(1));
+
+            var gotten2 = _territoriesService.GetHierarchiesQuery(VersionOptions.Draft, "HierarchyType0", "HierarchyType2").List();
+            Assert.That(gotten2.Count(), Is.EqualTo(1));
+
+            var gotten3 = _territoriesService.GetHierarchiesQuery(VersionOptions.Published, "HierarchyType1").List();
+            Assert.That(gotten3.Count(), Is.EqualTo(1));
+        }
+        
+        private void AddSampleTerritoriesData(out List<IContent> hierarchies, out List<IContent> territories) {
+            hierarchies = AddSampleHierarchiesData();
+            territories = new List<IContent>();
+            var hierarchiesArray = hierarchies.ToArray();
+            for (int i = 0; i < hierarchiesArray.Length; i++) {
+                var currentHierarchy = hierarchiesArray[i].As<TerritoryHierarchyPart>();
                 var territoryType = currentHierarchy.TerritoryType;
+                // add i+1 territories
+                for (int j = 0; j < i + 1; j++) {
+                    var territory = _contentManager
+                        .Create<TerritoryPart>(territoryType, i % 2 == 0 ? VersionOptions.Published : VersionOptions.Draft);
+                    _territoriesHierarchyService.AddTerritory(territory, currentHierarchy);
+                    territories.Add(territory);
+                }
             }
+            _transactionManager.RequireNew();
+        }
+
+        [Test]
+        public void GetTerritoryQueriesThrowExceptionForNullHierarchy() {
+            Assert.Throws<ArgumentNullException>(() => _territoriesService.GetTerritoriesQuery(null));
+
+            var hierarchy = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
+            hierarchy.Record = null;
+            Assert.Throws<ArgumentNullException>(() => _territoriesService.GetTerritoriesQuery(hierarchy));
+        }
+
+        [Test]
+        public void GetTerritoriesQueryDoesNotBreakIfThereAreNoTerritories() {
+
+            var hierarchy = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
+            Assert.That(_territoriesService.GetTerritoriesQuery(hierarchy).List().Count(), Is.EqualTo(0));
+        }
+
+        [Test]
+        public void GetTerritoriesQueryForLatestReturnsAllTerritoriesForHierarchy() {
+            List<IContent> hierarchies, territories;
+            AddSampleTerritoriesData(out hierarchies, out territories);
+
+            int expectedCount = 1;
+            foreach (var hierarchy in hierarchies) {
+                var gotten = _territoriesService
+                    .GetTerritoriesQuery((TerritoryHierarchyPart)hierarchy, VersionOptions.Latest)
+                    .List();
+                Assert.That(gotten.Count(), Is.EqualTo(expectedCount));
+                expectedCount++;
+            }
+        }
+
+        [Test]
+        public void GetTerritoriesQueryReturnsSameVersionAsHierarchy() {
+            List<IContent> hierarchies, territories;
+            AddSampleTerritoriesData(out hierarchies, out territories);
+
+            int index = 1;
+            foreach (var hierarchy in hierarchies) {
+                var gotten = _territoriesService
+                    .GetTerritoriesQuery(hierarchy.As<TerritoryHierarchyPart>())
+                    .List();
+
+                int expectedCount = hierarchy.ContentItem.IsPublished() ?
+                    index / 2:
+                    index;
+
+                Assert.That(gotten.Count(), Is.EqualTo(expectedCount));
+                index++;
+            }
+
         }
     }
 }

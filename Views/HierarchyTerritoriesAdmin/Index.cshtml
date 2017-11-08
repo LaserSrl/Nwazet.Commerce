@@ -12,13 +12,14 @@
 @Html.ValidationSummary()
 
 <div class="manage">
-    @Html.ItemEditLink(T("Back to Hierarchy").Text, hierarchyItem)
+    @Html.ItemEditLink(T("Back to Hierarchy").Text, hierarchyItem, null, new { @class = "button primaryAction" })
     @Html.ActionLink(T("Add a Territory").Text,
-                "CreateHierarchy",
+                "CreateTerritory",
                 new {
                     Area = "Nwazet.Commerce",
                     ReturnUrl = Request.RawUrl,
-                    id = Model.HierarchyPart.TerritoryType
+                    id = Model.HierarchyPart.TerritoryType,
+                    hierarchyId = hierarchyItem.Id
                 },
                 new { @class = "button primaryAction" })
 </div>
