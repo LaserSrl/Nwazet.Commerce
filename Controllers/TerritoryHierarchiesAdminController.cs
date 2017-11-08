@@ -125,7 +125,7 @@ namespace Nwazet.Commerce.Controllers {
         [HttpGet]
         public ActionResult CreateHierarchy(string id) {
             //id is the Name of the ContentType we are trying to create. Calling that id allows us to use standard 
-            //MVC routing (i.e. controller/action/id?querystring. This is especially nice for the post calls.
+            //MVC routing (i.e. controller/action/id?querystring). This is especially nice for the post calls.
             if (AllowedHierarchyTypes == null) {
                 return new HttpUnauthorizedResult(TerritoriesUtilities.Default401HierarchyMessage);
             }

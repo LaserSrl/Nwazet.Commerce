@@ -31,6 +31,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IAuthorizer _authorizer;
         private readonly IWorkContextAccessor _workContextAccessor;
         private readonly RouteCollection _routeCollection;
+        private readonly ITerritoriesHierarchyService _territoriesHierarchyService;
 
         public HierarchyTerritoriesAdminController(
             IContentManager contentManager,
@@ -38,7 +39,8 @@ namespace Nwazet.Commerce.Controllers {
             ITerritoriesService territoriesService,
             IAuthorizer authorizer,
             IWorkContextAccessor workContextAccessor,
-            RouteCollection routeCollection) {
+            RouteCollection routeCollection,
+            ITerritoriesHierarchyService territoriesHierarchyService) {
 
             _contentManager = contentManager;
             _contentDefinitionManager = contentDefinitionManager;
@@ -46,6 +48,7 @@ namespace Nwazet.Commerce.Controllers {
             _authorizer = authorizer;
             _workContextAccessor = workContextAccessor;
             _routeCollection = routeCollection;
+            _territoriesHierarchyService = territoriesHierarchyService;
 
             T = NullLocalizer.Instance;
 
@@ -58,32 +61,16 @@ namespace Nwazet.Commerce.Controllers {
 
         [HttpGet]
         public ActionResult Index(int id) {
+            ActionResult redirectTo;
+            if (ShouldRedirectForPermissions(id, out redirectTo)) {
+                return redirectTo;
+            }
+
             // list the first level of territories for the selected hierarchy
-            if (AllowedHierarchyTypes == null) {
-                return new HttpUnauthorizedResult(TerritoriesUtilities.Default401HierarchyMessage);
-            }
-            if (AllowedTerritoryTypes == null) {
-                return new HttpUnauthorizedResult(TerritoriesUtilities.Default401TerritoryMessage);
-            }
-
+            // The null checks for these objects are done in ShouldRedirectForPermissions
             var hierarchyItem = _contentManager.Get(id, VersionOptions.Latest);
-            if (hierarchyItem == null) {
-                return HttpNotFound();
-            }
             var hierarchyPart = hierarchyItem.As<TerritoryHierarchyPart>();
-            if (hierarchyPart == null) {
-                return HttpNotFound();
-            }
-
-            if (!AllowedHierarchyTypes.Any(ty => ty.Name == hierarchyItem.ContentType)) {
-                var typeName = _contentDefinitionManager.GetTypeDefinition(hierarchyItem.ContentType).DisplayName;
-                return new HttpUnauthorizedResult(TerritoriesUtilities.SpecificHierarchy401Message(typeName));
-            }
-            if (!AllowedTerritoryTypes.Any(ty => ty.Name == hierarchyPart.TerritoryType)) {
-                var typeName = _contentDefinitionManager.GetTypeDefinition(hierarchyPart.TerritoryType).DisplayName;
-                return new HttpUnauthorizedResult(TerritoriesUtilities.SpecificTerritory401Message(typeName));
-            }
-
+            
             var firstLevelOfHierarchy = _territoriesService
                 .GetTerritoriesQuery(hierarchyPart, null, VersionOptions.Latest)
                 .List().ToList();
@@ -96,6 +83,85 @@ namespace Nwazet.Commerce.Controllers {
             };
 
             return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult CreateTerritory(string id, int hierarchyId) {
+            // id is the name of the ContentType for the territory we are trying to create. By calling
+            // that argument "id" we can use the standard MVC routing (i.e. controller/action/id?querystring).
+            // This is especially nice on POST calls.
+            ActionResult redirectTo;
+            if (ShouldRedirectForPermissions(hierarchyId, out redirectTo)) {
+                return redirectTo;
+            }
+
+            // The null checks for these objects are done in ShouldRedirectForPermissions
+            var hierarchyItem = _contentManager.Get(hierarchyId, VersionOptions.Latest);
+            var hierarchyPart = hierarchyItem.As<TerritoryHierarchyPart>();
+            
+            if (!id.Equals(hierarchyPart.TerritoryType, StringComparison.OrdinalIgnoreCase)) {
+                // The hierarchy expects a TerritoryType different form the one we are trying to create
+                var hierarchyTitle = _contentManager.GetItemMetadata(hierarchyItem).DisplayText;
+                var errorText = string.IsNullOrWhiteSpace(hierarchyTitle) ?
+                    T("The requested type \"{0}\" does not match the expected TerritoryType for the hierarchy.", id) :
+                    T("The requested type \"{0}\" does not match the expected TerritoryType for hierarchy \"{1}\".", id, hierarchyTitle);
+                AddModelError("", errorText);
+                return RedirectToAction("Index");
+            }
+
+            // TODO: There must be "unused" TerritoryInternalRecords for this hierarchy.
+
+            // Creation
+            var territoryItem = _contentManager.New(id);
+            // Cannot insert Territory in the Hierarchy here, because its records do not exist yet.
+            // We will have to do it in the POST call.
+            // Allow user to Edit stuff
+            var model = _contentManager.BuildEditor(territoryItem);
+
+            return View(model.Hierarchy(hierarchyItem));
+        }
+
+        /// <summary>
+        /// This method performs a bunch of default checks to verify that the user is allowed to proceed
+        /// with the action it called. This will return false if the user is authorized to proceed.
+        /// </summary>
+        /// <param name="hierarchyId">The Id of a hierarchy ContentItem.</param>
+        /// <returns>Returns false if the caller is authorized to proceed. Otherwise the ou ActionResult
+        /// argument is populated with the Action the user should be redirected to.</returns>
+        private bool ShouldRedirectForPermissions(int hierarchyId, out ActionResult redirectTo) {
+            redirectTo = null;
+            if (AllowedHierarchyTypes == null) {
+                redirectTo = new HttpUnauthorizedResult(TerritoriesUtilities.Default401HierarchyMessage);
+                return true;
+            }
+            if (AllowedTerritoryTypes == null) {
+                redirectTo = new HttpUnauthorizedResult(TerritoriesUtilities.Default401TerritoryMessage);
+                return true;
+            }
+
+            var hierarchyItem = _contentManager.Get(hierarchyId, VersionOptions.Latest);
+            if (hierarchyItem == null) {
+                redirectTo = HttpNotFound();
+                return true;
+            }
+            var hierarchyPart = hierarchyItem.As<TerritoryHierarchyPart>();
+            if (hierarchyPart == null) {
+                redirectTo = HttpNotFound();
+                return true;
+            }
+
+            if (!AllowedHierarchyTypes.Any(ty => ty.Name == hierarchyItem.ContentType)) {
+                var typeName = _contentDefinitionManager.GetTypeDefinition(hierarchyItem.ContentType).DisplayName;
+                redirectTo = new HttpUnauthorizedResult(TerritoriesUtilities.SpecificHierarchy401Message(typeName));
+                return true;
+            }
+            if (!AllowedTerritoryTypes.Any(ty => ty.Name == hierarchyPart.TerritoryType)) {
+                var typeName = _contentDefinitionManager.GetTypeDefinition(hierarchyPart.TerritoryType).DisplayName;
+                redirectTo = new HttpUnauthorizedResult(TerritoriesUtilities.SpecificTerritory401Message(typeName));
+                return true;
+            }
+
+            return false;
         }
 
         private Lazy<IEnumerable<ContentTypeDefinition>> _allowedTerritoryTypes;

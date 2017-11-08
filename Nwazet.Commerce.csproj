@@ -197,6 +197,7 @@
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryManager.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryTypeSelection.cshtml" />
+    <None Include="Views\HierarchyTerritoriesAdmin\CreateTerritory.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\Index.cshtml" />
     <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />
     <None Include="Views\Parts\WishListsActions.cshtml" />
