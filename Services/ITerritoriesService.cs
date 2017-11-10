@@ -102,5 +102,14 @@ namespace Nwazet.Commerce.Services {
         /// argument is null or has a null underlying record.</exception>
         IContentQuery<TerritoryPart, TerritoryPartRecord> GetTerritoriesQuery(TerritoryHierarchyPart hierarchyPart, TerritoryPart territoryPart, VersionOptions versionOptions);
 
+        /// <summary>
+        /// Fetch a list of the TerritoryInternalRecords that do not yet have a corresponding ContentItem
+        /// in the hierarchy that we are processing.
+        /// </summary>
+        /// <param name="hierarchy">The hierarchy we are working on.</param>
+        /// <returns>An IEnumerable of the TerritoryInternalRecord that have not yet been used in the current hierarchy.</returns>
+        /// <exception cref="ArgumentNullException">Throws an ArgumentNullException if the TerritoryHierarchyPart
+        /// argument is null or has a null underlying record.</exception>
+        IEnumerable<TerritoryInternalRecord> GetAvailableTerritoryInternals(TerritoryHierarchyPart hierarchyPart);
     }
 }

@@ -13,7 +13,8 @@
 
 <div class="manage">
     @Html.ItemEditLink(T("Back to Hierarchy").Text, hierarchyItem, null, new { @class = "button primaryAction" })
-    @Html.ActionLink(T("Add a Territory").Text,
+    @if (Model.CanAddMoreTerritories) {
+        @Html.ActionLink(T("Add a Territory").Text,
                 "CreateTerritory",
                 new {
                     Area = "Nwazet.Commerce",
@@ -22,4 +23,5 @@
                     hierarchyId = hierarchyItem.Id
                 },
                 new { @class = "button primaryAction" })
+    }
 </div>

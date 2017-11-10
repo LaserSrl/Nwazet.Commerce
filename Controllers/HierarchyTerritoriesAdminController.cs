@@ -32,6 +32,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IWorkContextAccessor _workContextAccessor;
         private readonly RouteCollection _routeCollection;
         private readonly ITerritoriesHierarchyService _territoriesHierarchyService;
+        private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
 
         public HierarchyTerritoriesAdminController(
             IContentManager contentManager,
@@ -40,7 +41,8 @@ namespace Nwazet.Commerce.Controllers {
             IAuthorizer authorizer,
             IWorkContextAccessor workContextAccessor,
             RouteCollection routeCollection,
-            ITerritoriesHierarchyService territoriesHierarchyService) {
+            ITerritoriesHierarchyService territoriesHierarchyService,
+            ITerritoriesRepositoryService territoriesRepositoryService) {
 
             _contentManager = contentManager;
             _contentDefinitionManager = contentDefinitionManager;
@@ -49,12 +51,12 @@ namespace Nwazet.Commerce.Controllers {
             _workContextAccessor = workContextAccessor;
             _routeCollection = routeCollection;
             _territoriesHierarchyService = territoriesHierarchyService;
+            _territoriesRepositoryService = territoriesRepositoryService;
 
             T = NullLocalizer.Instance;
 
             _allowedTerritoryTypes = new Lazy<IEnumerable<ContentTypeDefinition>>(GetAllowedTerritoryTypes);
             _allowedHierarchyTypes = new Lazy<IEnumerable<ContentTypeDefinition>>(GetAllowedHierarchyTypes);
-
         }
 
         public Localizer T;
@@ -79,7 +81,13 @@ namespace Nwazet.Commerce.Controllers {
             var model = new TerritoryHierarchyTerritoriesViewModel {
                 HierarchyPart = hierarchyPart,
                 HierarchyItem = hierarchyItem,
-                Nodes = firstLevelOfHierarchy.Select(MakeANode).ToList()
+                FirstLevelNodes = firstLevelOfHierarchy.Select(MakeANode).ToList(),
+                Nodes = _territoriesService.
+                    GetTerritoriesQuery(hierarchyPart, VersionOptions.Latest)
+                    .List().Select(MakeANode).ToList(),
+                CanAddMoreTerritories = _territoriesService
+                    .GetAvailableTerritoryInternals(hierarchyPart)
+                    .Any()
             };
 
             return View(model);
@@ -109,8 +117,13 @@ namespace Nwazet.Commerce.Controllers {
                 return RedirectToAction("Index");
             }
 
-            // TODO: There must be "unused" TerritoryInternalRecords for this hierarchy.
+            // There must be "unused" TerritoryInternalRecords for this hierarchy.
+            if (_territoriesService
+                .GetAvailableTerritoryInternals(hierarchyPart)
+                .Any()) {
 
+
+            }
             // Creation
             var territoryItem = _contentManager.New(id);
             // Cannot insert Territory in the Hierarchy here, because its records do not exist yet.
@@ -172,7 +185,7 @@ namespace Nwazet.Commerce.Controllers {
         /// <summary>
         /// This method gets all the territory types the current user is allowed to manage.
         /// </summary>
-        /// <returns>Returns the types the user is allwoed to manage. Returns null if the user lacks the correct 
+        /// <returns>Returns the types the user is allowed to manage. Returns null if the user lacks the correct 
         /// permissions to be invoking these actions.</returns>
         private IEnumerable<ContentTypeDefinition> GetAllowedTerritoryTypes() {
             var allowedTypes = _territoriesService.GetTerritoryTypes();

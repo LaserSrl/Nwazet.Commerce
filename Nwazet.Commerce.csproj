@@ -246,6 +246,7 @@
     <Compile Include="Drivers\ProductSettingsPartDriver.cs" />
     <Compile Include="Drivers\ProductsListPartDriver.cs" />
     <Compile Include="Drivers\TerritoryHierarchyPartDriver.cs" />
+    <Compile Include="Drivers\TerritoryPartDriver.cs" />
     <Compile Include="Drivers\WishListItemPartDriver.cs" />
     <Compile Include="Drivers\WishListListPartDriver.cs" />
     <Compile Include="Drivers\ZipCodeTaxPartDriver.cs" />

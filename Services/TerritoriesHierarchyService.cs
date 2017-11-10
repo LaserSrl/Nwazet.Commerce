@@ -45,6 +45,12 @@ namespace Nwazet.Commerce.Services {
                     T("The ContentType for the Territory ({0}) does not match the expected TerritoryType for the hierarchy ({1})",
                         territoryTypeText, hierarchyTerritoryTypeText).Text);
             }
+            // The territory may come from a different hierarchy
+            if (territory.Record.Hierarchy != null &&
+                territory.Record.Hierarchy.Id != hierarchy.Record.Id) {
+
+
+            }
             // set hierarchy
             territory.Record.Hierarchy = hierarchy.Record;
             // remove parent: This method always puts the territory at the root level of the hierarchy
@@ -77,6 +83,12 @@ namespace Nwazet.Commerce.Services {
             if (parent == null || parent.Record == null) {
                 throw new ArgumentNullException("parent");
             }
+
+            // verify parent != territory
+            if (parent.Record.Id == territory.Record.Id) {
+                throw new InvalidOperationException(T("The parent and child territories cannot be the same.").Text);
+            }
+
             // verify type
             if (territory.ContentItem.ContentType != parent.ContentItem.ContentType) {
                 var territoryTypeText = territory.ContentItem
@@ -97,6 +109,16 @@ namespace Nwazet.Commerce.Services {
             if (parent.Record.Hierarchy.Id != territory.Record.Hierarchy.Id) {
                 throw new ArrayTypeMismatchException(T("The two territories must belong to the same hierarchy.").Text);
             }
+
+            // verify that the assignment would not create a cycle
+            var recordCheck = parent.Record;
+            while (recordCheck.ParentTerritory != null) {
+                if (recordCheck.ParentTerritory.Id == territory.Record.Id) {
+                    throw new InvalidOperationException(T("The parent territory cannot be a leaf of the child.").Text);
+                }
+                recordCheck = recordCheck.ParentTerritory;
+            }
+
             // finally move
             territory.Record.ParentTerritory = parent.Record;
         }

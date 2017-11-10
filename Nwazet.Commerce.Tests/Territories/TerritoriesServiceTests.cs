@@ -317,19 +317,22 @@ namespace Nwazet.Commerce.Tests.Territories {
         public void GetTerritoriesQueryReturnsSameVersionAsHierarchy() {
             List<IContent> hierarchies, territories;
             AddSampleTerritoriesData(out hierarchies, out territories);
-
-            int index = 1;
+            
             foreach (var hierarchy in hierarchies) {
                 var gotten = _territoriesService
                     .GetTerritoriesQuery(hierarchy.As<TerritoryHierarchyPart>())
                     .List();
+                var all = _territoriesService
+                    .GetTerritoriesQuery(hierarchy.As<TerritoryHierarchyPart>(), VersionOptions.Latest)
+                    .List();
+                var publishedTerritories = all.Where(t => t.ContentItem.IsPublished());
 
-                int expectedCount = hierarchy.ContentItem.IsPublished() ?
-                    index / 2:
-                    index;
+                var expectedCount = all.Count();
+                if (hierarchy.ContentItem.IsPublished()) {
+                    expectedCount = publishedTerritories.Count();
+                }
 
                 Assert.That(gotten.Count(), Is.EqualTo(expectedCount));
-                index++;
             }
 
         }

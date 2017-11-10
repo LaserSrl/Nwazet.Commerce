@@ -34,7 +34,7 @@ namespace Nwazet.Commerce.Handlers {
                     part.TerritoryType);
 
             //Lazyfield setters
-            //OnInitializing<TerritoryHierarchyPart>(PropertySetHandlers);
+            OnInitializing<TerritoryHierarchyPart>(PropertySetHandlers);
             OnInitializing<TerritoryHierarchyPart>(LazyLoadHandlers);
             OnLoaded<TerritoryHierarchyPart>((ctx, part) => LazyLoadHandlers(null, part));
 
@@ -57,22 +57,22 @@ namespace Nwazet.Commerce.Handlers {
 
         }
 
-        //static void PropertySetHandlers(
-        //    InitializingContentContext context, TerritoryHierarchyPart part) {
+        static void PropertySetHandlers(
+            InitializingContentContext context, TerritoryHierarchyPart part) {
 
-        //    part.TerritoriesField.Setter(value => {
-        //        var actualItems = value.Where(ci => ci.As<TerritoryPart>() != null);
-        //        part.Record.Territories = actualItems.Any() ? 
-        //            actualItems.Select(ci => ci.As<TerritoryPart>().Record).ToList():
-        //            new List<TerritoryPartRecord>();
-        //        return actualItems;
-        //    });
+            part.TerritoriesField.Setter(value => {
+                var actualItems = value.Where(ci => ci.As<TerritoryPart>() != null);
+                part.Record.Territories = actualItems.Any() ?
+                    actualItems.Select(ci => ci.As<TerritoryPart>().Record).ToList() :
+                    new List<TerritoryPartRecord>();
+                return actualItems;
+            });
 
-        //    //call the setter in case a value had already been set
-        //    if (part.TerritoriesField.Value != null) {
-        //        part.TerritoriesField.Value = part.TerritoriesField.Value;
-        //    }
-        //}
+            //call the setter in case a value had already been set
+            if (part.TerritoriesField.Value != null) {
+                part.TerritoriesField.Value = part.TerritoriesField.Value;
+            }
+        }
 
         void LazyLoadHandlers(
             InitializingContentContext context, TerritoryHierarchyPart part) {
@@ -90,7 +90,8 @@ namespace Nwazet.Commerce.Handlers {
         }
 
         void RemoveTerritoriesInHierarchy(RemoveContentContext context, TerritoryHierarchyPart part) {
-            foreach (var item in part.Territories) {
+            // I need to only invoke this on the first level. Those TerritoryPart will Remove their children.
+            foreach (var item in part.FirstLevel) {
                 _contentManager.Remove(item);
             }
         }

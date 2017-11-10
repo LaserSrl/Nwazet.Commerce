@@ -21,16 +21,19 @@ namespace Nwazet.Commerce.Services {
         private readonly IContentDefinitionManager _contentDefinitionManager;
         private readonly IContentManager _contentManager;
         private readonly IAuthorizer _authorizer;
+        private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
 
         public TerritoriesService(
             IContentDefinitionManager contentDefinitionManager,
             IContentManager contentManager,
-            IAuthorizer authorizer
+            IAuthorizer authorizer,
+            ITerritoriesRepositoryService territoriesRepositoryService
             ) {
             
             _contentDefinitionManager = contentDefinitionManager;
             _contentManager = contentManager;
             _authorizer = authorizer;
+            _territoriesRepositoryService = territoriesRepositoryService;
         }
 
         public IEnumerable<ContentTypeDefinition> GetTerritoryTypes() {
@@ -107,6 +110,25 @@ namespace Nwazet.Commerce.Services {
                 return baseQuery
                     .Where(tpr => tpr.ParentTerritory.Id == territoryPart.Record.Id);
             }
+        }
+
+        private IEnumerable<TerritoryInternalRecord> _availableTerritoryInternals; // cache results of following method
+        public IEnumerable<TerritoryInternalRecord> GetAvailableTerritoryInternals(TerritoryHierarchyPart hierarchyPart) {
+            if (hierarchyPart == null || hierarchyPart.Record == null) {
+                throw new ArgumentNullException("hierarchyPart");
+            }
+            if (_availableTerritoryInternals == null) {
+                _availableTerritoryInternals = _territoriesRepositoryService
+                    .GetTerritories()
+                    .Except(hierarchyPart
+                        .Territories
+                        .Select(ci => ci.As<TerritoryPart>()
+                            .Record
+                            .TerritoryInternalRecord
+                        )
+                    );
+            }
+            return _availableTerritoryInternals;
         }
     }
 }

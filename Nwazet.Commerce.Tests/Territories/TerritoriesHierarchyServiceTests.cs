@@ -233,11 +233,27 @@ namespace Nwazet.Commerce.Tests.Territories {
             _territoriesHierarchyService.AddTerritory(territory, hierarchy, parent);
             Assert.That(territory.Record.Hierarchy.Id, Is.EqualTo(hierarchy.Record.Id));
             
-            // This only works if the 1-to-n relationship in the db works
+            // This only works if the 1-to-n relationship in the db works also on test environment
             _territoriesHierarchyService.AddTerritory(parent, otherHierarchy);
             Assert.That(parent.Record.Hierarchy.Id, Is.EqualTo(otherHierarchy.Record.Id));
             Assert.That(territory.Record.Hierarchy.Id, Is.EqualTo(otherHierarchy.Record.Id));
             Assert.That(territory.Record.ParentTerritory.Id, Is.EqualTo(parent.Record.Id));
+        }
+
+        [Test]
+        public void AddTerritoryMovesBetweenHierarchies() {
+            // verify that we can move a territory from one hierarchy to another
+        }
+
+        [Test]
+        public void AddTerritoryInTheSameHierarchyDoesNotFail() {
+            // verify that we can call AddTerritory twice for the same territory and hierachy
+        }
+
+        [Test]
+        public void AddTerritoryMovesBetweenHierarchiesOnlyIfInternalRecordsAllowIt() {
+            // when using AddTerritory to move from one hierarchy to another, we must ensure that
+            // we do not have duplicate TerritoryInternalRecords.
         }
 
         [Test]
@@ -258,22 +274,126 @@ namespace Nwazet.Commerce.Tests.Territories {
         [Test]
         public void AssignParentThrowsTheExpectedArgumentNullExceptions() {
             // 1. territory is null
+            var parent = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            Assert.Throws<ArgumentNullException>(() => 
+                _territoriesHierarchyService.AssignParent(null, parent));
             // 2. territory.Record is null
+            var territory = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            territory.Record = null;
+            Assert.Throws<ArgumentNullException>(() =>
+                _territoriesHierarchyService.AssignParent(territory, parent));
             // 3. parent is null
+            territory = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            Assert.Throws<ArgumentNullException>(() =>
+                _territoriesHierarchyService.AssignParent(territory, null));
             // 4. parent.Record is null
+            parent.Record = null;
+            Assert.Throws<ArgumentNullException>(() =>
+                _territoriesHierarchyService.AssignParent(territory, parent));
             // 5. territory.Record.Hierarchy is null
+            var hierarchy = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
+            parent = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            _territoriesHierarchyService.AddTerritory(parent, hierarchy);
+            Assert.Throws<ArgumentNullException>(() =>
+                _territoriesHierarchyService.AssignParent(territory, parent));
             // 6. parent.Record.Hierachy is null
+            _territoriesHierarchyService.AddTerritory(territory, hierarchy);
+            parent = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            Assert.Throws<ArgumentNullException>(() =>
+                _territoriesHierarchyService.AssignParent(territory, parent));
+
+            // Sanity check
+            parent = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            territory = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            _territoriesHierarchyService.AddTerritory(parent, hierarchy);
+            _territoriesHierarchyService.AddTerritory(territory, hierarchy);
+            _territoriesHierarchyService.AssignParent(territory, parent);
+            Assert.That(territory.Record.ParentTerritory.Id, Is.EqualTo(parent.Record.Id));
         }
 
         [Test]
         public void AssignParentThrowsTheExpectedMismatchExceptions() {
             // 1. the ContentType of territory and parent do not match
+            var parent = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            var territory = _contentManager.Create<TerritoryPart>("TerritoryType1");
+            Assert.Throws<ArrayTypeMismatchException>(() =>
+                _territoriesHierarchyService.AssignParent(territory, parent));
             // 2. territory and parent belong to different hierarchies
+            territory = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            var hierarchy1 = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
+            var hierarchy2 = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
+            _territoriesHierarchyService.AddTerritory(parent, hierarchy1);
+            _territoriesHierarchyService.AddTerritory(territory, hierarchy2);
+            Assert.Throws<ArrayTypeMismatchException>(() =>
+                _territoriesHierarchyService.AssignParent(territory, parent));
+        }
+
+        [Test]
+        public void AssignParentThrowsInvalidOperationExceptionsForEqualTerritories() {
+            var hierarchy = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
+            // 1. parent == child
+            var parent = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            _territoriesHierarchyService.AddTerritory(parent, hierarchy);
+            Assert.Throws<InvalidOperationException>(() =>
+                _territoriesHierarchyService.AssignParent(parent, parent));
+        }
+
+        [Test]
+        public void AssignParentThrowsInvalidOperationExceptionsForAttemptedRecursion() {
+            var hierarchy = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
+            // parent is in a branch off the child
+            var T0 = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            _territoriesHierarchyService.AddTerritory(T0, hierarchy);
+            // 1. Immediate child
+            var T1 = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            _territoriesHierarchyService.AddTerritory(T1, hierarchy, T0);
+            Assert.Throws<InvalidOperationException>(() =>
+                _territoriesHierarchyService.AssignParent(T0, T1));
+            // Add a bunch of levels
+            for (int i = 0; i < 5; i++) {
+                var TX = _contentManager.Create<TerritoryPart>("TerritoryType0");
+                _territoriesHierarchyService.AddTerritory(TX, hierarchy, T1);
+                T1 = TX;
+            }
+            // 2. Parent is deeper down
+            Assert.Throws<InvalidOperationException>(() =>
+                _territoriesHierarchyService.AssignParent(T0, T1));
         }
 
         [Test]
         public void AssignParentMovesTerritoryCorrectly() {
             // try both a territory from the root level and one that had a parent already
+            var hierarchy = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
+            // Initial Hierarchy:
+            // - T1
+            // - - T2
+            // - T3
+            var T1 = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            var T2 = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            var T3 = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            _territoriesHierarchyService.AddTerritory(T1, hierarchy);
+            _territoriesHierarchyService.AddTerritory(T2, hierarchy, T1);
+            _territoriesHierarchyService.AddTerritory(T3, hierarchy);
+            // sanity check: verify hierarchy
+            var startingConditionOK = T1.Record.Hierarchy.Id == hierarchy.Record.Id &&
+                T2.Record.Hierarchy.Id == hierarchy.Record.Id &&
+                T3.Record.Hierarchy.Id == hierarchy.Record.Id &&
+                T1.Record.ParentTerritory == null &&
+                T2.Record.ParentTerritory.Id == T1.Record.Id &&
+                T3.Record.ParentTerritory == null;
+            Assert.That(startingConditionOK);
+            // Move T3 under T1
+            _territoriesHierarchyService.AssignParent(T3, T1);
+            var verify = T1.Record.ParentTerritory == null && // T1 has not moved
+                T2.Record.ParentTerritory.Id == T1.Record.Id && // T2 has not moved
+                T3.Record.ParentTerritory.Id == T1.Record.Id;
+            Assert.That(verify);
+            // Move T2 under T3
+            _territoriesHierarchyService.AssignParent(T2, T3);
+            verify = T1.Record.ParentTerritory == null && // T1 has not moved
+                T2.Record.ParentTerritory.Id == T3.Record.Id && 
+                T3.Record.ParentTerritory.Id == T1.Record.Id; // T3 has not moved
+            Assert.That(verify);
         }
 
         [Test]
