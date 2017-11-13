@@ -35,6 +35,7 @@
   <Place Parts_TerritoryHierarchy_SummaryAdmin="-"/>
   <Place Parts_TerritoryHierarchy_TerritoryManager="Content:2.1"/>
   <Place Parts_TerritoryHierarchy_TerritoryTypeSelection="Content:2.2"/>
+  <Place Parts_TerritoryPart_Creation="Content:2.1"/>
   <Match DisplayType="SummaryAdmin">
     <Place Parts_Product="Content:2;Alternate=ProductSummaryAdmin"/>
     <Place Parts_Product_AddButton="-"/>

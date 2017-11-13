@@ -11,17 +11,17 @@ using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Security {
     [OrchardFeature("Territories")]
-    public class HierachiesAuthorizationEventHandler : IAuthorizationServiceEventHandler {
+    public class TerritoriesAuthorizationEventHandler : IAuthorizationServiceEventHandler {
         public void Adjust(CheckAccessContext context) {
             if (!context.Granted &&
-                context.Content.Is<TerritoryHierarchyPart>()) {
+                context.Content.Is<TerritoryPart>()) {
 
                 var typeDefinition = context.Content.ContentItem.TypeDefinition;
                 //replace permission if there is one specific for the content type
-                if (typeDefinition.Parts.Any(ctpd => ctpd.PartDefinition.Name == TerritoryHierarchyPart.PartName) &&
-                    context.Permission == TerritoriesPermissions.ManageTerritoryHierarchies) {
+                if (typeDefinition.Parts.Any(ctpd => ctpd.PartDefinition.Name == TerritoryPart.PartName) &&
+                    context.Permission == TerritoriesPermissions.ManageTerritories) {
                     context.Adjusted = true;
-                    context.Permission = TerritoriesPermissions.GetHierarchyPermission(typeDefinition);
+                    context.Permission = TerritoriesPermissions.GetTerritoryPermission(typeDefinition);
                 }
             }
         }

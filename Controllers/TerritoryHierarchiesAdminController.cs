@@ -216,7 +216,8 @@ namespace Nwazet.Commerce.Controllers {
                         ? T("Your content has been created.")
                         : T("Your {0} has been created.", item.TypeDefinition.DisplayName));
 
-                    return this.RedirectLocal(returnUrl, () => RedirectToAction("EditHierarchy", new RouteValueDictionary { { "Id", item.Id } }));
+                    return this.RedirectLocal(returnUrl, () => 
+                        RedirectToAction("EditHierarchy", new RouteValueDictionary { { "Id", item.Id } }));
                 }
             });
         }
@@ -250,7 +251,7 @@ namespace Nwazet.Commerce.Controllers {
             if (!_authorizer.Authorize(Orchard.Core.Contents.Permissions.EditContent, hierarchyItem, TerritoriesUtilities.Edit401HierarchyMessage))
                 return new HttpUnauthorizedResult();
 
-            //We should have filtered out the cases where we cannot or should not be editing the new item here
+            //We should have filtered out the cases where we cannot or should not be editing the item here
             var model = _contentManager.BuildEditor(hierarchyItem);
             return View(model);
         }
