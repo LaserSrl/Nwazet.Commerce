@@ -24,22 +24,26 @@ namespace Nwazet.Commerce.Models {
         //    get { return _children.Value; }
         //    // no setter, because this is "filled" thanks to a 1-to-n relationship to TerritoryPartRecords
         //}
-        
+
         //public IEnumerable<ContentItem> FirstLevel {
         //    get { return Children
         //            .Where(ci => ci.As<TerritoryPart>().Record.ParentTerritory.Id == this.Record.Id); }
         //}
 
-        //private readonly LazyField<ContentItem> _hierarchy =
-        //    new LazyField<ContentItem>();
+        private readonly LazyField<ContentItem> _hierarchy =
+            new LazyField<ContentItem>();
 
-        //public LazyField<ContentItem> HierarchyField {
-        //    get { return _hierarchy; }
-        //}
+        public LazyField<ContentItem> HierarchyField {
+            get { return _hierarchy; }
+        }
 
-        //public ContentItem Hierarchy {
-        //    get { return _hierarchy.Value; }
-        //}
+        public ContentItem Hierarchy {
+            get { return _hierarchy.Value; }
+        }
+
+        public TerritoryHierarchyPart HierarchyPart {
+            get { return Hierarchy?.As<TerritoryHierarchyPart>(); }
+        }
 
         //private readonly LazyField<ContentItem> _parent =
         //    new LazyField<ContentItem>();

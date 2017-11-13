@@ -47,7 +47,7 @@ namespace Nwazet.Commerce.Drivers {
             
             var shapes = new List<DriverResult>();
             //part.id == 0: new item
-            if (part.Id == 0) {
+            if (part.Id == 0 || part.Record.Hierarchy == null) {
                 shapes.AddRange(CreationEditor(part, shapeHelper));
             } else {
                 shapes.AddRange(ProperEditor(part, shapeHelper));
@@ -118,14 +118,38 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         private void InvalidHierarchyNotification(LocalizedString detail) {
-            _notifier.Error(T("Impossible to identify a valid Hierarchy for this territory. {0} will fail.", detail));
+            _notifier.Error(InvalidHierarchyErrorMessage(detail));
+        }
+
+        private LocalizedString InvalidHierarchyErrorMessage(LocalizedString detail = null) {
+            if (detail != null) {
+                return T("Impossible to identify a valid Hierarchy for this territory. {0} will fail.", detail);
+            }
+            return T("Impossible to identify a valid Hierarchy for this territory.");
         }
 
         protected override DriverResult Editor(TerritoryPart part, IUpdateModel updater, dynamic shapeHelper) {
 
             var viewModel = new TerritoryPartViewModel();
             if (updater.TryUpdateModel(viewModel, Prefix, null, null)) {
-                //var avalaibleInternals = _territoriesService.GetAvailableTerritoryInternals();
+                var hierarchy = part.HierarchyPart;
+                if (hierarchy == null) {
+                    int hierarchyId;
+                    if (!TryValidateCreationContext(out hierarchyId)) {
+                        hierarchyId = 0;
+                    }
+                    hierarchy = _contentManager.Get<TerritoryHierarchyPart>(hierarchyId);
+                }
+                if (hierarchy == null) {
+                    updater.AddModelError("Hierarchy", InvalidHierarchyErrorMessage());
+                } else {
+                    var avalaibleInternals = _territoriesService.GetAvailableTerritoryInternals(hierarchy);
+                    int selectedId;
+                    if (int.TryParse(viewModel.SelectedRecordId, out selectedId)) { //TODO: fix this
+                        part.Record.TerritoryInternalRecord = avalaibleInternals.First(tir => tir.Id == selectedId);
+                    }
+                }
+
             }
 
             return Editor(part, shapeHelper);
@@ -142,7 +166,7 @@ namespace Nwazet.Commerce.Drivers {
                 routeValues["area"].ToString().Equals("Nwazet.Commerce", StringComparison.OrdinalIgnoreCase) &&
                 routeValues["controller"].ToString().Equals("HierarchyTerritoriesAdmin", StringComparison.OrdinalIgnoreCase) &&
                 routeValues["action"].ToString().Equals("CreateTerritory", StringComparison.OrdinalIgnoreCase) &&
-                request.QueryString.AllKeys.Contains("hierarchyId")) {
+                request.QueryString.AllKeys.Any(k => k.Equals("hierarchyId", StringComparison.OrdinalIgnoreCase))) {
 
                 if (int.TryParse(request.QueryString["hierarchyId"], out hierarchyId)) {
                     return true;

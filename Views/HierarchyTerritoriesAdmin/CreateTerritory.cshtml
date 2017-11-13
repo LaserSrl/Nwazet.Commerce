@@ -17,6 +17,7 @@
 @using (Html.BeginFormAntiForgeryPost(
                 Url.Action("CreateTerritory",
                     new {
+                        HierarchyId = hierarchyItem.Record.Id.ToString(),
                         ReturnUrl = Request.QueryString["ReturnUrl"]
                     }),
                         FormMethod.Post,

@@ -187,10 +187,13 @@ namespace Nwazet.Commerce.Controllers {
 
                     if (!ModelState.IsValid) {
                         _transactionManager.Cancel();
-                        return View(model);
+                        return View(model.Hierarchy(_contentManager.Get(hierarchyId)));
                     }
 
                     var territoryPart = item.As<TerritoryPart>();
+                    var hierachyPart = _contentManager.Get<TerritoryHierarchyPart>(hierarchyId);
+
+                    _territoriesHierarchyService.AddTerritory(territoryPart, hierachyPart);
 
                     conditionallyPublish(item);
 
