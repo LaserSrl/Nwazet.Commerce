@@ -49,32 +49,6 @@ namespace Nwazet.Commerce.Services {
         void AssignParent(TerritoryPart territory, TerritoryPart parent);
 
         /// <summary>
-        /// Assigns the territory to the hierarchy, under the specified parent, and also assigns
-        /// all child-territories to the hierarchy. This method will fail if the ContentItem
-        /// for the TerritoryPart is not of a type corresponding to the one allowed for the
-        /// hierarchy. This method allows moving a territory between two hierarchies, as long as
-        /// there is no mismatch between territory types.
-        /// </summary>
-        /// <param name="territory">The territory being assigned to the hierarchy.</param>
-        /// <param name="hierarchy">The hierarchy the territory is being assigned to.</param>
-        /// <param name="parent">The parent territory. If the parent is null, the territory will be
-        /// positioned at the root level of the hierarchy.</param>
-        /// <remarks>Using this method should be faster than calling AddTerritory(...) followed by 
-        /// AssignParent(...), because several checks may be skipped.</remarks>
-        /// <exception cref="ArrayTypeMismatchException">Throws an ArrayTypeMismatchException
-        /// if the type for the territory does not match the TerritoryType expected for the 
-        /// hierarchy.</exception>
-        /// <exception cref="ArrayTypeMismatchException">Throws an ArrayTypeMismatchException
-        /// if the parent belongs to a different hierarchy.</exception>
-        /// <exception cref="ArgumentNullException">Throws an ArgumentNullException if either
-        /// of the arguments is null or has a null underlying record.</exception>
-        /// <exception cref="InvalidOperationException">Throws an InvalidOperationException
-        /// when trying to add a territory that has an assigned TerritoryInternalRecord that is
-        /// already present in the hierarchy, or if a child of the territory has such assigned
-        /// TerritoryInternalRecord.</exception>
-        void AddTerritory(TerritoryPart territory, TerritoryHierarchyPart hierarchy, TerritoryPart parent);
-
-        /// <summary>
         /// Assigns the TerritoryInternalRecord identified by the Name given as argument as underlying
         /// territory for the TerritoryPart.
         /// </summary>

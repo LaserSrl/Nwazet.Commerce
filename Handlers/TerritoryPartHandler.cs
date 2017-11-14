@@ -19,6 +19,8 @@ namespace Nwazet.Commerce.Handlers {
             IRepository<TerritoryPartRecord> repository,
             IContentManager contentManager) {
 
+            _contentManager = contentManager;
+
             Filters.Add(StorageFilter.For(repository));
 
             ////Lazyfield setters
@@ -69,7 +71,7 @@ namespace Nwazet.Commerce.Handlers {
                 if (part.Record.Children != null && part.Record.Children.Any()) {
                     return _contentManager
                         .GetMany<ContentItem>(part.Record.Children.Select(tpr => tpr.ContentItemRecord.Id),
-                            VersionOptions.Latest, null);
+                            VersionOptions.Latest, QueryHints.Empty);
                 } else {
                     return Enumerable.Empty<ContentItem>();
                 }
@@ -79,7 +81,7 @@ namespace Nwazet.Commerce.Handlers {
                 if (part.Record.Hierarchy != null) {
                     return _contentManager
                         .Get<ContentItem>(part.Record.Hierarchy.Id,
-                            VersionOptions.Latest, null);
+                            VersionOptions.Latest, QueryHints.Empty);
                 } else {
                     return null;
                 }
@@ -90,7 +92,7 @@ namespace Nwazet.Commerce.Handlers {
                 if (part.Record.ParentTerritory != null) {
                     return _contentManager
                         .Get<ContentItem>(part.Record.ParentTerritory.Id,
-                            VersionOptions.Latest, null);
+                            VersionOptions.Latest, QueryHints.Empty);
                 } else {
                     return null;
                 }

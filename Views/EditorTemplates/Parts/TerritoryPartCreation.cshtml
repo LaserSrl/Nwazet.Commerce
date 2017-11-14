@@ -3,9 +3,14 @@
 
 <div>
     @if (Model.AvailableTerritoryInternalRecords.Any()) {
-        @Html.DropDownListFor(m => m.SelectedRecordId, Model.ListRecords())
-        <label for="@Html.FieldIdFor(m => m.SelectedRecordId)" class="forcheckbox">
-            @T("Select the unique territory identifier.")
-        </label>
+        <fieldset>
+            <label for="@Html.FieldIdFor(m => m.SelectedRecordId)" class="required">
+                @T("Territory identity")
+            </label>
+            @Html.DropDownListFor(m => m.SelectedRecordId, Model.ListRecords())
+            <span for="@Html.FieldIdFor(m => m.SelectedRecordId)" class="hint forcheckbox">
+                @T("Select the unique territory identifier.")
+            </span>
+        </fieldset>
     }
 </div>

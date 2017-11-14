@@ -3,9 +3,34 @@
 
 <div>
     @if (Model.AvailableTerritoryInternalRecords.Any()) {
-        @Html.DropDownListFor(m => m.SelectedRecordId, Model.ListRecords())
-        <label for="@Html.FieldIdFor(m => m.SelectedRecordId)" class="forcheckbox">
-            @T("Select the unique territory identifier. Be mindful of the relations in the hierarchy when changing this.")
-        </label>
+        <fieldset>
+            <label for="@Html.FieldIdFor(m => m.SelectedRecordId)" class="required">
+                @T("Territory identity")
+            </label>            
+            @if (Model.AvailableTerritoryInternalRecords.Count() == 1) {
+                @Html.HiddenFor(m => m.SelectedRecordId)
+                <span>
+                    @T("This territory has identity \"{0}\".", Model.AvailableTerritoryInternalRecords.First().Name)
+                </span>
+            } else {
+                @Html.DropDownListFor(m => m.SelectedRecordId, Model.ListRecords())
+                <span for="@Html.FieldIdFor(m => m.SelectedRecordId)" class="hint forcheckbox">
+                    @T("Select the unique territory identifier. Be mindful of the relations in the hierarchy when changing this.")
+                </span>
+            }
+            @if (Model.Parent != null) {
+                var parentMeta = Model.Parent.ContentItem.ContentManager.GetItemMetadata(Model.Parent);
+                var parentTitle = parentMeta.DisplayText;
+                <div>
+                    @T("This is a child of ")@Html.ItemEditLinkWithReturnUrl(T("\"{0}\"", parentTitle).Text, Model.Parent.ContentItem)@T(".")
+                </div>
+            }
+            @if (Model.Part.Children != null) {
+                <div>
+                    @T("This territory has {0} children.", Model.Part.Children.Count().ToString())
+                </div>
+            }
+        </fieldset>
     }
 </div>
+

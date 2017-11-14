@@ -40,6 +40,7 @@
     
 </div>
 @using (Html.BeginFormAntiForgeryPost()) {
+    @Html.Hidden("hierarchyId", Model.HierarchyPart.Record.Id)
     <div class="sections">
         <div class="primary">
             <div class="container">

@@ -48,7 +48,7 @@ namespace Nwazet.Commerce.Services {
             // The territory may come from a different hierarchy
             if (territory.Record.Hierarchy != null &&
                 territory.Record.Hierarchy.Id != hierarchy.Record.Id) {
-
+                //TODO
 
             }
             // set hierarchy
@@ -59,21 +59,6 @@ namespace Nwazet.Commerce.Services {
             foreach (var childRecord in territory.Record.Children) {
                 childRecord.Hierarchy = hierarchy.Record;
             }
-        }
-
-        public void AddTerritory(TerritoryPart territory, TerritoryHierarchyPart hierarchy, TerritoryPart parent) {
-            if (parent == null || parent.Record == null) {
-                throw new ArgumentNullException("parent");
-            }
-            if (parent.Record.Hierarchy == null) {
-                throw new ArgumentNullException("parent", T("The hierarchy for the Territory must not be null.").Text);
-            }
-            if (parent.Record.Hierarchy.Id != hierarchy.Record.Id) {
-                throw new ArrayTypeMismatchException(T("The two territories must belong to the same hierarchy.").Text);
-            }
-            AddTerritory(territory, hierarchy);
-            // finally move
-            territory.Record.ParentTerritory = parent.Record;
         }
 
         public void AssignParent(TerritoryPart territory, TerritoryPart parent) {

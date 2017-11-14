@@ -6,12 +6,14 @@ using Nwazet.Commerce.ViewModels;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Aspects;
+using Orchard.ContentManagement.Handlers;
 using Orchard.ContentManagement.MetaData;
 using Orchard.ContentManagement.MetaData.Models;
 using Orchard.Core.Contents.Settings;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
+using Orchard.Logging;
 using Orchard.Mvc.Extensions;
 using Orchard.Security;
 using Orchard.Security.Permissions;
@@ -41,6 +43,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
         private readonly ITransactionManager _transactionManager;
         private readonly INotifier _notifier;
+        private readonly IEnumerable<IContentHandler> _handlers;
 
         public HierarchyTerritoriesAdminController(
             IContentManager contentManager,
@@ -52,7 +55,8 @@ namespace Nwazet.Commerce.Controllers {
             ITerritoriesHierarchyService territoriesHierarchyService,
             ITerritoriesRepositoryService territoriesRepositoryService,
             ITransactionManager transactionManager,
-            INotifier notifier) {
+            INotifier notifier,
+            IEnumerable<IContentHandler> handlers) {
 
             _contentManager = contentManager;
             _contentDefinitionManager = contentDefinitionManager;
@@ -64,14 +68,17 @@ namespace Nwazet.Commerce.Controllers {
             _territoriesRepositoryService = territoriesRepositoryService;
             _transactionManager = transactionManager;
             _notifier = notifier;
+            _handlers = handlers;
 
             T = NullLocalizer.Instance;
+            Logger = NullLogger.Instance;
 
             _allowedTerritoryTypes = new Lazy<IEnumerable<ContentTypeDefinition>>(GetAllowedTerritoryTypes);
             _allowedHierarchyTypes = new Lazy<IEnumerable<ContentTypeDefinition>>(GetAllowedHierarchyTypes);
         }
 
         public Localizer T;
+        public ILogger Logger { get; set; }
 
         [HttpGet]
         public ActionResult Index(int id) {
@@ -104,6 +111,57 @@ namespace Nwazet.Commerce.Controllers {
 
             return View(model);
         }
+
+        [HttpPost, ActionName("Index")]
+        public ActionResult IndexPost(IList<TerritoryHierarchyTreeNode> nodes, int? hierarchyId) {
+            ActionResult redirectTo = HttpNotFound();
+            if (!hierarchyId.HasValue || ShouldRedirectForPermissions(hierarchyId.Value, out redirectTo)) {
+                return redirectTo;
+            }
+            var hierarchy = _contentManager.Get(hierarchyId.Value, VersionOptions.Latest);
+            var hierarchyPart = hierarchy.As<TerritoryHierarchyPart>();
+
+            if (nodes != null) {
+                foreach (var node in nodes) {
+                    // The only fields we receive as populated for the nodes are:
+                    //  - node.Id: the Id of the ContentItem for the TerritoryPart
+                    //  - node.ParentId: the Id of the Parent assigned to that node
+                    var territoryPart = _contentManager.Get<TerritoryPart>(node.Id, VersionOptions.Latest);
+                    try {
+                        if (node.ParentId == 0) {
+                            if (territoryPart.Parent != null) { // do not update if there was no change
+                                // moved from a parent up to the root
+                                UpdateTerritoryPosition(territoryPart, hierarchyPart);
+                            }
+                        } else {
+                            if (territoryPart.Parent == null || // the territory was at root
+                                territoryPart.Parent.Record.Id != node.ParentId) { // the territory had a different parent
+                                var parentPart = _contentManager.Get<TerritoryPart>(node.ParentId, VersionOptions.Latest);
+                                UpdateTerritoryPosition(territoryPart, hierarchyPart, parentPart);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        AddModelError("Hierarchy", ex.Message);
+                    }
+                }
+            }
+
+            return RedirectToAction("Index", new { hierarchyId.Value });
+        }
+
+        private void UpdateTerritoryPosition(
+            TerritoryPart territoryPart, TerritoryHierarchyPart hierarchyPart, TerritoryPart parentPart = null) {
+
+            var context = new UpdateContentContext(territoryPart.ContentItem);
+            _handlers.Invoke(handler => handler.Updating(context), Logger);
+            if (parentPart == null) {
+                _territoriesHierarchyService.AddTerritory(territoryPart, hierarchyPart); // move to root
+            } else {
+                _territoriesHierarchyService.AssignParent(territoryPart, parentPart);
+            }
+            _handlers.Invoke(handler => handler.Updated(context), Logger);
+        }
+        
 
         #region Create
         [HttpGet]
@@ -234,6 +292,60 @@ namespace Nwazet.Commerce.Controllers {
             var model = _contentManager.BuildEditor(territoryItem);
             return View(model);
         }
+
+        [HttpPost, ActionName("EditTerritory")]
+        [Orchard.Mvc.FormValueRequired("submit.Save")]
+        public ActionResult EditHierarchyPost(int id, string returnUrl) {
+            return EditTerritoryPost(id, returnUrl, contentItem => {
+                if (!contentItem.Has<IPublishingControlAspect>() && 
+                    !contentItem.TypeDefinition.Settings.GetModel<ContentTypeSettings>().Draftable)
+                    _contentManager.Publish(contentItem);
+            });
+        }
+
+        [HttpPost, ActionName("EditTerritory")]
+        [Orchard.Mvc.FormValueRequired("submit.Publish")]
+        public ActionResult EditAndPublishHierarchyPost(int id, string returnUrl) {
+            var content = _contentManager.Get(id, VersionOptions.Latest);
+
+            if (content == null)
+                return HttpNotFound();
+
+            if (!_authorizer.Authorize(
+                Orchard.Core.Contents.Permissions.PublishContent, content, TerritoriesUtilities.Edit401TerritoryMessage))
+                return new HttpUnauthorizedResult();
+
+            return EditTerritoryPost(id, returnUrl, contentItem => _contentManager.Publish(contentItem));
+        }
+
+        private ActionResult EditTerritoryPost(
+            int id, string returnUrl, Action<ContentItem> conditionallyPublish) {
+            var territoryItem = _contentManager.Get(id, VersionOptions.DraftRequired);
+            return ExecuteTerritoryPost(new TerritoryExecutionContext {
+                HierarchyItem = territoryItem.As<TerritoryPart>().Hierarchy,
+                TerritoryItem = territoryItem,
+                Message = TerritoriesUtilities.Edit401TerritoryMessage,
+                AdditionalPermissions = new Permission[] { Orchard.Core.Contents.Permissions.EditContent },
+                ExecutionAction = item => {
+                    var model = _contentManager.UpdateEditor(item, this);
+
+                    if (!ModelState.IsValid) {
+                        _transactionManager.Cancel();
+                        return View(model);
+                    }
+
+                    conditionallyPublish(item);
+
+                    _notifier.Information(string.IsNullOrWhiteSpace(item.TypeDefinition.DisplayName)
+                        ? T("Your content has been created.")
+                        : T("Your {0} has been created.", item.TypeDefinition.DisplayName));
+
+                    return this.RedirectLocal(returnUrl, () =>
+                        RedirectToAction("EditTerritory",
+                            new RouteValueDictionary { { "Id", item.Id } }));
+                }
+            });
+        }
         #endregion
 
         private ActionResult ExecuteTerritoryPost(
@@ -354,7 +466,7 @@ namespace Nwazet.Commerce.Controllers {
                 TerritoryItem = territoryPart.ContentItem,
                 ParentId = territoryPart.Record.ParentTerritory == null ? 0 : territoryPart.Record.ParentTerritory.Id,
                 EditUrl = _routeCollection.GetVirtualPath(requestContext, metadata.EditorRouteValues).VirtualPath,
-                DisplayText = metadata.DisplayText
+                DisplayText = metadata.DisplayText + (!territoryPart.ContentItem.IsPublished() ? T(" (draft)").Text : string.Empty)
             };
         }
         
