@@ -81,7 +81,7 @@ namespace Nwazet.Commerce.Handlers {
                 if (part.Record.Territories != null && part.Record.Territories.Any()) {
                     return _contentManager
                         .GetMany<ContentItem>(part.Record.Territories.Select(tpr => tpr.ContentItemRecord.Id),
-                            VersionOptions.Latest, null);
+                            VersionOptions.Latest, QueryHints.Empty);
                 } else {
                     return Enumerable.Empty<ContentItem>();
                 }

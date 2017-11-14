@@ -146,6 +146,10 @@
       <DependentUpon>inventory.js</DependentUpon>
     </Content>
     <Content Include="Scripts\jquery.iframe-transport.js" />
+    <Content Include="Scripts\jquery.mjs.nestedSortable.js" />
+    <Content Include="Scripts\jquery.mjs.nestedSortable.min.js">
+      <DependentUpon>jquery.mjs.nestedSortable.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\mustache.js" />
     <Content Include="Scripts\order-admin.js" />
     <Content Include="Scripts\order-admin.min.js">
@@ -170,13 +174,22 @@
     <Content Include="Scripts\shoppingcart.min.js">
       <DependentUpon>shoppingcart.js</DependentUpon>
     </Content>
+    <Content Include="Scripts\territory-hierarchies-admin.js" />
+    <Content Include="Scripts\territory-hierarchies-admin.min.js">
+      <DependentUpon>territory-hierarchies-admin.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\wishlists.js" />
     <Content Include="Scripts\wishlists.min.js">
       <DependentUpon>wishlists.js</DependentUpon>
     </Content>
     <Content Include="Styles\bundle.nwazet-commerce-admin.css" />
     <Content Include="Styles\attribute.nwazet-commerce-admin.css" />
+    <Content Include="Styles\images\move.gif" />
     <Content Include="Styles\reports-admin.css" />
+    <Content Include="Styles\territory-hierarchies-admin.css" />
+    <Content Include="Styles\territory-hierarchies-admin.min.css">
+      <DependentUpon>territory-hierarchies-admin.css</DependentUpon>
+    </Content>
     <Content Include="Styles\wishlists.nwazet-commerce.css" />
     <Content Include="Styles\wishlists.nwazet-commerce.min.css">
       <DependentUpon>wishlists.nwazet-commerce.css</DependentUpon>
@@ -198,6 +211,7 @@
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryManager.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryTypeSelection.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryPartCreation.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\TerritoryPartEdit.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\CreateTerritory.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\Index.cshtml" />
     <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />

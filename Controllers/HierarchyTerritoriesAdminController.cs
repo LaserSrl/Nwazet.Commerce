@@ -351,6 +351,8 @@ namespace Nwazet.Commerce.Controllers {
             var requestContext = _workContextAccessor.GetContext().HttpContext.Request.RequestContext;
             return new TerritoryHierarchyTreeNode {
                 Id = territoryPart.ContentItem.Id,
+                TerritoryItem = territoryPart.ContentItem,
+                ParentId = territoryPart.Record.ParentTerritory == null ? 0 : territoryPart.Record.ParentTerritory.Id,
                 EditUrl = _routeCollection.GetVirtualPath(requestContext, metadata.EditorRouteValues).VirtualPath,
                 DisplayText = metadata.DisplayText
             };

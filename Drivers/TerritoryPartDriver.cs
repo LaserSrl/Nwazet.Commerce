@@ -22,17 +22,20 @@ namespace Nwazet.Commerce.Drivers {
         private readonly ITerritoriesService _territoriesService;
         private readonly INotifier _notifier;
         private readonly IContentManager _contentManager;
+        private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
 
         public TerritoryPartDriver(
             IWorkContextAccessor workContextAccessor,
             ITerritoriesService territoriesService,
             INotifier notifier,
-            IContentManager contentManager) {
+            IContentManager contentManager,
+            ITerritoriesRepositoryService territoriesRepositoryService) {
 
             _workContextAccessor = workContextAccessor;
             _territoriesService = territoriesService;
             _notifier = notifier;
             _contentManager = contentManager;
+            _territoriesRepositoryService = territoriesRepositoryService;
 
             T = NullLocalizer.Instance;
         }
@@ -110,6 +113,25 @@ namespace Nwazet.Commerce.Drivers {
 
             var shapes = new List<DriverResult>();
 
+            // The territory here must exist in a hierarchy and with a selected unique record.
+            var territoryInternals = _territoriesService
+                .GetAvailableTerritoryInternals(part.HierarchyPart)
+                .ToList();
+            var model = new TerritoryPartViewModel() {
+                AvailableTerritoryInternalRecords = territoryInternals,
+                Hierarchy = part.HierarchyPart,
+                Parent = part.ParentPart,
+                Part = part
+            };
+            model.AvailableTerritoryInternalRecords.Add(part.Record.TerritoryInternalRecord);
+
+            shapes.Add(ContentShape("Parts_TerritoryPart_Edit",
+                () => shapeHelper.EditorTemplate(
+                    TemplateName: "Parts/TerritoryPartEdit",
+                    Model: model,
+                    Prefix: Prefix
+                    )));
+
             return shapes;
         }
 
@@ -145,14 +167,32 @@ namespace Nwazet.Commerce.Drivers {
                 } else {
                     var avalaibleInternals = _territoriesService.GetAvailableTerritoryInternals(hierarchy);
                     int selectedId;
-                    if (int.TryParse(viewModel.SelectedRecordId, out selectedId)) { //TODO: fix this
-                        part.Record.TerritoryInternalRecord = avalaibleInternals.First(tir => tir.Id == selectedId);
+                    if (int.TryParse(viewModel.SelectedRecordId, out selectedId)) {
+                        var selectedRecord = _territoriesRepositoryService.GetTerritoryInternal(selectedId);
+                        if (selectedRecord == null) {
+                            updater.AddModelError("Territory", InvalidInternalRecordMessage);
+                        } else {
+                            if (part.Record.TerritoryInternalRecord != null && part.Record.TerritoryInternalRecord.Id == selectedId) {
+                                // nothing to do here, right?
+                            } else {
+                                var fromAvailables = avalaibleInternals.FirstOrDefault(tir => tir.Id == selectedId);
+                                if (fromAvailables == null) {
+                                    updater.AddModelError("Territory", InvalidInternalRecordMessage);
+                                } else {
+                                    part.Record.TerritoryInternalRecord = fromAvailables;
+                                }
+                            }
+                        }
                     }
                 }
 
             }
 
             return Editor(part, shapeHelper);
+        }
+
+        private LocalizedString InvalidInternalRecordMessage {
+            get { return T("Invalid territory record."); }
         }
 
         private bool TryValidateCreationContext(out int hierarchyId) {
@@ -176,16 +216,5 @@ namespace Nwazet.Commerce.Drivers {
             return false;
         }
         
-        private TerritoryPartViewModel CreateViewModel(TerritoryPart part) {
-            return new TerritoryPartViewModel {
-                Part = part,
-                Parent = part.Record == null ? null :
-                    (part.Record.ParentTerritory == null ? null :
-                        (_contentManager.Get<TerritoryPart>(part.Record.ParentTerritory.Id))),
-                Hierarchy = part.Record == null ? null :
-                    (part.Record.Hierarchy == null ? null : 
-                        (_contentManager.Get<TerritoryHierarchyPart>(part.Record.Hierarchy.Id)))
-            };
-        }
     }
 }

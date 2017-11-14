@@ -23,17 +23,7 @@ namespace Nwazet.Commerce.ViewModels {
         public TerritoryPartViewModel() {
             AvailableTerritoryInternalRecords = new List<TerritoryInternalRecord>();
         }
-
-        public TerritoryPartViewModel(TerritoryPart part) {
-            Part = part;
-            AvailableTerritoryInternalRecords = new List<TerritoryInternalRecord>();
-            if (part.Record != null) {
-                if (part.Record.TerritoryInternalRecord != null) {
-                    AvailableTerritoryInternalRecords.Add(part.Record.TerritoryInternalRecord);
-                }
-            }
-        }
-
+        
         public IEnumerable<SelectListItem> ListRecords() {
             return AvailableTerritoryInternalRecords
                 .Select(tir =>

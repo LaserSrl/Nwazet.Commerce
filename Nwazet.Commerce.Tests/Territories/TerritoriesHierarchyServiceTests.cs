@@ -248,6 +248,14 @@ namespace Nwazet.Commerce.Tests.Territories {
         [Test]
         public void AddTerritoryInTheSameHierarchyDoesNotFail() {
             // verify that we can call AddTerritory twice for the same territory and hierachy
+            var territory = _contentManager.Create<TerritoryPart>("TerritoryType0");
+            var hierarchy = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
+
+            _territoriesHierarchyService.AddTerritory(territory, hierarchy);
+            Assert.That(territory.Record.Hierarchy.Id, Is.EqualTo(hierarchy.Record.Id));
+
+            _territoriesHierarchyService.AddTerritory(territory, hierarchy);
+            Assert.That(territory.Record.Hierarchy.Id, Is.EqualTo(hierarchy.Record.Id));
         }
 
         [Test]

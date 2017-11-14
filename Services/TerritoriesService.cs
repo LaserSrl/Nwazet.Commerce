@@ -120,12 +120,16 @@ namespace Nwazet.Commerce.Services {
             if (_availableTerritoryInternals == null) {
                 _availableTerritoryInternals = _territoriesRepositoryService
                     .GetTerritories()
-                    .Except(hierarchyPart
+                    .Where(tir => !hierarchyPart
                         .Territories
+                        .Where(ci => ci.As<TerritoryPart>()
+                            .Record
+                            .TerritoryInternalRecord != null)
                         .Select(ci => ci.As<TerritoryPart>()
                             .Record
                             .TerritoryInternalRecord
-                        )
+                            .Id)
+                        .Contains(tir.Id)
                     );
             }
             return _availableTerritoryInternals;

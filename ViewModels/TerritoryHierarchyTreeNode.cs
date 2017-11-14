@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Orchard.ContentManagement;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,10 @@ namespace Nwazet.Commerce.ViewModels {
         // id of corresponding Territory ContentItem
         public int Id { get; set; }
 
+        public ContentItem TerritoryItem { get; set; }
+
+        public int ParentId { get; set; }
+
         // Url for the Edit page of the corresponding Territory ContentItem
         public string EditUrl { get; set; }
 
@@ -23,9 +28,8 @@ namespace Nwazet.Commerce.ViewModels {
         // This is different than the case where Nodes.Count() == 0, as that means we have
         // loaded the list of children, and it is empty.
         public IList<TerritoryHierarchyTreeNode> Nodes { get; set; }
-
+        
         public TerritoryHierarchyTreeNode() {
-            Nodes = new List<TerritoryHierarchyTreeNode>();
         }
     }
 }
