@@ -39,7 +39,7 @@ namespace Nwazet.Commerce.Handlers {
             OnLoaded<TerritoryHierarchyPart>((ctx, part) => LazyLoadHandlers(null, part));
 
             //Handle the presence of territories in a hierarchy: may need to run asynchronously
-            OnRemoved<TerritoryHierarchyPart>(RemoveTerritoriesInHierarchy);
+            OnRemoving<TerritoryHierarchyPart>(RemoveTerritoriesInHierarchy);
         }
 
         protected override void GetItemMetadata(GetContentItemMetadataContext context) {

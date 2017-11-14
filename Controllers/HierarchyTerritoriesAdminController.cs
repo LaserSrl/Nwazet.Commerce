@@ -146,22 +146,31 @@ namespace Nwazet.Commerce.Controllers {
                 }
             }
 
-            return RedirectToAction("Index", new { hierarchyId.Value });
+            return RedirectToAction("Index", new { id = hierarchyId.Value });
         }
 
-        private void UpdateTerritoryPosition(
-            TerritoryPart territoryPart, TerritoryHierarchyPart hierarchyPart, TerritoryPart parentPart = null) {
+        [HttpPost]
+        public ActionResult DeleteTerritory(int id, string returnUrl) {
 
-            var context = new UpdateContentContext(territoryPart.ContentItem);
-            _handlers.Invoke(handler => handler.Updating(context), Logger);
-            if (parentPart == null) {
-                _territoriesHierarchyService.AddTerritory(territoryPart, hierarchyPart); // move to root
-            } else {
-                _territoriesHierarchyService.AssignParent(territoryPart, parentPart);
-            }
-            _handlers.Invoke(handler => handler.Updated(context), Logger);
+            var territoryItem = _contentManager.Get(id, VersionOptions.Latest);
+            var hierarchyId = territoryItem.As<TerritoryPart>().Hierarchy.Record.Id;
+            return ExecuteTerritoryPost(new TerritoryExecutionContext {
+                HierarchyItem = territoryItem.As<TerritoryPart>().Hierarchy,
+                TerritoryItem = territoryItem,
+                Message = TerritoriesUtilities.Delete401TerritoryMessage,
+                AdditionalPermissions = new Permission[] { Orchard.Core.Contents.Permissions.DeleteContent },
+                ExecutionAction = item => {
+                    if (item != null) {
+                        _contentManager.Remove(item);
+                        _notifier.Information(string.IsNullOrWhiteSpace(item.TypeDefinition.DisplayName)
+                            ? T("That content has been removed.")
+                            : T("That {0} has been removed.", item.TypeDefinition.DisplayName));
+                    }
+
+                    return this.RedirectLocal(returnUrl, () => RedirectToAction("Index", new { id = hierarchyId }));
+                }
+            });
         }
-        
 
         #region Create
         [HttpGet]
@@ -320,6 +329,7 @@ namespace Nwazet.Commerce.Controllers {
 
         private ActionResult EditTerritoryPost(
             int id, string returnUrl, Action<ContentItem> conditionallyPublish) {
+
             var territoryItem = _contentManager.Get(id, VersionOptions.DraftRequired);
             return ExecuteTerritoryPost(new TerritoryExecutionContext {
                 HierarchyItem = territoryItem.As<TerritoryPart>().Hierarchy,
@@ -469,7 +479,20 @@ namespace Nwazet.Commerce.Controllers {
                 DisplayText = metadata.DisplayText + (!territoryPart.ContentItem.IsPublished() ? T(" (draft)").Text : string.Empty)
             };
         }
-        
+
+        private void UpdateTerritoryPosition(
+            TerritoryPart territoryPart, TerritoryHierarchyPart hierarchyPart, TerritoryPart parentPart = null) {
+
+            var context = new UpdateContentContext(territoryPart.ContentItem);
+            _handlers.Invoke(handler => handler.Updating(context), Logger);
+            if (parentPart == null) {
+                _territoriesHierarchyService.AddTerritory(territoryPart, hierarchyPart); // move to root
+            } else {
+                _territoriesHierarchyService.AssignParent(territoryPart, parentPart);
+            }
+            _handlers.Invoke(handler => handler.Updated(context), Logger);
+        }
+
         #region IUpdateModel implementation
         public void AddModelError(string key, LocalizedString errorMessage) {
             ModelState.AddModelError(key, errorMessage.ToString());

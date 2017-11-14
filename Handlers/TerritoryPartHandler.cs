@@ -28,7 +28,7 @@ namespace Nwazet.Commerce.Handlers {
             OnLoading<TerritoryPart>((context, part) => LazyLoadHandlers(part));
 
             //Handle the presence of child territories: may need to run asynchronously
-            OnRemoved<TerritoryPart>(RemoveChildren);
+            OnRemoving<TerritoryPart>(RemoveChildren);
         }
 
         static void PropertySetHandlers(
