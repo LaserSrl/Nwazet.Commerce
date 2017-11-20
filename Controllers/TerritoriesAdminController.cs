@@ -1,33 +1,18 @@
-﻿using Nwazet.Commerce.Services;
-using Orchard;
-using Orchard.ContentManagement;
-using Orchard.Environment.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Mvc;
-using Orchard.Localization;
-using Orchard.UI.Navigation;
-using Orchard.Settings;
-using Orchard.DisplayManagement;
-using Nwazet.Commerce.ViewModels;
-using Nwazet.Commerce.Models;
-using Orchard.Security;
+﻿using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Permissions;
-using Orchard.Data;
-using Orchard.UI.Admin;
-using Orchard.ContentManagement.MetaData.Models;
-using Orchard.UI.Notify;
-using Orchard.Mvc.Extensions;
-using Orchard.ContentManagement.Aspects;
-using Orchard.Core.Contents.Settings;
+using Nwazet.Commerce.Services;
+using Orchard.ContentManagement;
 using Orchard.ContentManagement.MetaData;
-using Orchard.Utility.Extensions;
-using Orchard.Mvc.Html;
-using System.Web.Routing;
-using Orchard.Security.Permissions;
+using Orchard.Data;
+using Orchard.DisplayManagement;
+using Orchard.Environment.Extensions;
+using Orchard.Localization;
+using Orchard.Security;
+using Orchard.Settings;
+using Orchard.UI.Admin;
+using Orchard.UI.Navigation;
+using System;
+using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Territories")]

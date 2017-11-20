@@ -1,18 +1,13 @@
 ﻿using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Permissions;
+using Orchard.ContentManagement;
 using Orchard.ContentManagement.MetaData;
 using Orchard.ContentManagement.MetaData.Models;
 using Orchard.Environment.Extensions;
 using Orchard.Security;
-using Orchard.Security.Permissions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Orchard.ContentManagement;
-using Orchard.Data;
-using Orchard;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Territories")]

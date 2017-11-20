@@ -1,9 +1,7 @@
 ﻿using Autofac;
 using Moq;
 using NUnit.Framework;
-using Nwazet.Commerce.Exceptions;
 using Nwazet.Commerce.Handlers;
-using Nwazet.Commerce.Migrations;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
 using Nwazet.Commerce.Tests.Territories.Handlers;
@@ -14,19 +12,13 @@ using Orchard.ContentManagement.MetaData;
 using Orchard.ContentManagement.MetaData.Models;
 using Orchard.ContentManagement.Records;
 using Orchard.Data;
-using Orchard.Data.Migration;
-using Orchard.Data.Migration.Interpreters;
 using Orchard.Data.Migration.Records;
-using Orchard.Environment.Extensions;
-using Orchard.Environment.Extensions.Models;
 using Orchard.Tests;
 using Orchard.Tests.Stubs;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Tests.Territories {
     [TestFixture]

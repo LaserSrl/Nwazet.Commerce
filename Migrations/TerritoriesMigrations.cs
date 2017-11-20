@@ -3,11 +3,6 @@ using Orchard.ContentManagement.MetaData;
 using Orchard.Core.Contents.Extensions;
 using Orchard.Data.Migration;
 using Orchard.Environment.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Migrations {
     [OrchardFeature("Territories")]
@@ -28,16 +23,6 @@ namespace Nwazet.Commerce.Migrations {
                 .Column<int>("TerritoryInternalRecord_Id")
                 .Column<int>("ParentTerritory_Id")
                 .Column<int>("Hierarchy_Id"));
-
-            //// Foreign keys for the 1-to-n relationships
-            //SchemaBuilder.CreateForeignKey(
-            //    "FK_TerritoryToHierarchy",
-            //    "TerritoryPartRecord", new[] { "Hierarchy_Id" },
-            //    "TerritoryHierarchyPartRecord", new[] { "Id" });
-            //SchemaBuilder.CreateForeignKey(
-            //    "FK_TerritoryToParentTerritory",
-            //    "TerritoryPartRecord", new[] { "ParentTerritory_Id" },
-            //    "TerritoryPartRecord", new[] { "Id" });
 
             ContentDefinitionManager.AlterPartDefinition(TerritoryHierarchyPart.PartName, builder => builder.Attachable());
             ContentDefinitionManager.AlterPartDefinition(TerritoryPart.PartName, builder => builder.Attachable());

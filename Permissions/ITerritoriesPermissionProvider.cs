@@ -1,10 +1,5 @@
-﻿using Orchard.ContentManagement.MetaData.Models;
-using Orchard.Security.Permissions;
-using System;
+﻿using Orchard.Security.Permissions;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Permissions {
     public interface ITerritoriesPermissionProvider : IPermissionProvider {

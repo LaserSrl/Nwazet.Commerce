@@ -2,12 +2,7 @@
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.MetaData.Models;
-using Orchard.Security.Permissions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Services {
     public interface ITerritoriesService : IDependency {

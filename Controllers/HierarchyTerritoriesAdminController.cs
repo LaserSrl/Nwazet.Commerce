@@ -22,8 +22,6 @@ using Orchard.UI.Notify;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -40,7 +38,6 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IWorkContextAccessor _workContextAccessor;
         private readonly RouteCollection _routeCollection;
         private readonly ITerritoriesHierarchyService _territoriesHierarchyService;
-        private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
         private readonly ITransactionManager _transactionManager;
         private readonly INotifier _notifier;
         private readonly IEnumerable<IContentHandler> _handlers;
@@ -53,7 +50,6 @@ namespace Nwazet.Commerce.Controllers {
             IWorkContextAccessor workContextAccessor,
             RouteCollection routeCollection,
             ITerritoriesHierarchyService territoriesHierarchyService,
-            ITerritoriesRepositoryService territoriesRepositoryService,
             ITransactionManager transactionManager,
             INotifier notifier,
             IEnumerable<IContentHandler> handlers) {
@@ -65,7 +61,6 @@ namespace Nwazet.Commerce.Controllers {
             _workContextAccessor = workContextAccessor;
             _routeCollection = routeCollection;
             _territoriesHierarchyService = territoriesHierarchyService;
-            _territoriesRepositoryService = territoriesRepositoryService;
             _transactionManager = transactionManager;
             _notifier = notifier;
             _handlers = handlers;
