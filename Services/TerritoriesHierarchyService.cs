@@ -48,8 +48,26 @@ namespace Nwazet.Commerce.Services {
             // The territory may come from a different hierarchy
             if (territory.Record.Hierarchy != null &&
                 territory.Record.Hierarchy.Id != hierarchy.Record.Id) {
-                //TODO
-
+                // Verify that the TerritoryInternalRecords in the territory or its children can be moved there
+                var internalRecords = new List<int>();
+                if (territory.Record.TerritoryInternalRecord != null) {
+                    internalRecords.Add(territory.Record.TerritoryInternalRecord.Id);
+                }
+                if (territory.Record.Children != null) {
+                    internalRecords.AddRange(territory
+                        .Record
+                        .Children
+                        .Where(tpr => tpr.TerritoryInternalRecord != null)
+                        .Select(tpr => tpr.TerritoryInternalRecord.Id));
+                }
+                if (internalRecords.Any()) {
+                    if (hierarchy.Record
+                        .Territories
+                        .Select(tpr => tpr.TerritoryInternalRecord.Id)
+                        .Any(tir => internalRecords.Contains(tir))) {
+                        throw new TerritoryInternalDuplicateException(T("The territory being moved is already assigned in the current hierarchy."));
+                    }
+                }
             }
             // set hierarchy
             territory.Record.Hierarchy = hierarchy.Record;
@@ -128,7 +146,7 @@ namespace Nwazet.Commerce.Services {
             if (territory == null || territory.Record == null) {
                 throw new ArgumentNullException("territory");
             }
-            if (internalRecord == null) {
+            if (internalRecord == null || _territoriesRepositoryService.GetTerritoryInternal(internalRecord.Id) == null) {
                 throw new ArgumentNullException("internalRecord");
             }
             // check that the internal record does not exist yet in the same hierarchy

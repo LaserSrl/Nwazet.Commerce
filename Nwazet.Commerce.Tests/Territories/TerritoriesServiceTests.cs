@@ -336,5 +336,20 @@ namespace Nwazet.Commerce.Tests.Territories {
             }
 
         }
+
+        [Test]
+        public void GetAvailableTerritoryInternalsThrowsTheExpectedArgumentNullExceptions() {
+            Assert.Throws<ArgumentNullException>(() => _territoriesService.GetAvailableTerritoryInternals(null));
+
+            var hierarchy = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
+            hierarchy.Record = null;
+            Assert.Throws<ArgumentNullException>(() => _territoriesService.GetAvailableTerritoryInternals(hierarchy));
+        }
+
+        #region These tests would require the 1-to-many relationships to work in the test db
+        //[Test]
+        //public void GetAvailableTerritoryInternalsDoesNotReturnUsedInternals() { }
+
+        #endregion
     }
 }

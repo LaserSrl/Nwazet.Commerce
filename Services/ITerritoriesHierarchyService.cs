@@ -23,7 +23,7 @@ namespace Nwazet.Commerce.Services {
         /// hierarchy.</exception>
         /// <exception cref="ArgumentNullException">Throws an ArgumentNullException if either
         /// of the arguments is null or has a null underlying record.</exception>
-        /// <exception cref="InvalidOperationException">Throws an InvalidOperationException
+        /// <exception cref="TerritoryInternalDuplicateException">Throws an InvalidOperationException
         /// when trying to add a territory that has an assigned TerritoryInternalRecord that is
         /// already present in the hierarchy, or if a child of the territory has such assigned
         /// TerritoryInternalRecord.</exception>
