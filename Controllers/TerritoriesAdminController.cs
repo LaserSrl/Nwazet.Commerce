@@ -11,7 +11,9 @@ using Orchard.Security;
 using Orchard.Settings;
 using Orchard.UI.Admin;
 using Orchard.UI.Navigation;
+using Orchard.UI.Notify;
 using System;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Controllers {
@@ -24,6 +26,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IAuthorizer _authorizer;
         private readonly ITerritoriesRepositoryService _territoryRepositoryService;
         private readonly ITransactionManager _transactionManager;
+        private readonly INotifier _notifier;
 
         public TerritoriesAdminController(
             ISiteService siteService,
@@ -31,12 +34,14 @@ namespace Nwazet.Commerce.Controllers {
             IAuthorizer authorizer,
             ITerritoriesRepositoryService territoryRepositoryService,
             ITransactionManager transactionManager,
-            IContentDefinitionManager contentDefinitionManager) {
+            IContentDefinitionManager contentDefinitionManager,
+            INotifier notifier) {
 
             _siteService = siteService;
             _authorizer = authorizer;
             _territoryRepositoryService = territoryRepositoryService;
             _transactionManager = transactionManager;
+            _notifier = notifier;
 
             _shapeFactory = shapeFactory;
 
@@ -158,9 +163,20 @@ namespace Nwazet.Commerce.Controllers {
                 return HttpNotFound();
             }
 
-            //TODO: handle TerritoryParts that may "contain" the Territory we are trying to delete
+            var territoryName = tir.Name;
 
+            if (tir.TerritoryParts.Any()) {
+                // There are connected TerritoryParts. Don't delete the TerritoryInternalRecord
+                _notifier.Error(
+                    T("\"{0}\" cannot be deleted because it still has {1} connected parts (you can find them in its editor).", 
+                        territoryName, tir.TerritoryParts.Count));
+
+                return RedirectToAction("TerritoriesIndex");
+            }
+            
             _territoryRepositoryService.Delete(id);
+
+            _notifier.Information(T("\"{0}\" has been deleted.", territoryName));
 
             return RedirectToAction("TerritoriesIndex");
         }

@@ -25,7 +25,7 @@ namespace Nwazet.Commerce.ViewModels {
             return AvailableTerritoryInternalRecords
                 .Select(tir =>
                 new SelectListItem {
-                    Selected = Part == null ?
+                    Selected = (Part == null || Part.Record.TerritoryInternalRecord == null) ?
                         false :
                         Part.Record.TerritoryInternalRecord.Id == tir.Id,
                     Text = tir.Name,

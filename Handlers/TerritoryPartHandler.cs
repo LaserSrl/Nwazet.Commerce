@@ -26,6 +26,8 @@ namespace Nwazet.Commerce.Handlers {
 
             //Handle the presence of child territories: may need to run asynchronously
             OnRemoving<TerritoryPart>(RemoveChildren);
+            // Clean the record up, to avoid issues with the 1-to-many relationships
+            OnRemoving<TerritoryPart>(CleanupRecord);
         }
 
         static void PropertySetHandlers(
@@ -95,13 +97,33 @@ namespace Nwazet.Commerce.Handlers {
                 }
 
             });
+
+            part.AllChildrenCountField.Loader(() => {
+                if (part.Record != null) {
+                    return CountChildren(part.Record);
+                }
+                return 0;
+            });
+        }
+
+        private int CountChildren(TerritoryPartRecord tpr) {
+            if (tpr.Children == null || !tpr.Children.Any()) {
+                return 0;
+            }
+            return tpr.Children.Count + tpr.Children.Sum(CountChildren);
         }
 
         void RemoveChildren(RemoveContentContext context, TerritoryPart part) {
             // Only remove first level of children, because they will remove their children
-            foreach (var item in part.FirstLevel) {
+            foreach (var item in part.Children) {
                 _contentManager.Remove(item);
             }
+        }
+
+        void CleanupRecord(RemoveContentContext context, TerritoryPart part) {
+            part.Record.Hierarchy = null;
+            part.Record.ParentTerritory = null;
+            part.Record.TerritoryInternalRecord = null;
         }
     }
 }

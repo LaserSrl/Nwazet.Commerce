@@ -67,12 +67,16 @@ namespace Nwazet.Commerce.Services {
         /// Deletes the TerritoryInternalRecord object given by the id.
         /// </summary>
         /// <param name="id">The id of the TerritoryInternalRecord object to be deleted</param>
+        /// <remarks>Implementations of this method should take care of handling any TerritoryPart that
+        /// may be referencing the record that is being deleted.</remarks>
         void Delete(int id);
 
         /// <summary>
         /// Deletes the TerritoryInternalRecord object. The object is identified by the id.
         /// </summary>
         /// <param name="tir">The TerritoryInternalRecord object to be deleted.</param>
+        /// <remarks>Implementations of this method should take care of handling any TerritoryPart that
+        /// may be referencing the record that is being deleted.</remarks>
         void Delete(TerritoryInternalRecord tir);
     }
 }

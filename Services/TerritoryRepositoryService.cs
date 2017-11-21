@@ -89,6 +89,11 @@ namespace Nwazet.Commerce.Services {
         public void Delete(int id) {
             var tir = _territoryInternalRecord.Get(id);
             if (tir != null) {
+                // Handle connected TerritoryParts
+                foreach (var tpr in tir.TerritoryParts) {
+                    tpr.TerritoryInternalRecord = null;
+                }
+                // Delete record
                 _territoryInternalRecord.Delete(tir);
             }
         }

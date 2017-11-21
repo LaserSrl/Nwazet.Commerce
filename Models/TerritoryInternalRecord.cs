@@ -10,6 +10,12 @@ namespace Nwazet.Commerce.Models {
         [StringLengthMax]
         public virtual string Name { get; set; } //Name given to the territory
 
+        public TerritoryInternalRecord() {
+            TerritoryParts = new List<TerritoryPartRecord>();
+        }
+
+        public virtual IList<TerritoryPartRecord> TerritoryParts { get; set; }
+
         /// <summary>
         /// Returns a deep copy of the TerritoryInternalRecord passed as parameter.
         /// </summary>
@@ -18,7 +24,8 @@ namespace Nwazet.Commerce.Models {
         public static TerritoryInternalRecord Copy(TerritoryInternalRecord tir) {
             return new TerritoryInternalRecord {
                 Id = tir.Id,
-                Name = tir.Name
+                Name = tir.Name,
+                TerritoryParts = tir.TerritoryParts
             };
             //this allows us to safely pass stuff alog without affecting the data in the db
         }

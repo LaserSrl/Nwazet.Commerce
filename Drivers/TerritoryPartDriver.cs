@@ -72,7 +72,7 @@ namespace Nwazet.Commerce.Drivers {
             } else {
                 // We have a hierarchy that we can use to validate a list of allowed
                 // TerritoryInternalRecord
-                var hierarchy = _contentManager.Get<TerritoryHierarchyPart>(hierarchyId);
+                var hierarchy = _contentManager.Get<TerritoryHierarchyPart>(hierarchyId, VersionOptions.Latest);
                 if (hierarchy == null) {
                     // We don't really have a hierarchy after all
                     InvalidHierarchyOnCreation();
@@ -120,7 +120,9 @@ namespace Nwazet.Commerce.Drivers {
                 Parent = part.ParentPart,
                 Part = part
             };
-            model.AvailableTerritoryInternalRecords.Add(part.Record.TerritoryInternalRecord);
+            if (part.Record.TerritoryInternalRecord != null) {
+                model.AvailableTerritoryInternalRecords.Add(part.Record.TerritoryInternalRecord);
+            }
 
             shapes.Add(ContentShape("Parts_TerritoryPart_Edit",
                 () => shapeHelper.EditorTemplate(
@@ -157,7 +159,7 @@ namespace Nwazet.Commerce.Drivers {
                     if (!TryValidateCreationContext(out hierarchyId)) {
                         hierarchyId = 0;
                     }
-                    hierarchy = _contentManager.Get<TerritoryHierarchyPart>(hierarchyId);
+                    hierarchy = _contentManager.Get<TerritoryHierarchyPart>(hierarchyId, VersionOptions.Latest);
                 }
                 if (hierarchy == null) {
                     updater.AddModelError("Hierarchy", InvalidHierarchyErrorMessage());

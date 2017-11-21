@@ -238,7 +238,7 @@ namespace Nwazet.Commerce.Controllers {
             string typeName, int hierarchyId, string returnUrl, Action<ContentItem> conditionallyPublish) {
 
             return ExecuteTerritoryPost(new TerritoryExecutionContext {
-                HierarchyItem = _contentManager.Get(hierarchyId),
+                HierarchyItem = _contentManager.Get(hierarchyId, VersionOptions.Latest),
                 TerritoryItem = _contentManager.New(typeName),
                 Message = TerritoriesUtilities.Creation401TerritoryMessage,
                 AdditionalPermissions = new Permission[] { Orchard.Core.Contents.Permissions.EditContent },
@@ -249,11 +249,11 @@ namespace Nwazet.Commerce.Controllers {
 
                     if (!ModelState.IsValid) {
                         _transactionManager.Cancel();
-                        return View(model.Hierarchy(_contentManager.Get(hierarchyId)));
+                        return View(model.Hierarchy(_contentManager.Get(hierarchyId, VersionOptions.Latest)));
                     }
 
                     var territoryPart = item.As<TerritoryPart>();
-                    var hierachyPart = _contentManager.Get<TerritoryHierarchyPart>(hierarchyId);
+                    var hierachyPart = _contentManager.Get<TerritoryHierarchyPart>(hierarchyId, VersionOptions.Latest);
 
                     _territoriesHierarchyService.AddTerritory(territoryPart, hierachyPart);
 
@@ -471,7 +471,9 @@ namespace Nwazet.Commerce.Controllers {
                 TerritoryItem = territoryPart.ContentItem,
                 ParentId = territoryPart.Record.ParentTerritory == null ? 0 : territoryPart.Record.ParentTerritory.Id,
                 EditUrl = _routeCollection.GetVirtualPath(requestContext, metadata.EditorRouteValues).VirtualPath,
-                DisplayText = metadata.DisplayText + (!territoryPart.ContentItem.IsPublished() ? T(" (draft)").Text : string.Empty)
+                DisplayText = metadata.DisplayText + 
+                    (!territoryPart.ContentItem.IsPublished() ? T(" (draft)").Text : string.Empty) +
+                    ((territoryPart.Record.TerritoryInternalRecord == null) ? T(" (requires identity)").Text : string.Empty)
             };
         }
 

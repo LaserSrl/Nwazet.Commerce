@@ -17,18 +17,12 @@ namespace Nwazet.Commerce.Models {
             get { return _children; }
         }
 
+        // This contains the direct children of this territory
         public IEnumerable<ContentItem> Children {
             get { return _children.Value; }
             // no setter, because this is "filled" thanks to a 1-to-n relationship to TerritoryPartRecords
         }
-
-        public IEnumerable<ContentItem> FirstLevel {
-            get {
-                return Children
-                  .Where(ci => ci.As<TerritoryPart>().Record.ParentTerritory.Id == this.Record.Id);
-            }
-        }
-
+        
         private readonly LazyField<ContentItem> _hierarchy =
             new LazyField<ContentItem>();
 
@@ -57,6 +51,17 @@ namespace Nwazet.Commerce.Models {
 
         public TerritoryPart ParentPart {
             get { return Parent?.As<TerritoryPart>(); }
+        }
+
+        private readonly LazyField<int> _allChildrenCount =
+            new LazyField<int>();
+
+        public LazyField<int> AllChildrenCountField {
+            get { return _allChildrenCount; }
+        }
+
+        public int AllChildrenCount {
+            get { return _allChildrenCount.Value; }
         }
     }
 }

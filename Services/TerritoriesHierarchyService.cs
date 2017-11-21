@@ -67,13 +67,19 @@ namespace Nwazet.Commerce.Services {
                     }
                 }
             }
-            // set hierarchy
-            territory.Record.Hierarchy = hierarchy.Record;
             // remove parent: This method always puts the territory at the root level of the hierarchy
             territory.Record.ParentTerritory = null;
-            // set the hierarchy for all children
-            foreach (var childRecord in territory.Record.Children) {
-                childRecord.Hierarchy = hierarchy.Record;
+            // set hierarchy and also set the hierarchy for all children: we need to move all levels of children, 
+            // and record.Children only contains the first level.
+            AssignHierarchyToChildren(territory.Record, hierarchy.Record);
+        }
+
+        private void AssignHierarchyToChildren(TerritoryPartRecord tpr, TerritoryHierarchyPartRecord thpr) {
+            tpr.Hierarchy = thpr;
+            if (tpr.Children != null && tpr.Children.Any()) {
+                foreach (var child in tpr.Children) {
+                    AssignHierarchyToChildren(child, thpr);
+                }
             }
         }
 
