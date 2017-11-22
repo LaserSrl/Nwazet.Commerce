@@ -10,6 +10,7 @@ using Orchard.UI.Notify;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Orchard.ContentManagement.Handlers;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Territories")]
@@ -20,19 +21,22 @@ namespace Nwazet.Commerce.Drivers {
         private readonly INotifier _notifier;
         private readonly IContentManager _contentManager;
         private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
+        private readonly ITerritoriesHierarchyService _territoriesHierarchyService;
 
         public TerritoryPartDriver(
             IWorkContextAccessor workContextAccessor,
             ITerritoriesService territoriesService,
             INotifier notifier,
             IContentManager contentManager,
-            ITerritoriesRepositoryService territoriesRepositoryService) {
+            ITerritoriesRepositoryService territoriesRepositoryService,
+            ITerritoriesHierarchyService territoriesHierarchyService) {
 
             _workContextAccessor = workContextAccessor;
             _territoriesService = territoriesService;
             _notifier = notifier;
             _contentManager = contentManager;
             _territoriesRepositoryService = territoriesRepositoryService;
+            _territoriesHierarchyService = territoriesHierarchyService;
 
             T = NullLocalizer.Instance;
         }
@@ -178,7 +182,7 @@ namespace Nwazet.Commerce.Drivers {
                                 if (fromAvailables == null) {
                                     updater.AddModelError("Territory", InvalidInternalRecordMessage);
                                 } else {
-                                    part.Record.TerritoryInternalRecord = fromAvailables;
+                                    _territoriesHierarchyService.AssignInternalRecord(part, selectedId);
                                 }
                             }
                         }
@@ -214,6 +218,13 @@ namespace Nwazet.Commerce.Drivers {
 
             return false;
         }
-        
+
+        protected override void Exporting(TerritoryPart part, ExportContentContext context) {
+            base.Exporting(part, context);
+        }
+
+        protected override void Importing(TerritoryPart part, ImportContentContext context) {
+            base.Importing(part, context);
+        }
     }
 }

@@ -9,6 +9,7 @@ using Orchard.Localization;
 using Orchard.UI.Notify;
 using System.Collections.Generic;
 using System.Linq;
+using Orchard.ContentManagement.Handlers;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Territories")]
@@ -107,6 +108,14 @@ namespace Nwazet.Commerce.Drivers {
                     .ToDictionary(tt => tt.Name, tt => tt.DisplayName),
                 MayChangeTerritoryType = MayChangeTerritoryType(part)
             };
+        }
+
+        protected override void Exporting(TerritoryHierarchyPart part, ExportContentContext context) {
+            base.Exporting(part, context);
+        }
+
+        protected override void Importing(TerritoryHierarchyPart part, ImportContentContext context) {
+            base.Importing(part, context);
         }
     }
 }

@@ -294,12 +294,12 @@ namespace Nwazet.Commerce.Controllers {
 
             // We should have filtered out the cases where we cannot or should not be editing the item here
             var model = _contentManager.BuildEditor(territoryItem);
-            return View(model);
+            return View(model.Hierarchy(territoryItem.As<TerritoryPart>().Hierarchy));
         }
 
         [HttpPost, ActionName("EditTerritory")]
         [Orchard.Mvc.FormValueRequired("submit.Save")]
-        public ActionResult EditHierarchyPost(int id, string returnUrl) {
+        public ActionResult EditTerritoryPost(int id, string returnUrl) {
             return EditTerritoryPost(id, returnUrl, contentItem => {
                 if (!contentItem.Has<IPublishingControlAspect>() && 
                     !contentItem.TypeDefinition.Settings.GetModel<ContentTypeSettings>().Draftable)
@@ -309,7 +309,7 @@ namespace Nwazet.Commerce.Controllers {
 
         [HttpPost, ActionName("EditTerritory")]
         [Orchard.Mvc.FormValueRequired("submit.Publish")]
-        public ActionResult EditAndPublishHierarchyPost(int id, string returnUrl) {
+        public ActionResult EditAndPublishTerritoryPost(int id, string returnUrl) {
             var content = _contentManager.Get(id, VersionOptions.Latest);
 
             if (content == null)

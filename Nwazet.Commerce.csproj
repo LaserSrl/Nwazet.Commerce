@@ -213,6 +213,7 @@
     <None Include="Views\EditorTemplates\Parts\TerritoryPartCreation.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryPartEdit.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\CreateTerritory.cshtml" />
+    <None Include="Views\HierarchyTerritoriesAdmin\EditTerritory.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\Index.cshtml" />
     <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />
     <None Include="Views\Parts\WishListsActions.cshtml" />
@@ -228,6 +229,7 @@
   <ItemGroup>
     <Compile Include="Activities\CommerceActivity.cs" />
     <Compile Include="Activities\OrderActivity.cs" />
+    <Compile Include="Commands\TerritoriesCommands.cs" />
     <Compile Include="Controllers\ECommerceSettingsAdminController.cs" />
     <Compile Include="Controllers\HierarchyTerritoriesAdminController.cs" />
     <Compile Include="Controllers\InventoryBySKUSettingsAdminController.cs" />
@@ -406,6 +408,7 @@
     <Compile Include="Permissions\OrderPermissions.cs" />
     <Compile Include="Permissions\TerritoriesPermissions.cs" />
     <Compile Include="Permissions\WishListPermissions.cs" />
+    <Compile Include="Recipes\Providers\Builders\TerritoriesStep.cs" />
     <Compile Include="Reports\AverageSaleAmountReport.cs" />
     <Compile Include="Reports\BaseSalesReport.cs" />
     <Compile Include="Reports\SalesByBestSellingProductsReport.cs" />

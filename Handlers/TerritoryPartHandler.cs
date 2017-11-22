@@ -5,6 +5,7 @@ using Orchard.Data;
 using Orchard.Environment.Extensions;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Routing;
 
 namespace Nwazet.Commerce.Handlers {
     [OrchardFeature("Territories")]
@@ -28,6 +29,20 @@ namespace Nwazet.Commerce.Handlers {
             OnRemoving<TerritoryPart>(RemoveChildren);
             // Clean the record up, to avoid issues with the 1-to-many relationships
             OnRemoving<TerritoryPart>(CleanupRecord);
+        }
+
+        protected override void GetItemMetadata(GetContentItemMetadataContext context) {
+            var territory = context.ContentItem.As<TerritoryPart>();
+
+            if (territory == null)
+                return;
+
+            context.Metadata.EditorRouteValues = new RouteValueDictionary {
+                {"Area", "Nwazet.Commerce"},
+                {"Controller", "HierarchyTerritoriesAdmin"},
+                {"Action", "EditTerritory"},
+                {"Id", context.ContentItem.Id}
+            };
         }
 
         static void PropertySetHandlers(
