@@ -190,7 +190,8 @@ namespace Nwazet.Commerce.Recipes.Providers.Builders {
                     foreach (var item in hierarchyGroup
                         .Where(ci => 
                             ci.As<TerritoryPart>().Record.ParentTerritory != null
-                            && !exported.Contains(ci.As<TerritoryPart>().Record.Id))) {
+                            && !exported.Contains(ci.As<TerritoryPart>().Record.Id)
+                            && exported.Contains(ci.As<TerritoryPart>().Record.ParentTerritory.Id))) {
                         var element = _contentManager.Export(item);
                         if (element != null) {
                             data.Add(element);

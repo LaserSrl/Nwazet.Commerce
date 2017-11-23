@@ -126,6 +126,7 @@ namespace Nwazet.Commerce.Drivers {
             };
             if (part.Record.TerritoryInternalRecord != null) {
                 model.AvailableTerritoryInternalRecords.Add(part.Record.TerritoryInternalRecord);
+                model.SelectedRecordId = part.Record.TerritoryInternalRecord.Id.ToString();
             }
 
             shapes.Add(ContentShape("Parts_TerritoryPart_Edit",

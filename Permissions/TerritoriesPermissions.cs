@@ -49,7 +49,7 @@ namespace Nwazet.Commerce.Permissions {
             _contentDefinitionManager = contentDefinitionManager;
         }
 
-        public Feature Feature { get; }
+        public virtual Feature Feature { get; set; }
 
         public IEnumerable<PermissionStereotype> GetDefaultStereotypes() {
             return Enumerable.Empty<PermissionStereotype>();

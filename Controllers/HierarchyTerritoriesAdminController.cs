@@ -342,8 +342,8 @@ namespace Nwazet.Commerce.Controllers {
                     conditionallyPublish(item);
 
                     _notifier.Information(string.IsNullOrWhiteSpace(item.TypeDefinition.DisplayName)
-                        ? T("Your content has been created.")
-                        : T("Your {0} has been created.", item.TypeDefinition.DisplayName));
+                        ? T("Your content has been updated.")
+                        : T("Your {0} has been updated.", item.TypeDefinition.DisplayName));
 
                     return this.RedirectLocal(returnUrl, () =>
                         RedirectToAction("EditTerritory",

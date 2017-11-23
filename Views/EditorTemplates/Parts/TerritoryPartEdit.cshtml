@@ -3,16 +3,16 @@
 
 <div>
     @if (Model.AvailableTerritoryInternalRecords.Any()) {
-        <fieldset>
-            <label for="@Html.FieldIdFor(m => m.SelectedRecordId)" class="required">
-                @T("Territory identity")
-            </label>            
+        <fieldset>      
             @if (Model.AvailableTerritoryInternalRecords.Count() == 1) {
                 @Html.HiddenFor(m => m.SelectedRecordId)
                 <span>
                     @T("This territory has identity \"{0}\".", Model.AvailableTerritoryInternalRecords.First().Name)
                 </span>
             } else {
+                <label for="@Html.FieldIdFor(m => m.SelectedRecordId)" class="required">
+                    @T("Territory identity")
+                </label>
                 @Html.DropDownListFor(m => m.SelectedRecordId, Model.ListRecords())
                 <span for="@Html.FieldIdFor(m => m.SelectedRecordId)" class="hint forcheckbox">
                     @T("Select the unique territory identifier. Be mindful of the relations in the hierarchy when changing this.")
