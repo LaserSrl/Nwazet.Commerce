@@ -220,11 +220,55 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         protected override void Exporting(TerritoryPart part, ExportContentContext context) {
-            base.Exporting(part, context);
+            // we set attributes in the exported XML based on the values in the part's record
+            var element = context.Element(part.PartDefinition.Name);
+            if (part.Record.ParentTerritory != null) {
+                element.SetAttributeValue("ParentTerritoryId", GetIdentity(part.Record.ParentTerritory.Id));
+            }
+            if (part.Record.Hierarchy != null) {
+                element.SetAttributeValue("HierarchyId", GetIdentity(part.Record.Hierarchy.Id));
+            }
+            if (part.Record.TerritoryInternalRecord != null) {
+                element.SetAttributeValue("TerritoryInternalRecordId", part.Record.TerritoryInternalRecord.Name);
+            }
         }
 
         protected override void Importing(TerritoryPart part, ImportContentContext context) {
-            base.Importing(part, context);
+            // Set stuff in the record based off what is being imported
+            if (context.Data.Element(part.PartDefinition.Name) == null) {
+                return;
+            }
+            
+            var hierarchyIdentity = context.Attribute(part.PartDefinition.Name, "HierarchyId");
+            if (hierarchyIdentity == null) {
+                part.Record.Hierarchy = null;
+            } else {
+                var ci = context.GetItemFromSession(hierarchyIdentity);
+                var hierarchy = ci.As<TerritoryHierarchyPart>();
+                _territoriesHierarchyService.AddTerritory(part, hierarchy);
+            }
+            
+            var parentIdentity = context.Attribute(part.PartDefinition.Name, "ParentTerritoryId");
+            if (parentIdentity == null) {
+                part.Record.ParentTerritory = null;
+            } else {
+                var ci = context.GetItemFromSession(parentIdentity.ToString());
+                var parent = ci.As<TerritoryPart>();
+                _territoriesHierarchyService.AssignParent(part, parent);
+            }
+
+
+            var internalIdentity = context.Attribute(part.PartDefinition.Name, "TerritoryInternalRecordId");
+            if (internalIdentity == null) {
+                part.Record.TerritoryInternalRecord = null;
+            } else {
+                _territoriesHierarchyService.AssignInternalRecord(part, internalIdentity.ToString());
+            }
+        }
+
+        private string GetIdentity(int id) {
+            var ci = _contentManager.Get(id, VersionOptions.Latest);
+            return _contentManager.GetItemMetadata(ci).Identity.ToString();
         }
     }
 }

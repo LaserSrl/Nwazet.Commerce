@@ -95,13 +95,21 @@ namespace Nwazet.Commerce.Recipes.Providers.Builders {
                     .Add(ExportMetadata(territoryTypes));
 
             // Export ContentItems
-            if (contentItems.Any())
+            // 1. Export Hierarchies
+            var hierarchyItems = contentItems.Where(ci => hierarchyTypes.Contains(ci.ContentType));
+            if (hierarchyItems.Any())
                 context.RecipeDocument.Element("Orchard")
-                    .Add(ExportData(hierarchyTypes.Concat(territoryTypes), contentItems));
+                    .Add(ExportData(hierarchyTypes, hierarchyItems));
+            // 2. Export Territories
+            var territoryItems = contentItems.Where(ci => territoryTypes.Contains(ci.ContentType));
+            if (territoryItems.Any())
+                context.RecipeDocument.Element("Orchard")
+                    .Add(ExportTerritories(territoryItems));
         }
 
         /// <summary>
-        /// from Orchard.Recipes.Providers.Builders.ContentStep
+        /// from Orchard.Recipes.Providers.Builders.ContentStep. Hierarchies can be exported normally,
+        /// as long as they are exported/imported before territories.
         /// </summary>
         /// <param name="contentTypes"></param>
         /// <returns></returns>
@@ -154,6 +162,41 @@ namespace Nwazet.Commerce.Recipes.Providers.Builders {
                     var contentItemElement = _contentManager.Export(contentItem);
                     if (contentItemElement != null)
                         data.Add(contentItemElement);
+                }
+            }
+
+            return data;
+        }
+
+        private XElement ExportTerritories(IEnumerable<ContentItem> contentItems) {
+            var data = new XElement("Content");
+            
+            // Group territories by hierarchy
+            var groups = contentItems
+                .GroupBy(ci => ci.As<TerritoryPart>().Record.Hierarchy.Id);
+
+            // If we don't export stuff in the right order, import may mess up
+            foreach (var hierarchyGroup in groups) {
+                var exported = new List<int>();
+                // Export first level
+                foreach (var item in hierarchyGroup.Where(ci => ci.As<TerritoryPart>().Record.ParentTerritory == null)) {
+                    var element = _contentManager.Export(item);
+                    if (element != null) {
+                        data.Add(element);
+                    }
+                    exported.Add(item.As<TerritoryPart>().Record.Id);
+                }
+                while (exported.Count < hierarchyGroup.Count()) {
+                    foreach (var item in hierarchyGroup
+                        .Where(ci => 
+                            ci.As<TerritoryPart>().Record.ParentTerritory != null
+                            && !exported.Contains(ci.As<TerritoryPart>().Record.Id))) {
+                        var element = _contentManager.Export(item);
+                        if (element != null) {
+                            data.Add(element);
+                        }
+                        exported.Add(item.As<TerritoryPart>().Record.Id);
+                    }
                 }
             }
 

@@ -111,11 +111,15 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         protected override void Exporting(TerritoryHierarchyPart part, ExportContentContext context) {
-            base.Exporting(part, context);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("TerritoryType", part.TerritoryType);
         }
 
         protected override void Importing(TerritoryHierarchyPart part, ImportContentContext context) {
-            base.Importing(part, context);
+            if (context.Data.Element(part.PartDefinition.Name) == null) {
+                return;
+            }
+
+            part.TerritoryType = context.Attribute(part.PartDefinition.Name, "TerritoryType");
         }
     }
 }

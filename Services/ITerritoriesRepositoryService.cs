@@ -12,14 +12,16 @@ namespace Nwazet.Commerce.Services {
         /// Get the TerritoryInternalRecord object with the given id.
         /// </summary>
         /// <param name="id">The id of the desired object.</param>
-        /// <returns>A deep copy of the desired TerritoryInternalRecord object</returns>
+        /// <returns>A deep copy of the desired TerritoryInternalRecord object, or null if no
+        /// TerritoryInternalRecord is found with that id.</returns>
         TerritoryInternalRecord GetTerritoryInternal(int id);
 
         /// <summary>
         /// Get the TerritoryInternalRecord object with the given name.
         /// </summary>
         /// <param name="name">The name of the desired object.</param>
-        /// <returns>A deep copy of the desired TerritoryInternalRecord object</returns>
+        /// <returns>A deep copy of the desired TerritoryInternalRecord object, or null if no
+        /// TerritoryInternalRecord is found with that name.</returns>
         TerritoryInternalRecord GetTerritoryInternal(string name);
 
         /// <summary>

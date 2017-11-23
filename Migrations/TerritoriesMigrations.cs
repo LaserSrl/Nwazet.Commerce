@@ -27,11 +27,16 @@ namespace Nwazet.Commerce.Migrations {
             ContentDefinitionManager.AlterPartDefinition(TerritoryHierarchyPart.PartName, builder => builder.Attachable());
             ContentDefinitionManager.AlterPartDefinition(TerritoryPart.PartName, builder => builder.Attachable());
 
-            ContentDefinitionManager.AlterTypeDefinition("TerritoryHierarchy", cfg => cfg
-                .WithIdentity()
-                .WithPart("TitlePart")
-                .WithPart(TerritoryHierarchyPart.PartName)
-                .DisplayedAs("Territory Hierarchy"));
+            ContentDefinitionManager.AlterTypeDefinition("TerritoryHierarchy", typeBuilder => {
+                typeBuilder
+                    .WithIdentity()
+                    .WithPart("TitlePart")
+                    .WithPart(TerritoryHierarchyPart.PartName, partBuilder => {
+                        partBuilder.WithSetting("TerritoryHierarchyPartSettings.TerritoryType", "Territory");
+                    })
+                    .DisplayedAs("Territory Hierarchy");
+
+            });
 
             ContentDefinitionManager.AlterTypeDefinition("Territory", cfg => cfg
                 .WithIdentity()
