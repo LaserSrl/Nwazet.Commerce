@@ -32,8 +32,9 @@ namespace Nwazet.Commerce.Handlers {
 
             //Lazyfield setters
             OnInitializing<TerritoryHierarchyPart>(PropertySetHandlers);
-            OnInitializing<TerritoryHierarchyPart>(LazyLoadHandlers);
-            OnLoaded<TerritoryHierarchyPart>((ctx, part) => LazyLoadHandlers(null, part));
+            //OnInitializing<TerritoryHierarchyPart>(LazyLoadHandlers);
+            OnLoading<TerritoryHierarchyPart>((ctx, part) => LazyLoadHandlers(part));
+            OnVersioning<TerritoryHierarchyPart>((context, part, newVersionPart) => LazyLoadHandlers(newVersionPart));
 
             //Handle the presence of territories in a hierarchy: may need to run asynchronously
             OnRemoving<TerritoryHierarchyPart>(RemoveTerritoriesInHierarchy);
@@ -71,8 +72,7 @@ namespace Nwazet.Commerce.Handlers {
             }
         }
 
-        void LazyLoadHandlers(
-            InitializingContentContext context, TerritoryHierarchyPart part) {
+        void LazyLoadHandlers(TerritoryHierarchyPart part) {
 
             part.TerritoriesField.Loader(() => {
                 if (part.Record.Territories != null && part.Record.Territories.Any()) {

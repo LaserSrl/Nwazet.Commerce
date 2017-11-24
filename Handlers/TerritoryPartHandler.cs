@@ -24,6 +24,7 @@ namespace Nwazet.Commerce.Handlers {
             ////Lazyfield setters
             OnInitializing<TerritoryPart>(PropertySetHandlers);
             OnLoading<TerritoryPart>((context, part) => LazyLoadHandlers(part));
+            OnVersioning<TerritoryPart>((context, part, newVersionPart) => LazyLoadHandlers(newVersionPart));
 
             //Handle the presence of child territories: may need to run asynchronously
             OnRemoving<TerritoryPart>(RemoveChildren);

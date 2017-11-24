@@ -15,10 +15,12 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Mvc.Extensions;
+using Orchard.Mvc.Html;
 using Orchard.Security;
 using Orchard.Security.Permissions;
 using Orchard.UI.Admin;
 using Orchard.UI.Notify;
+using Orchard.Utility.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -339,7 +341,23 @@ namespace Nwazet.Commerce.Controllers {
                         return View(model);
                     }
 
+                    string previousRoute = null;
+                    if (item.Has<IAliasAspect>()
+                        && !string.IsNullOrWhiteSpace(returnUrl)
+                        && Request.IsLocalUrl(returnUrl)
+                        // only if the original returnUrl is the content itself
+                        && String.Equals(returnUrl, Url.ItemDisplayUrl(item), StringComparison.OrdinalIgnoreCase)
+                        ) {
+                        previousRoute = item.As<IAliasAspect>().Path;
+                    }
+
                     conditionallyPublish(item);
+
+                    if (!string.IsNullOrWhiteSpace(returnUrl)
+                        && previousRoute != null
+                        && !String.Equals(item.As<IAliasAspect>().Path, previousRoute, StringComparison.OrdinalIgnoreCase)) {
+                        returnUrl = Url.ItemDisplayUrl(item);
+                    }
 
                     _notifier.Information(string.IsNullOrWhiteSpace(item.TypeDefinition.DisplayName)
                         ? T("Your content has been updated.")

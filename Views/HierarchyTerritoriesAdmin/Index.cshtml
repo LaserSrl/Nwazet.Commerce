@@ -75,7 +75,7 @@
                 <span class="territory-parent"><input type="text" class="text" name="@Html.NameOf(m => m.Nodes[index].ParentId)" value="@node.ParentId" /></span>
                 <span class="territory-actions">
                     <input type="hidden" name="@Html.NameOf(m => m.Nodes[index].Id)" value="@node.Id" />
-                    @Html.ItemEditLink(T("Edit").Text, node.TerritoryItem, new { returnUrl = Request.RawUrl })@T(" | ")
+                    @Html.ItemEditLink(T("Edit").Text, node.TerritoryItem, new { ReturnUrl = Request.RawUrl })@T(" | ")
                     @Html.ActionLink(T("Delete").Text, "DeleteTerritory", new { id = node.Id }, new { @class = "remove", itemprop = "RemoveUrl UnsafeUrl" })
                 </span>
             </div>

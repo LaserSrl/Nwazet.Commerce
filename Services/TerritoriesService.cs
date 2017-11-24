@@ -116,14 +116,16 @@ namespace Nwazet.Commerce.Services {
                 _availableTerritoryInternals = _territoriesRepositoryService
                     .GetTerritories()
                     .Where(tir => !hierarchyPart
-                        .Territories
-                        .Where(ci => ci.As<TerritoryPart>()
-                            .Record
-                            .TerritoryInternalRecord != null)
-                        .Select(ci => ci.As<TerritoryPart>()
-                            .Record
-                            .TerritoryInternalRecord
-                            .Id)
+                        .Record.Territories //.Territories 
+                        .Where(tpr => tpr.TerritoryInternalRecord != null)
+                        //.Where(ci => ci.As<TerritoryPart>()
+                        //    .Record
+                        //    .TerritoryInternalRecord != null)
+                        .Select(tpr => tpr.TerritoryInternalRecord.Id)
+                        //.Select(ci => ci.As<TerritoryPart>()
+                        //    .Record
+                        //    .TerritoryInternalRecord
+                        //    .Id)
                         .Contains(tir.Id)
                     );
             }
