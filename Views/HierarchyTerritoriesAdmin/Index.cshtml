@@ -68,7 +68,7 @@
 
         var index = nodesList.FindIndex(tht => tht.Id == node.Id);
         // render the node, then its children
-        @:<li class="hierarchy-territory-item" data-index="@node.Id">
+        @:<li class="territories-list-item" data-index="@node.Id">
             <div>
                 <h2>@node.DisplayText</h2>
                 <span class="territory-type">(@node.TerritoryItem.TypeDefinition.DisplayName)</span>
@@ -95,9 +95,9 @@
     //<![CDATA[
     var leaveConfirmation = '@HttpUtility.JavaScriptStringEncode(T("Some items where not saved.").Text)';
 
-    $('#menuId').change(function () {
-        $(this).parents('form').submit();
-    });
+    //$('#menuId').change(function () {
+    //    $(this).parents('form').submit();
+    //});
     //]]>
     </script>
 }
