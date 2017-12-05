@@ -20,7 +20,7 @@
                             var ci = contentManager.Get(tpr.ContentItemRecord.Id, VersionOptions.Latest);
                             var displayText = contentManager.GetItemMetadata(ci).DisplayText;
                             displayText = string.IsNullOrWhiteSpace(displayText) ?
-                                T("Connected Territory").Text : displayText;
+                                T("Connected Territory").Text : Html.Encode(displayText);
                             <li>
                                 @Html.ItemEditLinkWithReturnUrl(displayText, ci)
                             </li>

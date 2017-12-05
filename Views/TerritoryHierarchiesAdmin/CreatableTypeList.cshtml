@@ -6,7 +6,7 @@
           "CreateHierarchy",
           new {
               Area = "Nwazet.Commerce",
-              id = (string)type.Name,
+              id = Html.Encode((string)type.Name),
               ReturnUrl = Request.QueryString["ReturnUrl"] })
     </p>
 }

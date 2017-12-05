@@ -16,7 +16,7 @@
             @foreach (var tir in items) {
                 <tr>
                     <td><input type="checkbox" value="@tir.Id" name="itemIds"/></td>
-                    <td>@tir.Name</td>
+                    <td>@Html.Encode(tir.Name)</td>
                     <td>
                         @Html.ActionLink(T("Edit").Text, "EditTerritoryInternal", "TerritoriesAdmin", new { id = tir.Id }, null) |
                         @Html.ActionLink(T("Delete").Text, "DeleteTerritoryInternal", "TerritoriesAdmin", new { id = tir.Id }, new { itemprop = "RemoveUrl UnsafeUrl" })

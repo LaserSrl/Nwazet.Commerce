@@ -7,7 +7,7 @@
             @if (Model.AvailableTerritoryInternalRecords.Count() == 1) {
                 @Html.HiddenFor(m => m.SelectedRecordId)
                 <span>
-                    @T("This territory has identity \"{0}\".", Model.AvailableTerritoryInternalRecords.First().Name)
+                    @T("This territory has identity \"{0}\".", Html.Encode(Model.AvailableTerritoryInternalRecords.First().Name))
                 </span>
             } else {
                 <label for="@Html.FieldIdFor(m => m.SelectedRecordId)" class="required">
@@ -20,7 +20,7 @@
             }
             @if (Model.Parent != null) {
                 var parentMeta = Model.Parent.ContentItem.ContentManager.GetItemMetadata(Model.Parent);
-                var parentTitle = parentMeta.DisplayText;
+                var parentTitle = Html.Encode(parentMeta.DisplayText);
                 <div>
                     @T("This is a child of ")@Html.ItemEditLinkWithReturnUrl(T("\"{0}\"", parentTitle).Text, Model.Parent.ContentItem)@T(".")
                 </div>
