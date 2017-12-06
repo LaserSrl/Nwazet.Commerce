@@ -22,7 +22,7 @@ namespace Nwazet.Commerce.Models {
             get { return _children.Value; }
             // no setter, because this is "filled" thanks to a 1-to-n relationship to TerritoryPartRecords
         }
-        
+
         private readonly LazyField<ContentItem> _hierarchy =
             new LazyField<ContentItem>();
 
@@ -62,6 +62,24 @@ namespace Nwazet.Commerce.Models {
 
         public int AllChildrenCount {
             get { return _allChildrenCount.Value; }
+        }
+
+        /// <summary>
+        /// Verifies whether the current TerritoryPart matches the one passsed as a parameter by comparing the respective
+        /// TerritoryInternalRecords. In case those cannot be accessed, or are null, the TerritoryParts are considered to 
+        /// not match.
+        /// </summary>
+        /// <param name="other">The TerritoryPart whose TerritoryInternalRecord will be compared with the current one.</param>
+        /// <returns>True if both TerritoryParts have a valid TerritoryInternalRecord, and the Ids of those match. False in 
+        /// every other case.</returns>
+        public bool Matches(TerritoryPart other) {
+            if (this.Record != null && this.Record.TerritoryInternalRecord != null
+                && other.Record != null && other.Record.TerritoryInternalRecord != null
+                && this.Record.TerritoryInternalRecord.Id == other.Record.TerritoryInternalRecord.Id) {
+
+                return true;
+            }
+            return false;
         }
     }
 }
