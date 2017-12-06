@@ -109,3 +109,7 @@ Features:
 	Territories:
 		Name: Territories
 		Description: Flexible advanced handling of hierarchies of territories and regions
+	Territories.Localization:
+		Name: Territories Localization Extensions
+		Description: Enables proper automated handling of territories for multicultural web sites
+		Dependencies: Territories, Orchard.Localization
