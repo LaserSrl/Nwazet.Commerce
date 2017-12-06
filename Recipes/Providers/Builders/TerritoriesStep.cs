@@ -65,18 +65,6 @@ namespace Nwazet.Commerce.Recipes.Providers.Builders {
                 .Where(ctd => ctd.Parts.Any(pa => pa
                     .PartDefinition.Name.Equals(TerritoryPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
                 .Select(ctd => ctd.Name);
-            // Get the ContentItems
-            var contentItems = hierarchyTypes.Any()
-                ? _contentManager
-                    .Query(VersionOptions.Latest, hierarchyTypes.ToArray())
-                    .List().ToList()
-                : Enumerable.Empty<ContentItem>().ToList();
-            if (territoryTypes.Any()) {
-                contentItems.AddRange(
-                    _contentManager
-                        .Query(VersionOptions.Latest, territoryTypes.ToArray())
-                        .List().ToList());
-            }
 
             // Add a command telling to try and enable this feature
             context.RecipeDocument.Element("Orchard")
@@ -96,15 +84,22 @@ namespace Nwazet.Commerce.Recipes.Providers.Builders {
 
             // Export ContentItems
             // 1. Export Hierarchies
-            var hierarchyItems = contentItems.Where(ci => hierarchyTypes.Contains(ci.ContentType));
+            // Get the ContentItems for the hierarchies (they have references to their territories)
+            var hierarchyItems = hierarchyTypes.Any()
+                ? _contentManager
+                    .Query(VersionOptions.Latest, hierarchyTypes.ToArray())
+                    .List().ToList()
+                : Enumerable.Empty<ContentItem>().ToList();
             if (hierarchyItems.Any())
                 context.RecipeDocument.Element("Orchard")
                     .Add(ExportData(hierarchyTypes, hierarchyItems));
             // 2. Export Territories
-            var territoryItems = contentItems.Where(ci => territoryTypes.Contains(ci.ContentType));
-            if (territoryItems.Any())
-                context.RecipeDocument.Element("Orchard")
-                    .Add(ExportTerritories(territoryItems));
+            foreach (var hierarchy in hierarchyItems.Select(ci => ci.As<TerritoryHierarchyPart>())) {
+                if (hierarchy.Territories.Any()) {
+                    context.RecipeDocument.Element("Orchard")
+                    .Add(ExportTerritories(hierarchy.Territories));
+                }
+            }
         }
 
         /// <summary>
