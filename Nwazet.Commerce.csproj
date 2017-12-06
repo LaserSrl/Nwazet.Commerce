@@ -65,10 +65,6 @@
     <Reference Include="Orchard.Fields">
       <HintPath>..\Orchard.Sources\src\Orchard.Web\Modules\Orchard.Fields\bin\Orchard.Fields.dll</HintPath>
     </Reference>
-    <Reference Include="Orchard.Forms, Version=1.10.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Orchard.Sources\src\Orchard.Web\Modules\Orchard.Forms\bin\Orchard.Forms.dll</HintPath>
-    </Reference>
     <Reference Include="Orchard.Framework">
       <HintPath>..\Orchard.Sources\src\Orchard.Web\bin\Orchard.Framework.dll</HintPath>
     </Reference>

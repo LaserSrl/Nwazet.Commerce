@@ -1,19 +1,15 @@
-﻿using Orchard.Environment.Extensions;
+﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Services;
+using Orchard.ContentManagement;
+using Orchard.ContentManagement.MetaData;
+using Orchard.ContentManagement.MetaData.Models;
+using Orchard.Environment.Extensions;
+using Orchard.Localization;
 using Orchard.Recipes.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Orchard.Localization;
-using Orchard.ContentManagement;
-using Orchard.ContentManagement.MetaData;
-using Orchard.ContentManagement.MetaData.Models;
-using Orchard.Recipes.Models;
-using Orchard.ContentManagement.MetaData;
-using Nwazet.Commerce.Models;
 using System.Xml.Linq;
-using Nwazet.Commerce.Services;
 
 namespace Nwazet.Commerce.Recipes.Providers.Builders {
     [OrchardFeature("Territories")]

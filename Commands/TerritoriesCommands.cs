@@ -2,11 +2,6 @@
 using Nwazet.Commerce.Services;
 using Orchard.Commands;
 using Orchard.Environment.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Commands {
     [OrchardFeature("Territories")]

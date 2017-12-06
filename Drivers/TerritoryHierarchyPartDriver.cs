@@ -4,12 +4,12 @@ using Nwazet.Commerce.Settings;
 using Nwazet.Commerce.ViewModels;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
+using Orchard.ContentManagement.Handlers;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.UI.Notify;
 using System.Collections.Generic;
 using System.Linq;
-using Orchard.ContentManagement.Handlers;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Territories")]
