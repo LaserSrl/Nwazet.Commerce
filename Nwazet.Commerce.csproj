@@ -59,6 +59,10 @@
     <Reference Include="Orchard.Autoroute">
       <HintPath>..\Orchard.Sources\src\Orchard.Web\Modules\Orchard.Autoroute\bin\Orchard.Autoroute.dll</HintPath>
     </Reference>
+    <Reference Include="Orchard.ContentTypes, Version=1.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Orchard.Sources\src\Orchard.Web\Modules\Orchard.ContentTypes\bin\Orchard.ContentTypes.dll</HintPath>
+    </Reference>
     <Reference Include="Orchard.Core">
       <HintPath>..\Orchard.Sources\src\Orchard.Web\Core\bin\Orchard.Core.dll</HintPath>
     </Reference>
@@ -283,6 +287,7 @@
     <Compile Include="Extensions\TerritoriesUtilities.cs" />
     <Compile Include="Features\CurrencyProviderBySiteSettingFeature.cs" />
     <Compile Include="Features\InventoryBySKUFeature.cs" />
+    <Compile Include="Features\TerritoriesLocalizationFeature.cs" />
     <Compile Include="Filters\ReferrerFilter.cs" />
     <Compile Include="Handlers\AdvancedSKUManagementHandler.cs" />
     <Compile Include="Handlers\AdvancedSKUsSiteSettingPartHandler.cs" />
@@ -526,6 +531,7 @@
     <Compile Include="Settings\ProductAttributeLocalizationSettings.cs" />
     <Compile Include="Settings\TerritoryHierarchyPartEditorEvents.cs" />
     <Compile Include="Settings\TerritoryHierarchyPartSettings.cs" />
+    <Compile Include="Settings\TerritoryLocalizationEditorEvents.cs" />
     <Compile Include="Shapes\ProductAttributesLocalizationAdminShapeProvider.cs" />
     <Compile Include="Tokens\CartTokens.cs" />
     <Compile Include="Tokens\OrderTokens.cs" />
