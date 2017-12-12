@@ -74,6 +74,10 @@
     <Reference Include="Orchard.MediaLibrary">
       <HintPath>..\Orchard.Sources\src\Orchard.Web\Modules\Orchard.MediaLibrary\bin\Orchard.MediaLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="Orchard.Modules, Version=1.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Orchard.Sources\src\Orchard.Web\Modules\Orchard.Modules\bin\Orchard.Modules.dll</HintPath>
+    </Reference>
     <Reference Include="Orchard.Projections">
       <HintPath>..\Orchard.Sources\src\Orchard.Web\Modules\Orchard.Projections\bin\Orchard.Projections.dll</HintPath>
     </Reference>
@@ -318,6 +322,7 @@
     <Compile Include="Menus\ShippingAdminMenu.cs" />
     <Compile Include="Menus\TerritoriesAdminMenu.cs" />
     <Compile Include="Migrations\AttributesLocalizationExtensionsMigrations.cs" />
+    <Compile Include="Migrations\BaseTaxImplementationsMigrations.cs" />
     <Compile Include="Migrations\BundleMigrations.cs" />
     <Compile Include="Migrations\BundlesLocalizationExtensionsMigrations.cs" />
     <Compile Include="Migrations\CommerceMigrations.cs" />

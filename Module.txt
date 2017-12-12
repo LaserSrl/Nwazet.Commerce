@@ -109,3 +109,7 @@ Features:
 	Territories:
 		Name: Territories
 		Description: Flexible advanced handling of hierarchies of territories and regions
+	Nwazet.BaseTaxImplementations:
+		Name: Nwazet Base Tax Implementations
+		Description: Basic tax configuration options
+		Dependencies: Nwazet.Taxes
