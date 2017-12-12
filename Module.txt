@@ -112,4 +112,5 @@ Features:
 	Nwazet.BaseTaxImplementations:
 		Name: Nwazet Base Tax Implementations
 		Description: Basic tax configuration options
+        Category: Commerce
 		Dependencies: Nwazet.Taxes
