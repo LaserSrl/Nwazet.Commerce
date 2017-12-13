@@ -321,6 +321,7 @@
     <Compile Include="Menus\ProductAdminMenu.cs" />
     <Compile Include="Menus\ShippingAdminMenu.cs" />
     <Compile Include="Menus\TerritoriesAdminMenu.cs" />
+    <Compile Include="Migrations\AdvancedVATMigrations.cs" />
     <Compile Include="Migrations\AttributesLocalizationExtensionsMigrations.cs" />
     <Compile Include="Migrations\BaseTaxImplementationsMigrations.cs" />
     <Compile Include="Migrations\BundleMigrations.cs" />
@@ -365,6 +366,8 @@
     <Compile Include="Models\TerritoryInternalRecord.cs" />
     <Compile Include="Models\TerritoryPart.cs" />
     <Compile Include="Models\TerritoryPartRecord.cs" />
+    <Compile Include="Models\VatConfigurationPart.cs" />
+    <Compile Include="Models\VatConfigurationPartRecord.cs" />
     <Compile Include="Models\WishListItemPart.cs" />
     <Compile Include="Models\WishListItemPartRecord.cs" />
     <Compile Include="Models\WishListListPartRecord.cs" />
@@ -490,6 +493,7 @@
     <Compile Include="Services\TextProductAttributeExtensionProvider.cs" />
     <Compile Include="Services\UseCurrencyFromSiteCultureProvider.cs" />
     <Compile Include="Services\UseCurrencyFromSiteSettingsProvider.cs" />
+    <Compile Include="Services\VatConfigurationProvider.cs" />
     <Compile Include="Services\WishListsArePrivatePermissionsService.cs" />
     <Compile Include="Services\WishListServices.cs" />
     <Compile Include="Services\WishListsUIServices.cs" />
