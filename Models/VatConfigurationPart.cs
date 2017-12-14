@@ -52,6 +52,11 @@ namespace Nwazet.Commerce.Models {
             set { Store(r => r.IsDefaultCategory, value); }
         }
 
+        public decimal DefaultRate {
+            get { return Retrieve(r => r.DefaultRate); }
+            set { Store(r => r.DefaultRate, value); }
+        }
+
         private readonly LazyField<ContentItem> _hierarchy =
             new LazyField<ContentItem>();
 

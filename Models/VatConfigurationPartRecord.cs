@@ -22,5 +22,7 @@ namespace Nwazet.Commerce.Models {
         public virtual bool IsDefaultCategory { get; set; }
 
         public virtual TerritoryHierarchyPartRecord Hierarchy { get; set; }
+
+        public virtual decimal DefaultRate { get; set; }
     }
 }

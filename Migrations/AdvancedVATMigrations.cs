@@ -17,6 +17,7 @@ namespace Nwazet.Commerce.Migrations {
                 .Column<string>("Category", col => col.NotNull().Unlimited().Unique())
                 .Column<int>("Priority")
                 .Column<bool>("IsDefaultCategory")
+                .Column<decimal>("DefaultRate")
                 .Column<int>("Hierarchy_Id"));
 
             return 1;
