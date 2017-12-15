@@ -213,6 +213,7 @@
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryTypeSelection.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryPartCreation.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryPartEdit.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\VatConfiguration.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\CreateTerritory.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\EditTerritory.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\Index.cshtml" />
