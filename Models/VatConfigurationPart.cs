@@ -11,9 +11,11 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.AdvancedVAT")]
     public class VatConfigurationPart : ContentPart<VatConfigurationPartRecord>, ITax {
+
+        #region ITax implementation
         public string Name {
-            get { return Retrieve(r => r.Category); }
-            set { Store(r => r.Category, value); }
+            get { return Category; }
+            set { Category = value; }
         }
 
         public int Priority {
@@ -41,10 +43,16 @@ namespace Nwazet.Commerce.Models {
 
             return taxTotal;
         }
+        #endregion
 
+        /// <summary>
+        /// This would be the product category this VAT will apply to. Uniqueness of this will have to be
+        /// enforced in code, because the migrations fail if we attempt to set this (actually, the corresponding
+        /// value in the record) as unique.
+        /// </summary>
         public string Category {
-            get { return Retrieve(r => r.Category); }
-            set { Store(r => r.Category, value); }
+            get { return Retrieve(r => r.Category) ?? string.Empty; }
+            set { Store(r => r.Category, value ?? string.Empty); }
         }
 
         public bool IsDefaultCategory {
@@ -66,6 +74,7 @@ namespace Nwazet.Commerce.Models {
 
         public ContentItem Hierarchy {
             get { return _hierarchy.Value; }
+            set { _hierarchy.Value = value; }
         }
 
         public TerritoryHierarchyPart HierarchyPart {

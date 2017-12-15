@@ -14,8 +14,6 @@ namespace Nwazet.Commerce.Models {
         
 
         public virtual int Priority { get; set; }
-
-        [Required]
         [StringLengthMax]
         public virtual string Category { get; set; }
 

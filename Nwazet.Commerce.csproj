@@ -309,6 +309,7 @@
     <Compile Include="Handlers\StripeSettingsPartHandler.cs" />
     <Compile Include="Handlers\DiscountPartHandler.cs" />
     <Compile Include="Handlers\SizeBasedShippingMethodPartHandler.cs" />
+    <Compile Include="Handlers\VatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\WeightBasedShippingMethodPartHandler.cs" />
     <Compile Include="Handlers\ProductPartHandler.cs" />
     <Compile Include="Handlers\WishListItemPartHandler.cs" />

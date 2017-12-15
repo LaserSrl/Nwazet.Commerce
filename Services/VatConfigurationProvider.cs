@@ -23,11 +23,11 @@ namespace Nwazet.Commerce.Services {
         }
 
         public string ContentTypeName {
-            get { return T("AdvancedVAT").Text; }
+            get { return "VATConfiguration"; }
         }
 
         public string Name {
-            get { return T("Advanced VAT Configuration").Text; }
+            get { return T("VAT Category Configuration").Text; }
         }
 
         public IEnumerable<ITax> GetTaxes() {

@@ -38,20 +38,42 @@ namespace Nwazet.Commerce.Drivers {
 
         protected override DriverResult Editor(VatConfigurationPart part, dynamic shapeHelper) {
             var model = CreateVM(part);
-            return null;
+            return ContentShape("Parts_VatConfiguration_Edit", 
+                () => shapeHelper.EditorTemplate(
+                    TemplateName: "Parts/VatConfiguration",
+                    Model: model,
+                    Prefix: Prefix
+                    ));
         }
 
         protected override DriverResult Editor(VatConfigurationPart part, IUpdateModel updater, dynamic shapeHelper) {
-            return null;
+            var model = new VatConfigurationViewModel();
+            if (updater.TryUpdateModel(model, Prefix, null, null)) {
+                part.Priority = model.Priority;
+                part.Category = model.Category;
+                // Check default category flag like it's done for homepage
+                part.DefaultRate = model.DefaultRate;
+                var hierarchy = _contentManager.Get(model.SelectedHierarchyId, VersionOptions.Latest);
+                if (hierarchy == null || hierarchy.As<TerritoryHierarchyPart>() == null) {
+                    // A hierarchy must be selected
+                    updater.AddModelError("Selected Hierarchy", T("You need to select a valid hierarchy."));
+                } else {
+                    part.Hierarchy = hierarchy;
+                }
+            }
+            return Editor(part, shapeHelper);
         }
 
         private VatConfigurationViewModel CreateVM(VatConfigurationPart part) {
             return new VatConfigurationViewModel {
-                Category = part.Category,
+                Category = part.Category, 
                 IsDefaultCategory = part.IsDefaultCategory,
                 DefaultRate = part.DefaultRate,
                 Priority = part.Priority,
-                SelectedHierarchyId = part.Hierarchy?.Id ?? 0,
+                SelectedHierarchyId = part.Hierarchy?.Id ?? -1,
+                SelectedHierarchyText = part.Hierarchy == null ? string.Empty 
+                    : _contentManager.GetItemMetadata(part.Hierarchy).DisplayText,
+                SelectedHierarchyItem = part.Hierarchy,
                 Part = part,
                 Hierarchies = _territoriesService
                     .GetHierarchiesQuery()

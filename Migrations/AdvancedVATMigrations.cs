@@ -1,4 +1,5 @@
-﻿using Orchard.Data.Migration;
+﻿using Orchard.ContentManagement.MetaData;
+using Orchard.Data.Migration;
 using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,15 @@ namespace Nwazet.Commerce.Migrations {
 
             SchemaBuilder.CreateTable("VatConfigurationPartRecord", table => table
                 .ContentPartRecord()
-                .Column<string>("Category", col => col.NotNull().Unlimited().Unique())
+                .Column<string>("Category", col => col.Unlimited()) // uniqueness on this will have to be enforced by services
                 .Column<int>("Priority")
                 .Column<bool>("IsDefaultCategory")
                 .Column<decimal>("DefaultRate")
                 .Column<int>("Hierarchy_Id"));
+
+            ContentDefinitionManager.AlterTypeDefinition("VATConfiguration", cfg => cfg
+                .WithPart("VatConfigurationPart")
+                .DisplayedAs("VAT Category Configuration"));
 
             return 1;
         }

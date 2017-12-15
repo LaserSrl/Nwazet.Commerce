@@ -17,6 +17,7 @@ namespace Nwazet.Commerce.ViewModels {
             Hierarchies = new List<SelectListItem>();
         }
 
+        [Required]
         public string Category { get; set; }
         public bool IsDefaultCategory { get; set; }
         public decimal DefaultRate { get; set; }
@@ -24,6 +25,9 @@ namespace Nwazet.Commerce.ViewModels {
 
         [Required]
         public int SelectedHierarchyId { get; set; }
+
+        public string SelectedHierarchyText { get; set; }
+        public ContentItem SelectedHierarchyItem { get; set; }
 
         public IEnumerable<SelectListItem> Hierarchies { get; set; }
 
