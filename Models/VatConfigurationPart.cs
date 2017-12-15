@@ -55,9 +55,9 @@ namespace Nwazet.Commerce.Models {
             set { Store(r => r.Category, value ?? string.Empty); }
         }
 
-        public bool IsDefaultCategory {
-            get { return Retrieve(r => r.IsDefaultCategory); }
-            set { Store(r => r.IsDefaultCategory, value); }
+        public bool PromoteToDefaultCategory {
+            get { return Retrieve(r => r.PromoteToDefaultCategory); }
+            set { Store(r => r.PromoteToDefaultCategory, value); }
         }
 
         public decimal DefaultRate {

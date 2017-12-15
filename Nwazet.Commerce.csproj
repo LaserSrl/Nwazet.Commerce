@@ -455,6 +455,7 @@
     <Compile Include="Services\ITerritoriesHierarchyService.cs" />
     <Compile Include="Services\ITerritoriesRepositoryService.cs" />
     <Compile Include="Services\ITerritoriesService.cs" />
+    <Compile Include="Services\IVatConfigurationService.cs" />
     <Compile Include="Services\IWishListExtensionProvider.cs" />
     <Compile Include="Services\IWishListServices.cs" />
     <Compile Include="Services\IWishListsPermissionsService.cs" />
@@ -497,6 +498,7 @@
     <Compile Include="Services\UseCurrencyFromSiteCultureProvider.cs" />
     <Compile Include="Services\UseCurrencyFromSiteSettingsProvider.cs" />
     <Compile Include="Services\VatConfigurationProvider.cs" />
+    <Compile Include="Services\VatConfigurationService.cs" />
     <Compile Include="Services\WishListsArePrivatePermissionsService.cs" />
     <Compile Include="Services\WishListServices.cs" />
     <Compile Include="Services\WishListsUIServices.cs" />

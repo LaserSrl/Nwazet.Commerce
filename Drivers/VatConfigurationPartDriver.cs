@@ -19,13 +19,16 @@ namespace Nwazet.Commerce.Drivers {
 
         private readonly IContentManager _contentManager;
         private readonly ITerritoriesService _territoriesService;
+        private readonly IVatConfigurationService _vatConfigurationService;
 
         public VatConfigurationPartDriver(
             IContentManager contentManager,
-            ITerritoriesService territoriesService) {
+            ITerritoriesService territoriesService,
+            IVatConfigurationService vatConfigurationService) {
 
             _contentManager = contentManager;
             _territoriesService = territoriesService;
+            _vatConfigurationService = vatConfigurationService;
 
             T = NullLocalizer.Instance;
         }
@@ -66,8 +69,9 @@ namespace Nwazet.Commerce.Drivers {
 
         private VatConfigurationViewModel CreateVM(VatConfigurationPart part) {
             return new VatConfigurationViewModel {
-                Category = part.Category, 
-                IsDefaultCategory = part.IsDefaultCategory,
+                Category = part.Category,
+                IsDefaultCategory = part.Id != 0 && part.Id == _vatConfigurationService.GetDefaultCategory(),
+                PromoteToDefaultCategory = part.PromoteToDefaultCategory,
                 DefaultRate = part.DefaultRate,
                 Priority = part.Priority,
                 SelectedHierarchyId = part.Hierarchy?.Id ?? -1,

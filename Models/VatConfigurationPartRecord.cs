@@ -17,7 +17,7 @@ namespace Nwazet.Commerce.Models {
         [StringLengthMax]
         public virtual string Category { get; set; }
 
-        public virtual bool IsDefaultCategory { get; set; }
+        public virtual bool PromoteToDefaultCategory { get; set; }
 
         public virtual TerritoryHierarchyPartRecord Hierarchy { get; set; }
 

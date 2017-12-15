@@ -17,7 +17,7 @@ namespace Nwazet.Commerce.Migrations {
                 .ContentPartRecord()
                 .Column<string>("Category", col => col.Unlimited()) // uniqueness on this will have to be enforced by services
                 .Column<int>("Priority")
-                .Column<bool>("IsDefaultCategory")
+                .Column<bool>("PromoteToDefaultCategory")
                 .Column<decimal>("DefaultRate")
                 .Column<int>("Hierarchy_Id"));
 

@@ -4,6 +4,12 @@
     <div>
         @Html.LabelFor(m => m.Category, T("Category").Text, new { @class = "sub" })
         @Html.TextBoxFor(m => m.Category, new { @class = "text text-medium", title = T("Product category") })
+        @if (Model.IsDefaultCategory) {
+            @T("This is the default category.")
+        } else {
+            @Html.LabelFor(m => m.IsDefaultCategory, T("Set this as the default category: ").Text, new { @class = "forcheckbox" })
+            @Html.CheckBoxFor(m => m.IsDefaultCategory)
+        }
         @Html.LabelFor(m => m.IsDefaultCategory, T("This is the default category: ").Text, new { @class = "forcheckbox" })
         @Html.CheckBoxFor(m => m.IsDefaultCategory)
         <span class="hint">@T("The product category this VAT will be applied to. The default category will apply to all products where a category was not specified.")</span>
