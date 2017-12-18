@@ -22,6 +22,7 @@ namespace Nwazet.Commerce.Handlers {
             _contentManager = contentManager;
 
             Filters.Add(StorageFilter.For(repository));
+            Filters.Add(new ActivatingFilter<VatConfigurationSiteSettingsPart>("Site"));
 
             //Lazyfield setters and loaders
             OnInitializing<VatConfigurationPart>(PropertySetHandlers);

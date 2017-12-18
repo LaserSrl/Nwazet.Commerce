@@ -70,7 +70,7 @@ namespace Nwazet.Commerce.Drivers {
         private VatConfigurationViewModel CreateVM(VatConfigurationPart part) {
             return new VatConfigurationViewModel {
                 Category = part.Category,
-                IsDefaultCategory = part.Id != 0 && part.Id == _vatConfigurationService.GetDefaultCategory(),
+                IsDefaultCategory = part.Id != 0 && part.Id == _vatConfigurationService.GetDefaultCategoryId(),
                 PromoteToDefaultCategory = part.PromoteToDefaultCategory,
                 DefaultRate = part.DefaultRate,
                 Priority = part.Priority,

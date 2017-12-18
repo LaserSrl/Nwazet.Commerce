@@ -371,6 +371,7 @@
     <Compile Include="Models\TerritoryPartRecord.cs" />
     <Compile Include="Models\VatConfigurationPart.cs" />
     <Compile Include="Models\VatConfigurationPartRecord.cs" />
+    <Compile Include="Models\VatConfigurationSiteSettingsPart.cs" />
     <Compile Include="Models\WishListItemPart.cs" />
     <Compile Include="Models\WishListItemPartRecord.cs" />
     <Compile Include="Models\WishListListPartRecord.cs" />
