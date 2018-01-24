@@ -136,6 +136,7 @@
     <Content Include="Content\menu.nwazet-commerce.png" />
     <Content Include="Content\move.gif" />
     <Content Include="LICENSE.txt" />
+    <Content Include="Recipes\World.recipe.xml" />
     <Content Include="Scripts\attribute-admin.js" />
     <Content Include="Scripts\chartjs.js" />
     <Content Include="Scripts\chartjs.min.js">
@@ -146,6 +147,10 @@
       <DependentUpon>inventory.js</DependentUpon>
     </Content>
     <Content Include="Scripts\jquery.iframe-transport.js" />
+    <Content Include="Scripts\jquery.mjs.nestedSortable.js" />
+    <Content Include="Scripts\jquery.mjs.nestedSortable.min.js">
+      <DependentUpon>jquery.mjs.nestedSortable.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\mustache.js" />
     <Content Include="Scripts\order-admin.js" />
     <Content Include="Scripts\order-admin.min.js">
@@ -170,13 +175,22 @@
     <Content Include="Scripts\shoppingcart.min.js">
       <DependentUpon>shoppingcart.js</DependentUpon>
     </Content>
+    <Content Include="Scripts\territory-hierarchies-admin.js" />
+    <Content Include="Scripts\territory-hierarchies-admin.min.js">
+      <DependentUpon>territory-hierarchies-admin.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\wishlists.js" />
     <Content Include="Scripts\wishlists.min.js">
       <DependentUpon>wishlists.js</DependentUpon>
     </Content>
     <Content Include="Styles\bundle.nwazet-commerce-admin.css" />
     <Content Include="Styles\attribute.nwazet-commerce-admin.css" />
+    <Content Include="Styles\images\move.gif" />
     <Content Include="Styles\reports-admin.css" />
+    <Content Include="Styles\territory-hierarchies-admin.css" />
+    <Content Include="Styles\territory-hierarchies-admin.min.css">
+      <DependentUpon>territory-hierarchies-admin.css</DependentUpon>
+    </Content>
     <Content Include="Styles\wishlists.nwazet-commerce.css" />
     <Content Include="Styles\wishlists.nwazet-commerce.min.css">
       <DependentUpon>wishlists.nwazet-commerce.css</DependentUpon>
@@ -194,7 +208,20 @@
     <Content Include="Styles\order-admin.min.css">
       <DependentUpon>order-admin.less</DependentUpon>
     </Content>
+    <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryManager.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryTypeSelection.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\TerritoryPartCreation.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\TerritoryPartEdit.cshtml" />
+    <None Include="Views\HierarchyTerritoriesAdmin\CreateTerritory.cshtml" />
+    <None Include="Views\HierarchyTerritoriesAdmin\EditTerritory.cshtml" />
+    <None Include="Views\HierarchyTerritoriesAdmin\Index.cshtml" />
+    <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />
     <None Include="Views\Parts\WishListsActions.cshtml" />
+    <None Include="Views\TerritoryHierarchiesAdmin\CreatableTypeList.cshtml" />
+    <None Include="Views\TerritoryHierarchiesAdmin\CreateHierarchy.cshtml" />
+    <None Include="Views\TerritoryHierarchiesAdmin\EditHierarchy.cshtml" />
+    <None Include="Views\TerritoriesAdmin\EditorTemplates\TerritoryInternalRecord.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Scripts\Web.config" />
     <Content Include="Properties\AssemblyInfo.cs" />
@@ -203,7 +230,9 @@
   <ItemGroup>
     <Compile Include="Activities\CommerceActivity.cs" />
     <Compile Include="Activities\OrderActivity.cs" />
+    <Compile Include="Commands\TerritoriesCommands.cs" />
     <Compile Include="Controllers\ECommerceSettingsAdminController.cs" />
+    <Compile Include="Controllers\HierarchyTerritoriesAdminController.cs" />
     <Compile Include="Controllers\InventoryBySKUSettingsAdminController.cs" />
     <Compile Include="Controllers\ProductSettingsAdminController.cs" />
     <Compile Include="Controllers\BundleAdminController.cs" />
@@ -212,6 +241,10 @@
     <Compile Include="Controllers\OrderSslController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\TaxAdminController.cs" />
+    <Compile Include="Controllers\TerritoriesAdminController.cs" />
+    <Compile Include="Controllers\TerritoriesAdminHierarchyExecutionContext.cs" />
+    <Compile Include="Controllers\TerritoryExecutionContext.cs" />
+    <Compile Include="Controllers\TerritoryHierarchiesAdminController.cs" />
     <Compile Include="Controllers\UspsAdminController.cs" />
     <Compile Include="Controllers\PromotionAdminController.cs" />
     <Compile Include="Controllers\ProductAdminController.cs" />
@@ -231,6 +264,8 @@
     <Compile Include="Drivers\ProductPartWishListDriver.cs" />
     <Compile Include="Drivers\ProductSettingsPartDriver.cs" />
     <Compile Include="Drivers\ProductsListPartDriver.cs" />
+    <Compile Include="Drivers\TerritoryHierarchyPartDriver.cs" />
+    <Compile Include="Drivers\TerritoryPartDriver.cs" />
     <Compile Include="Drivers\WishListItemPartDriver.cs" />
     <Compile Include="Drivers\WishListListPartDriver.cs" />
     <Compile Include="Drivers\ZipCodeTaxPartDriver.cs" />
@@ -246,8 +281,10 @@
     <Compile Include="Drivers\ShoppingCartWidgetDriver.cs" />
     <Compile Include="Drivers\WeightBasedShippingMethodPartDriver.cs" />
     <Compile Include="Exceptions\StripeException.cs" />
+    <Compile Include="Exceptions\TerritoryInternalDuplicateException.cs" />
     <Compile Include="Extensions\AttributeNameUtilities.cs" />
     <Compile Include="Extensions\DefaultHqlExpressionFactoryExtension.cs" />
+    <Compile Include="Extensions\TerritoriesUtilities.cs" />
     <Compile Include="Features\CurrencyProviderBySiteSettingFeature.cs" />
     <Compile Include="Features\InventoryBySKUFeature.cs" />
     <Compile Include="Filters\FilterHelper.cs" />
@@ -276,6 +313,8 @@
     <Compile Include="Handlers\ProductPartVersioningHandler.cs" />
     <Compile Include="Handlers\ProductSettingsPartHandler.cs" />
     <Compile Include="Handlers\StateOrCountryTaxPartHandler.cs" />
+    <Compile Include="Handlers\TerritoryHierarchyPartHandler.cs" />
+    <Compile Include="Handlers\TerritoryPartHandler.cs" />
     <Compile Include="Handlers\UspsShippingMethodPartHandler.cs" />
     <Compile Include="Handlers\UspsSettingsPartHandler.cs" />
     <Compile Include="Handlers\StripeSettingsPartHandler.cs" />
@@ -294,6 +333,7 @@
     <Compile Include="Menus\PromotionAdminMenu.cs" />
     <Compile Include="Menus\ProductAdminMenu.cs" />
     <Compile Include="Menus\ShippingAdminMenu.cs" />
+    <Compile Include="Menus\TerritoriesAdminMenu.cs" />
     <Compile Include="Migrations\AttributesLocalizationExtensionsMigrations.cs" />
     <Compile Include="Migrations\BundleMigrations.cs" />
     <Compile Include="Migrations\BundlesLocalizationExtensionsMigrations.cs" />
@@ -302,6 +342,7 @@
     <Compile Include="Migrations\OrderMigrations.cs" />
     <Compile Include="Migrations\PersistentCartMigrations.cs" />
     <Compile Include="Migrations\TaxMigrations.cs" />
+    <Compile Include="Migrations\TerritoriesMigrations.cs" />
     <Compile Include="Migrations\UspsMigrations.cs" />
     <Compile Include="Migrations\DiscountMigrations.cs" />
     <Compile Include="Migrations\ShippingMigrations.cs" />
@@ -331,6 +372,11 @@
     <Compile Include="Models\Reporting\ReportDataPoint.cs" />
     <Compile Include="Models\Reporting\TimePeriod.cs" />
     <Compile Include="Models\ShoppingCartBase.cs" />
+    <Compile Include="Models\TerritoryHierarchyPart.cs" />
+    <Compile Include="Models\TerritoryHierarchyPartRecord.cs" />
+    <Compile Include="Models\TerritoryInternalRecord.cs" />
+    <Compile Include="Models\TerritoryPart.cs" />
+    <Compile Include="Models\TerritoryPartRecord.cs" />
     <Compile Include="Models\WishListItemPart.cs" />
     <Compile Include="Models\WishListItemPartRecord.cs" />
     <Compile Include="Models\WishListListPartRecord.cs" />
@@ -371,9 +417,12 @@
     <Compile Include="Models\ShoppingCartQuantityProduct.cs" />
     <Compile Include="Models\ShoppingCartWidgetPart.cs" />
     <Compile Include="Permissions\CommercePermissions.cs" />
+    <Compile Include="Permissions\ITerritoriesPermissionProvider.cs" />
     <Compile Include="Permissions\ReportPermissions.cs" />
     <Compile Include="Permissions\OrderPermissions.cs" />
+    <Compile Include="Permissions\TerritoriesPermissions.cs" />
     <Compile Include="Permissions\WishListPermissions.cs" />
+    <Compile Include="Recipes\Providers\Builders\TerritoriesStep.cs" />
     <Compile Include="Reports\AverageSaleAmountReport.cs" />
     <Compile Include="Reports\BaseSalesReport.cs" />
     <Compile Include="Reports\SalesByBestSellingProductsReport.cs" />
@@ -386,6 +435,8 @@
     <Compile Include="Routes\OrderRoutes.cs" />
     <Compile Include="Routes\CommerceRoutes.cs" />
     <Compile Include="Routes\WishListRoutes.cs" />
+    <Compile Include="Security\HierachiesAuthorizationEventHandler.cs" />
+    <Compile Include="Security\TerritoriesAuthorizationEventHandler.cs" />
     <Compile Include="Security\WishListsAuthorizationEventHandler.cs" />
     <Compile Include="Services\BundleAutocompleteService.cs" />
     <Compile Include="Services\BundleProductLocalizationBundleService.cs" />
@@ -407,6 +458,9 @@
     <Compile Include="Services\IProductInventoryService.cs" />
     <Compile Include="Services\ISKUGenerationServices.cs" />
     <Compile Include="Services\ISKUUniquenessHelper.cs" />
+    <Compile Include="Services\ITerritoriesHierarchyService.cs" />
+    <Compile Include="Services\ITerritoriesRepositoryService.cs" />
+    <Compile Include="Services\ITerritoriesService.cs" />
     <Compile Include="Services\IWishListExtensionProvider.cs" />
     <Compile Include="Services\IWishListServices.cs" />
     <Compile Include="Services\IWishListsPermissionsService.cs" />
@@ -442,6 +496,9 @@
     <Compile Include="Services\ShippingService.cs" />
     <Compile Include="Services\ShoppingCartInfosetPartStorage.cs" />
     <Compile Include="Services\SKUGenerationServices.cs" />
+    <Compile Include="Services\TerritoriesHierarchyService.cs" />
+    <Compile Include="Services\TerritoriesService.cs" />
+    <Compile Include="Services\TerritoryRepositoryService.cs" />
     <Compile Include="Services\TextProductAttributeExtensionProvider.cs" />
     <Compile Include="Services\UseCurrencyFromSiteCultureProvider.cs" />
     <Compile Include="Services\UseCurrencyFromSiteSettingsProvider.cs" />
@@ -484,6 +541,8 @@
     <Compile Include="Settings\BundleProductSettings.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationEditorEvents.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationSettings.cs" />
+    <Compile Include="Settings\TerritoryHierarchyPartEditorEvents.cs" />
+    <Compile Include="Settings\TerritoryHierarchyPartSettings.cs" />
     <Compile Include="Shapes\ProductAttributesLocalizationAdminShapeProvider.cs" />
     <Compile Include="Tokens\CartTokens.cs" />
     <Compile Include="Tokens\OrderTokens.cs" />
@@ -493,6 +552,8 @@
     <Compile Include="ViewModels\ECommerceCurrencySiteSettingsViewModel.cs" />
     <Compile Include="ViewModels\ECommerceSettingsViewModel.cs" />
     <Compile Include="ViewModels\AttributeLocalizationProductAttributesPartEditViewModel.cs" />
+    <Compile Include="ViewModels\HierarchyAdminIndexViewModel.cs" />
+    <Compile Include="ViewModels\HierarchyIndexEntry.cs" />
     <Compile Include="ViewModels\InventoryBySKUProductEditorViewModel.cs" />
     <Compile Include="ViewModels\InventoryBySKUSiteSettingsPartViewModel.cs" />
     <Compile Include="ViewModels\ProductAttributePartDisplayViewModel.cs" />
@@ -510,6 +571,12 @@
     <Compile Include="ViewModels\PromotionIndexViewModel.cs" />
     <Compile Include="ViewModels\ShippingMethodIndexViewModel.cs" />
     <Compile Include="ViewModels\StripeCheckoutViewModel.cs" />
+    <Compile Include="ViewModels\TerritoryHierarchyPartSettingsViewModel.cs" />
+    <Compile Include="ViewModels\TerritoryHierarchyTerritoriesViewModel.cs" />
+    <Compile Include="ViewModels\TerritoryHierarchyTerritoryManagerViewModel.cs" />
+    <Compile Include="ViewModels\TerritoryHierarchyTreeNode.cs" />
+    <Compile Include="ViewModels\TerritoryHierarchyTypeSelectionViewModel.cs" />
+    <Compile Include="ViewModels\TerritoryPartViewModel.cs" />
     <Compile Include="ViewModels\UpdateShoppingCartItemViewModel.cs" />
     <Compile Include="Models\WishListListPart.cs" />
     <Compile Include="ViewModels\WishListElementViewModel.cs" />
@@ -617,6 +684,12 @@
     <None Include="app.config" />
     <None Include="bundleconfig.json" />
     <None Include="packages.config" />
+    <None Include="Views\TerritoriesAdmin\AddTerritoryInternal.cshtml" />
+    <None Include="Views\TerritoriesAdmin\EditTerritoryInternal.cshtml" />
+    <None Include="Views\TerritoryHierarchiesAdmin\Index.cshtml" />
+    <None Include="Views\TerritoryHierarchiesAdmin\HierarchiesListPartial.cshtml" />
+    <None Include="Views\TerritoriesAdmin\TerritoriesIndex.cshtml" />
+    <None Include="Views\TerritoriesAdmin\TerritoriesListPartial.cshtml" />
     <None Include="Views\WishListEditor.cshtml" />
     <None Include="Views\DefinitionTemplates\BundleProductSettings.cshtml" />
     <None Include="Views\EditorTemplates\Parts\BundleAutocomplete.cshtml" />

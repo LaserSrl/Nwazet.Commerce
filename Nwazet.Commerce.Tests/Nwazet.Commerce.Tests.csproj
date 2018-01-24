@@ -34,6 +34,14 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\Laser.Sources\Laser.Orchard\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Moq, Version=4.0.10827.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\..\Laser.Sources\Laser.Orchard\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.5.10.11092, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\Laser.Sources\Laser.Orchard\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
@@ -42,11 +50,26 @@
       <HintPath>..\..\Laser.Sources\Laser.Orchard\packages\NUnit.2.5.10.11092\lib\nunit.mocks.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Orchard.Core, Version=1.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Orchard.Sources\src\Orchard.Web\Core\bin\Orchard.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Orchard.Framework">
       <HintPath>..\..\Orchard.Sources\src\Orchard.Web\bin\Orchard.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="Orchard.Framework.Tests, Version=1.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Orchard.Sources\src\Orchard.Tests\bin\Debug\Orchard.Framework.Tests.dll</HintPath>
+    </Reference>
     <Reference Include="Orchard.Roles">
       <HintPath>..\..\Orchard.Sources\src\Orchard.Web\Modules\Orchard.Roles\bin\Orchard.Roles.dll</HintPath>
+    </Reference>
+    <Reference Include="Orchard.Tests.Modules">
+      <HintPath>..\..\Orchard.Sources\src\Orchard.Tests.Modules\bin\Debug\Orchard.Tests.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="Orchard.Users, Version=1.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Orchard.Sources\src\Orchard.Web\Modules\Orchard.Users\bin\Orchard.Users.dll</HintPath>
     </Reference>
     <Reference Include="pnunit.framework, Version=1.0.4109.34242, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Laser.Sources\Laser.Orchard\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
@@ -55,6 +78,8 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="System.Web" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
@@ -67,10 +92,16 @@
     <Compile Include="PriceServiceTieredPricingTests.cs" />
     <Compile Include="ProductAttributePricingTests.cs" />
     <Compile Include="ShippingServiceTest.cs" />
+    <Compile Include="Stubs\FakeUser.cs" />
     <Compile Include="Stubs\ShapeFactoryStub.cs" />
     <Compile Include="Stubs\SiteStub.cs" />
     <Compile Include="TaxByZipTests.cs" />
     <Compile Include="TaxTests.cs" />
+    <Compile Include="Territories\Handlers\TerritoryHierachyMockHandler.cs" />
+    <Compile Include="Territories\Handlers\TerritoryMockHandler.cs" />
+    <Compile Include="Territories\TerritoriesHierarchyServiceTests.cs" />
+    <Compile Include="Territories\TerritoriesRepositoryServiceTests.cs" />
+    <Compile Include="Territories\TerritoriesServiceTests.cs" />
     <Compile Include="TimePeriodTests.cs" />
     <Compile Include="UspsServiceInternationalTests.cs" />
     <Compile Include="Stubs\UspsServiceStub.cs" />
@@ -104,6 +135,9 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
