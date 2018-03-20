@@ -57,15 +57,15 @@
     <Reference Include="Orchard.Framework">
       <HintPath>..\..\Orchard.Sources\src\Orchard.Web\bin\Orchard.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Orchard.Framework.Tests, Version=1.10.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Orchard.Sources\src\Orchard.Tests\bin\Debug\Orchard.Framework.Tests.dll</HintPath>
-    </Reference>
     <Reference Include="Orchard.Roles">
       <HintPath>..\..\Orchard.Sources\src\Orchard.Web\Modules\Orchard.Roles\bin\Orchard.Roles.dll</HintPath>
     </Reference>
+    <Reference Include="Orchard.Framework.Tests, Version=1.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Orchard.Sources\src\Orchard.Tests\bin\$(Configuration)\Orchard.Framework.Tests.dll</HintPath>
+    </Reference>
     <Reference Include="Orchard.Tests.Modules">
-      <HintPath>..\..\Orchard.Sources\src\Orchard.Tests.Modules\bin\Debug\Orchard.Tests.Modules.dll</HintPath>
+      <HintPath>..\..\Orchard.Sources\src\Orchard.Tests.Modules\bin\$(Configuration)\Orchard.Tests.Modules.dll</HintPath>
     </Reference>
     <Reference Include="Orchard.Users, Version=1.10.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
