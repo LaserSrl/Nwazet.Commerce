@@ -1,6 +1,7 @@
 ﻿using Nwazet.Commerce.Models;
 using Orchard;
 using Orchard.ContentManagement;
+using Orchard.Environment.Configuration;
 using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
@@ -34,9 +35,31 @@ namespace Nwazet.Commerce.Services {
             }
         }
 
+        // We save the Id of the VatConfigurationPart for the default TaxProductCategory in
+        // the site settings. This way it will always be available.
+        // If that value is ==0 we know that no VatConfigurationPart has ever been set as default.
+        // Deletion of the default VatConfigurationPart will have to be prevented elsewhere.
+
         public int GetDefaultCategoryId() {
-            _contentManager.Query<VatConfigurationPart, VatConfigurationPartRecord>();
-            throw new NotImplementedException();
+            return Settings.DefaultVatConfigurationId;
+        }
+
+        public void SetDefaultCategory(VatConfigurationPart part) {
+            if (part.ContentItem.Id != GetDefaultCategoryId()) {
+                // the part is not the default yet
+                Settings.DefaultVatConfigurationId = part.ContentItem.Id;
+            }
+        }
+
+        public VatConfigurationPart GetDefaultCategory() {
+
+            var id = GetDefaultCategoryId();
+            if (id > 0) {
+                return _contentManager.Get<VatConfigurationPart>(id);
+            } else {
+                // no default category set
+                return null;
+            }
         }
     }
 }

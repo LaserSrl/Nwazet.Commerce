@@ -14,8 +14,8 @@ namespace Nwazet.Commerce.Models {
 
         #region ITax implementation
         public string Name {
-            get { return Category; }
-            set { Category = value; }
+            get { return TaxProductCategory; }
+            set { TaxProductCategory = value; }
         }
 
         public int Priority {
@@ -50,16 +50,11 @@ namespace Nwazet.Commerce.Models {
         /// enforced in code, because the migrations fail if we attempt to set this (actually, the corresponding
         /// value in the record) as unique.
         /// </summary>
-        public string Category {
-            get { return Retrieve(r => r.Category) ?? string.Empty; }
-            set { Store(r => r.Category, value ?? string.Empty); }
+        public string TaxProductCategory {
+            get { return Retrieve(r => r.TaxProductCategory) ?? string.Empty; }
+            set { Store(r => r.TaxProductCategory, value ?? string.Empty); }
         }
-
-        public bool PromoteToDefaultCategory {
-            get { return Retrieve(r => r.PromoteToDefaultCategory); }
-            set { Store(r => r.PromoteToDefaultCategory, value); }
-        }
-
+        
         public decimal DefaultRate {
             get { return Retrieve(r => r.DefaultRate); }
             set { Store(r => r.DefaultRate, value); }

@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.AdvancedVAT")]
     public class VatConfigurationSiteSettingsPart : ContentPart {
-        public string DefaultCategory {
-            get { return this.Retrieve(p => p.DefaultCategory); }
-            set { this.Store(p => p.DefaultCategory, value); }
+
+        public int DefaultVatConfigurationId {
+            get { return this.Retrieve(p => p.DefaultVatConfigurationId); }
+            set { this.Store(p => p.DefaultVatConfigurationId, value); }
         }
     }
 }

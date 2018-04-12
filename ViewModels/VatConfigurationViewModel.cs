@@ -18,9 +18,8 @@ namespace Nwazet.Commerce.ViewModels {
         }
 
         [Required]
-        public string Category { get; set; }
+        public string TaxProductCategory { get; set; }
         public bool IsDefaultCategory { get; set; }
-        public bool PromoteToDefaultCategory { get; set; }
         public decimal DefaultRate { get; set; }
         public int Priority { get; set; }
 

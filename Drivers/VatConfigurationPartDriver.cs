@@ -53,8 +53,11 @@ namespace Nwazet.Commerce.Drivers {
             var model = new VatConfigurationViewModel();
             if (updater.TryUpdateModel(model, Prefix, null, null)) {
                 part.Priority = model.Priority;
-                part.Category = model.Category;
+                part.TaxProductCategory = model.TaxProductCategory;
                 // Check default category flag like it's done for homepage
+                if (model.IsDefaultCategory) {
+                    _vatConfigurationService.SetDefaultCategory(part);
+                }
                 part.DefaultRate = model.DefaultRate;
                 var hierarchy = _contentManager.Get(model.SelectedHierarchyId, VersionOptions.Latest);
                 if (hierarchy == null || hierarchy.As<TerritoryHierarchyPart>() == null) {
@@ -68,10 +71,13 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         private VatConfigurationViewModel CreateVM(VatConfigurationPart part) {
+            // If no default VatConfigurationPart exists the GetDefaultCategoryId method returns 0,
+            // as is defined in the interface. This way, the next new VatConfigurationPart that is created
+            // will automatically becom the new default.
+            var partIsDefault = part.ContentItem.Id == _vatConfigurationService.GetDefaultCategoryId();
             return new VatConfigurationViewModel {
-                Category = part.Category,
-                IsDefaultCategory = part.Id != 0 && part.Id == _vatConfigurationService.GetDefaultCategoryId(),
-                PromoteToDefaultCategory = part.PromoteToDefaultCategory,
+                TaxProductCategory = part.TaxProductCategory,
+                IsDefaultCategory = partIsDefault,
                 DefaultRate = part.DefaultRate,
                 Priority = part.Priority,
                 SelectedHierarchyId = part.Hierarchy?.Id ?? -1,

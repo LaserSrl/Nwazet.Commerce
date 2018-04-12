@@ -15,9 +15,8 @@ namespace Nwazet.Commerce.Migrations {
 
             SchemaBuilder.CreateTable("VatConfigurationPartRecord", table => table
                 .ContentPartRecord()
-                .Column<string>("Category", col => col.Unlimited()) // uniqueness on this will have to be enforced by services
+                .Column<string>("TaxProductCategory", col => col.Unlimited()) // uniqueness on this will have to be enforced by services
                 .Column<int>("Priority")
-                .Column<bool>("PromoteToDefaultCategory")
                 .Column<decimal>("DefaultRate")
                 .Column<int>("Hierarchy_Id"));
 
@@ -27,5 +26,6 @@ namespace Nwazet.Commerce.Migrations {
 
             return 1;
         }
+        
     }
 }

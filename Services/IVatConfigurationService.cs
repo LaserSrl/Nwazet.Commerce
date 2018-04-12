@@ -1,4 +1,5 @@
-﻿using Orchard;
+﻿using Nwazet.Commerce.Models;
+using Orchard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,25 @@ namespace Nwazet.Commerce.Services {
         /// category is the product category that will be implicitly assigned to products whenever they
         /// have no category assigned to them explicitly.
         /// </summary>
-        /// <returns>The Id of the default product category. The return value will be negative if no
-        /// default category is set.</returns>
+        /// <returns>The Id of the default product category. The return value will be 0 if no default
+        /// category is set.</returns>
         /// <remarks>This method should only consider published categories.</remarks>
         int GetDefaultCategoryId();
+
+        /// <summary>
+        /// Get the object representing the default product category to be used when evaluating the 
+        /// VAT for products where a specific category has not been set.
+        /// </summary>
+        /// <returns>A object describing the default VAT to be applied. This method will return null
+        /// if it is impossible to determine a default category.</returns>
+        /// <remarks>This method should only consider published categories.</remarks>
+        VatConfigurationPart GetDefaultCategory();
+
+        /// <summary>
+        /// Set the category represented by the object as the default one to be used when no other
+        /// category has been explicitly set.
+        /// </summary>
+        /// <param name="part">The object describing the default VAT to be used.</param>
+        void SetDefaultCategory(VatConfigurationPart part);
     }
 }

@@ -440,6 +440,7 @@
     <Compile Include="Services\CartLifeCycleEventHandler.cs" />
     <Compile Include="Services\CommerceLocalStorageSettings.cs" />
     <Compile Include="Services\CurrencyProviderBase.cs" />
+    <Compile Include="Services\DefaultVatConfigurationPartDoesNotExist.cs" />
     <Compile Include="Services\IBundleAutocompleteService.cs" />
     <Compile Include="Services\IBundleProductLocalizationServices.cs" />
     <Compile Include="Services\IBundleService.cs" />

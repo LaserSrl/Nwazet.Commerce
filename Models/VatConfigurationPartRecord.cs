@@ -15,9 +15,7 @@ namespace Nwazet.Commerce.Models {
 
         public virtual int Priority { get; set; }
         [StringLengthMax]
-        public virtual string Category { get; set; }
-
-        public virtual bool PromoteToDefaultCategory { get; set; }
+        public virtual string TaxProductCategory { get; set; }
 
         public virtual TerritoryHierarchyPartRecord Hierarchy { get; set; }
 
