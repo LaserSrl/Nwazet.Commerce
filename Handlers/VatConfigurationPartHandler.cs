@@ -3,6 +3,7 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
+using Orchard.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +15,15 @@ namespace Nwazet.Commerce.Handlers {
     public class VatConfigurationPartHandler : ContentHandler {
 
         private readonly IContentManager _contentManager;
+        private readonly ISiteService _siteService;
 
         public VatConfigurationPartHandler(
             IRepository<VatConfigurationPartRecord> repository,
-            IContentManager contentManager) {
+            IContentManager contentManager,
+            ISiteService siteService) {
 
             _contentManager = contentManager;
+            _siteService = siteService;
 
             Filters.Add(StorageFilter.For(repository));
             Filters.Add(new ActivatingFilter<VatConfigurationSiteSettingsPart>("Site"));
@@ -29,6 +33,8 @@ namespace Nwazet.Commerce.Handlers {
             OnLoading<VatConfigurationPart>((context, part) => LazyLoadHandlers(part));
             OnVersioning<VatConfigurationPart>((context, part, newVersionPart) => LazyLoadHandlers(newVersionPart));
 
+            OnRemoved<VatConfigurationPart>((context, part) => ResetDefaultVatConfigurationPart(part));
+            OnDestroyed<VatConfigurationPart>((context, part) => ResetDefaultVatConfigurationPart(part));
         }
 
         static void PropertySetHandlers(
@@ -57,5 +63,15 @@ namespace Nwazet.Commerce.Handlers {
             });
         }
 
+        void ResetDefaultVatConfigurationPart(VatConfigurationPart part) {
+            // We will prevent removing the part that has the default configuration. However
+            // here we still manage the case where that part is removed, in order to have a
+            // further layer of data consistency. We may end up here if a delete/remove is invoked
+            // part without going through a permission check.
+            var settings = _siteService.GetSiteSettings().As<VatConfigurationSiteSettingsPart>();
+            if (settings.DefaultVatConfigurationId == part.ContentItem.Id) {
+                settings.DefaultVatConfigurationId = 0;
+            }
+        }
     }
 }

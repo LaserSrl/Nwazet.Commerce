@@ -39,6 +39,7 @@ namespace Nwazet.Commerce.Services {
         // the site settings. This way it will always be available.
         // If that value is ==0 we know that no VatConfigurationPart has ever been set as default.
         // Deletion of the default VatConfigurationPart will have to be prevented elsewhere.
+        // Deletion can be prevented by using a dynamic permission.
 
         public int GetDefaultCategoryId() {
             return Settings.DefaultVatConfigurationId;
