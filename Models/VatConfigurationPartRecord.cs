@@ -20,5 +20,7 @@ namespace Nwazet.Commerce.Models {
         public virtual TerritoryHierarchyPartRecord Hierarchy { get; set; }
 
         public virtual decimal DefaultRate { get; set; }
+
+        public virtual decimal DefaultExtraRate { get; set; }
     }
 }

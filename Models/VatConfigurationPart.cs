@@ -55,9 +55,20 @@ namespace Nwazet.Commerce.Models {
             set { Store(r => r.TaxProductCategory, value ?? string.Empty); }
         }
         
+        /// <summary>
+        /// Default rate for territories in the hierarchy
+        /// </summary>
         public decimal DefaultRate {
             get { return Retrieve(r => r.DefaultRate); }
             set { Store(r => r.DefaultRate, value); }
+        }
+
+        /// <summary>
+        /// Default rate for territories outside the hierarchy
+        /// </summary>
+        public decimal DefaultExtraRate {
+            get { return Retrieve(r => r.DefaultExtraRate); }
+            set { Store(r => r.DefaultExtraRate, value); }
         }
 
         private readonly LazyField<ContentItem> _hierarchy =

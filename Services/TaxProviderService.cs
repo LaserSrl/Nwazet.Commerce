@@ -36,5 +36,28 @@ namespace Nwazet.Commerce.Services {
         public decimal TotalTaxes(ITax tax, TaxContext context) {
             return _taxComputationHelpers.Sum(tch => tch.ComputeTax(tax, context));
         }
+
+        public IEnumerable<decimal> ItemizedTaxes(ITax tax, TaxContext context) {
+            foreach (var productQuantity in context.ShoppingCartQuantityProducts) {
+                var singleItemContext = CreateContext(
+                    new ShoppingCartQuantityProduct[] { productQuantity },
+                    productQuantity.Price * productQuantity.Quantity + productQuantity.LinePriceAdjustment,
+                    0,
+                    context.Country,
+                    context.ZipCode);
+                yield return _taxComputationHelpers.Sum(tch => tch.ComputeTax(tax, singleItemContext));
+            }
+        }
+
+        public decimal ShippingTaxes(ITax tax, TaxContext context) {
+            var shippingContext = CreateContext(
+                null,
+                0,
+                context.ShippingPrice,
+                context.Country,
+                context.ZipCode
+                );
+            return _taxComputationHelpers.Sum(tch => tch.ComputeTax(tax, shippingContext));
+        }
     }
 }

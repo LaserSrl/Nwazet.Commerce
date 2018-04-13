@@ -18,6 +18,7 @@ namespace Nwazet.Commerce.Migrations {
                 .Column<string>("TaxProductCategory", col => col.Unlimited()) // uniqueness on this will have to be enforced by services
                 .Column<int>("Priority")
                 .Column<decimal>("DefaultRate")
+                .Column<decimal>("DefaultExtraRate")
                 .Column<int>("Hierarchy_Id"));
 
             ContentDefinitionManager.AlterTypeDefinition("VATConfiguration", cfg => cfg

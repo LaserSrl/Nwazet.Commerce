@@ -30,5 +30,21 @@ namespace Nwazet.Commerce.Services {
         /// <param name="context"></param>
         /// <returns></returns>
         decimal TotalTaxes(ITax tax, TaxContext context);
+
+        /// <summary>
+        /// Computes itemized taxes for each item in the context.
+        /// </summary>
+        /// <param name="tax"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        IEnumerable<decimal> ItemizedTaxes(ITax tax, TaxContext context);
+
+        /// <summary>
+        /// Computes shipping taxes for the context.
+        /// </summary>
+        /// <param name="tax"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        decimal ShippingTaxes(ITax tax, TaxContext context);
     }
 }

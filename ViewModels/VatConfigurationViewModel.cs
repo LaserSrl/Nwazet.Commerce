@@ -21,6 +21,7 @@ namespace Nwazet.Commerce.ViewModels {
         public string TaxProductCategory { get; set; }
         public bool IsDefaultCategory { get; set; }
         public decimal DefaultRate { get; set; }
+        public decimal DefaultExtraRate { get; set; }
         public int Priority { get; set; }
 
         [Required]

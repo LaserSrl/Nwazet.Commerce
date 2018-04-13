@@ -59,6 +59,7 @@ namespace Nwazet.Commerce.Drivers {
                     _vatConfigurationService.SetDefaultCategory(part);
                 }
                 part.DefaultRate = model.DefaultRate;
+                part.DefaultExtraRate = model.DefaultExtraRate;
                 var hierarchy = _contentManager.Get(model.SelectedHierarchyId, VersionOptions.Latest);
                 if (hierarchy == null || hierarchy.As<TerritoryHierarchyPart>() == null) {
                     // A hierarchy must be selected
@@ -79,6 +80,7 @@ namespace Nwazet.Commerce.Drivers {
                 TaxProductCategory = part.TaxProductCategory,
                 IsDefaultCategory = partIsDefault,
                 DefaultRate = part.DefaultRate,
+                DefaultExtraRate = part.DefaultExtraRate,
                 Priority = part.Priority,
                 SelectedHierarchyId = part.Hierarchy?.Id ?? -1,
                 SelectedHierarchyText = part.Hierarchy == null ? string.Empty 

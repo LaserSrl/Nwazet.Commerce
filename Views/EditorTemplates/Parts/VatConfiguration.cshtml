@@ -19,9 +19,19 @@
         <span class="hint">@T("The product category this VAT will be applied to. The default category will apply to all products where a category was not specified.")</span>
     </div>
     <div>
-        @Html.LabelFor(m => m.DefaultRate, T("Default Rate").Text, new { @class = "sub" })
+        @Html.LabelFor(m => m.Priority, T("Priority").Text, new { @class = "sub" })
+        @Html.TextBoxFor(m => m.Priority, new { @class = "text text-small", pattern = "[0-9]", @type = "number" })
+        <span class="hint">@T("The priority to apply this tax. The highest priority wins. This makes it possible to create a hierarchy of taxes.")</span>
+    </div>
+    <div>
+        @Html.LabelFor(m => m.DefaultRate, T("Default Rate for territories in the hierarchy").Text, new { @class = "sub" })
         @Html.TextBoxFor(m => m.DefaultRate, new { @class = "text text-small", @type = "number" })
-        <span class="hint">@T("The default percent rate for this VAT. This will be applied when the destination for products is not found in the hierarchy for territories selected for this VAT configuration, or when the destination is found but it does not have a specific rate set in its configuration.")</span>
+        <span class="hint">@T("The default percent rate for this VAT that will be applied when the destination for products is found in the hierarchy but it does not have a specific rate set in its configuration.")</span>
+    </div>
+    <div>
+        @Html.LabelFor(m => m.DefaultExtraRate, T("Default Rate for territories outside the hierarchy").Text, new { @class = "sub" })
+        @Html.TextBoxFor(m => m.DefaultExtraRate, new { @class = "text text-small", @type = "number" })
+        <span class="hint">@T("The default percent rate for this VAT. This will be applied when the destination for products is not found in the hierarchy for territories selected for this VAT configuration.")</span>
     </div>
     <div>
         @if (Model.SelectedHierarchyItem == null) {
@@ -38,10 +48,5 @@
             @T("The hierarchy selected for this VAT configuration is \"{0}\". {1} (unsaved changes to the configuration will be lost)",
                 Model.SelectedHierarchyText, Html.ItemEditLinkWithReturnUrl(T("").Text, Model.SelectedHierarchyItem))
         }
-    </div>
-    <div>
-        @Html.LabelFor(m => m.Priority, T("Priority").Text, new { @class = "sub" })
-        @Html.TextBoxFor(m => m.Priority, new { @class = "text text-small", pattern = "[0-9]", @type = "number" })
-        <span class="hint">@T("The priority to apply this tax. The highest priority wins. This makes it possible to create a hierarchy of taxes.")</span>
     </div>
 </fieldset>
