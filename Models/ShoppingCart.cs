@@ -15,13 +15,15 @@ namespace Nwazet.Commerce.Models {
             IPriceService priceService,
             IEnumerable<IProductAttributesDriver> attributesDrivers,
             IEnumerable<ITaxProvider> taxProviders,
-            INotifier notifier)
+            INotifier notifier,
+            ITaxProviderService taxProviderService)
             : base (contentManager,
                   cartStorage,
                   priceService,
                   attributesDrivers,
                   taxProviders,
-                  notifier) {
+                  notifier,
+                  taxProviderService) {
         }
         
         public override IEnumerable<ShoppingCartItem> Items {

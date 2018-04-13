@@ -455,6 +455,8 @@
     <Compile Include="Services\IProductInventoryService.cs" />
     <Compile Include="Services\ISKUGenerationServices.cs" />
     <Compile Include="Services\ISKUUniquenessHelper.cs" />
+    <Compile Include="Services\ITaxComputationHelper.cs" />
+    <Compile Include="Services\ITaxProviderService.cs" />
     <Compile Include="Services\ITerritoriesHierarchyService.cs" />
     <Compile Include="Services\ITerritoriesRepositoryService.cs" />
     <Compile Include="Services\ITerritoriesService.cs" />
@@ -494,6 +496,9 @@
     <Compile Include="Services\ShippingService.cs" />
     <Compile Include="Services\ShoppingCartInfosetPartStorage.cs" />
     <Compile Include="Services\SKUGenerationServices.cs" />
+    <Compile Include="Services\StateOrCountryTaxComputationHelper.cs" />
+    <Compile Include="Services\TaxContext.cs" />
+    <Compile Include="Services\TaxProviderService.cs" />
     <Compile Include="Services\TerritoriesHierarchyService.cs" />
     <Compile Include="Services\TerritoriesService.cs" />
     <Compile Include="Services\TerritoryRepositoryService.cs" />
@@ -505,6 +510,7 @@
     <Compile Include="Services\WishListsArePrivatePermissionsService.cs" />
     <Compile Include="Services\WishListServices.cs" />
     <Compile Include="Services\WishListsUIServices.cs" />
+    <Compile Include="Services\ZipCodeTaxComputationHelper.cs" />
     <Compile Include="Services\ZipCodeTaxProvider.cs" />
     <Compile Include="Services\StateOrCountryTaxProvider.cs" />
     <Compile Include="Services\StripeWebService.cs" />

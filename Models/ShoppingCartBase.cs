@@ -19,6 +19,7 @@ namespace Nwazet.Commerce.Models {
         protected readonly IEnumerable<IProductAttributesDriver> _attributesDrivers;
         protected readonly IEnumerable<ITaxProvider> _taxProviders;
         protected readonly INotifier _notifier;
+        protected readonly ITaxProviderService _taxProviderService;
 
         protected IEnumerable<ShoppingCartQuantityProduct> _products;
 
@@ -30,7 +31,8 @@ namespace Nwazet.Commerce.Models {
             IPriceService priceService,
             IEnumerable<IProductAttributesDriver> attributesDrivers,
             IEnumerable<ITaxProvider> taxProviders,
-            INotifier notifier) {
+            INotifier notifier,
+            ITaxProviderService taxProviderService) {
 
             _contentManager = contentManager;
             _cartStorage = cartStorage;
@@ -38,6 +40,8 @@ namespace Nwazet.Commerce.Models {
             _attributesDrivers = attributesDrivers;
             _taxProviders = taxProviders;
             _notifier = notifier;
+            _taxProviderService = taxProviderService;
+
             T = NullLocalizer.Instance;
         }
 
@@ -103,10 +107,11 @@ namespace Nwazet.Commerce.Models {
             if (subTotal.Equals(0)) {
                 subTotal = Subtotal();
             }
+            var taxContext = _taxProviderService.CreateContext(GetProducts(), subTotal, shippingPrice, Country, ZipCode);
             return (
                 from tax in taxes
                 let name = tax.Name
-                let amount = tax.ComputeTax(GetProducts(), subTotal, shippingPrice, Country, ZipCode)
+                let amount = _taxProviderService.TotalTaxes(tax, taxContext)
                 where amount > 0
                 select new TaxAmount { Name = name, Amount = amount }
                 ).FirstOrDefault() ?? new TaxAmount { Amount = 0, Name = null };

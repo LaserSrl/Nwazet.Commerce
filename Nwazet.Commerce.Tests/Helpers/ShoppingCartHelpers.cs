@@ -69,7 +69,7 @@ namespace Nwazet.Commerce.Tests.Helpers {
                 new ProductDiscountPriceProvider()
             };
             var priceService = new PriceService(priceProviders, null);
-            var cart = new ShoppingCart(contentManager, cartStorage, priceService, null, taxProviders, new Notifier());
+            var cart = new ShoppingCart(contentManager, cartStorage, priceService, null, taxProviders, new Notifier(), null);
             FillCart(cart);
 
             return cart;

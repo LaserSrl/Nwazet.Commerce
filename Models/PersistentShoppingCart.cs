@@ -18,13 +18,15 @@ namespace Nwazet.Commerce.Models {
             IEnumerable<IProductAttributesDriver> attributesDrivers,
             IEnumerable<ITaxProvider> taxProviders,
             INotifier notifier,
-            IPersistentShoppingCartServices persistentShoppingCartServices)
+            IPersistentShoppingCartServices persistentShoppingCartServices,
+            ITaxProviderService taxProviderService)
             : base(contentManager,
-                  cartStorage,
-                  priceService,
-                  attributesDrivers,
-                  taxProviders,
-                  notifier) {
+                cartStorage,
+                priceService,
+                attributesDrivers,
+                taxProviders,
+                notifier,
+                taxProviderService) {
             
             _persistentShoppingCartServices = persistentShoppingCartServices;
         }
