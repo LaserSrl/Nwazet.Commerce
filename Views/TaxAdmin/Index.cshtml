@@ -2,6 +2,7 @@
 @using Orchard.ContentManagement
 @using Orchard.Core.Title.Models
 @using Orchard.Utility.Extensions
+@using Orchard.Core.Contents
 @model TaxIndexViewModel
 
 @{
@@ -46,7 +47,11 @@
                         @Html.ItemEditLinkWithReturnUrl(tax.Name, tax) 
                     </td>
                     <td>
-                        @Html.Link(T("Delete").Text, Url.ItemRemoveUrl(tax, new {returnUrl}), new {itemprop = "RemoveUrl UnsafeUrl"})
+                        @if (Authorizer.Authorize(Permissions.DeleteContent, tax)) {
+                            @Html.Link(T("Delete").Text, Url.ItemRemoveUrl(tax, new { returnUrl }), new { itemprop = "RemoveUrl UnsafeUrl" })
+                        }else {
+                            @T("Not allowed to delete")
+                        }
                     </td>
                 </tr>
             }

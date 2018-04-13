@@ -28,11 +28,12 @@ namespace Nwazet.Commerce.Handlers {
             Filters.Add(StorageFilter.For(repository));
             Filters.Add(new ActivatingFilter<VatConfigurationSiteSettingsPart>("Site"));
 
-            //Lazyfield setters and loaders
+            // Lazyfield setters and loaders
             OnInitializing<VatConfigurationPart>(PropertySetHandlers);
             OnLoading<VatConfigurationPart>((context, part) => LazyLoadHandlers(part));
             OnVersioning<VatConfigurationPart>((context, part, newVersionPart) => LazyLoadHandlers(newVersionPart));
-
+            
+            // manage the case where the default configuration is deleted
             OnRemoved<VatConfigurationPart>((context, part) => ResetDefaultVatConfigurationPart(part));
             OnDestroyed<VatConfigurationPart>((context, part) => ResetDefaultVatConfigurationPart(part));
         }
@@ -67,7 +68,7 @@ namespace Nwazet.Commerce.Handlers {
             // We will prevent removing the part that has the default configuration. However
             // here we still manage the case where that part is removed, in order to have a
             // further layer of data consistency. We may end up here if a delete/remove is invoked
-            // part without going through a permission check.
+            // without going through a permission check.
             var settings = _siteService.GetSiteSettings().As<VatConfigurationSiteSettingsPart>();
             if (settings.DefaultVatConfigurationId == part.ContentItem.Id) {
                 settings.DefaultVatConfigurationId = 0;
