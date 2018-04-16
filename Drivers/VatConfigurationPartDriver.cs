@@ -54,19 +54,11 @@ namespace Nwazet.Commerce.Drivers {
             if (updater.TryUpdateModel(model, Prefix, null, null)) {
                 part.Priority = model.Priority;
                 part.TaxProductCategory = model.TaxProductCategory;
-                // Check default category flag like it's done for homepage
+                // Check default category flag
                 if (model.IsDefaultCategory) {
                     _vatConfigurationService.SetDefaultCategory(part);
                 }
                 part.DefaultRate = model.DefaultRate;
-                part.DefaultExtraRate = model.DefaultExtraRate;
-                var hierarchy = _contentManager.Get(model.SelectedHierarchyId, VersionOptions.Latest);
-                if (hierarchy == null || hierarchy.As<TerritoryHierarchyPart>() == null) {
-                    // A hierarchy must be selected
-                    updater.AddModelError("Selected Hierarchy", T("You need to select a valid hierarchy."));
-                } else {
-                    part.Hierarchy = hierarchy;
-                }
             }
             return Editor(part, shapeHelper);
         }
@@ -80,22 +72,11 @@ namespace Nwazet.Commerce.Drivers {
                 TaxProductCategory = part.TaxProductCategory,
                 IsDefaultCategory = partIsDefault,
                 DefaultRate = part.DefaultRate,
-                DefaultExtraRate = part.DefaultExtraRate,
                 Priority = part.Priority,
-                SelectedHierarchyId = part.Hierarchy?.Id ?? -1,
-                SelectedHierarchyText = part.Hierarchy == null ? string.Empty 
-                    : _contentManager.GetItemMetadata(part.Hierarchy).DisplayText,
-                SelectedHierarchyItem = part.Hierarchy,
-                Part = part,
-                Hierarchies = _territoriesService
-                    .GetHierarchiesQuery()
-                    .List()
-                    .Select(thp => new SelectListItem {
-                        Selected = (part.Hierarchy?.Id ?? 0) == thp.Id,
-                        Text = _contentManager.GetItemMetadata(thp.ContentItem).DisplayText,
-                        Value = thp.Id.ToString()
-                    })
+                Part = part
             };
         }
+
+
     }
 }

@@ -22,13 +22,13 @@ namespace Nwazet.Commerce.Models {
             get { return Retrieve(r => r.Priority); }
             set { Store(r => r.Priority, value); }
         }
-        
+
         public decimal ComputeTax(
-            IEnumerable<ShoppingCartQuantityProduct> productQuantities, 
+            IEnumerable<ShoppingCartQuantityProduct> productQuantities,
             decimal subtotal, decimal shippingCost, string country, string zipCode) {
 
             // For this method the cart's subtotal does not matter and will always be ignored.
-            
+
             // Since we cannot inject services here, the part will need to have access to its own
             // table describing the relationships between product categories and destinations.
 
@@ -37,7 +37,7 @@ namespace Nwazet.Commerce.Models {
             foreach (var productQuantity in productQuantities) {
                 // get the category for this line of products
                 // given category and destination (country + zipcode)
-                
+
             }
 
 
@@ -54,37 +54,13 @@ namespace Nwazet.Commerce.Models {
             get { return Retrieve(r => r.TaxProductCategory) ?? string.Empty; }
             set { Store(r => r.TaxProductCategory, value ?? string.Empty); }
         }
-        
+
         /// <summary>
-        /// Default rate for territories in the hierarchy
+        /// Default rate for territories outside the selected hierarchies
         /// </summary>
         public decimal DefaultRate {
             get { return Retrieve(r => r.DefaultRate); }
             set { Store(r => r.DefaultRate, value); }
-        }
-
-        /// <summary>
-        /// Default rate for territories outside the hierarchy
-        /// </summary>
-        public decimal DefaultExtraRate {
-            get { return Retrieve(r => r.DefaultExtraRate); }
-            set { Store(r => r.DefaultExtraRate, value); }
-        }
-
-        private readonly LazyField<ContentItem> _hierarchy =
-            new LazyField<ContentItem>();
-
-        public LazyField<ContentItem> HierarchyField {
-            get { return _hierarchy; }
-        }
-
-        public ContentItem Hierarchy {
-            get { return _hierarchy.Value; }
-            set { _hierarchy.Value = value; }
-        }
-
-        public TerritoryHierarchyPart HierarchyPart {
-            get { return Hierarchy?.As<TerritoryHierarchyPart>(); }
         }
     }
 }

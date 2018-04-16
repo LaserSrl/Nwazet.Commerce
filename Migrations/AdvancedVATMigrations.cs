@@ -13,13 +13,19 @@ namespace Nwazet.Commerce.Migrations {
 
         public int Create() {
 
+            SchemaBuilder.CreateTable("TerritoryVatConfigurationPartRecord", table => table
+                .ContentPartRecord()
+                .Column<decimal>("Rate"));
+
+            SchemaBuilder.CreateTable("HierarchyVatConfigurationPartRecord", table => table
+                .ContentPartRecord()
+                .Column<decimal>("Rate"));
+
             SchemaBuilder.CreateTable("VatConfigurationPartRecord", table => table
                 .ContentPartRecord()
                 .Column<string>("TaxProductCategory", col => col.Unlimited()) // uniqueness on this will have to be enforced by services
                 .Column<int>("Priority")
-                .Column<decimal>("DefaultRate")
-                .Column<decimal>("DefaultExtraRate")
-                .Column<int>("Hierarchy_Id"));
+                .Column<decimal>("DefaultRate"));
 
             ContentDefinitionManager.AlterTypeDefinition("VATConfiguration", cfg => cfg
                 .WithPart("VatConfigurationPart")
@@ -27,6 +33,6 @@ namespace Nwazet.Commerce.Migrations {
 
             return 1;
         }
-        
+
     }
 }

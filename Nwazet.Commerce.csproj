@@ -296,6 +296,7 @@
     <Compile Include="Handlers\AttributePartHandler.cs" />
     <Compile Include="Handlers\AttributesPartHandler.cs" />
     <Compile Include="Handlers\ECommerceCurrencySiteSettingsPartHandler.cs" />
+    <Compile Include="Handlers\HierarchyVatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\InventoryBySKUSiteSettingsPartHandler.cs" />
     <Compile Include="Handlers\LocalizationAttributePartHandler.cs" />
     <Compile Include="Handlers\OrderPartHandler.cs" />
@@ -304,6 +305,7 @@
     <Compile Include="Handlers\StateOrCountryTaxPartHandler.cs" />
     <Compile Include="Handlers\TerritoryHierarchyPartHandler.cs" />
     <Compile Include="Handlers\TerritoryPartHandler.cs" />
+    <Compile Include="Handlers\TerritoryVatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\UspsShippingMethodPartHandler.cs" />
     <Compile Include="Handlers\UspsSettingsPartHandler.cs" />
     <Compile Include="Handlers\StripeSettingsPartHandler.cs" />
@@ -346,6 +348,8 @@
     <Compile Include="Models\ConversionUtilities.cs" />
     <Compile Include="Models\Charge.cs" />
     <Compile Include="Models\ECommerceCurrencySiteSettingsPart.cs" />
+    <Compile Include="Models\HierarchyVatConfigurationPart.cs" />
+    <Compile Include="Models\HierarchyVatConfigurationPartRecord.cs" />
     <Compile Include="Models\ICharge.cs" />
     <Compile Include="Models\InventoryBySKUSiteSettingsPart.cs" />
     <Compile Include="Models\PersistentShoppingCart.cs" />
@@ -369,6 +373,8 @@
     <Compile Include="Models\TerritoryInternalRecord.cs" />
     <Compile Include="Models\TerritoryPart.cs" />
     <Compile Include="Models\TerritoryPartRecord.cs" />
+    <Compile Include="Models\TerritoryVatConfigurationPart.cs" />
+    <Compile Include="Models\TerritoryVatConfigurationPartRecord.cs" />
     <Compile Include="Models\VatConfigurationPart.cs" />
     <Compile Include="Models\VatConfigurationPartRecord.cs" />
     <Compile Include="Models\VatConfigurationSiteSettingsPart.cs" />
