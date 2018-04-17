@@ -10,6 +10,10 @@ namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.AdvancedVAT")]
     public class HierarchyVatConfigurationPartRecord : ContentPartRecord {
 
-        public virtual decimal Rate { get; set; }
+        public HierarchyVatConfigurationPartRecord() {
+            VatConfigurationIntersections = new List<HierarchyVatConfigurationIntersectionRecord>();
+        }
+        
+        public virtual IList<HierarchyVatConfigurationIntersectionRecord> VatConfigurationIntersections { get; set; }
     }
 }

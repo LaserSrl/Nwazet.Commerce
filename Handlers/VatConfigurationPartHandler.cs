@@ -41,12 +41,36 @@ namespace Nwazet.Commerce.Handlers {
         static void PropertySetHandlers(
             InitializingContentContext context, VatConfigurationPart part) {
 
-            
+            //part.HierarchiesField.Setter(value => {
+            //    return value
+            //        .Where(thp => {
+            //            var hvcp = thp.As<HierarchyVatConfigurationPart>();
+            //            return hvcp != null
+            //                && hvcp.Record.VatConfigurationIntersections
+            //                    .Any(vci => vci.VatConfiguration == part.Record);
+            //        })
+            //        .ToList();
+            //});
+
+            // call the setter in case a value had already been set
+            if (part.HierarchiesField.Value != null) {
+                part.HierarchiesField.Value = part.HierarchiesField.Value;
+            }
         }
 
         void LazyLoadHandlers(VatConfigurationPart part) {
 
-           
+            //part.HierarchiesField.Loader(() => {
+            //    if (part.Record.HierarchyConfigurationIntersections != null
+            //        && part.Record.HierarchyConfigurationIntersections.Any()) {
+            //        return _contentManager
+            //            .GetMany<TerritoryHierarchyPart>(part.Record.HierarchyConfigurationIntersections
+            //                .Select(hci => hci.Hierarchy.Id), 
+            //                VersionOptions.Latest, QueryHints.Empty);
+            //    } else {
+            //        return Enumerable.Empty<TerritoryHierarchyPart>();
+            //    }
+            //});
         }
 
         void ResetDefaultVatConfigurationPart(VatConfigurationPart part) {

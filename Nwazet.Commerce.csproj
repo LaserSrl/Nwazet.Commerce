@@ -348,6 +348,7 @@
     <Compile Include="Models\ConversionUtilities.cs" />
     <Compile Include="Models\Charge.cs" />
     <Compile Include="Models\ECommerceCurrencySiteSettingsPart.cs" />
+    <Compile Include="Models\HierarchyVatConfigurationIntersectionRecord.cs" />
     <Compile Include="Models\HierarchyVatConfigurationPart.cs" />
     <Compile Include="Models\HierarchyVatConfigurationPartRecord.cs" />
     <Compile Include="Models\ICharge.cs" />

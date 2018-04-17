@@ -9,5 +9,6 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.AdvancedVAT")]
     public class TerritoryVatConfigurationPart : ContentPart<TerritoryVatConfigurationPartRecord> {
+        
     }
 }

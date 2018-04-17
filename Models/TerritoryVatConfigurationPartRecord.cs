@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.AdvancedVAT")]
     public class TerritoryVatConfigurationPartRecord : ContentPartRecord {
-
-        public virtual decimal Rate { get; set; }
+        
     }
 }

@@ -14,18 +14,32 @@ namespace Nwazet.Commerce.Migrations {
         public int Create() {
 
             SchemaBuilder.CreateTable("TerritoryVatConfigurationPartRecord", table => table
-                .ContentPartRecord()
-                .Column<decimal>("Rate"));
+                .ContentPartRecord());
 
             SchemaBuilder.CreateTable("HierarchyVatConfigurationPartRecord", table => table
-                .ContentPartRecord()
-                .Column<decimal>("Rate"));
+                .ContentPartRecord());
 
             SchemaBuilder.CreateTable("VatConfigurationPartRecord", table => table
                 .ContentPartRecord()
                 .Column<string>("TaxProductCategory", col => col.Unlimited()) // uniqueness on this will have to be enforced by services
                 .Column<int>("Priority")
                 .Column<decimal>("DefaultRate"));
+
+            SchemaBuilder.CreateTable("HierarchyVatConfigurationIntersectionRecord", table => table
+                .Column<int>("Id", col => col.Identity().PrimaryKey())
+                .Column<int>("Hierarchy_Id")
+                .Column<int>("VatConfiguration_Id")
+                .Column<decimal>("Rate"));
+            
+            SchemaBuilder.CreateForeignKey(
+                "FK_HierarchyVatHierarchy",
+                "HierarchyVatConfigurationIntersectionRecord", new[] { "Hierarchy_Id" },
+                "HierarchyVatConfigurationPartRecord", new[] { "Id" });
+
+            SchemaBuilder.CreateForeignKey(
+                "FK_HierarchyVatVat",
+                "HierarchyVatConfigurationIntersectionRecord", new[] { "VatConfiguration_Id" },
+                "VatConfigurationPartRecord", new[] { "Id" });
 
             ContentDefinitionManager.AlterTypeDefinition("VATConfiguration", cfg => cfg
                 .WithPart("VatConfigurationPart")

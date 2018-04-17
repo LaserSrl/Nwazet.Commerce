@@ -11,12 +11,18 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.AdvancedVAT")]
     public class VatConfigurationPartRecord : ContentPartRecord {
-        
+
+        public VatConfigurationPartRecord() {
+            HierarchyConfigurationIntersections = new List<HierarchyVatConfigurationIntersectionRecord>();
+        }
+
         public virtual int Priority { get; set; }
         [StringLengthMax]
         public virtual string TaxProductCategory { get; set; }
-        
+
         public virtual decimal DefaultRate { get; set; }
-        
+
+        public virtual IList<HierarchyVatConfigurationIntersectionRecord> HierarchyConfigurationIntersections { get; set; }
+
     }
 }
