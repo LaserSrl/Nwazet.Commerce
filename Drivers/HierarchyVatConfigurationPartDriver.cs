@@ -94,7 +94,7 @@ namespace Nwazet.Commerce.Drivers {
                         decimal d = 0;
                         if (!decimal.TryParse(vm.RateString, out d)) {
                             success = false;
-                            updater.AddModelError(T("Rate").Text, T("{0} Is not a valid value for rate."));
+                            updater.AddModelError(T("Rate").Text, T("{0} Is not a valid value for rate.", vm.RateString));
                         } else {
                             vm.Rate = d;
                         }
