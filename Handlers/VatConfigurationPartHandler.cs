@@ -40,37 +40,67 @@ namespace Nwazet.Commerce.Handlers {
 
         static void PropertySetHandlers(
             InitializingContentContext context, VatConfigurationPart part) {
+            
+            part.HierarchiesField.Setter(value => {
+                return value
+                    .Where(tup => {
+                        var hvcp = tup.Item1 // Item1 is the TerritoryHierarchyPart
+                            .As<HierarchyVatConfigurationPart>();
+                        return hvcp != null
+                            && hvcp.Record.VatConfigurationIntersections
+                                .Any(hvcir => hvcir.VatConfiguration == part.Record);
+                    })
+                    .ToList();
+            });
 
-            //part.HierarchiesField.Setter(value => {
-            //    return value
-            //        .Where(thp => {
-            //            var hvcp = thp.As<HierarchyVatConfigurationPart>();
-            //            return hvcp != null
-            //                && hvcp.Record.VatConfigurationIntersections
-            //                    .Any(vci => vci.VatConfiguration == part.Record);
-            //        })
-            //        .ToList();
-            //});
+            part.TerritoriesField.Setter(value => {
+                return value
+                    .Where(tup => {
+                        var tvcp = tup.Item1 // Item1 is the TerritoryPart
+                            .As<TerritoryVatConfigurationPart>();
+                        return tvcp != null
+                            && tvcp.Record.VatConfigurationIntersections
+                                .Any(tvcir => tvcir.VatConfiguration == part.Record);
+                    })
+                    .ToList();
+            });
 
-            // call the setter in case a value had already been set
+            // call the setters in case a value had already been set
             if (part.HierarchiesField.Value != null) {
                 part.HierarchiesField.Value = part.HierarchiesField.Value;
             }
         }
 
         void LazyLoadHandlers(VatConfigurationPart part) {
+            
+            part.HierarchiesField.Loader(() => {
+                if (part.Record.HierarchyConfigurationIntersections != null
+                    && part.Record.HierarchyConfigurationIntersections.Any()) {
+                    // IEnumerable<Tuple<A, B>> pairs = listA.Zip(listB, (a, b) => Tuple.Create(a, b));
+                    return part.Record.HierarchyConfigurationIntersections
+                        .Zip(_contentManager
+                            .GetMany<TerritoryHierarchyPart>(part.Record.HierarchyConfigurationIntersections
+                                .Select(hci => hci.Hierarchy.Id),
+                                VersionOptions.Latest, QueryHints.Empty),
+                            (a, b) => Tuple.Create(b, a.Rate));
+                } else {
+                    return Enumerable.Empty<Tuple<TerritoryHierarchyPart, decimal>>();
+                }
+            });
 
-            //part.HierarchiesField.Loader(() => {
-            //    if (part.Record.HierarchyConfigurationIntersections != null
-            //        && part.Record.HierarchyConfigurationIntersections.Any()) {
-            //        return _contentManager
-            //            .GetMany<TerritoryHierarchyPart>(part.Record.HierarchyConfigurationIntersections
-            //                .Select(hci => hci.Hierarchy.Id), 
-            //                VersionOptions.Latest, QueryHints.Empty);
-            //    } else {
-            //        return Enumerable.Empty<TerritoryHierarchyPart>();
-            //    }
-            //});
+            part.TerritoriesField.Loader(() => {
+                if (part.Record.TerritoryConfigurationIntersections != null
+                    && part.Record.TerritoryConfigurationIntersections.Any()) {
+                    return part.Record.TerritoryConfigurationIntersections
+                        .Zip(_contentManager
+                            .GetMany<TerritoryPart>(part.Record.TerritoryConfigurationIntersections
+                                .Select(tvcir => tvcir.Territory.Id),
+                                VersionOptions.Latest, QueryHints.Empty),
+                            (a, b) => Tuple.Create(b, a.Rate));
+                } else {
+                    return Enumerable.Empty<Tuple<TerritoryPart, decimal>>();
+                }
+            });
         }
 
         void ResetDefaultVatConfigurationPart(VatConfigurationPart part) {

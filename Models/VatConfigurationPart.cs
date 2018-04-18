@@ -73,5 +73,16 @@ namespace Nwazet.Commerce.Models {
         public IEnumerable<Tuple<TerritoryHierarchyPart, decimal>> Hierarchies {
             get { return _hierarchies.Value; }
         }
+
+        private LazyField<IEnumerable<Tuple<TerritoryPart, decimal>>> _territories =
+            new LazyField<IEnumerable<Tuple<TerritoryPart, decimal>>>();
+
+        public LazyField<IEnumerable<Tuple<TerritoryPart, decimal>>> TerritoriesField {
+            get { return _territories; }
+        }
+
+        public IEnumerable<Tuple<TerritoryPart, decimal>> Territories {
+            get { return _territories.Value; }
+        }
     }
 }

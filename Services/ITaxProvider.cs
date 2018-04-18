@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Orchard;
+using Nwazet.Commerce.Models;
 
 namespace Nwazet.Commerce.Services {
     public interface ITaxProvider : IDependency {
@@ -8,4 +9,6 @@ namespace Nwazet.Commerce.Services {
 
         IEnumerable<ITax> GetTaxes();
     }
+
+    
 }

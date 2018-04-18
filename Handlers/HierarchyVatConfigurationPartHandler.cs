@@ -22,19 +22,36 @@ namespace Nwazet.Commerce.Handlers {
             _contentManager = contentManager;
 
             Filters.Add(StorageFilter.For(repository));
+            
+            // Lazyfield setters and loaders
+            OnInitializing<HierarchyVatConfigurationPart>(PropertySetHandlers);
+            OnLoading<HierarchyVatConfigurationPart>((context, part) => LazyLoadHandlers(part));
+            OnVersioning<HierarchyVatConfigurationPart>((context, part, newVersionPart) => LazyLoadHandlers(newVersionPart));
+            
+        }
+
+        protected override void Activating(ActivatingContentContext context) {
+            // Attach this part wherever there is a TerritoryHierarchyPart
+            if (context.Definition.Parts.Any(pa => pa.PartDefinition.Name == "TerritoryHierarchyPart")) {
+                // the ContentItem we are activating is a hierarchy
+                context.Builder.Weld<HierarchyVatConfigurationPart>();
+            }
+            base.Activating(context);
         }
 
         static void PropertySetHandlers(
             InitializingContentContext context, HierarchyVatConfigurationPart part) {
-
-            //part.VatConfigurationsField.Setter(value => {
-            //    return value
-            //        .Where(vcp => vcp
-            //            .Record
-            //            .HierarchyConfigurationIntersections
-            //            .Any(hci => hci.Hierarchy == part.Record))
-            //        .ToList();
-            //});
+            
+            part.VatConfigurationsField.Setter(value => {
+                return value
+                    .Where(tup => tup
+                        .Item1 // Item1 is the VatConfigurationPart
+                        .Record
+                        .HierarchyConfigurationIntersections
+                        .Any(hvcir => hvcir.Hierarchy == part.Record)
+                    )
+                    .ToList();
+            });
 
             // call the setter in case a value had already been set
             if (part.VatConfigurationsField.Value != null) {
@@ -43,18 +60,21 @@ namespace Nwazet.Commerce.Handlers {
         }
 
         void LazyLoadHandlers(HierarchyVatConfigurationPart part) {
-
-            //part.VatConfigurationsField.Loader(() => {
-            //    if (part.Record.VatConfigurationIntersections != null
-            //        && part.Record.VatConfigurationIntersections.Any()) {
-            //        return _contentManager
-            //            .GetMany<VatConfigurationPart>(part.Record.VatConfigurationIntersections
-            //                .Select(vci => vci.VatConfiguration.Id),
-            //                VersionOptions.Latest, QueryHints.Empty);
-            //    } else {
-            //        return Enumerable.Empty<VatConfigurationPart>();
-            //    }
-            //});
+            
+            part.VatConfigurationsField.Loader(() => {
+                if (part.Record.VatConfigurationIntersections != null
+                    && part.Record.VatConfigurationIntersections.Any()) {
+                    // IEnumerable<Tuple<A, B>> pairs = listA.Zip(listB, (a, b) => Tuple.Create(a, b));
+                    return part.Record.VatConfigurationIntersections
+                        .Zip(_contentManager
+                            .GetMany<VatConfigurationPart>(part.Record.VatConfigurationIntersections
+                                .Select(hvcir => hvcir.VatConfiguration.Id),
+                                VersionOptions.Latest, QueryHints.Empty),
+                            (a, b) => Tuple.Create(b, a.Rate));
+                } else {
+                    return Enumerable.Empty<Tuple<VatConfigurationPart, decimal>>();
+                }
+            });
         }
     }
 }

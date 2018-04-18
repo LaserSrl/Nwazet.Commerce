@@ -14,6 +14,7 @@ namespace Nwazet.Commerce.Models {
 
         public VatConfigurationPartRecord() {
             HierarchyConfigurationIntersections = new List<HierarchyVatConfigurationIntersectionRecord>();
+            TerritoryConfigurationIntersections = new List<TerritoryVatConfigurationIntersectionRecord>();
         }
 
         public virtual int Priority { get; set; }
@@ -24,5 +25,6 @@ namespace Nwazet.Commerce.Models {
 
         public virtual IList<HierarchyVatConfigurationIntersectionRecord> HierarchyConfigurationIntersections { get; set; }
 
+        public virtual IList<TerritoryVatConfigurationIntersectionRecord> TerritoryConfigurationIntersections { get; set; }
     }
 }

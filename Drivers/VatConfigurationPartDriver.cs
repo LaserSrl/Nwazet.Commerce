@@ -12,6 +12,9 @@ using Orchard.ContentManagement;
 using Nwazet.Commerce.ViewModels;
 using Nwazet.Commerce.Services;
 using System.Web.Mvc;
+using Orchard.Security;
+using Nwazet.Commerce.Permissions;
+using Orchard.UI.Notify;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.AdvancedVAT")]
@@ -20,15 +23,21 @@ namespace Nwazet.Commerce.Drivers {
         private readonly IContentManager _contentManager;
         private readonly ITerritoriesService _territoriesService;
         private readonly IVatConfigurationService _vatConfigurationService;
+        private readonly IAuthorizer _authorizer;
+        private readonly INotifier _notifier;
 
         public VatConfigurationPartDriver(
             IContentManager contentManager,
             ITerritoriesService territoriesService,
-            IVatConfigurationService vatConfigurationService) {
+            IVatConfigurationService vatConfigurationService,
+            IAuthorizer authorizer,
+            INotifier notifier) {
 
             _contentManager = contentManager;
             _territoriesService = territoriesService;
             _vatConfigurationService = vatConfigurationService;
+            _authorizer = authorizer;
+            _notifier = notifier;
 
             T = NullLocalizer.Instance;
         }
@@ -40,8 +49,11 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         protected override DriverResult Editor(VatConfigurationPart part, dynamic shapeHelper) {
+            if (!_authorizer.Authorize(CommercePermissions.ManageTaxes)) {
+                _notifier.Warning(T("Changes to the VAT configuration will not be saved because you don't have the correct permissions."));
+            }
             var model = CreateVM(part);
-            return ContentShape("Parts_VatConfiguration_Edit", 
+            return ContentShape("Parts_VatConfiguration_Edit",
                 () => shapeHelper.EditorTemplate(
                     TemplateName: "Parts/VatConfiguration",
                     Model: model,
@@ -50,15 +62,17 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         protected override DriverResult Editor(VatConfigurationPart part, IUpdateModel updater, dynamic shapeHelper) {
-            var model = new VatConfigurationViewModel();
-            if (updater.TryUpdateModel(model, Prefix, null, null)) {
-                part.Priority = model.Priority;
-                part.TaxProductCategory = model.TaxProductCategory;
-                // Check default category flag
-                if (model.IsDefaultCategory) {
-                    _vatConfigurationService.SetDefaultCategory(part);
+            if (_authorizer.Authorize(CommercePermissions.ManageTaxes)) {
+                var model = new VatConfigurationViewModel();
+                if (updater.TryUpdateModel(model, Prefix, null, null)) {
+                    part.Priority = model.Priority;
+                    part.TaxProductCategory = model.TaxProductCategory;
+                    // Check default category flag
+                    if (model.IsDefaultCategory) {
+                        _vatConfigurationService.SetDefaultCategory(part);
+                    }
+                    part.DefaultRate = model.DefaultRate;
                 }
-                part.DefaultRate = model.DefaultRate;
             }
             return Editor(part, shapeHelper);
         }

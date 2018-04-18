@@ -6,9 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nwazet.Commerce.Models {
+namespace Nwazet.Commerce.Models { 
     [OrchardFeature("Nwazet.AdvancedVAT")]
     public class TerritoryVatConfigurationPartRecord : ContentPartRecord {
         
+        public TerritoryVatConfigurationPartRecord() {
+            VatConfigurationIntersections = new List<TerritoryVatConfigurationIntersectionRecord>();
+        }
+
+        public virtual IList<TerritoryVatConfigurationIntersectionRecord> VatConfigurationIntersections { get; set; }
     }
 }

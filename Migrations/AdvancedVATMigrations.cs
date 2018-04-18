@@ -41,6 +41,22 @@ namespace Nwazet.Commerce.Migrations {
                 "HierarchyVatConfigurationIntersectionRecord", new[] { "VatConfiguration_Id" },
                 "VatConfigurationPartRecord", new[] { "Id" });
 
+            SchemaBuilder.CreateTable("TerritoryVatConfigurationIntersectionRecord", table => table
+                .Column<int>("Id", col => col.Identity().PrimaryKey())
+                .Column<int>("Territory_Id")
+                .Column<int>("VatConfiguration_Id")
+                .Column<decimal>("Rate"));
+
+            SchemaBuilder.CreateForeignKey(
+                "FK_TerritoryVatTerritory",
+                "TerritoryVatConfigurationIntersectionRecord", new[] { "Territory_Id" },
+                "TerritoryVatConfigurationPartRecord", new[] { "Id" });
+
+            SchemaBuilder.CreateForeignKey(
+                "FK_TerritoryVatVat",
+                "TerritoryVatConfigurationIntersectionRecord", new[] { "VatConfiguration_Id" },
+                "VatConfigurationPartRecord", new[] { "Id" });
+
             ContentDefinitionManager.AlterTypeDefinition("VATConfiguration", cfg => cfg
                 .WithPart("VatConfigurationPart")
                 .DisplayedAs("VAT Category Configuration"));

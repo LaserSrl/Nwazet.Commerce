@@ -223,6 +223,8 @@
     <None Include="Views\TerritoryHierarchiesAdmin\CreateHierarchy.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\EditHierarchy.cshtml" />
     <None Include="Views\TerritoriesAdmin\EditorTemplates\TerritoryInternalRecord.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\HierarchyVatConfigurationPartAllowed.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\HierarchyVatConfigurationPartNotAllowed.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Scripts\Web.config" />
     <Content Include="Properties\AssemblyInfo.cs" />
@@ -259,6 +261,7 @@
     <Compile Include="Drivers\BundleLocalizationPartDriver.cs" />
     <Compile Include="Drivers\BundlePartDriver.cs" />
     <Compile Include="Drivers\ECommerceCurrencySiteSettingsPartDriver.cs" />
+    <Compile Include="Drivers\HierarchyVatConfigurationPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUProductPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUSiteSettingsPartDriver.cs" />
     <Compile Include="Drivers\OrderPartDriver.cs" />
@@ -374,6 +377,7 @@
     <Compile Include="Models\TerritoryInternalRecord.cs" />
     <Compile Include="Models\TerritoryPart.cs" />
     <Compile Include="Models\TerritoryPartRecord.cs" />
+    <Compile Include="Models\TerritoryVatConfigurationIntersectionRecord.cs" />
     <Compile Include="Models\TerritoryVatConfigurationPart.cs" />
     <Compile Include="Models\TerritoryVatConfigurationPartRecord.cs" />
     <Compile Include="Models\VatConfigurationPart.cs" />
@@ -467,6 +471,7 @@
     <Compile Include="Services\ITerritoriesHierarchyService.cs" />
     <Compile Include="Services\ITerritoriesRepositoryService.cs" />
     <Compile Include="Services\ITerritoriesService.cs" />
+    <Compile Include="Services\IVatConfigurationProvider.cs" />
     <Compile Include="Services\IVatConfigurationService.cs" />
     <Compile Include="Services\IWishListExtensionProvider.cs" />
     <Compile Include="Services\IWishListServices.cs" />
@@ -567,6 +572,7 @@
     <Compile Include="ViewModels\AttributeLocalizationProductAttributesPartEditViewModel.cs" />
     <Compile Include="ViewModels\HierarchyAdminIndexViewModel.cs" />
     <Compile Include="ViewModels\HierarchyIndexEntry.cs" />
+    <Compile Include="ViewModels\HierarchyVatConfigurationPartViewModel.cs" />
     <Compile Include="ViewModels\InventoryBySKUProductEditorViewModel.cs" />
     <Compile Include="ViewModels\InventoryBySKUSiteSettingsPartViewModel.cs" />
     <Compile Include="ViewModels\ProductAttributePartDisplayViewModel.cs" />
@@ -592,6 +598,7 @@
     <Compile Include="ViewModels\TerritoryPartViewModel.cs" />
     <Compile Include="ViewModels\UpdateShoppingCartItemViewModel.cs" />
     <Compile Include="Models\WishListListPart.cs" />
+    <Compile Include="ViewModels\VatConfigurationDetailViewModel.cs" />
     <Compile Include="ViewModels\VatConfigurationViewModel.cs" />
     <Compile Include="ViewModels\WishListElementViewModel.cs" />
     <Compile Include="ViewModels\WishListListViewModel.cs" />
