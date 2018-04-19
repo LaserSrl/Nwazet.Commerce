@@ -63,7 +63,7 @@ namespace Nwazet.Commerce.Drivers {
 
         protected override DriverResult Editor(VatConfigurationPart part, IUpdateModel updater, dynamic shapeHelper) {
             if (_authorizer.Authorize(CommercePermissions.ManageTaxes)) {
-                var model = new VatConfigurationViewModel();
+                var model = new VatConfigurationPartViewModel();
                 if (updater.TryUpdateModel(model, Prefix, null, null)) {
                     part.Priority = model.Priority;
                     part.TaxProductCategory = model.TaxProductCategory;
@@ -77,20 +77,38 @@ namespace Nwazet.Commerce.Drivers {
             return Editor(part, shapeHelper);
         }
 
-        private VatConfigurationViewModel CreateVM(VatConfigurationPart part) {
+        private VatConfigurationPartViewModel CreateVM(VatConfigurationPart part) {
             // If no default VatConfigurationPart exists the GetDefaultCategoryId method returns 0,
             // as is defined in the interface. This way, the next new VatConfigurationPart that is created
             // will automatically becom the new default.
             var partIsDefault = part.ContentItem.Id == _vatConfigurationService.GetDefaultCategoryId();
-            return new VatConfigurationViewModel {
+            return new VatConfigurationPartViewModel {
                 TaxProductCategory = part.TaxProductCategory,
                 IsDefaultCategory = partIsDefault,
                 DefaultRate = part.DefaultRate,
                 Priority = part.Priority,
-                Part = part
+                Part = part,
+                ItemizedSummary = BuildSummary(part)
             };
         }
 
-
+        private List<VatConfigurationHierarchySummaryViewModel> BuildSummary(VatConfigurationPart part) {
+            
+            return part.Hierarchies
+                .Select(tup => new VatConfigurationHierarchySummaryViewModel {
+                    Name = _contentManager.GetItemMetadata(tup.Item1).DisplayText,
+                    Item = tup.Item1.ContentItem,
+                    Rate = tup.Item2,
+                    SubRegions = part.Territories
+                        .Where(tpd => tpd.Item1.HierarchyPart.Record == tup.Item1.Record)
+                        .Select(tpd => new VatConfigurationTerritorySummaryViewModel {
+                            Name = _contentManager.GetItemMetadata(tpd.Item1).DisplayText,
+                            Item = tpd.Item1.ContentItem,
+                            Rate = tpd.Item2
+                        })
+                        .ToList()
+                })
+                .ToList();
+        }
     }
 }

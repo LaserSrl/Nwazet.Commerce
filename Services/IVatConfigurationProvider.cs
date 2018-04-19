@@ -21,5 +21,13 @@ namespace Nwazet.Commerce.Services {
         /// <param name="model">The HierarchyVatConfigurationPartViewModel object that contains the updated information.</param>
         void UpdateConfiguration(
             HierarchyVatConfigurationPart part, HierarchyVatConfigurationPartViewModel model);
+
+        /// <summary>
+        /// Updates the VAT category configurations for the given territory.
+        /// </summary>
+        /// <param name="part">The TerritoryVatConfigurationPart whose information we are updating.</param>
+        /// <param name="model">The TerritoryVatConfigurationPartViewModel object that contains the updated information.</param>
+        void UpdateConfiguration(
+            TerritoryVatConfigurationPart part, TerritoryVatConfigurationPartViewModel model);
     }
 }

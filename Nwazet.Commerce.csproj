@@ -213,6 +213,7 @@
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryTypeSelection.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryPartCreation.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryPartEdit.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\TerritoryVatConfigurationPartNotAllowed.cshtml" />
     <None Include="Views\EditorTemplates\Parts\VatConfiguration.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\CreateTerritory.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\EditTerritory.cshtml" />
@@ -225,6 +226,7 @@
     <None Include="Views\TerritoriesAdmin\EditorTemplates\TerritoryInternalRecord.cshtml" />
     <None Include="Views\EditorTemplates\Parts\HierarchyVatConfigurationPartAllowed.cshtml" />
     <None Include="Views\EditorTemplates\Parts\HierarchyVatConfigurationPartNotAllowed.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\TerritoryVatConfigurationPartAllowed.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Scripts\Web.config" />
     <Content Include="Properties\AssemblyInfo.cs" />
@@ -270,6 +272,7 @@
     <Compile Include="Drivers\ProductsListPartDriver.cs" />
     <Compile Include="Drivers\TerritoryHierarchyPartDriver.cs" />
     <Compile Include="Drivers\TerritoryPartDriver.cs" />
+    <Compile Include="Drivers\TerritoryVatConfigurationPartDriver.cs" />
     <Compile Include="Drivers\VatConfigurationPartDriver.cs" />
     <Compile Include="Drivers\WishListItemPartDriver.cs" />
     <Compile Include="Drivers\WishListListPartDriver.cs" />
@@ -596,10 +599,13 @@
     <Compile Include="ViewModels\TerritoryHierarchyTreeNode.cs" />
     <Compile Include="ViewModels\TerritoryHierarchyTypeSelectionViewModel.cs" />
     <Compile Include="ViewModels\TerritoryPartViewModel.cs" />
+    <Compile Include="ViewModels\TerritoryVatConfigurationPartViewModel.cs" />
     <Compile Include="ViewModels\UpdateShoppingCartItemViewModel.cs" />
     <Compile Include="Models\WishListListPart.cs" />
     <Compile Include="ViewModels\VatConfigurationDetailViewModel.cs" />
-    <Compile Include="ViewModels\VatConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\VatConfigurationPartViewModel.cs" />
+    <Compile Include="ViewModels\VatConfigurationHierarchySummaryViewModel.cs" />
+    <Compile Include="ViewModels\VatConfigurationTerritorySummaryViewModel.cs" />
     <Compile Include="ViewModels\WishListElementViewModel.cs" />
     <Compile Include="ViewModels\WishListListViewModel.cs" />
   </ItemGroup>

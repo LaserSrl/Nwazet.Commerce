@@ -11,7 +11,7 @@ using System.Web.Mvc;
 
 namespace Nwazet.Commerce.ViewModels {
     [OrchardFeature("Nwazet.AdvancedVAT")]
-    public class VatConfigurationViewModel {
+    public class VatConfigurationPartViewModel {
         
 
         [Required]
@@ -22,5 +22,7 @@ namespace Nwazet.Commerce.ViewModels {
         
 
         public VatConfigurationPart Part { get; set; }
+
+        public List<VatConfigurationHierarchySummaryViewModel> ItemizedSummary { get; set; }
     }
 }

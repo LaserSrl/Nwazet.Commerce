@@ -13,6 +13,8 @@ using Orchard.ContentManagement;
 using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels;
+using System.Globalization;
+using Orchard;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.AdvancedVAT")]
@@ -21,15 +23,18 @@ namespace Nwazet.Commerce.Drivers {
         private readonly IAuthorizer _authorizer;
         private readonly IVatConfigurationProvider _vatConfigurationProvider;
         private readonly IContentManager _contentManager;
+        private readonly IWorkContextAccessor _workContextAccessor;
 
         public HierarchyVatConfigurationPartDriver(
             IAuthorizer authorizer,
             IVatConfigurationProvider vatConfigurationProvider,
-            IContentManager contentManager) {
+            IContentManager contentManager,
+            IWorkContextAccessor workContextAccessor) {
 
             _authorizer = authorizer;
             _vatConfigurationProvider = vatConfigurationProvider;
             _contentManager = contentManager;
+            _workContextAccessor = workContextAccessor;
 
             T = NullLocalizer.Instance;
         }
@@ -38,6 +43,12 @@ namespace Nwazet.Commerce.Drivers {
 
         protected override string Prefix {
             get { return "HierarchyVatConfigurationPart"; }
+        }
+
+        private CultureInfo SiteCulture {
+            get {
+                return CultureInfo.GetCultureInfo(_workContextAccessor.GetContext().CurrentCulture);
+            }
         }
 
         protected override DriverResult Editor(HierarchyVatConfigurationPart part, dynamic shapeHelper) {
@@ -58,7 +69,7 @@ namespace Nwazet.Commerce.Drivers {
                                 : specificConfig.Item2,
                             RateString = specificConfig == null
                                 ? "0"
-                                : specificConfig.Item2.ToString()
+                                : specificConfig.Item2.ToString(SiteCulture)
                         };
                     })
                     .ToArray()
@@ -92,7 +103,7 @@ namespace Nwazet.Commerce.Drivers {
                     foreach (var vm in model.AllVatConfigurations.Where(c => c.IsSelected)) {
                         // parse from the string or fail the update
                         decimal d = 0;
-                        if (!decimal.TryParse(vm.RateString, out d)) {
+                        if (!decimal.TryParse(vm.RateString, NumberStyles.Any, SiteCulture, out d)) {
                             success = false;
                             updater.AddModelError(T("Rate").Text, T("{0} Is not a valid value for rate.", vm.RateString));
                         } else {
