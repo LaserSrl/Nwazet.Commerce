@@ -55,6 +55,13 @@ namespace Nwazet.Commerce.Services {
                 .List();
         }
 
+        public IEnumerable<VatConfigurationPart> GetVatConfigurations(VersionOptions versionOptions) {
+            return _contentManager
+                .Query<VatConfigurationPart, VatConfigurationPartRecord>()
+                .ForVersion(versionOptions)
+                .List();
+        }
+
         /// <summary>
         /// We lock on string.Intern(LockString) to make sure we do not mess things up when updating stuff
         /// in the IRepositories. The risk is to have races on some data that would result in invalid configurations

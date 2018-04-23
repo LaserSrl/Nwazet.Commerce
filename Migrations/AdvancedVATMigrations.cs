@@ -61,6 +61,10 @@ namespace Nwazet.Commerce.Migrations {
                 .WithPart("VatConfigurationPart")
                 .DisplayedAs("VAT Category Configuration"));
 
+            SchemaBuilder.CreateTable("ProductVatConfigurationPartRecord", table=>table
+                .ContentPartRecord()
+                .Column<int>("VatConfiguration_Id"));
+
             return 1;
         }
 

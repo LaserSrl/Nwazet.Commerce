@@ -1,5 +1,6 @@
 ﻿using Nwazet.Commerce.Models;
 using Nwazet.Commerce.ViewModels;
+using Orchard.ContentManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,13 @@ namespace Nwazet.Commerce.Services {
         /// </summary>
         /// <returns></returns>
         IEnumerable<VatConfigurationPart> GetVatConfigurations();
+
+        /// <summary>
+        /// Get all the VAT Category configurations in the specified version.
+        /// </summary>
+        /// <param name="versionOptions">The desired version.</param>
+        /// <returns></returns>
+        IEnumerable<VatConfigurationPart> GetVatConfigurations(VersionOptions versionOptions);
 
         /// <summary>
         /// Updates the VAT category configurations for the given hierarchy.

@@ -209,6 +209,7 @@
       <DependentUpon>order-admin.less</DependentUpon>
     </Content>
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\ProductVatConfiguration.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryManager.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryTypeSelection.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryPartCreation.cshtml" />
@@ -270,6 +271,7 @@
     <Compile Include="Drivers\ProductPartWishListDriver.cs" />
     <Compile Include="Drivers\ProductSettingsPartDriver.cs" />
     <Compile Include="Drivers\ProductsListPartDriver.cs" />
+    <Compile Include="Drivers\ProductVatConfigurationPartDriver.cs" />
     <Compile Include="Drivers\TerritoryHierarchyPartDriver.cs" />
     <Compile Include="Drivers\TerritoryPartDriver.cs" />
     <Compile Include="Drivers\TerritoryVatConfigurationPartDriver.cs" />
@@ -308,6 +310,7 @@
     <Compile Include="Handlers\OrderPartHandler.cs" />
     <Compile Include="Handlers\ProductPartVersioningHandler.cs" />
     <Compile Include="Handlers\ProductSettingsPartHandler.cs" />
+    <Compile Include="Handlers\ProductVatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\StateOrCountryTaxPartHandler.cs" />
     <Compile Include="Handlers\TerritoryHierarchyPartHandler.cs" />
     <Compile Include="Handlers\TerritoryPartHandler.cs" />
@@ -369,6 +372,8 @@
     <Compile Include="Models\ProductAttributeValueExtended.cs" />
     <Compile Include="Models\ProductPartVersionRecord.cs" />
     <Compile Include="Models\ProductSettingsPart.cs" />
+    <Compile Include="Models\ProductVatConfigurationPart.cs" />
+    <Compile Include="Models\ProductVatConfigurationPartRecord.cs" />
     <Compile Include="Models\Reporting\ChartType.cs" />
     <Compile Include="Models\Reporting\ICommerceReport.cs" />
     <Compile Include="Models\Reporting\ReportData.cs" />
@@ -586,6 +591,7 @@
     <Compile Include="ViewModels\OrderEditorViewModel.cs" />
     <Compile Include="ViewModels\PricingSettingsViewModel.cs" />
     <Compile Include="ViewModels\ProductEditorViewModel.cs" />
+    <Compile Include="ViewModels\ProductVatConfigurationPartEditorViewModel.cs" />
     <Compile Include="ViewModels\ReportDataViewModel.cs" />
     <Compile Include="ViewModels\TaxIndexViewModel.cs" />
     <Compile Include="ViewModels\DiscountEditorViewModel.cs" />
