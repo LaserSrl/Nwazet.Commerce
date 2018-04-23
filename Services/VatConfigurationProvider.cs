@@ -79,7 +79,7 @@ namespace Nwazet.Commerce.Services {
 
                 foreach (var detailVM in model.AllVatConfigurations) {
                     var oldCfg = part.VatConfigurations
-                        .FirstOrDefault(tup => tup.Item1.Record.Id == detailVM.VatConfigurationPartId);
+                        ?.FirstOrDefault(tup => tup.Item1.Record.Id == detailVM.VatConfigurationPartId);
                     if (oldCfg == null) {
                         if (detailVM.IsSelected) {
                             // we added a new VAT category configuration to this hiehrarchy
@@ -136,9 +136,9 @@ namespace Nwazet.Commerce.Services {
 
                 // When adding or updating configurations, we should double check that it is still available for the
                 // hierarchy
-                var hierarchyConfigurations = part
-                    .As<TerritoryPart>()
-                    ?.Hierarchy
+                var hierarchy = part.As<TerritoryPart>()?.HierarchyPart ??
+                    part.As<TerritoryPart>()?.CreationHierarchy;
+                var hierarchyConfigurations = hierarchy
                     ?.As<HierarchyVatConfigurationPart>()
                     ?.VatConfigurations
                     ?.Select(tup => tup.Item1);
@@ -150,7 +150,7 @@ namespace Nwazet.Commerce.Services {
                 } else {
                     foreach (var detailVM in model.AllVatConfigurations) {
                         var oldCfg = part.VatConfigurations
-                            .FirstOrDefault(tup => tup.Item1.Record.Id == detailVM.VatConfigurationPartId);
+                            ?.FirstOrDefault(tup => tup.Item1.Record.Id == detailVM.VatConfigurationPartId);
                         var configurationAllowed = hierarchyConfigurations.Any(vcp => vcp.Record.Id == detailVM.VatConfigurationPartId);
                         if (hierarchyConfigurations.Any(vcp => vcp.Record.Id == detailVM.VatConfigurationPartId)) {
                             // the VAT category configuration is allowed
@@ -195,5 +195,39 @@ namespace Nwazet.Commerce.Services {
             }
         }
 
+        public void ClearIntersectionRecords(VatConfigurationPart part) {
+            lock (string.Intern(LockString)) {
+                var allHierarchyConfigurations = _hierarchyVatConfigurations
+                    .Fetch(r => r.VatConfiguration == part.Record);
+                foreach (var entity in allHierarchyConfigurations) {
+                    _hierarchyVatConfigurations.Delete(entity);
+                }
+                var allTerritoryConfigurations = _territoryVatConfigurations
+                    .Fetch(r => r.VatConfiguration == part.Record);
+                foreach (var entity in allTerritoryConfigurations) {
+                    _territoryVatConfigurations.Delete(entity);
+                }
+            }
+        }
+
+        public void ClearIntersectionRecords(HierarchyVatConfigurationPart part) {
+            lock (string.Intern(LockString)) {
+                var allConfigurations = _hierarchyVatConfigurations
+                    .Fetch(r => r.Hierarchy == part.Record);
+                foreach (var entity in allConfigurations) {
+                    _hierarchyVatConfigurations.Delete(entity);
+                }
+            }
+        }
+
+        public void ClearIntersectionRecords(TerritoryVatConfigurationPart part) {
+            lock (string.Intern(LockString)) {
+                var allConfigurations = _territoryVatConfigurations
+                    .Fetch(r => r.Territory == part.Record);
+                foreach (var entity in allConfigurations) {
+                    _territoryVatConfigurations.Delete(entity);
+                }
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Services;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
@@ -16,14 +17,17 @@ namespace Nwazet.Commerce.Handlers {
 
         private readonly IContentManager _contentManager;
         private readonly ISiteService _siteService;
+        private readonly IVatConfigurationProvider _vatConfigurationProvider;
 
         public VatConfigurationPartHandler(
             IRepository<VatConfigurationPartRecord> repository,
             IContentManager contentManager,
-            ISiteService siteService) {
+            ISiteService siteService,
+            IVatConfigurationProvider vatConfigurationProvider) {
 
             _contentManager = contentManager;
             _siteService = siteService;
+            _vatConfigurationProvider = vatConfigurationProvider;
 
             Filters.Add(StorageFilter.For(repository));
             Filters.Add(new ActivatingFilter<VatConfigurationSiteSettingsPart>("Site"));
@@ -36,6 +40,10 @@ namespace Nwazet.Commerce.Handlers {
             // manage the case where the default configuration is deleted
             OnRemoved<VatConfigurationPart>((context, part) => ResetDefaultVatConfigurationPart(part));
             OnDestroyed<VatConfigurationPart>((context, part) => ResetDefaultVatConfigurationPart(part));
+
+            // Clean up
+            OnRemoving<VatConfigurationPart>(CleanupRecords);
+            OnDestroying<VatConfigurationPart>((context, part) => CleanupRecords(null, part));
         }
 
         static void PropertySetHandlers(
@@ -77,11 +85,12 @@ namespace Nwazet.Commerce.Handlers {
                 if (part.Record.HierarchyConfigurationIntersections != null
                     && part.Record.HierarchyConfigurationIntersections.Any()) {
                     // IEnumerable<Tuple<A, B>> pairs = listA.Zip(listB, (a, b) => Tuple.Create(a, b));
+                    var listB = _contentManager
+                        .GetMany<TerritoryHierarchyPart>(part.Record.HierarchyConfigurationIntersections
+                            .Select(hci => hci.Hierarchy.Id),
+                            VersionOptions.Latest, QueryHints.Empty);
                     return part.Record.HierarchyConfigurationIntersections
-                        .Zip(_contentManager
-                            .GetMany<TerritoryHierarchyPart>(part.Record.HierarchyConfigurationIntersections
-                                .Select(hci => hci.Hierarchy.Id),
-                                VersionOptions.Latest, QueryHints.Empty),
+                        .Zip(listB,
                             (a, b) => Tuple.Create(b, a.Rate));
                 } else {
                     return Enumerable.Empty<Tuple<TerritoryHierarchyPart, decimal>>();
@@ -91,12 +100,15 @@ namespace Nwazet.Commerce.Handlers {
             part.TerritoriesField.Loader(() => {
                 if (part.Record.TerritoryConfigurationIntersections != null
                     && part.Record.TerritoryConfigurationIntersections.Any()) {
+                    // IEnumerable<Tuple<A, B>> pairs = listA.Zip(listB, (a, b) => Tuple.Create(a, b));
+                    var listB = _contentManager
+                        .GetMany<TerritoryPart>(part.Record.TerritoryConfigurationIntersections
+                            .Select(tvcir => tvcir.Territory.Id),
+                            VersionOptions.Latest, QueryHints.Empty);
                     return part.Record.TerritoryConfigurationIntersections
-                        .Zip(_contentManager
-                            .GetMany<TerritoryPart>(part.Record.TerritoryConfigurationIntersections
-                                .Select(tvcir => tvcir.Territory.Id),
-                                VersionOptions.Latest, QueryHints.Empty),
+                        .Zip(listB,
                             (a, b) => Tuple.Create(b, a.Rate));
+
                 } else {
                     return Enumerable.Empty<Tuple<TerritoryPart, decimal>>();
                 }
@@ -112,6 +124,10 @@ namespace Nwazet.Commerce.Handlers {
             if (settings.DefaultVatConfigurationId == part.ContentItem.Id) {
                 settings.DefaultVatConfigurationId = 0;
             }
+        }
+
+        void CleanupRecords(RemoveContentContext context, VatConfigurationPart part) {
+            _vatConfigurationProvider.ClearIntersectionRecords(part);
         }
     }
 }

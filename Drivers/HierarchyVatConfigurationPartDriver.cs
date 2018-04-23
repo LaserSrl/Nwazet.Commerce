@@ -59,7 +59,7 @@ namespace Nwazet.Commerce.Drivers {
                 AllVatConfigurations = allConfigurations
                     .Select(cfg => {
                         var specificConfig = part.VatConfigurations
-                            .FirstOrDefault(tup => tup.Item1.Record == cfg.Record);
+                            ?.FirstOrDefault(tup => tup.Item1.Record == cfg.Record);
                         return new VatConfigurationDetailViewModel {
                             VatConfigurationPartId = cfg.Record.Id,
                             VatConfigurationPartText = cfg.Name,

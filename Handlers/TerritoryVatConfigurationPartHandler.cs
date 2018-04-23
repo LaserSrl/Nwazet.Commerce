@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Services;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
@@ -14,12 +15,15 @@ namespace Nwazet.Commerce.Handlers {
     public class TerritoryVatConfigurationPartHandler : ContentHandler {
 
         private readonly IContentManager _contentManager;
+        private readonly IVatConfigurationProvider _vatConfigurationProvider;
 
         public TerritoryVatConfigurationPartHandler(
             IRepository<TerritoryVatConfigurationPartRecord> repository,
-            IContentManager contentManager) {
+            IContentManager contentManager,
+            IVatConfigurationProvider vatConfigurationProvider) {
 
             _contentManager = contentManager;
+            _vatConfigurationProvider = vatConfigurationProvider;
 
             Filters.Add(StorageFilter.For(repository));
 
@@ -28,6 +32,9 @@ namespace Nwazet.Commerce.Handlers {
             OnLoading<TerritoryVatConfigurationPart>((context, part) => LazyLoadHandlers(part));
             OnVersioning<TerritoryVatConfigurationPart>((context, part, newVersionPart) => LazyLoadHandlers(newVersionPart));
 
+            // Clean up
+            OnRemoving<TerritoryVatConfigurationPart>(CleanupRecords);
+            OnDestroying<TerritoryVatConfigurationPart>((context, part) => CleanupRecords(null, part));
         }
 
         protected override void Activating(ActivatingContentContext context) {
@@ -74,9 +81,12 @@ namespace Nwazet.Commerce.Handlers {
                 } else {
                     return Enumerable.Empty<Tuple<VatConfigurationPart, decimal>>();
                 }
-
-                return null;
+                
             });
+        }
+
+        void CleanupRecords(RemoveContentContext context, TerritoryVatConfigurationPart part) {
+            _vatConfigurationProvider.ClearIntersectionRecords(part);
         }
     }
 }

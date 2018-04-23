@@ -93,22 +93,26 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         private List<VatConfigurationHierarchySummaryViewModel> BuildSummary(VatConfigurationPart part) {
-            
-            return part.Hierarchies
-                .Select(tup => new VatConfigurationHierarchySummaryViewModel {
-                    Name = _contentManager.GetItemMetadata(tup.Item1).DisplayText,
-                    Item = tup.Item1.ContentItem,
-                    Rate = tup.Item2,
-                    SubRegions = part.Territories
-                        .Where(tpd => tpd.Item1.HierarchyPart.Record == tup.Item1.Record)
-                        .Select(tpd => new VatConfigurationTerritorySummaryViewModel {
-                            Name = _contentManager.GetItemMetadata(tpd.Item1).DisplayText,
-                            Item = tpd.Item1.ContentItem,
-                            Rate = tpd.Item2
-                        })
-                        .ToList()
-                })
-                .ToList();
+
+            return part.Hierarchies == null
+                ? new List<VatConfigurationHierarchySummaryViewModel>()
+                : part.Hierarchies
+                    .Select(tup => new VatConfigurationHierarchySummaryViewModel {
+                        Name = _contentManager.GetItemMetadata(tup.Item1).DisplayText,
+                        Item = tup.Item1.ContentItem,
+                        Rate = tup.Item2,
+                        SubRegions = part.Territories == null
+                            ? new List<VatConfigurationTerritorySummaryViewModel>()
+                            :part.Territories
+                                .Where(tpd => tpd.Item1.HierarchyPart.Record == tup.Item1.Record)
+                                .Select(tpd => new VatConfigurationTerritorySummaryViewModel {
+                                    Name = _contentManager.GetItemMetadata(tpd.Item1).DisplayText,
+                                    Item = tpd.Item1.ContentItem,
+                                    Rate = tpd.Item2
+                                })
+                                .ToList()
+                    })
+                    .ToList();
         }
     }
 }

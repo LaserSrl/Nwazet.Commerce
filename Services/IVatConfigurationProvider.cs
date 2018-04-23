@@ -29,5 +29,23 @@ namespace Nwazet.Commerce.Services {
         /// <param name="model">The TerritoryVatConfigurationPartViewModel object that contains the updated information.</param>
         void UpdateConfiguration(
             TerritoryVatConfigurationPart part, TerritoryVatConfigurationPartViewModel model);
+
+        /// <summary>
+        /// Clear the records for the VAT configurations for the product category represented by the given part.
+        /// </summary>
+        /// <param name="part">The part whose configurations are to be deleted.</param>
+        void ClearIntersectionRecords(VatConfigurationPart part);
+        
+        /// <summary>
+        /// Clear the records for the VAT configurations for the hierarchy represented by the given part.
+        /// </summary>
+        /// <param name="part">The part whose configurations are to be deleted.</param>
+        void ClearIntersectionRecords(HierarchyVatConfigurationPart part);
+
+        /// <summary>
+        /// Clear the records for the VAT configurations for the territory represented by the given part.
+        /// </summary>
+        /// <param name="part">The part whose configurations are to be deleted.</param>
+        void ClearIntersectionRecords(TerritoryVatConfigurationPart part);
     }
 }
