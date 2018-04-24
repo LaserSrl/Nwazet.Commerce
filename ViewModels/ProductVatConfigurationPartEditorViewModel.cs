@@ -14,7 +14,7 @@ namespace Nwazet.Commerce.ViewModels {
         }
 
         /// <summary>
-        /// This ctor allows settign the value to be displayed for the selection of the default
+        /// This ctor allows setting the value to be displayed for the selection of the default
         /// vat category.
         /// </summary>
         /// <param name="defaultText"></param>

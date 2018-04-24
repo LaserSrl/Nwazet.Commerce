@@ -46,6 +46,14 @@ namespace Nwazet.Commerce.Handlers {
             OnDestroying<VatConfigurationPart>((context, part) => CleanupRecords(null, part));
         }
 
+
+        protected override void GetItemMetadata(GetContentItemMetadataContext context) {
+            var part = context.ContentItem.As<VatConfigurationPart>();
+
+            if (part != null) {
+                context.Metadata.DisplayText = part.Name;
+            }
+        }
         static void PropertySetHandlers(
             InitializingContentContext context, VatConfigurationPart part) {
             

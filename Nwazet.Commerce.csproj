@@ -216,6 +216,7 @@
     <None Include="Views\EditorTemplates\Parts\TerritoryPartEdit.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryVatConfigurationPartNotAllowed.cshtml" />
     <None Include="Views\EditorTemplates\Parts\VatConfiguration.cshtml" />
+    <None Include="Views\EditorTemplates\SiteSettings\VatConfiguration.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\CreateTerritory.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\EditTerritory.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\Index.cshtml" />
@@ -276,6 +277,7 @@
     <Compile Include="Drivers\TerritoryPartDriver.cs" />
     <Compile Include="Drivers\TerritoryVatConfigurationPartDriver.cs" />
     <Compile Include="Drivers\VatConfigurationPartDriver.cs" />
+    <Compile Include="Drivers\VatConfigurationSiteSettingsPartDriver.cs" />
     <Compile Include="Drivers\WishListItemPartDriver.cs" />
     <Compile Include="Drivers\WishListListPartDriver.cs" />
     <Compile Include="Drivers\ZipCodeTaxPartDriver.cs" />
@@ -453,6 +455,7 @@
     <Compile Include="Security\PreventDeletingDefaultVatConfigurationEventHandler.cs" />
     <Compile Include="Security\TerritoriesAuthorizationEventHandler.cs" />
     <Compile Include="Security\WishListsAuthorizationEventHandler.cs" />
+    <Compile Include="Services\BaseProductPriceService.cs" />
     <Compile Include="Services\BundleAutocompleteService.cs" />
     <Compile Include="Services\BundleProductLocalizationBundleService.cs" />
     <Compile Include="Services\BundleProductLocalizationServices.cs" />
@@ -472,6 +475,7 @@
     <Compile Include="Services\IProductAttributeAdminServices.cs" />
     <Compile Include="Services\IProductAttributeLocalizationServices.cs" />
     <Compile Include="Services\IProductInventoryService.cs" />
+    <Compile Include="Services\IProductPriceService.cs" />
     <Compile Include="Services\ISKUGenerationServices.cs" />
     <Compile Include="Services\ISKUUniquenessHelper.cs" />
     <Compile Include="Services\ITaxComputationHelper.cs" />
@@ -497,6 +501,7 @@
     <Compile Include="Services\ICurrencyProvider.cs" />
     <Compile Include="Services\ProductInventoryService.cs" />
     <Compile Include="Services\ProductInventoryServiceBase.cs" />
+    <Compile Include="Services\ProductPriceService.cs" />
     <Compile Include="Services\ProductResolverSelector.cs" />
     <Compile Include="Services\AddressFormatter.cs" />
     <Compile Include="Services\BundleService.cs" />
@@ -527,6 +532,7 @@
     <Compile Include="Services\UseCurrencyFromSiteSettingsProvider.cs" />
     <Compile Include="Services\VatConfigurationProvider.cs" />
     <Compile Include="Services\VatConfigurationService.cs" />
+    <Compile Include="Services\VatProductPriceService.cs" />
     <Compile Include="Services\WishListsArePrivatePermissionsService.cs" />
     <Compile Include="Services\WishListServices.cs" />
     <Compile Include="Services\WishListsUIServices.cs" />
@@ -611,6 +617,7 @@
     <Compile Include="ViewModels\VatConfigurationDetailViewModel.cs" />
     <Compile Include="ViewModels\VatConfigurationPartViewModel.cs" />
     <Compile Include="ViewModels\VatConfigurationHierarchySummaryViewModel.cs" />
+    <Compile Include="ViewModels\VatConfigurationSiteSettingsPartViewModel.cs" />
     <Compile Include="ViewModels\VatConfigurationTerritorySummaryViewModel.cs" />
     <Compile Include="ViewModels\WishListElementViewModel.cs" />
     <Compile Include="ViewModels\WishListListViewModel.cs" />
