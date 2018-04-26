@@ -48,6 +48,10 @@ namespace Nwazet.Commerce.Services {
             return part.Price + part.Price * GetRate(part);
         }
 
+        public override decimal GetPrice(ProductPart part, decimal basePrice) {
+            return basePrice + basePrice * GetRate(part);
+        }
+
         private VatConfigurationPart GetVatConfiguration(ProductPart part) {
             return part
                 ?.As<ProductVatConfigurationPart>()
@@ -86,7 +90,7 @@ namespace Nwazet.Commerce.Services {
 
             if (hierarchyConfigs == null || !hierarchyConfigs.Any()) {
                 // territory is not in the hierarchies, so use the default rate
-                return vatConfig.DefaultRate;
+                return vatConfig.DefaultRate / 100.0m;
             }
 
             // get the territory exception if it exists
@@ -133,13 +137,13 @@ namespace Nwazet.Commerce.Services {
                 // We handle the error case where we have multiple territories satisfying the query by
                 // sending the minimum of the rates. If there is only a single configuration for hierarchies
                 // (the correct case) the following instruction will return the only rate.
-                return hierarchyConfigs.Select(tup => tup.Item2).Min();
+                return hierarchyConfigs.Select(tup => tup.Item2).Min() / 100.0m;
             }
 
             // We handle the error case where we have multiple territories satisfying the query by
             // sending the minimum of the rates. If there is only a single configuration for territories
             // (the correct case) the following instruction will return the only rate.
-            return territoryConfig.Select(tup => tup.Item2).Min();
+            return territoryConfig.Select(tup => tup.Item2).Min() / 100.0m;
 
             // the way this method is written, having a configuration specific for a territory "fixes" the 
             // error condition where the territory is ni more than one hierarchy

@@ -24,5 +24,9 @@ namespace Nwazet.Commerce.Services {
         public virtual decimal? GetShippingCost(ProductPart part) {
             return part.ShippingCost;
         }
+
+        public virtual decimal GetPrice(ProductPart part, decimal basePrice) {
+            return basePrice;
+        }
     }
 }
