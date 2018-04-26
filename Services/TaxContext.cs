@@ -18,6 +18,10 @@ namespace Nwazet.Commerce.Services {
         public string Country { get; set; }
         public string ZipCode { get; set; }
         #endregion
-
+        
+        /// <summary>
+        /// We are going to need a destination for taxes and shipping.
+        /// </summary>
+        public TerritoryInternalRecord DestinationTerritory { get; set; }
     }
 }

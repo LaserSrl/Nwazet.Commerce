@@ -11,11 +11,14 @@ namespace Nwazet.Commerce.Services {
     public class TaxProviderService : ITaxProviderService {
 
         private readonly IEnumerable<ITaxComputationHelper> _taxComputationHelpers;
+        private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
 
         public TaxProviderService(
-            IEnumerable<ITaxComputationHelper> taxComputationHelpers) {
+            IEnumerable<ITaxComputationHelper> taxComputationHelpers,
+            ITerritoriesRepositoryService territoriesRepositoryService) {
 
             _taxComputationHelpers = taxComputationHelpers;
+            _territoriesRepositoryService = territoriesRepositoryService;
         }
 
         public TaxContext CreateContext(
@@ -29,8 +32,41 @@ namespace Nwazet.Commerce.Services {
                 CartSubTotal = subtotal,
                 ShippingPrice = shippingCost,
                 Country = country,
-                ZipCode = zipCode
+                ZipCode = zipCode,
+                DestinationTerritory = FindDestination(country, zipCode)
             };
+        }
+
+        public TaxContext CreateContext(
+            IEnumerable<ShoppingCartQuantityProduct> productQuantities,
+            decimal subtotal,
+            decimal shippingCost,
+            string country, string zipCode,
+            TerritoryInternalRecord destinationTerritory) {
+
+            return new TaxContext() {
+                ShoppingCartQuantityProducts = productQuantities,
+                CartSubTotal = subtotal,
+                ShippingPrice = shippingCost,
+                Country = country,
+                ZipCode = zipCode,
+                DestinationTerritory = destinationTerritory
+            };
+        }
+
+        private TerritoryInternalRecord FindDestination(string country, string zipCode) {
+            if (string.IsNullOrWhiteSpace(country) && string.IsNullOrWhiteSpace(zipCode)) {
+                return null;
+            }
+            var destination = !string.IsNullOrWhiteSpace(zipCode)
+                ? _territoriesRepositoryService.GetTerritoryInternal(zipCode)
+                : null;
+            if (destination == null) {
+                destination = !string.IsNullOrWhiteSpace(country)
+                    ? _territoriesRepositoryService.GetTerritoryInternal(country)
+                    : null;
+            }
+            return destination;
         }
 
         public decimal TotalTaxes(ITax tax, TaxContext context) {
@@ -44,7 +80,8 @@ namespace Nwazet.Commerce.Services {
                     productQuantity.Price * productQuantity.Quantity + productQuantity.LinePriceAdjustment,
                     0,
                     context.Country,
-                    context.ZipCode);
+                    context.ZipCode,
+                    context.DestinationTerritory);
                 yield return _taxComputationHelpers.Sum(tch => tch.ComputeTax(tax, singleItemContext));
             }
         }

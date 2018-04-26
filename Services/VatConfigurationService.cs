@@ -15,13 +15,16 @@ namespace Nwazet.Commerce.Services {
 
         private readonly IContentManager _contentManager;
         private readonly IWorkContextAccessor _workContextAccessor;
+        private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
 
         public VatConfigurationService(
             IContentManager contentManager,
-            IWorkContextAccessor workContextAccessor) {
+            IWorkContextAccessor workContextAccessor,
+            ITerritoriesRepositoryService territoriesRepositoryService) {
 
             _contentManager = contentManager;
             _workContextAccessor = workContextAccessor;
+            _territoriesRepositoryService = territoriesRepositoryService;
         }
 
         private VatConfigurationSiteSettingsPart _settings { get; set; }
@@ -64,5 +67,118 @@ namespace Nwazet.Commerce.Services {
                 return null;
             }
         }
+
+        public decimal GetRate(ProductPart part) {
+            // Given the VatConfiguration for this product, 
+            // find the rate for the front end
+            if (Settings.DefaultTerritoryForVatId == 0) {
+                // Do not add tax for front end, i.e. the price shown on front end is "before tax"
+                return 0;
+            }
+
+            var defaultTerritory = _territoriesRepositoryService
+                .GetTerritoryInternal(Settings.DefaultTerritoryForVatId);
+
+            if (defaultTerritory == null) {
+                // This is an error condition that may be caused by setting a territory as default, and
+                // then deleting the territory without updating the configuration.
+                return 0;
+            }
+
+            return GetRate(part, defaultTerritory);
+        }
+
+        public decimal GetRate(ProductPart part, TerritoryInternalRecord destination) {
+            if (destination == null) {
+                return GetRate(part);
+            }
+
+            var vatConfig = GetVatConfiguration(part);
+
+            if (vatConfig == null) {
+                // No vat configuration exists
+                return 0;
+            }
+
+            var hierarchyConfigs = vatConfig
+                .Hierarchies
+                ?.Where(tup => {
+                    var thp = tup.Item1;
+                    return thp
+                        .Record
+                        .Territories
+                        .Any(tpr => tpr.TerritoryInternalRecord != null
+                            && tpr.TerritoryInternalRecord.Id == destination.Id);
+                });
+
+            if (hierarchyConfigs == null || !hierarchyConfigs.Any()) {
+                // territory is not in the hierarchies, so use the default rate
+                return vatConfig.DefaultRate / 100.0m;
+            }
+
+            // get the territory exception if it exists
+            var territoryConfig = vatConfig
+                .Territories
+                ?.Where(tup => {
+                    var tp = tup.Item1;
+                    return tp
+                        .Record
+                        .TerritoryInternalRecord
+                        .Id == destination.Id;
+                });
+            if (territoryConfig == null || !territoryConfig.Any()) {
+                // see if the default territory is a child of a territory with a configured
+                // rate
+                territoryConfig = vatConfig
+                    .Territories
+                    ?.Where(tup => {
+                        var tp = tup.Item1;
+                        var children = tp.Children;
+                        var isChild = false;
+                        while (children != null && children.Any()) {
+                            isChild = children // search through the children
+                                .Any(ci => {
+                                    var territory = ci.As<TerritoryPart>();
+                                    return territory != null //sanity check
+                                        && territory.Record.TerritoryInternalRecord.Id == destination.Id;
+                                });
+                            if (isChild) {
+                                break;
+                            }
+                            // then we search through the children's children
+                            children = children
+                                .Where(ci => ci.As<TerritoryPart>() != null) //sanity chedk
+                                .SelectMany(ci => ci.As<TerritoryPart>().Children);
+                        }
+                        return isChild;
+                    });
+            }
+
+            if (territoryConfig == null || !territoryConfig.Any()) {
+                // there is no territory-specific configuration
+
+                // We handle the error case where we have multiple territories satisfying the query by
+                // sending the minimum of the rates. If there is only a single configuration for hierarchies
+                // (the correct case) the following instruction will return the only rate.
+                return hierarchyConfigs.Select(tup => tup.Item2).Min() / 100.0m;
+            }
+
+            // We handle the error case where we have multiple territories satisfying the query by
+            // sending the minimum of the rates. If there is only a single configuration for territories
+            // (the correct case) the following instruction will return the only rate.
+            return territoryConfig.Select(tup => tup.Item2).Min() / 100.0m;
+
+            // the way this method is written, having a configuration specific for a territory "fixes" the 
+            // error condition where the territory is ni more than one hierarchy
+        }
+
+        private VatConfigurationPart GetVatConfiguration(ProductPart part) {
+            return part
+                ?.As<ProductVatConfigurationPart>()
+                ?.VatConfigurationPart
+                ?? GetDefaultCategory();
+        }
+
+
     }
 }

@@ -27,21 +27,9 @@ namespace Nwazet.Commerce.Models {
             IEnumerable<ShoppingCartQuantityProduct> productQuantities,
             decimal subtotal, decimal shippingCost, string country, string zipCode) {
 
-            // For this method the cart's subtotal does not matter and will always be ignored.
-
-            // Since we cannot inject services here, the part will need to have access to its own
-            // table describing the relationships between product categories and destinations.
-
-            decimal taxTotal = 0;
-
-            foreach (var productQuantity in productQuantities) {
-                // get the category for this line of products
-                // given category and destination (country + zipcode)
-
-            }
-
-
-            return taxTotal;
+            // tax computations are too complex to reliably do here without services and such
+            //The VatTaxComputationHelper will make sure this method is not called.
+            throw new NotImplementedException();
         }
         #endregion
 

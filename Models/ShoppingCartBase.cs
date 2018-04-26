@@ -99,7 +99,7 @@ namespace Nwazet.Commerce.Models {
             return Math.Round(GetProducts().Sum(pq => Math.Round(pq.Price * pq.Quantity + pq.LinePriceAdjustment, 2)), 2);
         }
         public virtual TaxAmount Taxes(decimal subTotal = 0) {
-            if (Country == null && ZipCode == null) return null;
+            //if (Country == null && ZipCode == null) return null;
             var taxes = _taxProviders
                 .SelectMany(p => p.GetTaxes())
                 .OrderByDescending(t => t.Priority);

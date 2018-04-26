@@ -31,6 +31,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ICurrencyProvider _currencyProvider;
         private readonly ILocalStorageSettings _localStorageSettings;
         private readonly IEnumerable<ICartLifeCycleEventHandler> _cartLifeCycleEventHandlers;
+        private readonly IProductPriceService _productPriceService;
 
         public Localizer T { get; set; }
 
@@ -50,7 +51,8 @@ namespace Nwazet.Commerce.Controllers {
             IEnumerable<IProductAttributeExtensionProvider> attributeExtensionProviders,
             ICurrencyProvider currencyProvider,
             ILocalStorageSettings localStorageSettings,
-            IEnumerable<ICartLifeCycleEventHandler> cartLifeCycleEventHandlers) {
+            IEnumerable<ICartLifeCycleEventHandler> cartLifeCycleEventHandlers,
+            IProductPriceService productPriceService) {
 
             _shippingMethodProviders = shippingMethodProviders;
             _shoppingCart = shoppingCart;
@@ -64,6 +66,7 @@ namespace Nwazet.Commerce.Controllers {
             _currencyProvider = currencyProvider;
             _localStorageSettings = localStorageSettings;
             _cartLifeCycleEventHandlers = cartLifeCycleEventHandlers;
+            _productPriceService = productPriceService;
 
             T = NullLocalizer.Instance;
         }
@@ -271,10 +274,10 @@ namespace Nwazet.Commerce.Controllers {
                     ProductImage: ((MediaLibraryPickerField)productQuantity.Product.ContentItem.Parts.SelectMany(part => part.Fields).FirstOrDefault(field => field.Name == "ProductImage")),
                     IsDigital: productQuantity.Product.IsDigital,
                     ConsiderInventory: productQuantity.Product.ConsiderInventory,
-                    Price: productQuantity.Product.Price,
-                    OriginalPrice: productQuantity.Product.Price,
-                    DiscountedPrice: productQuantity.Price,
-                    LinePriceAdjustment: productQuantity.LinePriceAdjustment,
+                    Price: _productPriceService.GetPrice(productQuantity.Product),
+                    OriginalPrice: _productPriceService.GetPrice(productQuantity.Product),
+                    DiscountedPrice: _productPriceService.GetPrice(productQuantity.Product, productQuantity.Price),
+                    LinePriceAdjustment: _productPriceService.GetPrice(productQuantity.Product, productQuantity.LinePriceAdjustment),
                     Promotion: productQuantity.Promotion,
                     ShippingCost: productQuantity.Product.ShippingCost,
                     Weight: productQuantity.Product.Weight,
@@ -368,7 +371,7 @@ namespace Nwazet.Commerce.Controllers {
                                          ? _contentManager.GetItemMetadata(productQuantity.Product).DisplayText
                                          : productQuantity.Product.Sku,
                              productAttributes = productQuantity.AttributeIdsToValues,
-                             unitPrice = productQuantity.Product.Price,
+                             unitPrice = _productPriceService.GetPrice(productQuantity.Product),
                              quantity = productQuantity.Quantity
                          }).ToArray()
             };

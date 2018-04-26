@@ -533,6 +533,7 @@
     <Compile Include="Services\VatConfigurationProvider.cs" />
     <Compile Include="Services\VatConfigurationService.cs" />
     <Compile Include="Services\VatProductPriceService.cs" />
+    <Compile Include="Services\VatTaxComputationHelper.cs" />
     <Compile Include="Services\WishListsArePrivatePermissionsService.cs" />
     <Compile Include="Services\WishListServices.cs" />
     <Compile Include="Services\WishListsUIServices.cs" />

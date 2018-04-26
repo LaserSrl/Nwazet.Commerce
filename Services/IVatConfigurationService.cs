@@ -34,5 +34,22 @@ namespace Nwazet.Commerce.Services {
         /// </summary>
         /// <param name="part">The object describing the default VAT to be used.</param>
         void SetDefaultCategory(VatConfigurationPart part);
+
+        /// <summary>
+        /// Given a product's configuration, find the VAT rate to apply.
+        /// </summary>
+        /// <param name="part">The ProductPart for the product</param>
+        /// <returns>The rate computed for the product and the default destination.</returns>
+        decimal GetRate(ProductPart part);
+
+        /// <summary>
+        /// Given a product's configuration and a destination terriotry, find the VAT rate to apply.
+        /// </summary>
+        /// <param name="part">The ProductPart for the product</param>
+        /// <param name="destination">An object describing the destination.</param>
+        /// <returns>The rate computed for the product and the destination.</returns>
+        /// <remarks>The case destination == null should be handled by computing the rate for 
+        /// the default destination in the settings for the site.</remarks>
+        decimal GetRate(ProductPart part, TerritoryInternalRecord destination);
     }
 }
