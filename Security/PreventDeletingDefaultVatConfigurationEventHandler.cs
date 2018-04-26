@@ -13,7 +13,7 @@ namespace Nwazet.Commerce.Security {
     [OrchardFeature("Nwazet.AdvancedVAT")]
     public class PreventDeletingDefaultVatConfigurationEventHandler : IAuthorizationServiceEventHandler {
         /*
-            Currently, the only class where this event handler woudl be used is RolesBasedAuthorizationService
+            Currently, the only class where this event handler would be used is RolesBasedAuthorizationService
             The way its TryCheckAccess method is written, the only way to guarantee we prevent the default
             VatConfigurationPart to be deleted is by changing the context.Granted in the Complete method,
             because changing it anywhere else has a change for it be be superseded by other handling, e.g.
