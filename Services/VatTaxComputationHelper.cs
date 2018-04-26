@@ -24,6 +24,10 @@ namespace Nwazet.Commerce.Services {
             }
 
             if (tax.GetType() == typeof(VatConfigurationPart)) {
+                // with the introduction of IProductPriceService in the ShoppingCartBase computations, 
+                // we don't need to compute the VAT separately here, because that would only lead to
+                // paying it twice, unless the system is configured to always display prices "before tax"
+
                 var destination = context.DestinationTerritory;
                 // if destination is null, we may still pass it to the methods from IVatConfigurationService,
                 // that will treat it as the default destination.
@@ -34,15 +38,23 @@ namespace Nwazet.Commerce.Services {
                 // for each VAT categoy configured. That is why in VatConfigurationProvider.GetTaxes()
                 // we cheat and only return the first VatConfigurationPart.
 
+                // This method should compute taxes only if the subtotal does not include them already.
+                // i.e. thi is equivalent to saying that we compute taxes only when the site setting is
+                // telling to display prices "before tax"
+                if (_vatConfigurationService.GetDefaultDestination() != null) {
+                    return 0;
+                }
+
                 // This method should return the total tax for all the products from the context.
                 return context
                     .ShoppingCartQuantityProducts
                     .Sum(scqp => {
                         var rate = _vatConfigurationService.GetRate(scqp.Product, destination);
-                        return
-                            rate *
-                                (scqp.Quantity * (scqp.Price)
-                                + scqp.LinePriceAdjustment);
+                        var vat = rate *
+                            (scqp.Quantity * (scqp.Price)
+                            + scqp.LinePriceAdjustment);
+
+                        return vat;
                     });
             }
 

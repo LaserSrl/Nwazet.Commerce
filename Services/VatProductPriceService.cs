@@ -30,19 +30,56 @@ namespace Nwazet.Commerce.Services {
         }
         
         public override decimal GetDiscountPrice(ProductPart part) {
-            return part.DiscountPrice + part.DiscountPrice * GetRate(part);
+            return GetPrice(part, part.DiscountPrice);
+        }
+
+        public override decimal GetDiscountPrice(ProductPart part, string country, string zipCode) {
+            return GetPrice(part, part.DiscountPrice, country, zipCode);
         }
 
         public override decimal GetPrice(ProductPart part) {
-            return part.Price + part.Price * GetRate(part);
+            return GetPrice(part, part.Price);
         }
 
         public override decimal GetPrice(ProductPart part, decimal basePrice) {
             return basePrice + basePrice * GetRate(part);
         }
-        
+
+        public override decimal GetPrice(ProductPart part, string country, string zipCode) {
+            return GetPrice(part, part.Price, country, zipCode);
+        }
+
+        public override decimal GetPrice(ProductPart part, decimal basePrice, string country, string zipCode) {
+            return basePrice + basePrice * GetRate(part, FindDestination(country, zipCode));
+        }
+
         private decimal GetRate(ProductPart part) {
             return _vatConfigurationService.GetRate(part);
+        }
+
+        private decimal GetRate(ProductPart part, TerritoryInternalRecord destination) {
+            return _vatConfigurationService.GetRate(part, destination);
+        }
+
+        private TerritoryInternalRecord FindDestination(string country, string zipCode) {
+            if (_vatConfigurationService.GetDefaultDestination() == null) {
+                // the configuration is telling that the prices on the frontend should be 
+                // "before tax"
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(country) && string.IsNullOrWhiteSpace(zipCode)) {
+                return null;
+            }
+            var destination = !string.IsNullOrWhiteSpace(zipCode)
+                ? _territoriesRepositoryService.GetTerritoryInternal(zipCode)
+                : null;
+            if (destination == null) {
+                destination = !string.IsNullOrWhiteSpace(country)
+                    ? _territoriesRepositoryService.GetTerritoryInternal(country)
+                    : null;
+            }
+            return destination;
         }
     }
 }

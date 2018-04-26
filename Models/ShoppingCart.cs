@@ -16,14 +16,16 @@ namespace Nwazet.Commerce.Models {
             IEnumerable<IProductAttributesDriver> attributesDrivers,
             IEnumerable<ITaxProvider> taxProviders,
             INotifier notifier,
-            ITaxProviderService taxProviderService)
+            ITaxProviderService taxProviderService,
+            IProductPriceService productPriceService)
             : base (contentManager,
                   cartStorage,
                   priceService,
                   attributesDrivers,
                   taxProviders,
                   notifier,
-                  taxProviderService) {
+                  taxProviderService,
+                  productPriceService) {
         }
         
         public override IEnumerable<ShoppingCartItem> Items {

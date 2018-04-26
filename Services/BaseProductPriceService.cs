@@ -28,5 +28,17 @@ namespace Nwazet.Commerce.Services {
         public virtual decimal GetPrice(ProductPart part, decimal basePrice) {
             return basePrice;
         }
+
+        public virtual decimal GetPrice(ProductPart part, string country, string zipCode) {
+            return part.Price;
+        }
+
+        public virtual decimal GetPrice(ProductPart part, decimal basePrice, string country, string zipCode) {
+            return basePrice;
+        }
+
+        public virtual decimal GetDiscountPrice(ProductPart part, string country, string zipCode) {
+            return part.DiscountPrice;
+        }
     }
 }

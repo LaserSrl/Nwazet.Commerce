@@ -20,6 +20,7 @@ namespace Nwazet.Commerce.Models {
         protected readonly IEnumerable<ITaxProvider> _taxProviders;
         protected readonly INotifier _notifier;
         protected readonly ITaxProviderService _taxProviderService;
+        protected readonly IProductPriceService _productPriceService;
 
         protected IEnumerable<ShoppingCartQuantityProduct> _products;
 
@@ -32,7 +33,8 @@ namespace Nwazet.Commerce.Models {
             IEnumerable<IProductAttributesDriver> attributesDrivers,
             IEnumerable<ITaxProvider> taxProviders,
             INotifier notifier,
-            ITaxProviderService taxProviderService) {
+            ITaxProviderService taxProviderService,
+            IProductPriceService productPriceService) {
 
             _contentManager = contentManager;
             _cartStorage = cartStorage;
@@ -41,6 +43,7 @@ namespace Nwazet.Commerce.Models {
             _taxProviders = taxProviders;
             _notifier = notifier;
             _taxProviderService = taxProviderService;
+            _productPriceService = productPriceService;
 
             T = NullLocalizer.Instance;
         }
@@ -96,7 +99,12 @@ namespace Nwazet.Commerce.Models {
         }
         public abstract void Remove(int productId, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues = null);
         public virtual decimal Subtotal() {
-            return Math.Round(GetProducts().Sum(pq => Math.Round(pq.Price * pq.Quantity + pq.LinePriceAdjustment, 2)), 2);
+            return Math.Round(
+                GetProducts()
+                .Sum(pq => 
+                    Math.Round(
+                        _productPriceService.GetPrice(pq.Product, pq.Price, Country, ZipCode) 
+                        * pq.Quantity + pq.LinePriceAdjustment, 2)), 2);
         }
         public virtual TaxAmount Taxes(decimal subTotal = 0) {
             //if (Country == null && ZipCode == null) return null;

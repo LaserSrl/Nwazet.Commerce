@@ -172,6 +172,16 @@ namespace Nwazet.Commerce.Services {
             // error condition where the territory is ni more than one hierarchy
         }
 
+        public TerritoryInternalRecord GetDefaultDestination() {
+            if (Settings.DefaultTerritoryForVatId == 0) {
+                return null;
+            }
+
+            return _territoriesRepositoryService
+                .GetTerritoryInternal(Settings.DefaultTerritoryForVatId);
+        }
+
+
         private VatConfigurationPart GetVatConfiguration(ProductPart part) {
             return part
                 ?.As<ProductVatConfigurationPart>()

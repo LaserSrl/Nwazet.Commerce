@@ -184,7 +184,7 @@ namespace Nwazet.Commerce.Controllers {
                 .GetProducts()
                 .Where(p => p.Quantity > 0)
                 .ToList();
-            var productShapes = GetProductShapesFromQuantities(productQuantities, productMessages);
+            var productShapes = GetProductShapesFromQuantities(productQuantities, country, zipCode, productMessages);
             shape.ShopItems = productShapes;
 
             var shopItemsAllDigital = !(productQuantities.Any(pq => !(pq.Product.IsDigital)));
@@ -262,6 +262,7 @@ namespace Nwazet.Commerce.Controllers {
 
         private IEnumerable<dynamic> GetProductShapesFromQuantities(
             IEnumerable<ShoppingCartQuantityProduct> productQuantities,
+            string country = null, string zipCode = null,
             Dictionary<int, List<string>> productMessages = null) {
             var productShapes = productQuantities.Select(
                 productQuantity => _shapeFactory.ShoppingCartItem(
@@ -274,10 +275,10 @@ namespace Nwazet.Commerce.Controllers {
                     ProductImage: ((MediaLibraryPickerField)productQuantity.Product.ContentItem.Parts.SelectMany(part => part.Fields).FirstOrDefault(field => field.Name == "ProductImage")),
                     IsDigital: productQuantity.Product.IsDigital,
                     ConsiderInventory: productQuantity.Product.ConsiderInventory,
-                    Price: _productPriceService.GetPrice(productQuantity.Product),
-                    OriginalPrice: _productPriceService.GetPrice(productQuantity.Product),
-                    DiscountedPrice: _productPriceService.GetPrice(productQuantity.Product, productQuantity.Price),
-                    LinePriceAdjustment: _productPriceService.GetPrice(productQuantity.Product, productQuantity.LinePriceAdjustment),
+                    Price: _productPriceService.GetPrice(productQuantity.Product, country, zipCode),
+                    OriginalPrice: _productPriceService.GetPrice(productQuantity.Product, country, zipCode),
+                    DiscountedPrice: _productPriceService.GetPrice(productQuantity.Product, productQuantity.Price, country, zipCode),
+                    LinePriceAdjustment: _productPriceService.GetPrice(productQuantity.Product, productQuantity.LinePriceAdjustment, country, zipCode),
                     Promotion: productQuantity.Promotion,
                     ShippingCost: productQuantity.Product.ShippingCost,
                     Weight: productQuantity.Product.Weight,

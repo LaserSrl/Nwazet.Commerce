@@ -51,5 +51,11 @@ namespace Nwazet.Commerce.Services {
         /// <remarks>The case destination == null should be handled by computing the rate for 
         /// the default destination in the settings for the site.</remarks>
         decimal GetRate(ProductPart part, TerritoryInternalRecord destination);
+
+        /// <summary>
+        /// Get the default destination configured for the purpose of VAT computations.
+        /// </summary>
+        /// <returns>Returns the territory selected as default destination, or null if none is selected.</returns>
+        TerritoryInternalRecord GetDefaultDestination();
     }
 }
