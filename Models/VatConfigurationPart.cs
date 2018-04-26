@@ -14,8 +14,7 @@ namespace Nwazet.Commerce.Models {
 
         #region ITax implementation
         public string Name {
-            get { return TaxProductCategory; }
-            set { TaxProductCategory = value; }
+            get { return "VAT"; }
         }
 
         public int Priority {
@@ -28,7 +27,7 @@ namespace Nwazet.Commerce.Models {
             decimal subtotal, decimal shippingCost, string country, string zipCode) {
 
             // tax computations are too complex to reliably do here without services and such
-            //The VatTaxComputationHelper will make sure this method is not called.
+            // The VatTaxComputationHelper will make sure this method is not called.
             throw new NotImplementedException();
         }
         #endregion

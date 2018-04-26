@@ -70,7 +70,7 @@ namespace Nwazet.Commerce.Drivers {
                                     ?.FirstOrDefault(tup => tup.Item1.Record == cfg.Item1.Record);
                                 return new VatConfigurationDetailViewModel {
                                     VatConfigurationPartId = cfg.Item1.Record.Id,
-                                    VatConfigurationPartText = cfg.Item1.Name,
+                                    VatConfigurationPartText = cfg.Item1.TaxProductCategory,
                                     IsSelected = specificConfig != null,
                                     Rate = specificConfig == null
                                         ? 0

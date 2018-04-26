@@ -40,7 +40,7 @@ namespace Nwazet.Commerce.ViewModels {
             result.AddRange(AllVatConfigurations
                 .Select(vcp => new SelectListItem {
                     Selected = vcp.Record.Id == VatConfigurationId,
-                    Text = vcp.Name,
+                    Text = vcp.TaxProductCategory,
                     Value = vcp.Record.Id.ToString()
                 }));
             return result;
