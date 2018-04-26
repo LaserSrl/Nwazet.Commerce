@@ -53,6 +53,15 @@ namespace Nwazet.Commerce.Drivers {
                 _notifier.Warning(T("Changes to the VAT configuration will not be saved because you don't have the correct permissions."));
             }
             var model = CreateVM(part);
+            var configIssues = CheckIntersectionsBetweenHierarchies(part);
+            if (configIssues.Any()) {
+                var sb = new StringBuilder();
+                sb.AppendLine(T("There are issues with the hierarchies configured for this VAT:").Text);
+                foreach (var issue in configIssues) {
+                    sb.AppendLine(T("\t{0} and {1} intersect on {2}", issue.Hierarchy1, issue.Hierarchy2, issue.Territory).Text);
+                }
+                _notifier.Warning(T("{0}", sb.ToString()));
+            }
             return ContentShape("Parts_VatConfiguration_Edit",
                 () => shapeHelper.EditorTemplate(
                     TemplateName: "Parts/VatConfiguration",
@@ -114,5 +123,42 @@ namespace Nwazet.Commerce.Drivers {
                     })
                     .ToList();
         }
+
+        private IEnumerable<HierarchyIntersection> CheckIntersectionsBetweenHierarchies(VatConfigurationPart part) {
+            
+            if (part.Hierarchies != null
+                && part.Hierarchies.Count() > 1) {
+                // get the TerritoryHierarchyParts
+                var hierarchies = part.Hierarchies.Select(tup => tup.Item1).ToArray();
+                for (int i = 0; i < hierarchies.Length-1; i++) {
+                    var source = hierarchies[i].Territories.Select(ci => ci.As<TerritoryPart>());
+                    var sourceString = _contentManager.GetItemMetadata(hierarchies[i]).DisplayText;
+                    for (int j = i+1; j < hierarchies.Length; j++) {
+                        var other = hierarchies[j].Territories.Select(ci => ci.As<TerritoryPart>());
+                        var otherString = _contentManager.GetItemMetadata(hierarchies[j]).DisplayText;
+                        var intersection = source.Intersect(other, new TerritoryPart.TerritoryPartComparer());
+                        if (intersection.Any()) {
+                            foreach (var territory in intersection) {
+
+                                yield return new HierarchyIntersection {
+                                    Hierarchy1 = sourceString,
+                                    Hierarchy2 = otherString,
+                                    Territory = territory.Record.TerritoryInternalRecord.Name
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+
+            yield break;
+        }
+
+        class HierarchyIntersection {
+            public string Hierarchy1 { get; set; }
+            public string Hierarchy2 { get; set; }
+            public string Territory { get; set; }
+        }
+
     }
 }
