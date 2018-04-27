@@ -1,11 +1,7 @@
 ﻿using Nwazet.Commerce.Models;
 using Nwazet.Commerce.ViewModels;
 using Orchard.ContentManagement;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Services {
     public interface IVatConfigurationProvider : ITaxProvider {

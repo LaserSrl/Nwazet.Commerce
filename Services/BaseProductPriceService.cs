@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nwazet.Commerce.Models;
+﻿using Nwazet.Commerce.Models;
 using Orchard.Environment.Extensions;
+using System.Collections.Generic;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Nwazet.Commerce")]

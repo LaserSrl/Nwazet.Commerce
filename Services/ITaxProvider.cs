@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using Orchard;
-using Nwazet.Commerce.Models;
+﻿using Orchard;
+using System.Collections.Generic;
 
 namespace Nwazet.Commerce.Services {
     public interface ITaxProvider : IDependency {

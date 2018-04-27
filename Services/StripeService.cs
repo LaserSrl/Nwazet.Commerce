@@ -72,6 +72,7 @@ namespace Nwazet.Commerce.Services {
                 productShapeList.Select(p => new CheckoutItem {
                     ProductId = p.Product.Id,
                     Quantity = p.Quantity,
+                    OriginalPrice = p.Product.Price,
                     Price = p.DiscountedPrice,
                     LinePriceAdjustment = p.LinePriceAdjustment,
                     PromotionId = p.Promotion == null ? 0 : p.Promotion.Id,

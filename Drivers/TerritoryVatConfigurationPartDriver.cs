@@ -1,20 +1,15 @@
 ﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services;
+using Nwazet.Commerce.ViewModels;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Security;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
-using Nwazet.Commerce.ViewModels;
-using Nwazet.Commerce.Permissions;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.AdvancedVAT")]

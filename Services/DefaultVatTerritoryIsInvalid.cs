@@ -1,15 +1,11 @@
-﻿using Orchard.Environment.Extensions;
-using Orchard.UI.Admin.Notification;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Orchard.UI.Notify;
+﻿using Nwazet.Commerce.Models;
 using Orchard;
-using Orchard.Localization;
-using Nwazet.Commerce.Models;
 using Orchard.ContentManagement;
+using Orchard.Environment.Extensions;
+using Orchard.Localization;
+using Orchard.UI.Admin.Notification;
+using Orchard.UI.Notify;
+using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Services {

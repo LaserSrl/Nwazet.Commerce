@@ -1,13 +1,7 @@
 ﻿using Nwazet.Commerce.Models;
-using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Mvc;
 
 namespace Nwazet.Commerce.ViewModels {
     [OrchardFeature("Nwazet.AdvancedVAT")]
