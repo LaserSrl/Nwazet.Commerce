@@ -27,6 +27,7 @@ namespace Nwazet.Commerce.Drivers {
         private readonly IMembershipService _membershipService;
         private readonly IEnumerable<IProductAttributeExtensionProvider> _extensionProviders;
         private readonly ICurrencyProvider _currencyProvider;
+        private readonly IEnumerable<IOrderAdditionalInformationProvider> _orderAdditionalInformationProviders;
 
         public OrderPartDriver(
             IOrderService orderService,
@@ -37,7 +38,8 @@ namespace Nwazet.Commerce.Drivers {
             IWorkflowManager workflowManager,
             IMembershipService membershipService,
             IEnumerable<IProductAttributeExtensionProvider> extensionProviders,
-            ICurrencyProvider currencyProvider) {
+            ICurrencyProvider currencyProvider,
+            IEnumerable<IOrderAdditionalInformationProvider> orderAdditionalInformationProviders) {
 
             _orderService = orderService;
             _addressFormatter = addressFormatter;
@@ -48,6 +50,7 @@ namespace Nwazet.Commerce.Drivers {
             _membershipService = membershipService;
             _extensionProviders = extensionProviders;
             _currencyProvider = currencyProvider;
+            _orderAdditionalInformationProviders = orderAdditionalInformationProviders;
 
             T = NullLocalizer.Instance;
         }
@@ -141,8 +144,11 @@ namespace Nwazet.Commerce.Drivers {
                 EventCategoryLabels = _orderService.EventCategoryLabels,
                 LinkToTransaction = linkToTransaction,
                 UserName = part.User == null ? "" : part.User.UserName,
-                UserNameNeeded = productContents.Any(p => p.As<ProductPart>() == null ? false : p.As<ProductPart>().AuthenticationRequired),
-                CurrencyCode = string.IsNullOrWhiteSpace(part.CurrencyCode) ? _currencyProvider.CurrencyCode : part.CurrencyCode
+                UserNameNeeded = productContents
+                    .Any(p => p.As<ProductPart>() == null ? false : p.As<ProductPart>().AuthenticationRequired),
+                CurrencyCode = string.IsNullOrWhiteSpace(part.CurrencyCode) 
+                    ? _currencyProvider.CurrencyCode : part.CurrencyCode
+                // TODO: add information for possible additional columns to be added to the products' table
             };
             return ContentShape("Parts_Order_Edit",
                 () => shapeHelper.EditorTemplate(
@@ -223,6 +229,7 @@ namespace Nwazet.Commerce.Drivers {
             return Editor(part, shapeHelper);
         }
 
+        // TODO: handle import/export of the additional Order information
         protected override void Importing(OrderPart part, ImportContentContext context) {
 
             var xel = context.Data.Element(typeof(OrderPart).Name);

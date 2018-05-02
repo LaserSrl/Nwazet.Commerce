@@ -81,17 +81,19 @@
 
     <fieldset class="order-items">
         <legend>@T("Products:")</legend>
-        <table>
+        <table id="order_products_table">
             <thead>
                 <tr>
                     <th class="quantity"><abbr title="@T("Quantity")">@T("Qty")</abbr></th>
                     <th class="description">@T("Product")</th>
                     <th class="price">@T("Original price")</th>
                     <th class="price">@T("Price")</th>
-                    <th class="price">@T("Adjustment")</th>
+                    @if (Model.OrderItems.Any(oi => oi.LinePriceAdjustment != 0)) {
+                        <th class="price">@T("Adjustment")</th>
+                    }
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="order_products_table_body">
                 @foreach (var item in Model.OrderItems) {
 
                     string originalPrice = "";
@@ -100,12 +102,14 @@
                         originalPrice = String.Format("<strike>{0}</strike>", currencyInUse.PriceAsString(item.OriginalPrice, cultureInUse));
                     }
 
-                    <tr>
+                    <tr id="@string.Format("order_products_table_row-product_{0}", item.ProductId)">
                         <td class="quantity">@item.Quantity &times;</td>
                         <td class="description"><a href="@Url.ItemDisplayUrl(Model.Products[item.ProductId])">@item.Title</a></td>
                         <td class="price">@Html.Raw(originalPrice)</td>
                         <td class="price">@currencyInUse.PriceAsString(item.Price, cultureInUse)</td>
-                        <td class="price">@currencyInUse.PriceAsString(item.LinePriceAdjustment, cultureInUse)</td>
+                        @if (item.LinePriceAdjustment != 0) {
+                            <td class="price">@currencyInUse.PriceAsString(item.LinePriceAdjustment, cultureInUse)</td>
+                        }
                     </tr>
                     if (item.Attributes != null && item.Attributes.Any(a => a.Value.ExtensionProviderInstance != null)) {
                         <tr>

@@ -472,6 +472,7 @@
     <Compile Include="Services\ILocalStorageSettings.cs" />
     <Compile Include="Services\InventoriesAreNotSynchronizedBySKU.cs" />
     <Compile Include="Services\InventoryBySKUProductInventoryService.cs" />
+    <Compile Include="Services\IOrderAdditionalInformationProvider.cs" />
     <Compile Include="Services\IPersistentShoppingCartServices.cs" />
     <Compile Include="Services\IProductAttributeAdminServices.cs" />
     <Compile Include="Services\IProductAttributeLocalizationServices.cs" />

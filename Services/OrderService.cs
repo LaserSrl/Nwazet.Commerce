@@ -72,6 +72,11 @@ namespace Nwazet.Commerce.Services {
 
             _contentManager.Publish(order.ContentItem);
 
+
+            // TODO: Here we have created the order, so we may use it (and its ContentItem)
+            // to create additional records that will contain further information. We do this
+            // through the implementations of IOrderAdditionalInformationProvider
+
             return order;
         }
 

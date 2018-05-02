@@ -5,6 +5,11 @@ using System.Collections.Generic;
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Nwazet.Commerce")]
     public abstract class BaseProductPriceService : IProductPriceService {
+
+        public virtual decimal GetOriginalPrice(ProductPart part) {
+            return part.Price;
+        }
+
         public virtual decimal GetDiscountPrice(ProductPart part) {
            return part.DiscountPrice;
         }

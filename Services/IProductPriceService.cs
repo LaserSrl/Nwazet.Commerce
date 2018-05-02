@@ -8,6 +8,13 @@ namespace Nwazet.Commerce.Services {
     /// </summary>
     public interface IProductPriceService : IDependency {
         /// <summary>
+        /// Returns the price for the product before any discount or taxes are applied
+        /// </summary>
+        /// <param name="part"></param>
+        /// <returns></returns>
+        decimal GetOriginalPrice(ProductPart part);
+
+        /// <summary>
         /// Returns the price for the product
         /// </summary>
         /// <param name="part"></param>
