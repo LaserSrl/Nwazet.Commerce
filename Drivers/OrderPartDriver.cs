@@ -147,8 +147,20 @@ namespace Nwazet.Commerce.Drivers {
                 UserNameNeeded = productContents
                     .Any(p => p.As<ProductPart>() == null ? false : p.As<ProductPart>().AuthenticationRequired),
                 CurrencyCode = string.IsNullOrWhiteSpace(part.CurrencyCode) 
-                    ? _currencyProvider.CurrencyCode : part.CurrencyCode
-                // TODO: add information for possible additional columns to be added to the products' table
+                    ? _currencyProvider.CurrencyCode : part.CurrencyCode,
+                // additional stuff to be displayed for the order:
+                AdditionalMetadataShapes = _orderAdditionalInformationProviders
+                    .SelectMany(oaip => oaip.GetAdditionalOrderMetadataShapes(part)),
+                AdditionalStatusShapes = _orderAdditionalInformationProviders
+                    .SelectMany(oaip => oaip.GetAdditionalOrderStatusShapes(part)),
+                AdditionalAddressesShapes = _orderAdditionalInformationProviders
+                    .SelectMany(oaip => oaip.GetAdditionalOrderAddressesShapes(part)),
+                AdditionalProductShapes = _orderAdditionalInformationProviders
+                    .SelectMany(oaip => oaip.GetAdditionalOrderProductsShapes(part)),
+                AdditionalProductInformation = _orderAdditionalInformationProviders
+                    .SelectMany(oaip => oaip.GetAdditionalOrderProductsInformation(part)),
+                AdditionalOrderTrackingShapes = _orderAdditionalInformationProviders
+                    .SelectMany(oaip => oaip.GetAdditionalOrderTrackingShapes(part))
             };
             return ContentShape("Parts_Order_Edit",
                 () => shapeHelper.EditorTemplate(
@@ -336,6 +348,10 @@ namespace Nwazet.Commerce.Drivers {
                     part.User = _membershipService.GetUser(userName);
                 }
             }
+
+            foreach (var oaip in _orderAdditionalInformationProviders) {
+                oaip.Importing(part, context);
+            }
         }
 
         protected override void Exporting(OrderPart part, ExportContentContext context) {
@@ -404,6 +420,10 @@ namespace Nwazet.Commerce.Drivers {
                 .AddEl(new XElement(UserName).With(part.User)
                     .ToAttr(u => u.UserName)
                 );
+
+            foreach (var oaip in _orderAdditionalInformationProviders) {
+                oaip.Exporting(part, context);
+            }
         }
     }
 }

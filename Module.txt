@@ -118,4 +118,4 @@ Features:
 		Name: Nwazet Advanced VAT or Sales Tax
 		Description: Provides advanced options to set up management of VAT or sales taxes.
 		Category: Commerce
-		Dependencies: Nwazet.Taxes, Territories
+		Dependencies: Nwazet.Taxes, Nwazet.Orders, Territories

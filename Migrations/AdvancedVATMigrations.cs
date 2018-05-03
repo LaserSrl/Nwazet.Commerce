@@ -60,6 +60,11 @@ namespace Nwazet.Commerce.Migrations {
                 .ContentPartRecord()
                 .Column<int>("VatConfiguration_Id"));
 
+            SchemaBuilder.CreateTable("OrderVatRecord", table => table
+                .Column<int>("Id", col => col.Identity().PrimaryKey())
+                .Column<int>("OrderPartRecord_Id")
+                .Column<string>("Information", col => col.Unlimited()));
+
             return 1;
         }
 

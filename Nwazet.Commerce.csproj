@@ -364,6 +364,7 @@
     <Compile Include="Models\HierarchyVatConfigurationPartRecord.cs" />
     <Compile Include="Models\ICharge.cs" />
     <Compile Include="Models\InventoryBySKUSiteSettingsPart.cs" />
+    <Compile Include="Models\OrderVatRecord.cs" />
     <Compile Include="Models\PersistentShoppingCart.cs" />
     <Compile Include="Models\ProductsListPart.cs" />
     <Compile Include="Models\OrderEvent.cs" />
@@ -455,6 +456,7 @@
     <Compile Include="Security\PreventDeletingDefaultVatConfigurationEventHandler.cs" />
     <Compile Include="Security\TerritoriesAuthorizationEventHandler.cs" />
     <Compile Include="Security\WishListsAuthorizationEventHandler.cs" />
+    <Compile Include="Services\BaseOrderAdditionalInformationProvider.cs" />
     <Compile Include="Services\BaseProductPriceService.cs" />
     <Compile Include="Services\BundleAutocompleteService.cs" />
     <Compile Include="Services\BundleProductLocalizationBundleService.cs" />
@@ -535,6 +537,7 @@
     <Compile Include="Services\UseCurrencyFromSiteSettingsProvider.cs" />
     <Compile Include="Services\VatConfigurationProvider.cs" />
     <Compile Include="Services\VatConfigurationService.cs" />
+    <Compile Include="Services\VatOrderAdditionalInformationProvider.cs" />
     <Compile Include="Services\VatProductPriceService.cs" />
     <Compile Include="Services\VatTaxComputationHelper.cs" />
     <Compile Include="Services\WishListsArePrivatePermissionsService.cs" />
@@ -593,6 +596,7 @@
     <Compile Include="ViewModels\HierarchyVatConfigurationPartViewModel.cs" />
     <Compile Include="ViewModels\InventoryBySKUProductEditorViewModel.cs" />
     <Compile Include="ViewModels\InventoryBySKUSiteSettingsPartViewModel.cs" />
+    <Compile Include="ViewModels\OrderEditorAdditionalProductInfoViewModel.cs" />
     <Compile Include="ViewModels\ProductAttributePartDisplayViewModel.cs" />
     <Compile Include="ViewModels\ProductAttributePartEditViewModel.cs" />
     <Compile Include="ViewModels\AttributesIndexViewModel.cs" />
@@ -734,6 +738,7 @@
     <None Include="Views\TerritoryHierarchiesAdmin\HierarchiesListPartial.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesIndex.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesListPartial.cshtml" />
+    <None Include="Views\VatAdditionalOrderProductsShape.cshtml" />
     <None Include="Views\WishListEditor.cshtml" />
     <None Include="Views\DefinitionTemplates\BundleProductSettings.cshtml" />
     <None Include="Views\EditorTemplates\Parts\BundleAutocomplete.cshtml" />

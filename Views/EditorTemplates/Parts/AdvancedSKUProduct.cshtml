@@ -45,8 +45,13 @@
             lbl.next('br').remove(); //remove line breaks
             tb.after(myDiv);
             myDiv.show();
-            tb.remove();
-            lbl.remove();
+            tb.hide();//remove();
+            lbl.hide();//remove();
+
+            $(tb[0].form).submit(function () {
+                var currentSku = $("#@Html.IdFor(m => m.CurrentSku)").val()
+                tb.val(currentSku);
+            })
         })
     </script>
 }

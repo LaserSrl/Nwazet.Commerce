@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.ViewModels;
 using Orchard;
 using Orchard.ContentManagement.Handlers;
 using System;
@@ -47,12 +48,27 @@ namespace Nwazet.Commerce.Services {
         /// </summary>
         /// <param name="orderPart"></param>
         /// <returns></returns>
-        IEnumerable<dynamic> GetAdditionalOrderProductsInformation(OrderPart orderPart);
+        IEnumerable<OrderEditorAdditionalProductInfoViewModel> GetAdditionalOrderProductsInformation(OrderPart orderPart);
+
+        /// <summary>
+        /// This method returns shapes to be shown along the order's product information.
+        /// </summary>
+        /// <param name="orderPart"></param>
+        /// <returns></returns>
+        IEnumerable<dynamic> GetAdditionalOrderProductsShapes(OrderPart orderPart);
+
+        /// <summary>
+        /// This method returns shapes to be shown along the order's tracking information.
+        /// </summary>
+        /// <param name="orderPart"></param>
+        /// <returns></returns>
+        IEnumerable<dynamic> GetAdditionalOrderTrackingShapes(OrderPart orderPart);
+
 
         #endregion
 
         #region Import/Export
-        
+
         /// <summary>
         /// Called at the end of the Importing method for the OrderPart
         /// </summary>
