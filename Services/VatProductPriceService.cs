@@ -24,15 +24,15 @@ namespace Nwazet.Commerce.Services {
         }
         
         public override decimal GetDiscountPrice(ProductPart part) {
-            return GetPrice(part, part.DiscountPrice);
+            return GetPrice(part, base.GetDiscountPrice(part));
         }
 
         public override decimal GetDiscountPrice(ProductPart part, string country, string zipCode) {
-            return GetPrice(part, part.DiscountPrice, country, zipCode);
+            return GetPrice(part, base.GetDiscountPrice(part), country, zipCode);
         }
 
         public override decimal GetPrice(ProductPart part) {
-            return GetPrice(part, part.Price);
+            return GetPrice(part, base.GetPrice(part));
         }
 
         public override decimal GetPrice(ProductPart part, decimal basePrice) {
@@ -40,7 +40,7 @@ namespace Nwazet.Commerce.Services {
         }
 
         public override decimal GetPrice(ProductPart part, string country, string zipCode) {
-            return GetPrice(part, part.Price, country, zipCode);
+            return GetPrice(part, base.GetPrice(part), country, zipCode);
         }
 
         public override decimal GetPrice(ProductPart part, decimal basePrice, string country, string zipCode) {

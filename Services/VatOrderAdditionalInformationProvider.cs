@@ -53,15 +53,40 @@ namespace Nwazet.Commerce.Services {
             // We will need the destination TerritoryInternalRecord to figure out VAT
             var destination = FindDestination(orderPart.ShippingAddress, orderPart.BillingAddress);
 
-            var data = _contentManager
+            var products = _contentManager
                 .GetMany<ProductPart>(orderPart.Items.Select(ci => ci.ProductId),
-                    VersionOptions.Published, QueryHints.Empty)
-                .Select(pp => {
+                    VersionOptions.Published, QueryHints.Empty);
+
+            var data = products
+                .Select(pp => Tuple.Create<ProductPart, CheckoutItem>(
+                    pp,
+                    orderPart.Items.FirstOrDefault(ci => ci.ProductId == pp.ContentItem.Id)))
+                .Select(tup => {
+                    var productPart = tup.Item1;
+                    var checkoutItem = tup.Item2;
+                    var rate = _vatConfigurationService.GetRate(productPart, destination);
+                    // productPart.Price is what has been input in the editor for the ContentItem. It may
+                    // not be the taxable amount in case there are discounts of any form.
+                    // We can recover the taxable amount by using checkoutItem.Price and the computed rate
+                    var priceBeforeTax = checkoutItem.Price;
+                    if (rate != 0m) {
+                        // If the rate is 0, we don't really care about the taxable amount, and it's fine to
+                        // consider it the same as the final price.
+                        // If the rate is not 0, we discriminate depending on the setting for the default 
+                        // destination.
+                        if (_vatConfigurationService.GetDefaultDestination() != null) {
+                            // in this configuration, the price on the checkoutItem is already inclusive
+                            // of VAT. We may then find the taxable amount by subtracting the VAT.
+                            priceBeforeTax = checkoutItem.Price / (1m + rate);
+                        }
+                        // If the default destination was null, then the checkoutItem.Price does not include
+                        // VAT: it is already the taxable amount as it is.
+                    }
                     return Tuple.Create<int, RateAndPrice>(
-                        pp.ContentItem.Id,
+                        productPart.ContentItem.Id,
                         new RateAndPrice {
-                            Rate = _vatConfigurationService.GetRate(pp, destination),
-                            PriceBeforeTax = pp.Price
+                            Rate = rate,
+                            PriceBeforeTax = priceBeforeTax
                         });
                 }).ToDictionary(tup => tup.Item1, tup => tup.Item2);
 
