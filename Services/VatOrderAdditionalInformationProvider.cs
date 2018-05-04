@@ -136,7 +136,7 @@ namespace Nwazet.Commerce.Services {
             var currency = Currency.Currencies[orderPart.CurrencyCode];
             var cultureInUse = CultureInfo.GetCultureInfo(_workContextAccessor.GetContext().CurrentCulture);
             yield return new OrderEditorAdditionalProductInfoViewModel {
-                Title = T("Price before Tax").Text,
+                Title = T("Price before VAT").Text,
                 HeaderClass = "price",
                 Information = DeserializeInformation(info.Information)
                     .ToDictionary(
@@ -175,6 +175,19 @@ namespace Nwazet.Commerce.Services {
             yield return _shapeFactory.VatAdditionalOrderProductsShape(
                 TaxDue: currency.PriceAsString(vatDue, cultureInUse),
                 TaxableAmount: currency.PriceAsString(taxable, cultureInUse)
+                );
+        }
+
+        public override IEnumerable<dynamic> GetAdditionalOrderAddressesShapes(OrderPart orderPart) {
+            // We will need the destination TerritoryInternalRecord to figure out VAT
+            var destination = FindDestination(orderPart.ShippingAddress, orderPart.BillingAddress);
+
+            if (destination == null) {
+                yield break;
+            }
+
+            yield return _shapeFactory.VatAdditionalOrderAddressesShapes(
+                Destination: destination.Name
                 );
         }
 

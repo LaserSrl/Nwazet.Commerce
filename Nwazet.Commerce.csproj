@@ -739,6 +739,7 @@
     <None Include="Views\TerritoryHierarchiesAdmin\HierarchiesListPartial.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesIndex.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesListPartial.cshtml" />
+    <None Include="Views\VatAdditionalOrderAddressesShapes.cshtml" />
     <None Include="Views\VatAdditionalOrderProductsShape.cshtml" />
     <None Include="Views\WishListEditor.cshtml" />
     <None Include="Views\DefinitionTemplates\BundleProductSettings.cshtml" />
