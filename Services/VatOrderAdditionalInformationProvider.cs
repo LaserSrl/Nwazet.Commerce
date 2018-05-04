@@ -14,6 +14,7 @@ using Orchard.Localization;
 using System.Globalization;
 using Orchard;
 using Orchard.DisplayManagement;
+using System.Xml.Linq;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Nwazet.AdvancedVAT")]
@@ -91,28 +92,39 @@ namespace Nwazet.Commerce.Services {
                 }).ToDictionary(tup => tup.Item1, tup => tup.Item2);
 
             // Now store
-            var existing = _vatOrderRepository
-                .Fetch(ovr => ovr.OrderPartRecord == orderPart.Record);
-            if (existing != null && existing.Any()) {
-                // the fact that something already exists is an error that should never happen
-                // we handle it by deleting those old records
-                foreach (var entity in existing) {
-                    _vatOrderRepository.Delete(entity);
-                }
-            }
-
-            _vatOrderRepository.Create(new OrderVatRecord {
-                OrderPartRecord = orderPart.Record,
-                Information = SerializeInformationDictionary(data)
-            });
+            StoreInfo(orderPart, SerializeInformationDictionary(data));
         }
 
         public override void Exporting(OrderPart part, ExportContentContext context) {
-            base.Exporting(part, context);
+            var info = _vatOrderRepository
+                .Fetch(ovr => ovr.OrderPartRecord == part.Record)
+                .FirstOrDefault();
+            if (info == null) {
+                return;
+            }
+
+            context.Element(part.PartDefinition.Name)
+                .AddEl(new XElement("VatOrderAdditionalInformation").With(info)
+                    .ToAttr(i => i.Information)
+                );
+            
         }
 
         public override void Importing(OrderPart part, ImportContentContext context) {
-            base.Importing(part, context);
+            var element = context.Data.Element(part.PartDefinition.Name);
+            if (element == null) {
+                return;
+            }
+
+            var infoEl = element.Element("VatOrderAdditionalInformation");
+            if (infoEl == null) {
+                return;
+            }
+
+            var info = infoEl.Attribute("Information").Value;
+            if (!string.IsNullOrWhiteSpace(info)) {
+                StoreInfo(part, info);
+            }
         }
 
         public override IEnumerable<OrderEditorAdditionalProductInfoViewModel> GetAdditionalOrderProductsInformation(OrderPart orderPart) {
@@ -125,10 +137,11 @@ namespace Nwazet.Commerce.Services {
                 yield break;
             }
 
+            var data = DeserializeInformation(info.Information);
             yield return new OrderEditorAdditionalProductInfoViewModel {
                 Title = T("VAT Rate").Text,
                 HeaderClass = "vat",
-                Information = DeserializeInformation(info.Information)
+                Information = data
                     .ToDictionary(did => did.Key, did => $"{(did.Value.Rate * 100m).ToString()} %"),
                 InformationClass = "vat"
             };
@@ -138,7 +151,7 @@ namespace Nwazet.Commerce.Services {
             yield return new OrderEditorAdditionalProductInfoViewModel {
                 Title = T("Price before VAT").Text,
                 HeaderClass = "price",
-                Information = DeserializeInformation(info.Information)
+                Information = data
                     .ToDictionary(
                         did => did.Key, 
                         did => currency.PriceAsString(did.Value.PriceBeforeTax, cultureInUse)),
@@ -228,6 +241,23 @@ namespace Nwazet.Commerce.Services {
 
         private static Dictionary<int, RateAndPrice> DeserializeInformation(string info) {
             return JsonConvert.DeserializeObject<Dictionary<int, RateAndPrice>>(info);
+        }
+
+        private void StoreInfo(OrderPart orderPart, string info) {
+            var existing = _vatOrderRepository
+                .Fetch(ovr => ovr.OrderPartRecord == orderPart.Record);
+            if (existing != null && existing.Any()) {
+                // the fact that something already exists is an error that should never happen
+                // we handle it by deleting those old records
+                foreach (var entity in existing) {
+                    _vatOrderRepository.Delete(entity);
+                }
+            }
+
+            _vatOrderRepository.Create(new OrderVatRecord {
+                OrderPartRecord = orderPart.Record,
+                Information = info
+            });
         }
 
         private static decimal TaxDue(RateAndPrice rap) {

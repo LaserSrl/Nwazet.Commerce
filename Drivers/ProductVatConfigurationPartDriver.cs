@@ -6,6 +6,7 @@ using Orchard.ContentManagement.Drivers;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using System.Linq;
+using Orchard.ContentManagement.Handlers;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.AdvancedVAT")]
@@ -30,7 +31,7 @@ namespace Nwazet.Commerce.Drivers {
         protected override string Prefix {
             get { return "ProductVatConfigurationPart"; }
         }
-        
+
         protected override DriverResult Editor(ProductVatConfigurationPart part, dynamic shapeHelper) {
             var model = CreateVM(part);
             return ContentShape("Parts_ProductVatConfiguration_Edit",
@@ -60,13 +61,59 @@ namespace Nwazet.Commerce.Drivers {
         private ProductVatConfigurationPartEditorViewModel CreateVM(
             ProductVatConfigurationPart part) {
             return new ProductVatConfigurationPartEditorViewModel(T("Default").Text) {
-                VatConfigurationId = part.UseDefaultVatCategory 
-                    ? 0 
+                VatConfigurationId = part.UseDefaultVatCategory
+                    ? 0
                     : part.VatConfigurationPart.Record.Id,
                 AllVatConfigurations = _vatConfigurationProvider
                     .GetVatConfigurations()
                     .ToList()
             };
+        }
+
+        // Exporting and Importing should only be used in cloning the Items this part is attached to, because
+        // the part itself is in relation with things outside the ContentItem that may not be exported/imported
+        // at the same time
+        protected override void Exporting(ProductVatConfigurationPart part, ExportContentContext context) {
+            var element = context.Element(part.PartDefinition.Name);
+            if (part.Record.VatConfiguration != null) {
+                element.SetAttributeValue("VatConfigurationIdentity", GetIdentity(part.Record.VatConfiguration.Id));
+                // we also set the Id, in case when we are importing we cannot get the item form the session
+                // by using the identity
+                element.SetAttributeValue("VatConfigurationId", part.Record.VatConfiguration.Id.ToString());
+            }
+        }
+
+        protected override void Importing(ProductVatConfigurationPart part, ImportContentContext context) {
+            if (context.Data.Element(part.PartDefinition.Name) == null) {
+                return;
+            }
+
+            VatConfigurationPartRecord importedVat = null;
+
+            var vatIdentity = context.Attribute(part.PartDefinition.Name, "VatConfigurationIdentity");
+            if (vatIdentity != null) {
+                var vatCi = context.GetItemFromSession(vatIdentity);
+                importedVat = vatCi?.As<VatConfigurationPart>()?.Record;
+            }
+
+            if (importedVat == null) {
+                // try using the id
+                var vatIdObj = context.Attribute(part.PartDefinition.Name, "VatConfigurationId");
+                int vatId = 0;
+                if (!string.IsNullOrWhiteSpace(vatIdObj)
+                    && int.TryParse(vatIdObj, out vatId)) {
+                    if (vatId > 0) {
+                        importedVat = _contentManager.Get<VatConfigurationPart>(vatId)?.Record;
+                    }
+                }
+            }
+
+            part.Record.VatConfiguration = importedVat;
+        }
+
+        private string GetIdentity(int id) {
+            var ci = _contentManager.Get(id, VersionOptions.Latest);
+            return _contentManager.GetItemMetadata(ci).Identity.ToString();
         }
     }
 }
