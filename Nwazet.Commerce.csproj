@@ -314,6 +314,7 @@
     <Compile Include="Handlers\ProductSettingsPartHandler.cs" />
     <Compile Include="Handlers\ProductVatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\StateOrCountryTaxPartHandler.cs" />
+    <Compile Include="Handlers\TaxDisplayTextHandler.cs" />
     <Compile Include="Handlers\TerritoryHierarchyPartHandler.cs" />
     <Compile Include="Handlers\TerritoryPartHandler.cs" />
     <Compile Include="Handlers\TerritoryVatConfigurationPartHandler.cs" />

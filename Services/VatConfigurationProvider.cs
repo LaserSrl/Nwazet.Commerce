@@ -44,10 +44,11 @@ namespace Nwazet.Commerce.Services {
         public IEnumerable<ITax> GetTaxes() {
             // We cheat a bit here. We return only one object, because when computing things for VAT
             // we are going to use the objects referenced by the products anyway.
+            // ERROR: returning only one item is wrong, because the TaxAdminController needs to show them all
             return _contentManager
                 .Query<VatConfigurationPart, VatConfigurationPartRecord>()
                 .ForVersion(VersionOptions.Published)
-                .Slice(0, 1);
+                .List();
         }
 
         public IEnumerable<VatConfigurationPart> GetVatConfigurations() {

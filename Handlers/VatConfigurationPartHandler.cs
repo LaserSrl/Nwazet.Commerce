@@ -48,7 +48,7 @@ namespace Nwazet.Commerce.Handlers {
             var part = context.ContentItem.As<VatConfigurationPart>();
 
             if (part != null) {
-                context.Metadata.DisplayText = part.TaxProductCategory;
+                context.Metadata.DisplayText = $"{part.Name} {part.TaxProductCategory}";
             }
         }
         static void PropertySetHandlers(

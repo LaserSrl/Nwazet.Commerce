@@ -44,7 +44,7 @@
             @foreach (var tax in Model.Taxes) { 
                 <tr>
                     <td>
-                        @Html.ItemEditLinkWithReturnUrl(tax.Name, tax) 
+                        @Html.ItemEditLinkWithReturnUrl(tax.ContentItem.ContentManager.GetItemMetadata(tax.ContentItem).DisplayText, tax) 
                     </td>
                     <td>
                         @if (Authorizer.Authorize(Permissions.DeleteContent, tax)) {

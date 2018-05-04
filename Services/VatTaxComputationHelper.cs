@@ -33,9 +33,11 @@ namespace Nwazet.Commerce.Services {
                 // this approach would be that we would end up computing the same things over and over 
                 // for each VAT categoy configured. That is why in VatConfigurationProvider.GetTaxes()
                 // we cheat and only return the first VatConfigurationPart.
+                // ERROR: we will computing VAT over and over, because the GetTaxes() method must return
+                // all vat configurations, otherwise the TaxAdminController cannot do its job.
 
                 // This method should compute taxes only if the subtotal does not include them already.
-                // i.e. thi is equivalent to saying that we compute taxes only when the site setting is
+                // i.e. this is equivalent to saying that we compute taxes only when the site setting is
                 // telling to display prices "before tax"
                 if (_vatConfigurationService.GetDefaultDestination() != null) {
                     return 0;
