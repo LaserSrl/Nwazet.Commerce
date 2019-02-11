@@ -19,7 +19,7 @@
                 </tr>
             </thead>
             @foreach (var entry in entries) {
-                var linkText = entry.DisplayText +
+                var linkText = string.IsNullOrWhiteSpace(entry.DisplayText) ? entry.TypeDisplayName : entry.DisplayText +
                     (entry.IsDraft ? " " + T("(draft)").Text : "");
 
                 <tr>
