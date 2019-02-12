@@ -7,8 +7,10 @@
         @if (Model.DefaultVatConfigurationPart == null) {
             <p>@T("You need to configure a default VAT category for your products.")</p>
         } else {
+            var linkText = Model.DefaultVatConfigurationPart.TaxProductCategory;
+            linkText = string.IsNullOrWhiteSpace(linkText) ? Model.DefaultVatConfigurationPart.Name : linkText;
             <p>
-                @T("The default VAT category is: ")@Html.ItemEditLink(Model.DefaultVatConfigurationPart.Name, Model.DefaultVatConfigurationPart)
+                @T("The default VAT category is: ")@Html.ItemEditLink(linkText, Model.DefaultVatConfigurationPart)
             </p>
 	    }
     </div>
