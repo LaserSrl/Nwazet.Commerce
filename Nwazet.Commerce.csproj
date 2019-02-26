@@ -339,11 +339,13 @@
     <Compile Include="Migrations\WishListMigrations.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\AdvancedSKUsSiteSettingPart.cs" />
+    <Compile Include="Models\ApplicabilityCriterionRecord.cs" />
     <Compile Include="Models\CheckoutError.cs" />
     <Compile Include="Models\CheckoutItem.cs" />
     <Compile Include="Models\ConversionUtilities.cs" />
     <Compile Include="Models\Charge.cs" />
     <Compile Include="Models\ECommerceCurrencySiteSettingsPart.cs" />
+    <Compile Include="Models\FlexibleShippingMethodRecord.cs" />
     <Compile Include="Models\HierarchyVatConfigurationIntersectionRecord.cs" />
     <Compile Include="Models\HierarchyVatConfigurationPart.cs" />
     <Compile Include="Models\HierarchyVatConfigurationPartRecord.cs" />

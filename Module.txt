@@ -124,3 +124,8 @@ Features:
 		Description: Basic shipping configuration options
         Category: Commerce
 		Dependencies: Nwazet.Shipping
+	Nwazet.FlexibleShippingImplementations:
+		Name: Nwazet Flexible Shipping Implementations
+		Description: Faceted configuration options for shipping
+        Category: Commerce
+		Dependencies: Nwazet.Shipping, Orchard.Forms
