@@ -7,7 +7,7 @@ using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 
 namespace Nwazet.Commerce.Models {
-    [OrchardFeature("Nwazet.Shipping")]
+    [OrchardFeature("Nwazet.BaseShippingImplementations")]
     public class WeightBasedShippingMethodPart : ContentPart<WeightBasedShippingMethodPartRecord>,
         IShippingMethod {
         public string Name {

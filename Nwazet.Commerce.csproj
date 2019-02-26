@@ -323,6 +323,7 @@
     <Compile Include="Menus\TerritoriesAdminMenu.cs" />
     <Compile Include="Migrations\AdvancedVATMigrations.cs" />
     <Compile Include="Migrations\AttributesLocalizationExtensionsMigrations.cs" />
+    <Compile Include="Migrations\BaseShippingImplementationsMigrations.cs" />
     <Compile Include="Migrations\BaseTaxImplementationsMigrations.cs" />
     <Compile Include="Migrations\BundleMigrations.cs" />
     <Compile Include="Migrations\BundlesLocalizationExtensionsMigrations.cs" />

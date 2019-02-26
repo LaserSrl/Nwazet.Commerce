@@ -5,7 +5,7 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 
 namespace Nwazet.Commerce.Services {
-    [OrchardFeature("Nwazet.Shipping")]
+    [OrchardFeature("Nwazet.BaseShippingImplementations")]
     public class WeightBasedShippingMethodProvider : IShippingMethodProvider {
         private readonly IContentManager _contentManager;
         private Localizer T { get; set; }

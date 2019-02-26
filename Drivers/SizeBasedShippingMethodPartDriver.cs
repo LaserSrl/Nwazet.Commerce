@@ -10,7 +10,7 @@ using Orchard.ContentManagement.Handlers;
 using Orchard.Environment.Extensions;
 
 namespace Nwazet.Commerce.Drivers {
-    [OrchardFeature("Nwazet.Shipping")]
+    [OrchardFeature("Nwazet.BaseShippingImplementations")]
     public class SizeBasedShippingMethodPartDriver : ContentPartDriver<SizeBasedShippingMethodPart> {
         private readonly IEnumerable<IShippingAreaProvider> _shippingAreaProviders;
 

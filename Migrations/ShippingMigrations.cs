@@ -2,28 +2,25 @@
 using Orchard.ContentManagement.MetaData;
 using Orchard.Data.Migration;
 using Orchard.Environment.Extensions;
+using Orchard.Modules.Services;
 
 namespace Nwazet.Commerce.Migrations {
     [OrchardFeature("Nwazet.Shipping")]
     public class ShippingMigrations : DataMigrationImpl {
 
+        private readonly IModuleService _moduleService;
+
+        public ShippingMigrations(
+            IModuleService moduleService) {
+
+            _moduleService = moduleService;
+        }
+
         public int Create() {
-            SchemaBuilder.CreateTable("WeightBasedShippingMethodPartRecord", table => table
-                .ContentPartRecord()
-                .Column("Name", DbType.String)
-                .Column("ShippingCompany", DbType.String)
-                .Column("Price", DbType.Double)
-                .Column("MinimumWeight", DbType.Double, column => column.Nullable())
-                .Column("MaximumWeight", DbType.Double, column => column.Nullable())
-                .Column("IncludedShippingAreas", DbType.String)
-                .Column("ExcludedShippingAreas", DbType.String)
-            );
-
-            ContentDefinitionManager.AlterTypeDefinition("WeightBasedShippingMethod", cfg => cfg
-              .WithPart("WeightBasedShippingMethodPart")
-              .WithPart("TitlePart"));
-
-            return 1;
+            // Update: we moved WeightBasedShippingMethod and SizeBasedShippingMethod implementations
+            // to the BaseShippingImplementations features, so we need to skip the migration steps
+            // related to them here.
+            return 4;
         }
 
         public int UpdateFrom1() {
@@ -53,6 +50,15 @@ namespace Nwazet.Commerce.Migrations {
                 table.AlterColumn("Price", column =>
                     column.WithType(DbType.Decimal)));
             return 3;
+        }
+
+        public int UpdateFrom3() {
+            // The tables created and updated in the previous steps now belong to the BaseShippingImplementations
+            // feature.
+
+            _moduleService.EnableFeatures(new string[] { "Nwazet.BaseShippingImplementations" }, true);
+
+            return 4;
         }
     }
 }

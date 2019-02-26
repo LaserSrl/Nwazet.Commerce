@@ -7,7 +7,7 @@ using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 
 namespace Nwazet.Commerce.Models {
-    [OrchardFeature("Nwazet.Shipping")]
+    [OrchardFeature("Nwazet.BaseShippingImplementations")]
     public class SizeBasedShippingMethodPart : ContentPart<SizeBasedShippingMethodPartRecord>, IShippingMethod {
         public string Name {
             get { return Retrieve(r => r.Name); }

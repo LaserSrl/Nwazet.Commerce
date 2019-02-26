@@ -28,7 +28,7 @@ Features:
         Dependencies: Nwazet.Commerce
     Nwazet.Shipping:
         Name: Nwazet Shipping
-        Description: Define shipping options to work with Nwazet Commerce
+        Description: Define shipping options and interfaces to work with Nwazet Commerce
         Category: Commerce
         Dependencies: Nwazet.Commerce
     Nwazet.Promotions:
@@ -119,3 +119,8 @@ Features:
 		Description: Provides advanced options to set up management of VAT or sales taxes.
 		Category: Commerce
 		Dependencies: Nwazet.Taxes, Nwazet.Orders, Territories
+	Nwazet.BaseShippingImplementations:
+		Name: Nwazet Base Shipping Implementations
+		Description: Basic shipping configuration options
+        Category: Commerce
+		Dependencies: Nwazet.Shipping
