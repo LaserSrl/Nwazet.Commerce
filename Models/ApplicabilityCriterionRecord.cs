@@ -14,6 +14,7 @@ namespace Nwazet.Commerce.Models {
         public virtual string Type { get; set; }
         public virtual string State { get; set; }
 
+        // "parent" property
         public virtual FlexibleShippingMethodRecord FlexibleShippingMethodRecord { get; set; }
     }
 }

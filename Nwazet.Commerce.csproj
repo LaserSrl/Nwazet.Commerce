@@ -179,6 +179,7 @@
     </Content>
     <None Include="packages.config" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ProductVatConfiguration.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryManager.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryTypeSelection.cshtml" />
@@ -235,6 +236,7 @@
     <Compile Include="Drivers\BundleLocalizationPartDriver.cs" />
     <Compile Include="Drivers\BundlePartDriver.cs" />
     <Compile Include="Drivers\ECommerceCurrencySiteSettingsPartDriver.cs" />
+    <Compile Include="Drivers\FlexibleShippingMethodPartDriver.cs" />
     <Compile Include="Drivers\HierarchyVatConfigurationPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUProductPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUSiteSettingsPartDriver.cs" />
@@ -289,6 +291,7 @@
     <Compile Include="Handlers\AttributePartHandler.cs" />
     <Compile Include="Handlers\AttributesPartHandler.cs" />
     <Compile Include="Handlers\ECommerceCurrencySiteSettingsPartHandler.cs" />
+    <Compile Include="Handlers\FlexibleShippingMethodPartHandler.cs" />
     <Compile Include="Handlers\HierarchyVatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\InventoryBySKUSiteSettingsPartHandler.cs" />
     <Compile Include="Handlers\LocalizationAttributePartHandler.cs" />
@@ -329,6 +332,7 @@
     <Compile Include="Migrations\BundlesLocalizationExtensionsMigrations.cs" />
     <Compile Include="Migrations\CommerceMigrations.cs" />
     <Compile Include="Migrations\AttributesMigrations.cs" />
+    <Compile Include="Migrations\FlexibleShippingMethodMigrations.cs" />
     <Compile Include="Migrations\OrderMigrations.cs" />
     <Compile Include="Migrations\PersistentCartMigrations.cs" />
     <Compile Include="Migrations\TaxMigrations.cs" />
@@ -345,6 +349,7 @@
     <Compile Include="Models\ConversionUtilities.cs" />
     <Compile Include="Models\Charge.cs" />
     <Compile Include="Models\ECommerceCurrencySiteSettingsPart.cs" />
+    <Compile Include="Models\FlexibleShippingMethodPart.cs" />
     <Compile Include="Models\FlexibleShippingMethodRecord.cs" />
     <Compile Include="Models\HierarchyVatConfigurationIntersectionRecord.cs" />
     <Compile Include="Models\HierarchyVatConfigurationPart.cs" />
@@ -454,6 +459,7 @@
     <Compile Include="Services\CurrencyProviderBase.cs" />
     <Compile Include="Services\DefaultVatConfigurationPartDoesNotExist.cs" />
     <Compile Include="Services\DefaultVatTerritoryIsInvalid.cs" />
+    <Compile Include="Services\FlexibleShippingMethodProvider.cs" />
     <Compile Include="Services\IBundleAutocompleteService.cs" />
     <Compile Include="Services\IBundleProductLocalizationServices.cs" />
     <Compile Include="Services\IBundleService.cs" />
@@ -594,6 +600,7 @@
     <Compile Include="ViewModels\ProductEditorViewModel.cs" />
     <Compile Include="ViewModels\ProductVatConfigurationPartEditorViewModel.cs" />
     <Compile Include="ViewModels\ReportDataViewModel.cs" />
+    <Compile Include="ViewModels\ShippingApplicabilityCriterionViewModel.cs" />
     <Compile Include="ViewModels\TaxIndexViewModel.cs" />
     <Compile Include="ViewModels\DiscountEditorViewModel.cs" />
     <Compile Include="ViewModels\ProductAttributesPartEditViewModel.cs" />
