@@ -1,0 +1,50 @@
+﻿@using Nwazet.Commerce.Models
+@using Nwazet.Commerce.ViewModels
+@{
+    var method = (FlexibleShippingMethodPart)Model.ShippingMethod;
+    var criterias = (IEnumerable<ApplicabilityCriterionEntry>)Model.Criterias;
+}
+<fieldset>
+    <legend>@T("Validity criteria")</legend>
+    <span class="hint">
+        @T("All configured criteria must be verified for this shipping method to apply. Make sure to save your changes to the rest of the content before editing the filters.")
+    </span>
+    <table class="items">
+        <thead>
+            <tr>
+                <th scope="col">@T("Description")</th>
+                <th scope="col" class="actions">
+                    @Html.ActionLink(T("+ Add a new Criterion").Text,
+                        "Add",
+                        new {
+                            controller = "FlexibleShippingCriterion",
+                            area = "Nwazet.Commerce",
+                            id = method.Id })
+                </th>
+            </tr>
+        </thead>
+        @foreach (var criterion in criterias) {
+            <tr>
+                <td>@criterion.DisplayText</td>
+                <td>
+                    @Html.ActionLink(T("Edit").Text,
+                        "Edit",
+                        new {
+                            controller = "FlexibleShippingCriterion",
+                            area = "Nwazet.Commerce",
+                            id = method.Id,
+                            category = criterion.Category,
+                            type = criterion.Type,
+                            filterId = criterion.CriterionRecordId }) |
+                    @Html.ActionLink(T("Delete").Text,
+                        "Delete",
+                        new { controller = "FlexibleShippingCriterion",
+                            area = "Nwazet.Commerce",
+                            id = method.Id,
+                            criterionId = criterion.CriterionRecordId },
+                        new { itemprop = "RemoveUrl UnsafeUrl" })
+                </td>
+            </tr>
+        }
+    </table>
+</fieldset>

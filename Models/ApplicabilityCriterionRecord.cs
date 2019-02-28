@@ -10,6 +10,7 @@ namespace Nwazet.Commerce.Models {
     public class ApplicabilityCriterionRecord {
 
         public virtual int Id { get; set; } // Primary Key
+        public virtual string Category { get; set; }
         public virtual string Description { get; set; }
         public virtual string Type { get; set; }
         public virtual string State { get; set; }

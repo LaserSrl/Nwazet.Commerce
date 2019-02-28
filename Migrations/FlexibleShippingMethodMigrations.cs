@@ -41,5 +41,12 @@ namespace Nwazet.Commerce.Migrations {
 
             return 1;
         }
+
+        public int UpdateFrom1() {
+            SchemaBuilder.AlterTable("ApplicabilityCriterionRecord", table => table
+                .AddColumn<string>("Category", c => c.WithLength(64)));
+
+            return 2;
+        }
     }
 }

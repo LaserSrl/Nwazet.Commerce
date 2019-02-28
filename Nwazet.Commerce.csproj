@@ -180,6 +180,8 @@
     <None Include="packages.config" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethodCriteria.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\NewFlexibleShippingMethodCriteria.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ProductVatConfiguration.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryManager.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryTypeSelection.cshtml" />
@@ -188,6 +190,8 @@
     <None Include="Views\EditorTemplates\Parts\TerritoryVatConfigurationPartNotAllowed.cshtml" />
     <None Include="Views\EditorTemplates\Parts\VatConfiguration.cshtml" />
     <None Include="Views\EditorTemplates\SiteSettings\VatConfiguration.cshtml" />
+    <None Include="Views\FlexibleShippingCriterion\Add.cshtml" />
+    <None Include="Views\FlexibleShippingCriterion\Edit.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\CreateTerritory.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\EditTerritory.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\Index.cshtml" />
@@ -208,8 +212,10 @@
   <ItemGroup>
     <Compile Include="Activities\CommerceActivity.cs" />
     <Compile Include="Activities\OrderActivity.cs" />
+    <Compile Include="ApplicabilityCriteria\CartSubTotalCriteria.cs" />
     <Compile Include="Commands\TerritoriesCommands.cs" />
     <Compile Include="Controllers\ECommerceSettingsAdminController.cs" />
+    <Compile Include="Controllers\FlexibleShippingCriterionController.cs" />
     <Compile Include="Controllers\HierarchyTerritoriesAdminController.cs" />
     <Compile Include="Controllers\InventoryBySKUSettingsAdminController.cs" />
     <Compile Include="Controllers\ProductSettingsAdminController.cs" />
@@ -230,6 +236,11 @@
     <Compile Include="Controllers\ShoppingCartController.cs" />
     <Compile Include="Controllers\StripeController.cs" />
     <Compile Include="Controllers\WishListsController.cs" />
+    <Compile Include="Descriptors\ApplicabilityCriterion\ApplicabilityCriterionDescriptor.cs" />
+    <Compile Include="Descriptors\ApplicabilityCriterion\CriterionContext.cs" />
+    <Compile Include="Descriptors\ApplicabilityCriterion\DescribeCriterionContext.cs" />
+    <Compile Include="Descriptors\ApplicabilityCriterion\DescribeCriterionFor.cs" />
+    <Compile Include="Descriptors\TypeDescriptor.cs" />
     <Compile Include="Drivers\AdvancedSKUProductPartDriver.cs" />
     <Compile Include="Drivers\AdvancedSKUsSiteSettingPartDriver.cs" />
     <Compile Include="Drivers\AttributeLocalizationProductAttributesPartDriver.cs" />
@@ -459,11 +470,14 @@
     <Compile Include="Services\CurrencyProviderBase.cs" />
     <Compile Include="Services\DefaultVatConfigurationPartDoesNotExist.cs" />
     <Compile Include="Services\DefaultVatTerritoryIsInvalid.cs" />
+    <Compile Include="Services\FlexibleShippingManager.cs" />
     <Compile Include="Services\FlexibleShippingMethodProvider.cs" />
+    <Compile Include="Services\IApplicabilityCriterionProvider.cs" />
     <Compile Include="Services\IBundleAutocompleteService.cs" />
     <Compile Include="Services\IBundleProductLocalizationServices.cs" />
     <Compile Include="Services\IBundleService.cs" />
     <Compile Include="Services\ICartLifeCycleEventHandler.cs" />
+    <Compile Include="Services\IFlexibleShippingManager.cs" />
     <Compile Include="Services\ILocalStorageSettings.cs" />
     <Compile Include="Services\InventoriesAreNotSynchronizedBySKU.cs" />
     <Compile Include="Services\InventoryBySKUProductInventoryService.cs" />
@@ -581,6 +595,9 @@
     <Compile Include="Tokens\ProductTokens.cs" />
     <Compile Include="ViewModels\AdancedSKUsSiteSettingsViewModel.cs" />
     <Compile Include="ViewModels\AdvancedSKUProductEditorViewModel.cs" />
+    <Compile Include="ViewModels\ApplicabilityCriterionEntry.cs" />
+    <Compile Include="ViewModels\CriteriaAddViewModel.cs" />
+    <Compile Include="ViewModels\CriterionEditViewModel.cs" />
     <Compile Include="ViewModels\ECommerceCurrencySiteSettingsViewModel.cs" />
     <Compile Include="ViewModels\ECommerceSettingsViewModel.cs" />
     <Compile Include="ViewModels\AttributeLocalizationProductAttributesPartEditViewModel.cs" />
@@ -600,7 +617,6 @@
     <Compile Include="ViewModels\ProductEditorViewModel.cs" />
     <Compile Include="ViewModels\ProductVatConfigurationPartEditorViewModel.cs" />
     <Compile Include="ViewModels\ReportDataViewModel.cs" />
-    <Compile Include="ViewModels\ShippingApplicabilityCriterionViewModel.cs" />
     <Compile Include="ViewModels\TaxIndexViewModel.cs" />
     <Compile Include="ViewModels\DiscountEditorViewModel.cs" />
     <Compile Include="ViewModels\ProductAttributesPartEditViewModel.cs" />
@@ -812,6 +828,7 @@
       <Name>Orchard.Framework</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

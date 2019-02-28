@@ -11,8 +11,8 @@
     <span class="hint">@T("The technical name of the shipping method (this is different from the title, which is the method's friendly name that will be displayed to end-users).")</span><br />
     <label class="sub" for="@Html.Id("ShippingCompany")">@T("Shipping Company")</label><br />
     @Html.TextBox("ShippingCompany", method.ShippingCompany, new { @class = "text" })<br />
-    <label class="sub" for="@Html.Id("Price")">@T("Price")</label><br />
-    @Html.TextBox("Price", method.DefaultPrice, new { @class = "text" })<br />
+    <label class="sub" for="@Html.Id("DefaultPrice")">@T("Price")</label><br />
+    @Html.TextBox("DefaultPrice", method.DefaultPrice, new { @class = "text" })<br />
     <label class="sub" for="@Html.Id("IncludedShippingAreas")">@T("Areas for which this method is valid:")</label><br />
     @foreach (var area in shippingAreas) {
         <input type="checkbox" name="@(Model.Prefix + ".IncludedShippingAreas")" @(includedAreas.Contains(area.Id) ? " checked=\"checked\"" : "") id="@(Model.Prefix + "_included_" + area.Id)" value="@area.Id" />
@@ -25,16 +25,4 @@
         <label class="forcheckbox" for="@(Model.Prefix + "_excluded_" + area.Id)">@area.Name</label>
     }
     <span class="hint">@T("Use this to restrict what areas this method is available from. For example, an international shipping method would have World included, but US excluded, so that it can't be selected for domestic shipping.")</span><br />
-</fieldset>
-<fieldset>
-    <legend>@T("Validity criteria")</legend>
-    <table class="items">
-
-    </table>
-    @if (true) {
-        @*There are criteria selected already*@
-
-    } else {
-        @**@
-    }
 </fieldset>
