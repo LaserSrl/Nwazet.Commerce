@@ -1,4 +1,5 @@
-﻿using Nwazet.Commerce.Services;
+﻿using Nwazet.Commerce.ApplicabilityCriteria;
+using Nwazet.Commerce.Services;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
@@ -46,7 +47,24 @@ namespace Nwazet.Commerce.Models {
             string zipCode, 
             IWorkContextAccessor workContextAccessor) {
 
-            return null;
+            var workContext = workContextAccessor.GetContext();
+            IFlexibleShippingManager flexibleShippingManager;
+            if (workContext != null
+                && workContext.TryResolve(out flexibleShippingManager)) {
+                // we have a usable IFlexibleShippingManager here
+                if (flexibleShippingManager.TestCriteria(
+                    Id, new ApplicabilityContext (
+                        productQuantities,
+                        shippingMethods,
+                        country,
+                        zipCode
+                    ))) {
+
+
+                }
+            }
+
+            return Enumerable.Empty<ShippingOption>();
         }
     }
 }

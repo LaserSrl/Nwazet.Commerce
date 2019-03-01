@@ -26,7 +26,7 @@ namespace Nwazet.Commerce.Descriptors.ApplicabilityCriterion {
             string type, 
             LocalizedString name, 
             LocalizedString description, 
-            Action<CriterionContext> filter, 
+            Action<CriterionContext> criterion, 
             Func<CriterionContext, LocalizedString> display, 
             string form = null) {
 
@@ -35,7 +35,7 @@ namespace Nwazet.Commerce.Descriptors.ApplicabilityCriterion {
                 Name = name,
                 Description = description,
                 Category = _category,
-                Filter = filter,
+                TestCriterion = criterion,
                 Display = display,
                 Form = form });
             return this;

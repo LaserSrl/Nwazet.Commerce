@@ -212,6 +212,7 @@
   <ItemGroup>
     <Compile Include="Activities\CommerceActivity.cs" />
     <Compile Include="Activities\OrderActivity.cs" />
+    <Compile Include="ApplicabilityCriteria\ApplicabilityContext.cs" />
     <Compile Include="ApplicabilityCriteria\CartSubTotalCriteria.cs" />
     <Compile Include="Commands\TerritoriesCommands.cs" />
     <Compile Include="Controllers\ECommerceSettingsAdminController.cs" />

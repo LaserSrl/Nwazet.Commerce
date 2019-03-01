@@ -13,7 +13,7 @@ namespace Nwazet.Commerce.Descriptors.ApplicabilityCriterion {
         public string Type { get; set; }
         public LocalizedString Name { get; set; }
         public LocalizedString Description { get; set; }
-        public Action<CriterionContext> Filter { get; set; }
+        public Action<CriterionContext> TestCriterion { get; set; }
         public string Form { get; set; }
         public Func<CriterionContext, LocalizedString> Display { get; set; }
     }

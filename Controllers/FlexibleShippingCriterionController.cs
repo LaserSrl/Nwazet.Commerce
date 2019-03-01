@@ -63,9 +63,7 @@ namespace Nwazet.Commerce.Controllers {
 
             // Get the descriptor for the criterion we are editing
             var criterion = _flexibleShippingManager
-                .DescribeCriteria()
-                .SelectMany(x => x.Descriptors)
-                .FirstOrDefault(x => x.Category == category && x.Type == type);
+                .GetCriteria(category, type);
             if (criterion == null) {
                 return HttpNotFound();
             }
@@ -127,10 +125,7 @@ namespace Nwazet.Commerce.Controllers {
 
             // Get the criterion
             var criterion = _flexibleShippingManager
-                .DescribeCriteria()
-                .SelectMany(x => x.Descriptors)
-                .Where(x => x.Category == category && x.Type == type)
-                .FirstOrDefault();
+                .GetCriteria(category, type);
 
             var model = new CriterionEditViewModel();
             TryUpdateModel(model);

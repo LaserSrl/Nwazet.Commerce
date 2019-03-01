@@ -38,22 +38,17 @@ namespace Nwazet.Commerce.Drivers {
             var shapes = new List<DriverResult>(2);
 
             // Load applicability criteria if we are not in a new ContentItem
-            if (part.Id == 0) {
+            if (part.Id == 0
+                || part.ApplicabilityCriteria == null) {
                 shapes.Add(ContentShape("Parts_FlexibleShippingMethod_EditCriteria",
                     () => shapeHelper.EditorTemplate(
                         TemplateName: "Parts/NewFlexibleShippingMethodCriteria",
                         Prefix: Prefix)));
             } else {
-                var allCriteria = _flexibleShippingManager
-                    .DescribeCriteria()
-                    .SelectMany(x => x.Descriptors)
-                    .ToList();
                 var criterionEntries = new List<ApplicabilityCriterionEntry>();
                 foreach (var criterion in part.ApplicabilityCriteria) {
-                    var crit = allCriteria.FirstOrDefault(c => 
-                            c.Category == criterion.Category
-                            && c.Type == criterion.Type 
-                        );
+                    var crit = _flexibleShippingManager
+                        .GetCriteria(criterion.Category, criterion.Type);
                     if (crit != null) {
                         criterionEntries.Add(
                             new ApplicabilityCriterionEntry {
