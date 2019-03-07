@@ -1,12 +1,10 @@
 ﻿using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
-using System;
+using Orchard.Environment.Extensions;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.ApplicabilityCriteria {
+    [OrchardFeature("Nwazet.FlexibleShippingImplementations")]
     public class ApplicabilityContext {
 
         public ApplicabilityContext(

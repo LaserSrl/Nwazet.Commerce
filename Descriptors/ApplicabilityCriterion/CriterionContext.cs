@@ -1,11 +1,7 @@
 ﻿using Nwazet.Commerce.ApplicabilityCriteria;
 using Nwazet.Commerce.Models;
 using Orchard.Environment.Extensions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Descriptors.ApplicabilityCriterion {
     [OrchardFeature("Nwazet.FlexibleShippingImplementations")]
@@ -19,7 +15,7 @@ namespace Nwazet.Commerce.Descriptors.ApplicabilityCriterion {
 
         public ApplicabilityContext ApplicabilityContext { get; set; }
         public bool IsApplicable { get; set; }
-        
+
         public FlexibleShippingMethodRecord FlexibleShippingMethodRecord { get; set; }
     }
 }

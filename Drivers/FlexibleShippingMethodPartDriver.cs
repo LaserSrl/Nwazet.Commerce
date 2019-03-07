@@ -6,11 +6,8 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.Environment.Extensions;
 using Orchard.Forms.Services;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.FlexibleShippingImplementations")]
@@ -55,10 +52,10 @@ namespace Nwazet.Commerce.Drivers {
                                 Category = crit.Category,
                                 Type = crit.Type,
                                 CriterionRecordId = criterion.Id,
-                                DisplayText = string.IsNullOrWhiteSpace(criterion.Description) 
+                                DisplayText = string.IsNullOrWhiteSpace(criterion.Description)
                                     ? crit.Display(new CriterionContext {
                                         State = FormParametersHelper.ToDynamic(criterion.State)
-                                    }).Text 
+                                    }).Text
                                     : criterion.Description
                             });
                     }
@@ -73,7 +70,7 @@ namespace Nwazet.Commerce.Drivers {
                         Prefix: Prefix)));
             }
 
-            shapes.Add( ContentShape("Parts_FlexibleShippingMethod_Edit",
+            shapes.Add(ContentShape("Parts_FlexibleShippingMethod_Edit",
                 () => shapeHelper.EditorTemplate(
                     TemplateName: "Parts/FlexibleShippingMethod",
                     Model: shapeHelper.ShippingEditor(
@@ -93,7 +90,7 @@ namespace Nwazet.Commerce.Drivers {
 
         //POST
         protected override DriverResult Editor(
-            FlexibleShippingMethodPart part, 
+            FlexibleShippingMethodPart part,
             IUpdateModel updater,
             dynamic shapeHelper) {
 

@@ -2,9 +2,6 @@
 using Orchard.Localization;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Descriptors.ApplicabilityCriterion {
     [OrchardFeature("Nwazet.FlexibleShippingImplementations")]
@@ -23,11 +20,11 @@ namespace Nwazet.Commerce.Descriptors.ApplicabilityCriterion {
         public List<ApplicabilityCriterionDescriptor> Types { get; private set; }
 
         public DescribeCriterionFor Element(
-            string type, 
-            LocalizedString name, 
-            LocalizedString description, 
-            Action<CriterionContext> criterion, 
-            Func<CriterionContext, LocalizedString> display, 
+            string type,
+            LocalizedString name,
+            LocalizedString description,
+            Action<CriterionContext> criterion,
+            Func<CriterionContext, LocalizedString> display,
             string form = null) {
 
             Types.Add(new ApplicabilityCriterionDescriptor {
@@ -37,7 +34,8 @@ namespace Nwazet.Commerce.Descriptors.ApplicabilityCriterion {
                 Category = _category,
                 TestCriterion = criterion,
                 Display = display,
-                Form = form });
+                Form = form
+            });
             return this;
         }
     }

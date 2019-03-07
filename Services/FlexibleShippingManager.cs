@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nwazet.Commerce.ApplicabilityCriteria;
+﻿using Nwazet.Commerce.ApplicabilityCriteria;
 using Nwazet.Commerce.Descriptors;
 using Nwazet.Commerce.Descriptors.ApplicabilityCriterion;
 using Nwazet.Commerce.Models;
@@ -12,6 +7,8 @@ using Orchard.Data;
 using Orchard.Environment.Extensions;
 using Orchard.Forms.Services;
 using Orchard.Tokens;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Nwazet.FlexibleShippingImplementations")]

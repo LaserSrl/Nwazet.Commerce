@@ -5,11 +5,8 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Projections.FilterEditors.Forms;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.ApplicabilityCriteria {
     [OrchardFeature("Nwazet.FlexibleShippingImplementations")]
@@ -46,19 +43,19 @@ namespace Nwazet.Commerce.ApplicabilityCriteria {
                 // with a method to do the comparison ourselves, so we have to do it here
                 // explicitly, replicating some of the stuff that's there.
                 var op = (NumericOperator)Enum.Parse(
-                    typeof(NumericOperator), 
+                    typeof(NumericOperator),
                     Convert.ToString(context.State.Operator));
                 decimal min, max;
                 if (op == NumericOperator.Between || op == NumericOperator.NotBetween) {
                     min = decimal.Parse(
-                        Convert.ToString(context.State.Min), 
+                        Convert.ToString(context.State.Min),
                         CultureInfo.InvariantCulture);
                     max = decimal.Parse(
-                        Convert.ToString(context.State.Max), 
+                        Convert.ToString(context.State.Max),
                         CultureInfo.InvariantCulture);
                 } else {
                     min = max = decimal.Parse(
-                        Convert.ToString(context.State.Value), 
+                        Convert.ToString(context.State.Value),
                         CultureInfo.InvariantCulture);
                 }
                 // get the comparison func
@@ -66,11 +63,11 @@ namespace Nwazet.Commerce.ApplicabilityCriteria {
                 // compute the cart subtotal
                 // func for each "line" of price
                 var linePrice = LinePrice(
-                    context.ApplicabilityContext.Country, 
+                    context.ApplicabilityContext.Country,
                     context.ApplicabilityContext.ZipCode);
                 var subtotal = Math.Round(
                     context.ApplicabilityContext.ProductQuantities
-                        .Sum(pq => linePrice(pq)), 
+                        .Sum(pq => linePrice(pq)),
                     2);
                 // can do the test now
                 context.IsApplicable = test(subtotal);

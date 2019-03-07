@@ -5,9 +5,6 @@ using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.FlexibleShippingImplementations")]
@@ -41,10 +38,10 @@ namespace Nwazet.Commerce.Models {
         }
 
         public IEnumerable<ShippingOption> ComputePrice(
-            IEnumerable<ShoppingCartQuantityProduct> productQuantities, 
-            IEnumerable<IShippingMethod> shippingMethods, 
-            string country, 
-            string zipCode, 
+            IEnumerable<ShoppingCartQuantityProduct> productQuantities,
+            IEnumerable<IShippingMethod> shippingMethods,
+            string country,
+            string zipCode,
             IWorkContextAccessor workContextAccessor) {
 
             var workContext = workContextAccessor.GetContext();
@@ -53,18 +50,48 @@ namespace Nwazet.Commerce.Models {
                 && workContext.TryResolve(out flexibleShippingManager)) {
                 // we have a usable IFlexibleShippingManager here
                 if (flexibleShippingManager.TestCriteria(
-                    Id, new ApplicabilityContext (
+                    Id, new ApplicabilityContext(
                         productQuantities,
                         shippingMethods,
                         country,
                         zipCode
                     ))) {
-
-
+                    // TODO: make price the result of something?
+                    yield return GetOption();
                 }
             }
 
-            return Enumerable.Empty<ShippingOption>();
+            yield break;
+        }
+
+        private ShippingOption GetOption(decimal price) {
+            return new ShippingOption {
+                Description = Name,
+                Price = price,
+                IncludedShippingAreas =
+                    IncludedShippingAreas == null
+                        ? new string[] { }
+                        : IncludedShippingAreas.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
+                ExcludedShippingAreas =
+                    ExcludedShippingAreas == null
+                        ? new string[] { }
+                        : ExcludedShippingAreas.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            };
+        }
+
+        private ShippingOption GetOption() {
+            return new ShippingOption {
+                Description = Name,
+                Price = DefaultPrice,
+                IncludedShippingAreas =
+                    IncludedShippingAreas == null
+                        ? new string[] { }
+                        : IncludedShippingAreas.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
+                ExcludedShippingAreas =
+                    ExcludedShippingAreas == null
+                        ? new string[] { }
+                        : ExcludedShippingAreas.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            };
         }
     }
 }

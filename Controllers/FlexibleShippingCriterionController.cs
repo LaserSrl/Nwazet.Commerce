@@ -3,20 +3,18 @@ using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels;
 using Orchard.ContentManagement;
+using Orchard.Environment.Extensions;
 using Orchard.Forms.Services;
 using Orchard.Localization;
 using Orchard.Security;
 using Orchard.UI.Admin;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Controllers {
+    [OrchardFeature("Nwazet.FlexibleShippingImplementations")]
     [ValidateInput(false), Admin]
     public class FlexibleShippingCriterionController : Controller {
         private readonly IAuthorizer _authorizer;
@@ -42,7 +40,7 @@ namespace Nwazet.Commerce.Controllers {
 
         public ActionResult Add(int id) {
             if (!_authorizer.Authorize(
-                CommercePermissions.ManageShipping, 
+                CommercePermissions.ManageShipping,
                 T("Not authorized to manage shipping methods"))) {
                 return new HttpUnauthorizedResult();
             }
@@ -68,8 +66,8 @@ namespace Nwazet.Commerce.Controllers {
                 return HttpNotFound();
             }
             // build the form, and let external components alter it
-            var form = criterion.Form == null 
-                ? null 
+            var form = criterion.Form == null
+                ? null
                 : _formManager.Build(criterion.Form);
 
             string description = "";
@@ -87,7 +85,7 @@ namespace Nwazet.Commerce.Controllers {
                 if (critRecord != null) {
                     description = critRecord.Description;
                     var parameters = FormParametersHelper.FromString(critRecord.State);
-                    _formManager.Bind(form, 
+                    _formManager.Bind(form,
                         new DictionaryValueProvider<string>(parameters, CultureInfo.InvariantCulture));
                 }
             }
@@ -96,16 +94,17 @@ namespace Nwazet.Commerce.Controllers {
                 Id = id,
                 Description = description,
                 Criterion = criterion,
-                Form = form };
+                Form = form
+            };
             return View(viewModel);
         }
 
         [HttpPost, ActionName("Edit")]
         public ActionResult EditPost(
-            int id, 
-            string category, 
-            string type, 
-            [DefaultValue(-1)] int criterionId, 
+            int id,
+            string category,
+            string type,
+            [DefaultValue(-1)] int criterionId,
             FormCollection formCollection) {
 
             if (!_authorizer.Authorize(
@@ -133,7 +132,8 @@ namespace Nwazet.Commerce.Controllers {
             _formManager.Validate(new ValidatingContext {
                 FormName = criterion.Form,
                 ModelState = ModelState,
-                ValueProvider = ValueProvider });
+                ValueProvider = ValueProvider
+            });
 
             if (ModelState.IsValid) {
                 var criterionRecord = part.ApplicabilityCriteria
@@ -167,7 +167,8 @@ namespace Nwazet.Commerce.Controllers {
                 Id = id,
                 Description = model.Description,
                 Criterion = criterion,
-                Form = form };
+                Form = form
+            };
 
             return View(viewModel);
         }
