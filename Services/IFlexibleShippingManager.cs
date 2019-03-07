@@ -17,5 +17,9 @@ namespace Nwazet.Commerce.Services {
             string category, string type);
 
         bool TestCriteria(int methodId, ApplicabilityContext context);
+
+        void DeleteAllCriteria(int methodId);
+
+        void DeleteCriterion(int criterionId);
     }
 }

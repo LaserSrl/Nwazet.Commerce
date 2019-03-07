@@ -8,6 +8,7 @@ using Nwazet.Commerce.Descriptors;
 using Nwazet.Commerce.Descriptors.ApplicabilityCriterion;
 using Nwazet.Commerce.Models;
 using Orchard.ContentManagement;
+using Orchard.Data;
 using Orchard.Environment.Extensions;
 using Orchard.Forms.Services;
 using Orchard.Tokens;
@@ -18,15 +19,18 @@ namespace Nwazet.Commerce.Services {
         private readonly IEnumerable<IApplicabilityCriterionProvider> _criterionProviders;
         private readonly IContentManager _contentManager;
         private readonly ITokenizer _tokenizer;
+        private readonly IRepository<ApplicabilityCriterionRecord> _criteriaRepository;
 
         public FlexibleShippingManager(
             IEnumerable<IApplicabilityCriterionProvider> criterionProviders,
             IContentManager contentManager,
-            ITokenizer tokenizer) {
+            ITokenizer tokenizer,
+            IRepository<ApplicabilityCriterionRecord> criteriaRepository) {
 
             _criterionProviders = criterionProviders;
             _contentManager = contentManager;
             _tokenizer = tokenizer;
+            _criteriaRepository = criteriaRepository;
         }
 
         public IEnumerable<TypeDescriptor<ApplicabilityCriterionDescriptor>> DescribeCriteria() {
@@ -51,10 +55,13 @@ namespace Nwazet.Commerce.Services {
         }
 
         public bool TestCriteria(int methodId, ApplicabilityContext context) {
-            var testResult = true;
             // get the method
             var methodPart = _contentManager.Get<FlexibleShippingMethodPart>(methodId);
-            testResult = methodPart != null;
+            return TestCriteria(methodPart, context);
+        }
+
+        private bool TestCriteria(FlexibleShippingMethodPart methodPart, ApplicabilityContext context) {
+            var testResult = methodPart != null;
             if (testResult) {
                 // prepare tokens
                 Dictionary<string, object> tokens = new Dictionary<string, object>();
@@ -80,6 +87,32 @@ namespace Nwazet.Commerce.Services {
                 }
             }
             return testResult;
+        }
+
+        public void DeleteAllCriteria(int methodId) {
+            // get the method
+            var methodPart = _contentManager.Get<FlexibleShippingMethodPart>(methodId);
+            DeleteAllCriteria(methodPart);
+        }
+
+        private void DeleteAllCriteria(FlexibleShippingMethodPart methodPart) {
+            if (methodPart != null) {
+                foreach (var criterion in methodPart.ApplicabilityCriteria) {
+                    DeleteCriterion(criterion);
+                }
+            }
+        }
+
+        public void DeleteCriterion(int criterionId) {
+            var record = _criteriaRepository.Get(criterionId);
+            if (record != null) {
+                DeleteCriterion(record);
+            }
+        }
+
+        private void DeleteCriterion(ApplicabilityCriterionRecord record) {
+            record.FlexibleShippingMethodRecord.ApplicabilityCriteria.Remove(record);
+            _criteriaRepository.Delete(record);
         }
     }
 }

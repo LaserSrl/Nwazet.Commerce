@@ -17,6 +17,12 @@ namespace Nwazet.Commerce.Models {
         public virtual string ExcludedShippingAreas { get; set; }
         public virtual decimal DefaultPrice { get; set; }
 
+        // Since this is a ContentPartRecord it does not get deleted from the db when the
+        // ContentItem it belongs to is deleted. Thus, the CascadeAllDeleteOrphan attribute
+        // will not cause child criteria to be deleted there. They would have to be deleted
+        // explicitly. In keeping with the approaches used in Orchard.Projections, the child
+        // records will not be deleted when the ContentItem is removed.
+        // It is required anyway to allow saving the children records.
         [CascadeAllDeleteOrphan, Aggregate]
         [XmlArray("ApplicabilityCriteria")]
         public virtual IList<ApplicabilityCriterionRecord> ApplicabilityCriteria { get; set; }

@@ -76,8 +76,7 @@ namespace Nwazet.Commerce.Controllers {
             // bind form with existing values.
             if (criterionId != -1) {
                 // get the shipping method
-                var ci = _contentManager.Get(id);
-                var part = ci.As<FlexibleShippingMethodPart>();
+                var part = _contentManager.Get<FlexibleShippingMethodPart>(id);
                 if (part == null) {
                     // weird error condition
                     return HttpNotFound();
@@ -171,6 +170,36 @@ namespace Nwazet.Commerce.Controllers {
                 Form = form };
 
             return View(viewModel);
+        }
+
+        [HttpPost]
+        public ActionResult Delete(int id, int criterionId) {
+            if (!_authorizer.Authorize(
+                CommercePermissions.ManageShipping,
+                T("Not authorized to manage shipping methods"))) {
+                return new HttpUnauthorizedResult();
+            }
+
+            // get the shipping method
+            var ci = _contentManager.Get(id);
+            var part = ci.As<FlexibleShippingMethodPart>();
+            if (part == null) {
+                // weird error condition
+                return HttpNotFound();
+            }
+            if (criterionId != -1) {
+                var critRecord = part
+                    .ApplicabilityCriteria
+                    .FirstOrDefault(ac => ac.Id == criterionId);
+                if (critRecord == null) {
+                    // weird error condition
+                    return HttpNotFound();
+                }
+                // actually delete
+                _flexibleShippingManager.DeleteCriterion(criterionId);
+            }
+
+            return RedirectToAction("Edit", _contentManager.GetItemMetadata(ci).EditorRouteValues);
         }
     }
 }
