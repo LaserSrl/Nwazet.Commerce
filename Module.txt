@@ -112,7 +112,7 @@ Features:
 	Nwazet.BaseTaxImplementations:
 		Name: Nwazet Base Tax Implementations
 		Description: Basic tax configuration options
-        Category: Commerce
+		Category: Commerce
 		Dependencies: Nwazet.Taxes
 	Nwazet.AdvancedVAT:
 		Name: Nwazet Advanced VAT or Sales Tax
@@ -122,10 +122,10 @@ Features:
 	Nwazet.BaseShippingImplementations:
 		Name: Nwazet Base Shipping Implementations
 		Description: Basic shipping configuration options
-        Category: Commerce
+		Category: Commerce
 		Dependencies: Nwazet.Shipping
 	Nwazet.FlexibleShippingImplementations:
 		Name: Nwazet Flexible Shipping Implementations
 		Description: Faceted configuration options for shipping
-        Category: Commerce
+		Category: Commerce
 		Dependencies: Nwazet.Shipping, Orchard.Forms
