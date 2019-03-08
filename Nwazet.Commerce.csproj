@@ -214,6 +214,8 @@
     <Compile Include="Activities\OrderActivity.cs" />
     <Compile Include="ApplicabilityCriteria\ApplicabilityContext.cs" />
     <Compile Include="ApplicabilityCriteria\CartSubTotalCriteria.cs" />
+    <Compile Include="ApplicabilityCriteria\CartWeightCriteria.cs" />
+    <Compile Include="ApplicabilityCriteria\NumericCriterionBase.cs" />
     <Compile Include="Commands\TerritoriesCommands.cs" />
     <Compile Include="Controllers\ECommerceSettingsAdminController.cs" />
     <Compile Include="Controllers\FlexibleShippingCriterionController.cs" />
