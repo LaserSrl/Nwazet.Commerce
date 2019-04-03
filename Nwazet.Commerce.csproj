@@ -453,6 +453,7 @@
     <Compile Include="Reports\BestSellingProductsReport.cs" />
     <Compile Include="Reports\TotalSalesReport.cs" />
     <Compile Include="Reports\NumberOfSalesReport.cs" />
+    <Compile Include="ResourceManifest.cs" />
     <Compile Include="Routes\UspsRoutes.cs" />
     <Compile Include="Routes\StripeRoutes.cs" />
     <Compile Include="Routes\OrderRoutes.cs" />
