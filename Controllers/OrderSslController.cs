@@ -13,6 +13,9 @@ using Orchard.Mvc;
 using Orchard.Themes;
 using Orchard.UI.Notify;
 using System.Collections.Generic;
+using Orchard.UI.Navigation;
+using Orchard.Settings;
+using Orchard.Core.Common.Models;
 
 namespace Nwazet.Commerce.Controllers {
     [Themed]
@@ -28,6 +31,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IOrchardServices _orchardServices;
         private readonly ICurrencyProvider _currencyProvider;
         private readonly IEnumerable<ICartLifeCycleEventHandler> _cartLifeCycleEventHandlers;
+        private readonly ISiteService _siteService;
 
         public OrderSslController(
             IOrderService orderService,
@@ -39,7 +43,8 @@ namespace Nwazet.Commerce.Controllers {
             IShoppingCart shoppingCart,
             IOrchardServices orchardServices,
             ICurrencyProvider currencyProvider,
-            IEnumerable<ICartLifeCycleEventHandler> cartLifeCycleEventHandlers) {
+            IEnumerable<ICartLifeCycleEventHandler> cartLifeCycleEventHandlers,
+            ISiteService siteService) {
 
             _orderService = orderService;
             _contentManager = contentManager;
@@ -53,6 +58,7 @@ namespace Nwazet.Commerce.Controllers {
             _orchardServices = orchardServices;
             _currencyProvider = currencyProvider;
             _cartLifeCycleEventHandlers = cartLifeCycleEventHandlers;
+            _siteService = siteService;
         }
 
         public Localizer T { get; set; }
@@ -63,7 +69,7 @@ namespace Nwazet.Commerce.Controllers {
                 return HttpNotFound();
             }
             var orderId = TempData["OrderId"];
-            var order = _contentManager.Get<OrderPart>((int) orderId);
+            var order = _contentManager.Get<OrderPart>((int)orderId);
             var billingAddress = _addressFormatter.Format(order.BillingAddress);
             var shippingAddress = _addressFormatter.Format(order.ShippingAddress);
             var items = order.Items.ToList();
@@ -104,7 +110,6 @@ namespace Nwazet.Commerce.Controllers {
             if (id <= 0) {
                 return HttpNotFound();
             }
-            
 
             if (TempData.ContainsKey("OrderId")) {
                 return Confirmation();
@@ -113,13 +118,12 @@ namespace Nwazet.Commerce.Controllers {
             var order = _contentManager.Get<OrderPart>(id);
             if (order == null) {
                 return HttpNotFound();
-            }            
+            }
 
             var currentUser = _wca.GetContext().CurrentUser;
             bool isOwnOrder = currentUser == order.User;
 
-            if (isOwnOrder)
-            {                
+            if (isOwnOrder) {
                 if (!_orchardServices.Authorizer.Authorize(OrderPermissions.ViewOwnOrders, order,
                     T("User does not have ViewOwnOrders permission"))) {
                     return new HttpUnauthorizedResult();
@@ -129,24 +133,48 @@ namespace Nwazet.Commerce.Controllers {
                 return Confirmation();
             }
 
-
-            if (!String.IsNullOrWhiteSpace(password)) {
-                
+            if (!string.IsNullOrWhiteSpace(password)) {
                 if (!password.EndsWith("=")) {
                     password += "=";
                 }
                 if (password != order.Password) {
                     _notifier.Error(T("Wrong password"));
-                }
-                else {
+                } else {
                     TempData["OrderId"] = id;
                     return Confirmation();
                 }
-                
             }
-            return new ShapeResult(this, _shapeFactory.Order_CheckPassword(
-                OrderId: id));
-            
+            return new ShapeResult(this,
+                _shapeFactory.Order_CheckPassword(
+                    OrderId: id));
+        }
+
+        [OutputCache(NoStore = true, Duration = 0), Authorize]
+        public ActionResult OrderHistory(PagerParameters pagerParameters) {
+            var user = _wca.GetContext().CurrentUser;
+            if (user == null) {
+                // we should never be here, because the AuthorizeAttribute should
+                // take care of anonymous users.
+                return new HttpUnauthorizedResult(T("Sign In to visualize your order history.").Text);
+            }
+
+            // get the page of the order history for the user.
+            var pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
+            var query = _contentManager
+                .Query<OrderPart, OrderPartRecord>()
+                .Where(o => o.UserId == user.Id)
+                .Join<CommonPartRecord>()
+                .OrderByDescending(cpr => cpr.CreatedUtc);
+
+            var pagerShape = _shapeFactory.Pager(pager).TotalItemCount(query.Count());
+            var pageOfContentItems = query.Slice(pager.GetStartIndex(), pager.PageSize).ToList();
+            var list = _shapeFactory.List();
+            list.AddRange(pageOfContentItems
+                .Select(ci => _contentManager.BuildDisplay(ci, "Summary")));
+
+            return View((object)_shapeFactory.ViewModel()
+                .ContentItems(list)
+                .Pager(pagerShape));
         }
     }
 }
