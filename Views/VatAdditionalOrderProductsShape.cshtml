@@ -1,3 +1,18 @@
-﻿<div class="vat-due">
-    @T("The total VAT due for this order is {0} from a taxable amount of {1}", Model.TaxDue, Model.TaxableAmount)
-</div>
+﻿<table class="vat-due">
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@T("Total VAT due")</td>
+            <td class="price">@Model.TaxDue</td>
+        </tr>
+        <tr>
+            <td>@T("Taxable amount")</td>
+            <td class="price">@Model.TaxableAmount</td>
+        </tr>
+    </tbody>
+</table>
