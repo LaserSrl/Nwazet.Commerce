@@ -24,19 +24,25 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IWorkContextAccessor _wca;
         private readonly IWorkflowManager _workflowManager;
         private readonly INotifier _notifier;
+        private readonly IEnumerable<ICartLifeCycleEventHandler> _cartLifeCycleEventHandlers;
+        private readonly IShoppingCart _shoppingCart;
 
         public StripeController(
             IStripeService stripeService,
             IOrderService orderService,
             IWorkContextAccessor wca,
             IWorkflowManager workflowManager,
-            INotifier notifier) {
+            INotifier notifier,
+            IEnumerable<ICartLifeCycleEventHandler> cartLifeCycleEventHandlers,
+            IShoppingCart shoppingCart) {
 
             _stripeService = stripeService;
             _orderService = orderService;
             _wca = wca;
             _workflowManager = workflowManager;
             _notifier = notifier;
+            _cartLifeCycleEventHandlers = cartLifeCycleEventHandlers;
+            _shoppingCart = shoppingCart;
 
             Logger = NullLogger.Instance;
             T = NullLocalizer.Instance;
@@ -160,6 +166,11 @@ namespace Nwazet.Commerce.Controllers {
                     {"Content", order},
                     {"Order", order}
                 });
+            // call handlers to manage the cart
+            foreach (var handler in _cartLifeCycleEventHandlers) {
+                handler.Finalized();
+            }
+            _shoppingCart.Clear();
             order.LogActivity(OrderPart.Event, T("Order created.").Text);
             // Clear checkout info from temp data
             TempData.Remove(NwazetStripeCheckout);
