@@ -18,7 +18,9 @@ using System.Xml.Linq;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Nwazet.AdvancedVAT")]
-    public class VatOrderAdditionalInformationProvider : BaseOrderAdditionalInformationProvider {
+    public class VatOrderAdditionalInformationProvider : 
+        BaseOrderAdditionalInformationProvider,
+        IOrderFrontEndAdditionalInformationProvider {
 
         private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
         private readonly IVatConfigurationService _vatConfigurationService;
