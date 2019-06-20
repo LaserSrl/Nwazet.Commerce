@@ -1,4 +1,5 @@
 ﻿using Orchard.ContentManagement.MetaData;
+using Orchard.Core.Contents.Extensions;
 using Orchard.Data.Migration;
 using Orchard.Environment.Extensions;
 
@@ -68,5 +69,14 @@ namespace Nwazet.Commerce.Migrations {
             return 1;
         }
 
+        public int UpdateFrom1() {
+            // make ProductVatConfigurationPart attachable
+            // This should be attached with care.
+            ContentDefinitionManager.AlterPartDefinition("ProductVatConfigurationPart",
+              builder => builder
+                .Attachable()
+                .WithDescription("This part provides a way to associate a VAT Configuration to ContentItems. Use this with care."));
+            return 2;
+        }
     }
 }

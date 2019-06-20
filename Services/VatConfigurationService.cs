@@ -94,7 +94,28 @@ namespace Nwazet.Commerce.Services {
                 // No vat configuration exists
                 return 0;
             }
+            return GetRate(vatConfig, destination);
+        }
 
+        public decimal GetRate(VatConfigurationPart vatConfig) {
+            if (Settings.DefaultTerritoryForVatId == 0) {
+                // Do not add tax for front end, i.e. the price shown on front end is "before tax"
+                return 0;
+            }
+
+            var defaultTerritory = _territoriesRepositoryService
+                .GetTerritoryInternal(Settings.DefaultTerritoryForVatId);
+
+            if (defaultTerritory == null) {
+                // This is an error condition that may be caused by setting a territory as default, and
+                // then deleting the territory without updating the configuration.
+                return 0;
+            }
+
+            return GetRate(vatConfig, defaultTerritory);
+        }
+
+        public decimal GetRate(VatConfigurationPart vatConfig, TerritoryInternalRecord destination) {
             var hierarchyConfigs = vatConfig
                 .Hierarchies
                 ?.Where(tup => {

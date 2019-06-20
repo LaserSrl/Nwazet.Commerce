@@ -27,7 +27,10 @@ namespace Nwazet.Commerce.Models {
             get { return Retrieve(r => r.ExcludedShippingAreas); }
             set { Store(r => r.ExcludedShippingAreas, value); }
         }
-
+        /// <summary>
+        /// In cases where VAT or similar taxes are applied on shipping, this is the
+        /// price before tax.
+        /// </summary>
         public decimal DefaultPrice {
             get { return Retrieve(r => r.DefaultPrice); }
             set { Store(r => r.DefaultPrice, value); }
@@ -56,8 +59,22 @@ namespace Nwazet.Commerce.Models {
                         country,
                         zipCode
                     ))) {
+                    var price = DefaultPrice;
                     // TODO: make price the result of something?
-                    yield return GetOption();
+                    var baseVatConfig = this.As<ProductVatConfigurationPart>();
+                    IVatConfigurationService vatConfigurationService;
+                    if (baseVatConfig != null
+                        && workContext.TryResolve(out vatConfigurationService)) {
+                        // a ProductVatConfigurationPart has been attached to this part that is
+                        // used to configure shipping. This tells us 2 things:
+                        // 1. The AdvancedVAT feature is active.
+                        // 2. We want to configure VAT for this shipping.
+                        var vatConfig = baseVatConfig.VatConfigurationPart
+                            ?? vatConfigurationService.GetDefaultCategory();
+                        var rate = vatConfigurationService.GetRate(vatConfig);
+                        price = price * (1.0m + rate);
+                    }
+                    yield return GetOption(price);
                 }
             }
 
@@ -68,6 +85,7 @@ namespace Nwazet.Commerce.Models {
             return new ShippingOption {
                 Description = Name,
                 Price = price,
+                ShippingCompany = ShippingCompany,
                 IncludedShippingAreas =
                     IncludedShippingAreas == null
                         ? new string[] { }
@@ -75,23 +93,13 @@ namespace Nwazet.Commerce.Models {
                 ExcludedShippingAreas =
                     ExcludedShippingAreas == null
                         ? new string[] { }
-                        : ExcludedShippingAreas.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        : ExcludedShippingAreas.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
+                ShippingMethod = this
             };
         }
 
         private ShippingOption GetOption() {
-            return new ShippingOption {
-                Description = Name,
-                Price = DefaultPrice,
-                IncludedShippingAreas =
-                    IncludedShippingAreas == null
-                        ? new string[] { }
-                        : IncludedShippingAreas.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
-                ExcludedShippingAreas =
-                    ExcludedShippingAreas == null
-                        ? new string[] { }
-                        : ExcludedShippingAreas.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-            };
+            return GetOption(DefaultPrice);
         }
     }
 }

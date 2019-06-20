@@ -13,6 +13,7 @@
     @Html.TextBox("ShippingCompany", method.ShippingCompany, new { @class = "text" })<br />
     <label class="sub" for="@Html.Id("DefaultPrice")">@T("Price")</label><br />
     @Html.TextBox("DefaultPrice", method.DefaultPrice, new { @class = "text" })<br />
+    <span class="hint">@T("The base price for shipping. In cases where VAT or similar taxes are applied on shipping, this is the price before tax.")</span><br />
     <label class="sub" for="@Html.Id("IncludedShippingAreas")">@T("Areas for which this method is valid:")</label><br />
     @foreach (var area in shippingAreas) {
         <input type="checkbox" name="@(Model.Prefix + ".IncludedShippingAreas")" @(includedAreas.Contains(area.Id) ? " checked=\"checked\"" : "") id="@(Model.Prefix + "_included_" + area.Id)" value="@area.Id" />

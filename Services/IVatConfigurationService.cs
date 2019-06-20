@@ -48,6 +48,21 @@ namespace Nwazet.Commerce.Services {
         decimal GetRate(ProductPart part, TerritoryInternalRecord destination);
 
         /// <summary>
+        /// Find the VAT rate a given configuration would apply in the default destination territory.
+        /// </summary>
+        /// <param name="vatConfig">An object describing the VAT configuration.</param>
+        /// <returns>The rate computed for the default destination.</returns>
+        decimal GetRate(VatConfigurationPart vatConfig);
+
+        /// <summary>
+        /// Find the VAT rate a given configuration would apply in a given territory.
+        /// </summary>
+        /// <param name="vatConfig">An object describing the VAT configuration.</param>
+        /// <param name="destination">An object describing the destination.</param>
+        /// <returns>The rate computed for the destination.</returns>
+        decimal GetRate(VatConfigurationPart vatConfig, TerritoryInternalRecord destination);
+
+        /// <summary>
         /// Get the default destination configured for the purpose of VAT computations.
         /// </summary>
         /// <returns>Returns the territory selected as default destination, or null if none is selected.</returns>
