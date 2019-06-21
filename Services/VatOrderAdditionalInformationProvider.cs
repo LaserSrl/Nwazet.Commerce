@@ -189,7 +189,10 @@ namespace Nwazet.Commerce.Services {
 
             yield return _shapeFactory.VatAdditionalOrderProductsShape(
                 TaxDue: currency.PriceAsString(vatDue, cultureInUse),
-                TaxableAmount: currency.PriceAsString(taxable, cultureInUse)
+                TaxableAmount: currency.PriceAsString(taxable, cultureInUse),
+                // Also provide the decimal values incase something fancy needs to be done
+                TaxValue: vatDue,
+                TaxableValue: taxable
                 );
         }
 

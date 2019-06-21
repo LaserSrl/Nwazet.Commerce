@@ -97,7 +97,8 @@ namespace Nwazet.Commerce.Models {
                     ExcludedShippingAreas == null
                         ? new string[] { }
                         : ExcludedShippingAreas.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
-                ShippingMethodId = this.Id
+                ShippingMethodId = this.Id,
+                DefaultPrice = DefaultPrice
             };
         }
 

@@ -16,6 +16,11 @@ namespace Nwazet.Commerce.Models {
         /// additional stuff at all stages.
         /// </summary>
         public int ShippingMethodId { get; set; }
+        /// <summary>
+        /// Adding this value allows us to store information for those cases where VAT
+        /// computations were involved.
+        /// </summary>
+        public decimal DefaultPrice { get; set; }
 
         public override string ToString() {
             return Description + ": $" + Price.ToString("F2");
