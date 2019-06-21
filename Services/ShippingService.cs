@@ -34,7 +34,8 @@ namespace Nwazet.Commerce.Services {
                                           "\nIncluded:" + String.Join(",", shippingOption.IncludedShippingAreas ?? new string[0]) +
                                           "\nExcluded:" + String.Join(",", shippingOption.ExcludedShippingAreas ?? new string[0]) +
                                           "\nPrice:" + shippingOption.Price +
-                                          "\nShippingMethodId:" + shippingOption.ShippingMethodId);
+                                          "\nShippingMethodId:" + shippingOption.ShippingMethodId +
+                                          "\nDefaultPrice:" + shippingOption.DefaultPrice);
                     shippingOption.FormValue = Convert.ToBase64String(MachineKey.Protect(binaryValue, EncryptionPurpose));
                     if (!alreadyFound.Contains(shippingOption)) {
                         alreadyFound.Add(shippingOption);
@@ -56,7 +57,8 @@ namespace Nwazet.Commerce.Services {
                 IncludedShippingAreas = properties[2].Substring(9).Split(','),
                 ExcludedShippingAreas = properties[3].Substring(9).Split(','),
                 Price = decimal.Parse(properties[4].Substring(6)),
-                ShippingMethodId = int.Parse(properties[5].Substring(17))
+                ShippingMethodId = int.Parse(properties[5].Substring(17)),
+                DefaultPrice = decimal.Parse(properties[6].Substring(13))
             };
             return shippingOption;
         }
