@@ -111,7 +111,8 @@ namespace Nwazet.Commerce.Models {
                 .AddEl(new XElement(ShippingName).With(shippingOption)
                     .ToAttr(s => s.Description)
                     .ToAttr(s => s.ShippingCompany)
-                    .ToAttr(s => s.Price)                    
+                    .ToAttr(s => s.Price)  
+                    .ToAttr(s => s.ShippingMethodId)
                     .Element);
 
             var shippingAddressElement = Address.Set(new XElement(ShippingAddressName), shippingAddress);
@@ -270,6 +271,7 @@ namespace Nwazet.Commerce.Models {
                     .FromAttr(s => s.Description)
                     .FromAttr(s => s.ShippingCompany)
                     .FromAttr(s => s.Price)
+                    .FromAttr(s => s.ShippingMethodId)
                     .Context;
             }
         }

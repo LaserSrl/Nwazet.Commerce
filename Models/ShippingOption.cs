@@ -15,7 +15,7 @@ namespace Nwazet.Commerce.Models {
         /// more flexible, because IShippingMethod implementations may be used to provide
         /// additional stuff at all stages.
         /// </summary>
-        public IShippingMethod ShippingMethod { get; set; }
+        public int ShippingMethodId { get; set; }
 
         public override string ToString() {
             return Description + ": $" + Price.ToString("F2");

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Nwazet.Commerce.Services;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.FieldStorage.InfosetStorage;
 using Orchard.ContentManagement.Utilities;
@@ -129,12 +130,23 @@ namespace Nwazet.Commerce.Models {
                     }
                 }
                 shipElement.SetAttributeValue("FormValue", shippingOption.FormValue ?? "");
+                shipElement.SetAttributeValue("ShippingMethodId", shippingOption.ShippingMethodId);
             }
         }
 
         private ShippingOption RetrieveShippingOption() {
             var partElement = GetInfosetElement();
             var shipElement = GetSubElement(partElement, "ShippingOption");
+            int methodId = 0;
+            if (shipElement.Attribute("ShippingMethodId") != null) {
+                var method = (IShippingMethod)null;
+                if (int.TryParse(shipElement.Attribute("ShippingMethodId").Value, out methodId) && methodId > 0) {
+                    method = (IShippingMethod)this.ContentItem.ContentManager.Get(methodId);
+                    if (method == null) {
+                        methodId = 0;
+                    }
+                }
+            }
             return shipElement.Attributes().Any() ? new ShippingOption() {
                 Price = (decimal)(shipElement.Attribute("Price")),
                 Description = shipElement.Attribute("Description").Value,
@@ -143,7 +155,8 @@ namespace Nwazet.Commerce.Models {
                     shipElement.Element("IncludedShippingAreas").Elements("Area").Select(el => el.Value),
                 ExcludedShippingAreas = shipElement.Element("ExcludedShippingAreas") == null ? new List<string>() :
                     shipElement.Element("ExcludedShippingAreas").Elements("Area").Select(el => el.Value),
-                FormValue = shipElement.Attribute("FormValue").Value
+                FormValue = shipElement.Attribute("FormValue").Value,
+                ShippingMethodId = methodId
             } : null;
         }
 

@@ -69,6 +69,9 @@ namespace Nwazet.Commerce.Models {
                         // used to configure shipping. This tells us 2 things:
                         // 1. The AdvancedVAT feature is active.
                         // 2. We want to configure VAT for this shipping.
+                        // Using this part for this here is kind of an hack. We really would like to have
+                        // a  more coherent system in place.
+                        // TODO: fix this hack without breaking anything.
                         var vatConfig = baseVatConfig.VatConfigurationPart
                             ?? vatConfigurationService.GetDefaultCategory();
                         var rate = vatConfigurationService.GetRate(vatConfig);
@@ -94,7 +97,7 @@ namespace Nwazet.Commerce.Models {
                     ExcludedShippingAreas == null
                         ? new string[] { }
                         : ExcludedShippingAreas.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
-                ShippingMethod = this
+                ShippingMethodId = this.Id
             };
         }
 
