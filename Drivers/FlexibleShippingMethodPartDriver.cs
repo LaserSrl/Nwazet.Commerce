@@ -4,10 +4,12 @@ using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
+using Orchard.ContentManagement.Handlers;
 using Orchard.Environment.Extensions;
 using Orchard.Forms.Services;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.FlexibleShippingImplementations")]
@@ -15,13 +17,16 @@ namespace Nwazet.Commerce.Drivers {
 
         private readonly IEnumerable<IShippingAreaProvider> _shippingAreaProviders;
         private readonly IFlexibleShippingManager _flexibleShippingManager;
+        private readonly IFormManager _formManager;
 
         public FlexibleShippingMethodPartDriver(
             IEnumerable<IShippingAreaProvider> shippingAreaProviders,
-            IFlexibleShippingManager flexibleShippingManager) {
+            IFlexibleShippingManager flexibleShippingManager,
+            IFormManager formManager) {
 
             _shippingAreaProviders = shippingAreaProviders;
             _flexibleShippingManager = flexibleShippingManager;
+            _formManager = formManager;
         }
 
         protected override string Prefix {
@@ -104,6 +109,66 @@ namespace Nwazet.Commerce.Drivers {
                 ? ""
                 : string.Join(",", dyn.ExcludedShippingAreas);
             return Editor(part, shapeHelper);
+        }
+
+        protected override void Exporting(FlexibleShippingMethodPart part, ExportContentContext context) {
+            var element = context.Element(part.PartDefinition.Name);
+            element
+                .With(part)
+                .ToAttr(p => p.Name)
+                .ToAttr(p => p.ShippingCompany)
+                .ToAttr(p => p.IncludedShippingAreas)
+                .ToAttr(p => p.ExcludedShippingAreas)
+                .ToAttr(p => p.DefaultPrice);
+            // ApplicabilityCriteria
+            if (part.ApplicabilityCriteria != null && part.ApplicabilityCriteria.Any()) {
+                element.Add(new XElement("ApplicabilityCriteria",
+                    part.ApplicabilityCriteria.Select(criterion => {
+                        return new XElement("Criterion",
+                            new XAttribute("Category", criterion.Category),
+                            new XAttribute("Description", criterion.Description),
+                            new XAttribute("Type", criterion.Type),
+                            new XAttribute("State", criterion.State));
+                    })));
+            }
+        }
+
+        protected override void Importing(FlexibleShippingMethodPart part, ImportContentContext context) {
+            var element = context.Data.Element(part.PartDefinition.Name);
+            if (element == null) {
+                return;
+            }
+            element
+               .With(part)
+               .FromAttr(p => p.Name)
+               .FromAttr(p => p.ShippingCompany)
+               .FromAttr(p => p.IncludedShippingAreas)
+               .FromAttr(p => p.ExcludedShippingAreas)
+               .FromAttr(p => p.DefaultPrice);
+            // ApplicabilityCriteria
+            part.Record.ApplicabilityCriteria.Clear();
+            foreach (var item in element
+                .Element("ApplicabilityCriteria")
+                .Elements("Criterion")
+                .Select(criterion => {
+                    var category = criterion.Attribute("Category").Value;
+                    var description = criterion.Attribute("Description").Value;
+                    var type = criterion.Attribute("Type").Value;
+                    var state = criterion.Attribute("State").Value;
+                    var descriptor = _flexibleShippingManager
+                        .GetCriteria(category, type);
+                    if (descriptor != null) {
+                        state = _formManager.Import(descriptor.Form, state, context);
+                    }
+                    return new ApplicabilityCriterionRecord {
+                        Category = category,
+                        Description = description,
+                        Type = type,
+                        State = state
+                    };
+                })) {
+                part.Record.ApplicabilityCriteria.Add(item);
+            }
         }
     }
 }
