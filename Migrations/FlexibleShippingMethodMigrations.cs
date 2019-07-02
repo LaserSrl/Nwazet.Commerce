@@ -43,5 +43,11 @@ namespace Nwazet.Commerce.Migrations {
 
             return 2;
         }
+
+        public int UpdateFrom2() {
+            ContentDefinitionManager.AlterTypeDefinition("FlexibleShippingMethod", cfg => cfg
+                .WithIdentity());
+            return 3;
+        }
     }
 }

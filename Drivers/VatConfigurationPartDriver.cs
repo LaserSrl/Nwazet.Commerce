@@ -4,6 +4,7 @@ using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
+using Orchard.ContentManagement.Handlers;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Security;
@@ -156,5 +157,25 @@ namespace Nwazet.Commerce.Drivers {
             public string Territory { get; set; }
         }
 
+        protected override void Exporting(VatConfigurationPart part, ExportContentContext context) {
+            var element = context.Element(part.PartDefinition.Name);
+            element
+                .With(part)
+                .ToAttr(p => p.Priority)
+                .ToAttr(p => p.TaxProductCategory)
+                .ToAttr(p => p.DefaultRate);
+        }
+
+        protected override void Importing(VatConfigurationPart part, ImportContentContext context) {
+            var element = context.Data.Element(part.PartDefinition.Name);
+            if (element == null) {
+                return;
+            }
+            element
+               .With(part)
+               .FromAttr(p => p.Priority)
+               .FromAttr(p => p.TaxProductCategory)
+               .FromAttr(p => p.DefaultRate);
+        }
     }
 }

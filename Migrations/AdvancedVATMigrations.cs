@@ -78,5 +78,11 @@ namespace Nwazet.Commerce.Migrations {
                 .WithDescription("This part provides a way to associate a VAT Configuration to ContentItems. Use this with care."));
             return 2;
         }
+
+        public int UpdateFrom2() {
+            ContentDefinitionManager.AlterTypeDefinition("VATConfiguration", cfg => cfg
+                .WithIdentity());
+            return 3;
+        }
     }
 }
