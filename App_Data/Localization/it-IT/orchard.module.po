@@ -1609,7 +1609,7 @@ msgid "Add to cart"
 msgstr "Aggiungi al carrello"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.AddToWishlistButton.cshtml"
-msgid "Add to wishlist"
+msgid "Add to WishList"
 msgstr "Aggiungi alla lista dei desideri"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.AddToWishlistButton.cshtml"
@@ -4037,7 +4037,7 @@ msgid "Shipping Option"
 msgstr "Opzione di spedizione"
 
 msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
-msgid "Special instructions"
+msgid "Special Instructions"
 msgstr "Istruzioni speciali"
 
 msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
