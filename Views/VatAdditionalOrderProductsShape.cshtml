@@ -1,4 +1,5 @@
-﻿<table class="vat-due">
+﻿@using System.Globalization;
+<table class="vat-due">
     <thead>
         <tr>
             <th></th>
@@ -8,11 +9,19 @@
     <tbody>
         <tr>
             <td>@T("Total VAT due")</td>
-            <td class="price">@Model.TaxDue</td>
+            <td class="price">
+                @Model.Currency.PriceAsString(
+                    Model.TaxValue + Model.ShippingTaxValue,
+                    (CultureInfo)Model.CultureInUse)
+            </td>
         </tr>
         <tr>
             <td>@T("Taxable amount")</td>
-            <td class="price">@Model.TaxableAmount</td>
+            <td class="price">
+                @Model.Currency.PriceAsString(
+                    Model.TaxableValue + Model.ShippingTaxableValue,
+                    (CultureInfo)Model.CultureInUse)
+            </td>
         </tr>
     </tbody>
 </table>

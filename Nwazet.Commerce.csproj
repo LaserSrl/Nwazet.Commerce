@@ -177,6 +177,10 @@
     <Content Include="Styles\order-admin.min.css">
       <DependentUpon>order-admin.less</DependentUpon>
     </Content>
+    <None Include="compilerconfig.json" />
+    <None Include="compilerconfig.json.defaults">
+      <DependentUpon>compilerconfig.json</DependentUpon>
+    </None>
     <None Include="packages.config" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />

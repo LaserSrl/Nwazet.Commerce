@@ -93,6 +93,22 @@ namespace Nwazet.Commerce.Services {
                         });
                 }).ToDictionary(tup => tup.Item1, tup => tup.Item2);
 
+            // add Vat infor related to shipping, if it's even there
+            if (orderPart.ShippingOption != null) {
+                var shippingVatPart = _contentManager.Get<ProductVatConfigurationPart>(orderPart.ShippingOption.ShippingMethodId);
+                if (shippingVatPart != null) {
+                    // shipping has a VAT configured
+                    var vatConfig = shippingVatPart.VatConfigurationPart
+                            ?? _vatConfigurationService.GetDefaultCategory();
+                    data.Add(
+                        orderPart.ShippingOption.ShippingMethodId, // we reserve this Id for shipping
+                        new RateAndPrice {
+                            Rate = _vatConfigurationService.GetRate(vatConfig),
+                            PriceBeforeTax = orderPart.ShippingOption.DefaultPrice
+                        });
+                }
+            }
+
             // Now store
             StoreInfo(orderPart, SerializeInformationDictionary(data));
         }
@@ -184,15 +200,30 @@ namespace Nwazet.Commerce.Services {
                     ? data[checkoutItem.ProductId].PriceBeforeTax * checkoutItem.Quantity
                     : 0m);
 
+            //add shipping
+            var shippingTax = 0.0m;
+            var shippingTaxable = 0.0m;
+            if (orderPart.ShippingOption != null) {
+                if (data.ContainsKey(orderPart.ShippingOption.ShippingMethodId)) {
+                    var rateAndPrice = data[orderPart.ShippingOption.ShippingMethodId];
+                    shippingTax += TaxDue(rateAndPrice);
+                    shippingTaxable += rateAndPrice.PriceBeforeTax;
+                }
+            }
+
             var currency = Currency.Currencies[orderPart.CurrencyCode];
             var cultureInUse = CultureInfo.GetCultureInfo(_workContextAccessor.GetContext().CurrentCulture);
 
             yield return _shapeFactory.VatAdditionalOrderProductsShape(
                 TaxDue: currency.PriceAsString(vatDue, cultureInUse),
                 TaxableAmount: currency.PriceAsString(taxable, cultureInUse),
-                // Also provide the decimal values incase something fancy needs to be done
+                // provide all details to rebuild the strings.
+                Currency: currency,
+                CultureInUse: cultureInUse,
                 TaxValue: vatDue,
-                TaxableValue: taxable
+                TaxableValue: taxable,
+                ShippingTaxValue: shippingTax,
+                ShippingTaxableValue: shippingTaxable
                 );
         }
 
