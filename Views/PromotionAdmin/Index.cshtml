@@ -6,7 +6,7 @@
 	if(!pageSizes.Contains(defaultPageSize)) { 
 		pageSizes.Add(defaultPageSize);
 	}
-    var returnUrl = ViewContext.RequestContext.HttpContext.Request.ToUrlString();
+    var returnUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl;
 }
 
 <h1>@Html.TitleForPage(T("Manage Promotions").Text) </h1>

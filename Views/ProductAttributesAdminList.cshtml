@@ -2,7 +2,7 @@
 @using Nwazet.Commerce.Models
 @{
     IEnumerable<ProductAttributePart> attributes = (IEnumerable<ProductAttributePart>)(Model.ProductAttributes);
-    var returnUrl = ViewContext.RequestContext.HttpContext.Request.ToUrlString();
+    var returnUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl;
 }
 
 <table class="items">

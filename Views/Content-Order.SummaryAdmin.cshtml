@@ -4,7 +4,7 @@
 @{
     ContentItem contentItem = Model.ContentItem;
     var order = contentItem.As<OrderPart>();
-    var returnUrl = ViewContext.RequestContext.HttpContext.Request.ToUrlString();
+    var returnUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl;
 
 
     var hasManageOrderPermission = Authorizer.Authorize(Nwazet.Commerce.Permissions.OrderPermissions.ManageOrders);
