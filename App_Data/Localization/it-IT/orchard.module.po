@@ -449,6 +449,14 @@ msgid "Add"
 msgstr "Aggiungi"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
+msgid "Address 1"
+msgstr "Indirizzo 1"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
+msgid "Address 2"
+msgstr "Indirizzo 2"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "Adjustment"
 msgstr "Correzione"
 
@@ -477,6 +485,18 @@ msgid "Charged to:"
 msgstr "Addebitato a:"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
+msgid "City"
+msgstr "Città"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
+msgid "Company"
+msgstr "Azienda"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
+msgid "Country"
+msgstr "Stato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "Edit"
 msgstr "Modifica"
 
@@ -485,8 +505,20 @@ msgid "E-mail:"
 msgstr "E-mail:"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
+msgid "First Name"
+msgstr "Nome"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
+msgid "Honorific"
+msgstr "Onorifico"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "ID: {0}"
 msgstr "ID: {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
+msgid "Last Name"
+msgstr "Cognome"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "Order Username:"
@@ -509,6 +541,10 @@ msgid "Phone:"
 msgstr "Telefono:"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
+msgid "Postal code"
+msgstr "CAP"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "Price"
 msgstr "Prezzo"
 
@@ -519,6 +555,10 @@ msgstr "Prodotto"
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "Products:"
 msgstr "Prodotti:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
+msgid "Province or State"
+msgstr "Provincia o Stato"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "Purchase order:"
@@ -1609,7 +1649,7 @@ msgid "Add to cart"
 msgstr "Aggiungi al carrello"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.AddToWishlistButton.cshtml"
-msgid "Add to WishList"
+msgid "Add to wishlist"
 msgstr "Aggiungi alla lista dei desideri"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.AddToWishlistButton.cshtml"
@@ -4037,7 +4077,7 @@ msgid "Shipping Option"
 msgstr "Opzione di spedizione"
 
 msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
-msgid "Special Instructions"
+msgid "Special instructions"
 msgstr "Istruzioni speciali"
 
 msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
