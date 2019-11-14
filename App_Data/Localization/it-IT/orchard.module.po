@@ -745,6 +745,10 @@ msgid "Price Adjustment"
 msgstr "Aggiustamento di prezzo"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
+msgid "Price Adjustment is the amount the price will be adjusted for each item that has the attribute selected. Use negative adjustments to reduce the price."
+msgstr "L'Aggiustamento di Prezzo è l'importo che verrà adeguato per ogni articolo per cui è stato selezionato l'attributo. Utilizzare adeguamenti negativi per ridurre il prezzo."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
 msgid "Sort Order"
 msgstr "Ordinamento"
 
@@ -759,6 +763,10 @@ msgstr "Nome Tecnico"
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
 msgid "Technical name of the attribute."
 msgstr "Nome tecnico dell'attributo."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
+msgid "When checked, Apply To Line causes the price adjustment to be applied to the line total. By default, the adjustment is applied to the unit price."
+msgstr "Se selezioni, Applica alla Linea fa si che l'adeguamento del prezzo venga applicato al totale della linea. Per le impostazioni predefinite, l'adeguamento è applicato al prezzo unitario."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttributes.cshtml"
 msgid "Attributes"
@@ -1649,7 +1657,7 @@ msgid "Add to cart"
 msgstr "Aggiungi al carrello"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.AddToWishlistButton.cshtml"
-msgid "Add to wishlist"
+msgid "Add to WishList"
 msgstr "Aggiungi alla lista dei desideri"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.AddToWishlistButton.cshtml"
@@ -1715,6 +1723,10 @@ msgstr "Aggiungi Livello di Prezzo"
 msgctxt "~/Modules/Nwazet.Commerce/Views/PriceTiersAdmin.cshtml"
 msgid "Price"
 msgstr "Prezzo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/PriceTiersAdmin.cshtml"
+msgid "Price can be a fixed amount or a percentage of the base price. "
+msgstr "Il Prezzo può essere un importo fisso o una percentuale del prezzo base."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/PriceTiersAdmin.cshtml"
 msgid "Quantity"
@@ -4077,8 +4089,8 @@ msgid "Shipping Option"
 msgstr "Opzione di spedizione"
 
 msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
-msgid "Special instructions"
-msgstr "Istruzioni speciali"
+msgid "Special Instructions"
+msgstr "Istruzioni Speciali"
 
 msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
 msgid "Status"
