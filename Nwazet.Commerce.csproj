@@ -313,6 +313,7 @@
     <Compile Include="Handlers\FlexibleShippingMethodPartHandler.cs" />
     <Compile Include="Handlers\HierarchyVatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\InventoryBySKUSiteSettingsPartHandler.cs" />
+    <Compile Include="Handlers\InventoryPartHandler.cs" />
     <Compile Include="Handlers\LocalizationAttributePartHandler.cs" />
     <Compile Include="Handlers\OrderPartHandler.cs" />
     <Compile Include="Handlers\ProductPartVersioningHandler.cs" />
@@ -375,6 +376,8 @@
     <Compile Include="Models\HierarchyVatConfigurationPartRecord.cs" />
     <Compile Include="Models\ICharge.cs" />
     <Compile Include="Models\InventoryBySKUSiteSettingsPart.cs" />
+    <Compile Include="Models\InventoryPart.cs" />
+    <Compile Include="Models\InventoryPartRecord.cs" />
     <Compile Include="Models\OrderVatRecord.cs" />
     <Compile Include="Models\PersistentShoppingCart.cs" />
     <Compile Include="Models\ProductsListPart.cs" />
@@ -497,6 +500,7 @@
     <Compile Include="Services\IProductAttributeLocalizationServices.cs" />
     <Compile Include="Services\IProductInventoryService.cs" />
     <Compile Include="Services\IProductPriceService.cs" />
+    <Compile Include="Services\IProductService.cs" />
     <Compile Include="Services\ISKUGenerationServices.cs" />
     <Compile Include="Services\ISKUUniquenessHelper.cs" />
     <Compile Include="Services\ITaxComputationHelper.cs" />
@@ -540,6 +544,7 @@
     <Compile Include="Services\OrderService.cs" />
     <Compile Include="Services\ProductAttributeService.cs" />
     <Compile Include="Services\ProductDiscountPriceProvider.cs" />
+    <Compile Include="Services\ProductService.cs" />
     <Compile Include="Services\ShippingService.cs" />
     <Compile Include="Services\ShoppingCartInfosetPartStorage.cs" />
     <Compile Include="Services\SKUGenerationServices.cs" />

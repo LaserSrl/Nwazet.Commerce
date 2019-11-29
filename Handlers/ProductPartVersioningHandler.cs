@@ -33,13 +33,7 @@ namespace Nwazet.Commerce.Handlers {
             //The Inventory gets copied over to Latest and Published
             _productInventoryService.SynchronizeInventories(part);
         }
-
-        private void SynchronizeInventory(ProductPart part, IEnumerable<ProductPart> targets) {
-            foreach (var target in targets) {
-                target.Inventory = part.Inventory;
-            }
-        }
-
+        
         private IEnumerable<ProductPart> GetSynchronizationSet(ProductPart part) {
             //return Latest and Published versions, unless they coincide or are the same as part
             var sSet = new ProductPart[] {

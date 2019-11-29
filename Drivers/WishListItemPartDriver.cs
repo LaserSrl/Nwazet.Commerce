@@ -19,6 +19,7 @@ namespace Nwazet.Commerce.Drivers {
         private readonly IPriceService _priceService;
         private readonly ICurrencyProvider _currencyProvider;
         private readonly IEnumerable<IWishListExtensionProvider> _wishListExtensionProviders;
+        private readonly IProductService _productService;
 
         public WishListItemPartDriver(
             IEnumerable<IProductAttributeExtensionProvider> extensionProviders,
@@ -26,7 +27,8 @@ namespace Nwazet.Commerce.Drivers {
             IPriceService priceService,
             ICurrencyProvider currencyProvider,
             IEnumerable<IProductAttributesDriver> attributeDrivers,
-            IEnumerable<IWishListExtensionProvider> wishListExtensionProviders) {
+            IEnumerable<IWishListExtensionProvider> wishListExtensionProviders,
+            IProductService productService) {
 
             _extensionProviders = extensionProviders;
             _contentManager = contentManager;
@@ -34,6 +36,7 @@ namespace Nwazet.Commerce.Drivers {
             _currencyProvider = currencyProvider;
             _attributeDrivers = attributeDrivers;
             _wishListExtensionProviders = wishListExtensionProviders;
+            _productService = productService;
         }
 
         protected override string Prefix {
@@ -82,7 +85,7 @@ namespace Nwazet.Commerce.Drivers {
                 })));
             //get the shapes for the actions on the element
             //Add to cart
-            if (product.Inventory > 0 || product.AllowBackOrder || (product.IsDigital && !product.ConsiderInventory)) {
+            if (_productService.MayAddToCart(product)) {
                 shapes.Add(ContentShape("Parts_Product_AddToCartFromWishList", () =>
                     shapeHelper.Parts_Product_AddToCartFromWishList(
                         MinimumOrderQuantity: product.MinimumOrderQuantity,

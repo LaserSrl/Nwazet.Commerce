@@ -6,7 +6,8 @@
 @{ 
     Style.Include("wishlists.nwazet-commerce.css", "wishlists.nwazet-commerce.min.css");
 
-    string imageUrl = (Model.ProductImage != null && Model.ProductImage.MediaParts.Count > 0) ? Model.ProductImage.MediaParts[0].MediaUrl : null;
+    string imageUrl = (Model.ProductImage != null && Model.ProductImage.MediaParts.Count > 0) 
+        ? Model.ProductImage.MediaParts[0].MediaUrl : null;
     var title = Model.Title
         + (Model.ProductAttributes == null || Model.ProductAttributes.Count == 0
                 ? "" : " (" + string.Join(", ", ((Dictionary<int, ProductAttributeValueExtended>)Model.ProductAttributes).Values

@@ -56,13 +56,13 @@ namespace Nwazet.Commerce.Services {
         }
 
         public virtual int SetInventory(ProductPart part, int inventoryValue) {
-            part.Inventory = inventoryValue;
+            part.As<InventoryPart>().Inventory = inventoryValue;
             SynchronizeInventories(part);
             return part.Inventory;
         }
 
         public virtual int UpdateInventory(ProductPart part, int inventoryChange) {
-            part.Inventory += inventoryChange;
+            part.As<InventoryPart>().Inventory += inventoryChange;
             SynchronizeInventories(part);
             return part.Inventory;
         }

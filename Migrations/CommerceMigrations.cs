@@ -15,12 +15,16 @@ namespace Nwazet.Commerce.Migrations {
 
         private readonly IRepository<ProductPartRecord> _repository;
         IRepository<ProductPartVersionRecord> _versionRepository;
+        IRepository<InventoryPartRecord> _inventoryPartRepository;
+
         public CommerceMigrations(
             IRepository<ProductPartRecord> repository,
-            IRepository<ProductPartVersionRecord> versionRepository) {
+            IRepository<ProductPartVersionRecord> versionRepository,
+            IRepository<InventoryPartRecord> inventoryPartRepository) {
 
             _repository = repository;
             _versionRepository = versionRepository;
+            _inventoryPartRepository = inventoryPartRepository;
         }
 
         public int Create() {
@@ -184,6 +188,43 @@ namespace Nwazet.Commerce.Migrations {
 
             return 12;
         }
-        
+
+        public int UpdateFrom12() {
+            // since we moved to ProductPartVersionRecord, the other table is just a waste
+            SchemaBuilder.DropTable("ProductPartRecord");
+            return 13;
+        }
+
+        // THE BIG INVENTORIES OVERHAUL
+        public int UpdateFrom13() {
+            //PART 1
+            // new partrecord to map product inventories that are self-managed by the merchant
+            SchemaBuilder.CreateTable("InventoryPartRecord", table => table
+               .ContentPartRecord()
+               .Column<int>("Inventory")
+               .Column<string>("OutOfStockMessage", col => col.Unlimited())
+               .Column<bool>("AllowBackOrder")
+               .Column<int>("MinimumOrderQuantity"));
+            // new part to configure inventories in products
+            ContentDefinitionManager.AlterPartDefinition("InventoryPart",
+              builder => builder
+                .Attachable()
+                .WithDescription("This part provides a way to manage inventory for a product. "
+                    + "This part allows storage of the portion of inventory that is managed by the merchant themselves."
+                    + "It should only be attached to ContentTypes that have a ProductPart. "));
+
+            // Attach the new InventoryPart to all ContentTypes that used to have the
+            // ProductPart
+            var productTypes = ContentDefinitionManager
+                .ListTypeDefinitions()
+                .Where(ctd => ctd.Parts.Any(ctpd => ctpd.PartDefinition.Name.Equals("ProductPart")));
+            foreach (var pt in productTypes) {
+                ContentDefinitionManager.AlterTypeDefinition(pt.Name, cfg => cfg
+                    .WithPart("InventoryPart"));
+            }
+
+            return 14;
+        }
+
     }
 }

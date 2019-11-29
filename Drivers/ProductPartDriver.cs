@@ -21,6 +21,7 @@ namespace Nwazet.Commerce.Drivers {
         private readonly ICurrencyProvider _currencyProvider;
         private readonly IProductInventoryService _productInventoryService;
         private readonly IProductPriceService _productPriceService;
+        private readonly IProductService _productService;
 
         public ProductPartDriver(
             IWorkContextAccessor wca,
@@ -29,6 +30,7 @@ namespace Nwazet.Commerce.Drivers {
             ICurrencyProvider currencyProvider,
             IProductInventoryService productInventoryService,
             IProductPriceService productPriceService,
+            IProductService productService,
             ITieredPriceProvider tieredPriceProvider = null) {
 
             _wca = wca;
@@ -38,6 +40,7 @@ namespace Nwazet.Commerce.Drivers {
             _currencyProvider = currencyProvider;
             _productInventoryService = productInventoryService;
             _productPriceService = productPriceService;
+            _productService = productService;
         }
 
         protected override string Prefix
@@ -73,7 +76,7 @@ namespace Nwazet.Commerce.Drivers {
                     CurrencyProvider: _currencyProvider
                     )
                 ));
-            if (part.Inventory > 0 || part.AllowBackOrder || (part.IsDigital && !part.ConsiderInventory)) {
+            if (_productService.MayAddToCart(part)) {
                 shapes.Add(ContentShape(
                         "Parts_Product_AddButton",
                         () => {
@@ -111,7 +114,7 @@ namespace Nwazet.Commerce.Drivers {
             if (productSettings != null) allowTieredPricingOverride = productSettings.AllowProductOverrides;
 
             part.Weight = Math.Round(part.Weight, 3);
-            part.Inventory = _productInventoryService.GetInventory(part);
+            //part.Inventory = _productInventoryService.GetInventory(part);
             return ContentShape("Parts_Product_Edit",
                 () => shapeHelper.EditorTemplate(
                     TemplateName: "Parts/Product",

@@ -2,6 +2,7 @@
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using System.Collections.Generic;
+using Nwazet.Commerce.Services;
 
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.Commerce")]
@@ -24,18 +25,6 @@ namespace Nwazet.Commerce.Models {
             set { Store(r => r.DiscountPrice, value); }
         }
 
-        public bool IsDigital
-        {
-            get { return Retrieve(r => r.IsDigital); }
-            set { Store(r => r.IsDigital, value); }
-        }
-
-        public bool ConsiderInventory
-        {
-            get { return Retrieve(r => r.ConsiderInventory); }
-            set { Store(r => r.ConsiderInventory, value); }
-        }
-
         public decimal? ShippingCost
         {
             get { return Retrieve(r => r.ShippingCost); }
@@ -54,24 +43,6 @@ namespace Nwazet.Commerce.Models {
             set { Store(r => r.Size, value); }
         }
 
-        public int Inventory
-        {
-            get { return Retrieve(r => r.Inventory); }
-            set { Store(r => r.Inventory, value); }
-        }
-
-        public string OutOfStockMessage
-        {
-            get { return Retrieve(r => r.OutOfStockMessage); }
-            set { Store(r => r.OutOfStockMessage, value); }
-        }
-
-        public bool AllowBackOrder
-        {
-            get { return Retrieve(r => r.AllowBackOrder); }
-            set { Store(r => r.AllowBackOrder, value); }
-        }
- 
         public bool OverrideTieredPricing
         {
             get { return Retrieve(r => r.OverrideTieredPricing); }
@@ -92,24 +63,65 @@ namespace Nwazet.Commerce.Models {
             }
         }
 
-        public int MinimumOrderQuantity
-        {
-            get
-            {
-                var minimumOrderQuantity = Retrieve(r => r.MinimumOrderQuantity);
-                return minimumOrderQuantity > 1 ? minimumOrderQuantity : 1;
-            }
-            set
-            {
-                var minimumOrderQuantity = value > 1 ? value : 1;
-                Store(r => r.MinimumOrderQuantity, minimumOrderQuantity); 
-            }
-        }
-
         public bool AuthenticationRequired
         {
             get { return Retrieve(r => r.AuthenticationRequired); }
             set { Store(r => r.AuthenticationRequired, value); }
         }
+
+        public bool IsDigital {
+            get { return Retrieve(r => r.IsDigital); }
+            set { Store(r => r.IsDigital, value); }
+        }
+
+        /// <summary>
+        /// Shortcut property to get the total inventory for the product
+        /// </summary>
+        public int Inventory {
+            get {
+                return ProductInventoryService?.GetInventory(this) ?? 0;
+            }
+        }
+
+        public bool ConsiderInventory {
+            get {
+                return this.Has<InventoryPart>();
+            }
+        }
+
+        public string OutOfStockMessage {
+            get {
+                return this.As<InventoryPart>()?.OutOfStockMessage ?? string.Empty;
+            }
+        }
+
+        public bool AllowBackOrder {
+            get {
+                return this.As<InventoryPart>()?.AllowBackOrder ?? false;
+            }
+        }
+
+        public int MinimumOrderQuantity {
+            get {
+                var minimumOrderQuantity = this.As<InventoryPart>()?.MinimumOrderQuantity;
+                return minimumOrderQuantity > 1 ? minimumOrderQuantity.Value : 1;
+            }
+        }
+
+        /// <summary>
+        /// Back reference to service used for common operations.
+        /// This is set when the ProductPart is Activated.
+        /// </summary>
+        public IProductService ProductService { get; set; }
+        /// <summary>
+        /// Back reference to service used for inventory operations.
+        /// This is set when the ProductPart is Activated.
+        /// </summary>
+        public IProductInventoryService ProductInventoryService { get; set; }
+        /// <summary>
+        /// Back reference to service used for price operations.
+        /// This is set when the ProductPart is Activated.
+        /// </summary>
+        public IProductPriceService ProductPriceService { get; set; }
     }
 }
