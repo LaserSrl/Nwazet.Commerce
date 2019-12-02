@@ -1,13 +1,9 @@
 ﻿using Nwazet.Commerce.Services;
 using Orchard.ContentManagement;
-using Orchard.ContentManagement.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Orchard.Environment.Extensions;
 
 namespace Nwazet.Commerce.Models {
+    [OrchardFeature("Nwazet.Commerce")]
     public class InventoryPart : ContentPart<InventoryPartRecord> {
         /*
          Inventory discussion.

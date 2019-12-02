@@ -1,11 +1,8 @@
 ﻿using Orchard.ContentManagement.Records;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Orchard.Environment.Extensions;
 
 namespace Nwazet.Commerce.Models {
+    [OrchardFeature("Nwazet.Commerce")]
     public class InventoryPartRecord : ContentPartRecord {
         public virtual int Inventory { get; set; }
         public virtual string OutOfStockMessage { get; set; }

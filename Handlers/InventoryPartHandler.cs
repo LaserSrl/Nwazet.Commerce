@@ -2,13 +2,10 @@
 using Nwazet.Commerce.Services;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Orchard.Environment.Extensions;
 
 namespace Nwazet.Commerce.Handlers {
+    [OrchardFeature("Nwazet.Commerce")]
     public class InventoryPartHandler : ContentHandler {
         private readonly IProductInventoryService _productInventoryService;
 

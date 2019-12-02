@@ -3,6 +3,7 @@ using Nwazet.Commerce.ViewModels;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.Handlers;
+using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Drivers {
-    public class InventoryPartDriver : ContentPartDriver<InventoryPart>{
+    [OrchardFeature("Nwazet.Commerce")]
+    public class InventoryPartDriver : ContentPartDriver<InventoryPart> {
 
         public InventoryPartDriver() {
 
@@ -49,11 +51,24 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         protected override void Exporting(InventoryPart part, ExportContentContext context) {
-            base.Exporting(part, context);
+            var el = context.Element(typeof(InventoryPart).Name);
+            el.With(part)
+                .ToAttr(p => p.Inventory)
+                .ToAttr(p => p.OutOfStockMessage)
+                .ToAttr(p => p.AllowBackOrder)
+                .ToAttr(p => p.MinimumOrderQuantity);
         }
 
         protected override void Importing(InventoryPart part, ImportContentContext context) {
-            base.Importing(part, context);
+            var el = context.Data.Element(typeof(InventoryPart).Name);
+            if (el == null) {
+                return;
+            }
+            el.With(part)
+                .FromAttr(p => p.Inventory)
+                .FromAttr(p => p.OutOfStockMessage)
+                .FromAttr(p => p.AllowBackOrder)
+                .FromAttr(p => p.MinimumOrderQuantity);
         }
     }
 }

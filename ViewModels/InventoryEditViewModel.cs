@@ -1,11 +1,8 @@
 ﻿using Nwazet.Commerce.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Orchard.Environment.Extensions;
 
 namespace Nwazet.Commerce.ViewModels {
+    [OrchardFeature("Nwazet.Commerce")]
     public class InventoryEditViewModel {
 
         public InventoryEditViewModel() { }

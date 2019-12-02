@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nwazet.Commerce.Models;
+﻿using Nwazet.Commerce.Models;
+using Orchard.Environment.Extensions;
 
 namespace Nwazet.Commerce.Services {
+    [OrchardFeature("Nwazet.Commerce")]
     public class ProductService : IProductService {
         public bool MayAddToCart(ProductPart product) {
             return MayAddToCart(product, 0);

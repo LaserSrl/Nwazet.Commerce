@@ -161,14 +161,14 @@ namespace Nwazet.Commerce.Drivers {
             if (el == null) return;
             el.With(part)
                 .FromAttr(p => p.Sku)
-                .FromAttr(p => p.Inventory)
-                .FromAttr(p => p.OutOfStockMessage)
-                .FromAttr(p => p.AllowBackOrder)
+                //.FromAttr(p => p.Inventory)
+                //.FromAttr(p => p.OutOfStockMessage)
+                //.FromAttr(p => p.AllowBackOrder)
                 .FromAttr(p => p.IsDigital)
-                .FromAttr(p => p.ConsiderInventory)
+                //.FromAttr(p => p.ConsiderInventory)
                 .FromAttr(p => p.Weight)
                 .FromAttr(p => p.OverrideTieredPricing)
-                .FromAttr(p => p.MinimumOrderQuantity)
+                //.FromAttr(p => p.MinimumOrderQuantity)
                 .FromAttr(p => p.AuthenticationRequired);
             var priceAttr = el.Attribute("Price");
             decimal price;
@@ -200,15 +200,15 @@ namespace Nwazet.Commerce.Drivers {
             el
                 .With(part)
                 .ToAttr(p => p.Sku)
-                .ToAttr(p => p.OutOfStockMessage)
-                .ToAttr(p => p.AllowBackOrder)
+                //.ToAttr(p => p.OutOfStockMessage)
+                //.ToAttr(p => p.AllowBackOrder)
                 .ToAttr(p => p.IsDigital)
-                .ToAttr(p => p.ConsiderInventory)
+                //.ToAttr(p => p.ConsiderInventory)
                 .ToAttr(p => p.Weight)
                 .ToAttr(p => p.OverrideTieredPricing)
-                .ToAttr(p => p.MinimumOrderQuantity)
+                //.ToAttr(p => p.MinimumOrderQuantity)
                 .ToAttr(p => p.AuthenticationRequired);
-            el.SetAttributeValue("Inventory", _productInventoryService.GetInventory(part));
+            //el.SetAttributeValue("Inventory", _productInventoryService.GetInventory(part));
             el.SetAttributeValue("Price", part.Price.ToString("C", CultureInfo.InvariantCulture));
             el.SetAttributeValue("DiscountPrice", part.DiscountPrice.ToString("C", CultureInfo.InvariantCulture));
             el.SetAttributeValue("PriceTiers", PriceTier.SerializePriceTiers(part.PriceTiers));
