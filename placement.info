@@ -1,8 +1,10 @@
 ﻿<Placement>
   <Place Parts_Product_Edit="Content:3.1"/>
+  <Place Parts_Inventory_Edit="Content:3.2"/>
   <Place Part_Product_SKUEdit="Content:3.1"/>
   <Place Part_Product_InventoryBySKUEdit="Content:3.1"/>
   <Place Parts_Product="Content:3.1"/>
+  <Place Parts_Inventory="Content:3.2"/>
   <Place Parts_Product_PriceTiers="Content:3.2"/>
   <Place Parts_Product_AddButton="Content:3.3"/>
   <Place Parts_Product_AddToWishListButton="Content:3.3"/>

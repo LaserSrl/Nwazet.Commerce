@@ -185,6 +185,7 @@
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethodCriteria.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Inventory.cshtml" />
     <None Include="Views\EditorTemplates\Parts\NewFlexibleShippingMethodCriteria.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ProductVatConfiguration.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryManager.cshtml" />
@@ -200,6 +201,7 @@
     <None Include="Views\HierarchyTerritoriesAdmin\EditTerritory.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\Index.cshtml" />
     <None Include="Views\OrderSsl\OrderHistory.cshtml" />
+    <None Include="Views\Parts\Inventory.cshtml" />
     <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />
     <None Include="Views\Parts\WishListsActions.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\CreatableTypeList.cshtml" />
@@ -259,6 +261,7 @@
     <Compile Include="Drivers\HierarchyVatConfigurationPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUProductPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUSiteSettingsPartDriver.cs" />
+    <Compile Include="Drivers\InventoryPartDriver.cs" />
     <Compile Include="Drivers\OrderPartDriver.cs" />
     <Compile Include="Drivers\ProductPartWishListDriver.cs" />
     <Compile Include="Drivers\ProductSettingsPartDriver.cs" />
@@ -621,6 +624,7 @@
     <Compile Include="ViewModels\HierarchyVatConfigurationPartViewModel.cs" />
     <Compile Include="ViewModels\InventoryBySKUProductEditorViewModel.cs" />
     <Compile Include="ViewModels\InventoryBySKUSiteSettingsPartViewModel.cs" />
+    <Compile Include="ViewModels\InventoryEditViewModel.cs" />
     <Compile Include="ViewModels\OrderEditorAdditionalProductInfoViewModel.cs" />
     <Compile Include="ViewModels\ProductAttributePartDisplayViewModel.cs" />
     <Compile Include="ViewModels\ProductAttributePartEditViewModel.cs" />

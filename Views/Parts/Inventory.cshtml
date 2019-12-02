@@ -1,0 +1,12 @@
+﻿@{
+    var outOfStockMessage = (string)Model.OutOfStockMessage;
+}
+@if (Model.Inventory != null && (int)Model.Inventory <= 0) {
+    <div class="out-of-stock">
+        @if (string.IsNullOrWhiteSpace(outOfStockMessage)) {
+            @T("This product is currently out of stock.")
+        } else {
+            @outOfStockMessage
+        }
+    </div>
+}

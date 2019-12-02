@@ -116,9 +116,7 @@ namespace Nwazet.Commerce.Controllers {
                     }
                 }
                 //only add to cart if there are at least as many available products as the requested quantity
-                if (quantity > productPart.Inventory && !productPart.AllowBackOrder &&
-                    (!productPart.IsDigital || (productPart.IsDigital && productPart.ConsiderInventory))
-                    ) {
+                if (!productPart.ProductService.MayAddToCart(productPart, quantity)) {
                     quantity = productPart.Inventory;
                     if (productMessages.ContainsKey(id)) {
                         productMessages[id].Add(T("Quantity decreased to match inventory for {0}.", productTitle).Text);
@@ -231,9 +229,8 @@ namespace Nwazet.Commerce.Controllers {
             }
             if (displayCheckoutButtons) {
                 //check whether back-order is allowed for products whose inventory is less than the requested quantity
-                displayCheckoutButtons = !productQuantities.Any(pq =>
-                    pq.Quantity > pq.Product.Inventory && !pq.Product.AllowBackOrder &&
-                    (!pq.Product.IsDigital || (pq.Product.IsDigital && pq.Product.ConsiderInventory)));
+                displayCheckoutButtons = !productQuantities.Any(pq => 
+                    !pq.Product.ProductService.MayAddToCart(pq.Product, pq.Quantity));
             }
             if (displayCheckoutButtons) {
                 var checkoutShapes = _checkoutServices.Select(

@@ -24,7 +24,7 @@
 
 @Display.PriceTiersAdmin(PriceTiers: Model.PriceTiers, ShowPriceTiers: (Model.AllowProductOverrides && Model.Product.OverrideTieredPricing), NamePrefix: Html.NameForModel(), ToggleCheckboxId: Html.IdFor(m => m.Product.OverrideTieredPricing))
 
-<fieldset>
+@*<fieldset>
     <label class="sub" for="@Html.IdFor(m => m.Product.Inventory)">@T("Inventory")</label>
     @if (Model.Product.Has<BundlePart>()) {
         <text>: @Model.Product.Inventory</text>
@@ -41,7 +41,7 @@
     <span class="hint">@T("If unchecked, the add button won't be visible on the product page when the inventory is zero or less.")</span>
     <label class="sub" for="@Html.IdFor(m => m.Product.MinimumOrderQuantity)">@T("Minimum order quantity")</label><br />
     @Html.TextBoxFor(m => m.Product.MinimumOrderQuantity, new { @class = "text-small", @type = "number", min = "1" })<br />
-</fieldset>
+</fieldset>*@
 <fieldset>
     <label class="sub" for="@Html.IdFor(m => m.Product.Weight)">@T("Weight")</label><br />
     @Html.TextBoxFor(m => m.Product.Weight, new { @class = "text" })<br />

@@ -31,6 +31,12 @@ namespace Nwazet.Commerce.Services {
         /// <returns>The quantity in inventory.</returns>
         int GetInventory(ProductPart part);
         /// <summary>
+        /// Get the inventory of the InventoryPart specified.
+        /// </summary>
+        /// <param name="part">The InventoryPart whose inventory we are looking for.</param>
+        /// <returns>The quantity in inventory.</returns>
+        int GetInventory(InventoryPart part);
+        /// <summary>
         /// Gets the ProductParts whose inventory has issues, e.g. is not synchronized correctly.
         /// If ProductParts can be grouped, this may return a single ProductPart for each group.
         /// </summary>

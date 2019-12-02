@@ -1,0 +1,18 @@
+﻿@using Nwazet.Commerce.Models
+@using Nwazet.Commerce.Services
+@using Orchard.ContentManagement
+@model Nwazet.Commerce.ViewModels.InventoryEditViewModel
+
+<fieldset>
+    <label class="sub" for="@Html.IdFor(m => m.Inventory)">@T("Inventory")</label>
+    @Html.TextBoxFor(m => m.Inventory, new { @class = "text" })
+    <span class="hint">@T("Changes to the inventory value will propagate to other versions of this product.")</span>
+    <label class="sub" for="@Html.IdFor(m => m.OutOfStockMessage)">@T("Out of stock message")</label><br />
+    @Html.TextBoxFor(m => m.OutOfStockMessage, new { @class = "text-medium" })<br />
+    <span class="hint">@T("This message will be displayed if the inventory is zero or less. Leave blank for the default message to be used.")</span>
+    @Html.CheckBoxFor(m => m.AllowBackOrder)
+    <label class="sub" for="@Html.IdFor(m => m.AllowBackOrder)">@T("allow back order")</label><br />
+    <span class="hint">@T("If unchecked, the add button won't be visible on the product page when the inventory is zero or less.")</span>
+    <label class="sub" for="@Html.IdFor(m => m.MinimumOrderQuantity)">@T("Minimum order quantity")</label><br />
+    @Html.TextBoxFor(m => m.MinimumOrderQuantity, new { @class = "text-small", @type = "number", min = "1" })<br />
+</fieldset>

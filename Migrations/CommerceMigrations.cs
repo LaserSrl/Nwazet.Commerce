@@ -8,6 +8,7 @@ using Orchard.Environment.Extensions;
 using Orchard.Indexing;
 using System.Linq;
 using System.Collections.Generic;
+using Orchard.ContentManagement;
 
 namespace Nwazet.Commerce.Migrations {
     [OrchardFeature("Nwazet.Commerce")]
@@ -16,15 +17,18 @@ namespace Nwazet.Commerce.Migrations {
         private readonly IRepository<ProductPartRecord> _repository;
         IRepository<ProductPartVersionRecord> _versionRepository;
         IRepository<InventoryPartRecord> _inventoryPartRepository;
+        private readonly IContentManager _contentManager;
 
         public CommerceMigrations(
             IRepository<ProductPartRecord> repository,
             IRepository<ProductPartVersionRecord> versionRepository,
-            IRepository<InventoryPartRecord> inventoryPartRepository) {
+            IRepository<InventoryPartRecord> inventoryPartRepository,
+            IContentManager contentManager) {
 
             _repository = repository;
             _versionRepository = versionRepository;
             _inventoryPartRepository = inventoryPartRepository;
+            _contentManager = contentManager;
         }
 
         public int Create() {
@@ -197,7 +201,7 @@ namespace Nwazet.Commerce.Migrations {
 
         // THE BIG INVENTORIES OVERHAUL
         public int UpdateFrom13() {
-            //PART 1
+            //PART 1 of THE BIG INVENTORIES OVERHAUL
             // new partrecord to map product inventories that are self-managed by the merchant
             SchemaBuilder.CreateTable("InventoryPartRecord", table => table
                .ContentPartRecord()
@@ -222,9 +226,34 @@ namespace Nwazet.Commerce.Migrations {
                 ContentDefinitionManager.AlterTypeDefinition(pt.Name, cfg => cfg
                     .WithPart("InventoryPart"));
             }
+            // Move values from "old" ProductPart to "new" InventoryPart
+            // get ProductPartVersionRecords
+            var allProducts = _contentManager
+                .Query<ProductPart>(VersionOptions.Latest)
+                .List();
+            foreach (var product in allProducts) {
+                // these products have no InventoryPart yet
+                var oldRecord = product.Record;
+                var newRecord = new InventoryPartRecord {
+                    // pair with ContentItem
+                    ContentItemRecord = oldRecord.ContentItemRecord,
+                    // copy values
+                    Inventory = oldRecord.Inventory,
+                    OutOfStockMessage = oldRecord.OutOfStockMessage,
+                    AllowBackOrder = oldRecord.AllowBackOrder,
+                    MinimumOrderQuantity = oldRecord.MinimumOrderQuantity
+                };
+                _inventoryPartRepository.Create(newRecord);
+            }
 
             return 14;
         }
+        // for PART 2 of THE BIG INVENTORIES OVERHAUL
+        // we would like to drop the columns od ProductPartVersionRecord that have become obsolete 
+        // thanks to the introduction of InventoryPart.
+        // However, since when we created them we added some constraints to them (e.g. default values),
+        // we should drop the constraints first (or SQL will fail). Since there is no trivial way
+        // to identify those constraints through code, we keep those unused columns for now.
 
     }
 }

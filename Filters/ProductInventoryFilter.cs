@@ -22,7 +22,7 @@ namespace Nwazet.Commerce.Filters {
         }
 
         public void Describe(DescribeFilterContext describe) {
-            describe.For("ProductPart", T("Product"), T("Product"))
+            describe.For("InventoryPart", T("Inventory"), T("Inventory"))
                 .Element("ProductInventory", T("Product Inventory"), T("Product Inventory Filter."),
                     (Action<dynamic>)ApplyFilter,
                     (Func<dynamic, LocalizedString>)DisplayFilter,
@@ -38,7 +38,7 @@ namespace Nwazet.Commerce.Filters {
             var filterExpression = FilterHelper.GetFilterPredicateNumeric(op, "Inventory", value, min, max);
             var query = (IHqlQuery)context.Query;
             context.Query = query
-                .Where(x => x.ContentPartRecord<ProductPartVersionRecord>(), filterExpression);
+                .Where(x => x.ContentPartRecord<InventoryPartRecord>(), filterExpression);
             return;
         }
 
