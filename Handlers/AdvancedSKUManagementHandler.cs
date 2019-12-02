@@ -73,7 +73,11 @@ namespace Nwazet.Commerce.Handlers {
         }
 
         private void ProcessSku (ProductPart part) {
-            if (string.IsNullOrWhiteSpace(part.Sku) ||
+            var settings = _orchardServices.WorkContext.CurrentSite.As<AdvancedSKUsSiteSettingPart>();
+            var pattern = string.IsNullOrWhiteSpace(settings.SKUPattern)
+                ? _SKUGenerationServices.Value.DefaultSkuPattern
+                : settings.SKUPattern;
+            if (string.IsNullOrWhiteSpace(part.Sku) || part.Sku.Equals(pattern)||
                 _SKUGenerationServices.Value.GetSettings().AllowCustomPattern) { //AllowCustomPattern is handled inside GenerateSku
                 //generate a new sku
                 part.Sku = _SKUGenerationServices.Value.GenerateSku(part);

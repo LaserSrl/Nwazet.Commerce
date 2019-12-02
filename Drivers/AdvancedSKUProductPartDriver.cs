@@ -34,15 +34,15 @@ namespace Nwazet.Commerce.Drivers {
         protected override DriverResult Editor(ProductPart part, dynamic shapeHelper) {
 
             var settings = _SKUGenerationServices.GetSettings();
+            if (string.IsNullOrWhiteSpace(part.Sku) && settings.GenerateSKUAutomatically) {
+                part.Sku = string.IsNullOrWhiteSpace(settings.SKUPattern) ? _SKUGenerationServices.DefaultSkuPattern : settings.SKUPattern;
+            }
             var model = new AdvancedSKUProductEditorViewModel() {
                 Product = part,
                 CurrentSku = part.Sku,
                 Settings = settings,
                 SkuPattern = string.IsNullOrWhiteSpace(settings.SKUPattern) ? _SKUGenerationServices.DefaultSkuPattern : settings.SKUPattern
             };
-            if (string.IsNullOrWhiteSpace(part.Sku) && settings.GenerateSKUAutomatically) {
-                part.Sku = _SKUGenerationServices.DefaultSkuPattern;
-            }
 
             return ContentShape("Part_Product_SKUEdit",
                 () => shapeHelper.EditorTemplate(

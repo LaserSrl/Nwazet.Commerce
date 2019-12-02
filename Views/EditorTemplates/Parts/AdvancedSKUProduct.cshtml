@@ -17,9 +17,9 @@
     else {
         if (Model.Settings.GenerateSKUAutomatically) { //don't allow editing the sku
             @Html.HiddenFor(m => m.CurrentSku)
-            if (string.IsNullOrWhiteSpace(Model.CurrentSku)) {
+            if (string.IsNullOrWhiteSpace(Model.CurrentSku) || Model.CurrentSku.Equals(Model.SkuPattern)) {
                 <span class="hint">
-                    @T("Save the current item and leave the input empty to have the sku automatically generated using the pattern {0}", Model.SkuPattern)
+                    @T("Save the current item to have the sku automatically generated using the pattern {0}", Model.SkuPattern)
                 </span>
             }
             else {
