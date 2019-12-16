@@ -12,7 +12,7 @@ namespace Nwazet.Commerce.Handlers {
         public InventoryPartHandler(
             IRepository<InventoryPartRecord> repository,
             IProductInventoryService productInventoryService) {
-
+            _productInventoryService = productInventoryService;
             Filters.Add(StorageFilter.For(repository));
 
             OnActivated<InventoryPart>((ctx, part) => {
