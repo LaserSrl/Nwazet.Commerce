@@ -205,6 +205,10 @@ msgid "Save the current item and leave the input empty to have the sku automatic
 msgstr "Salva l'oggetto corrente lasciando questa casella vuota perchè lo SKU sia generato automaticamente usandi il pattern {0}"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/AdvancedSKUProduct.cshtml"
+msgid "Save the current item to have the sku automatically generated using the pattern {0}"
+msgstr "Salvare il contenuto corrente per generare automaticamente uno SKU nel formato {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/AdvancedSKUProduct.cshtml"
 msgid "Sku"
 msgstr "SKU"
 
@@ -419,6 +423,34 @@ msgstr "Non è stata configurata una categoria IVA."
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/HierarchyVatConfigurationPartNotAllowed.cshtml"
 msgid "VAT Category"
 msgstr "Categoria IVA"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
+msgid "allow back order"
+msgstr "Permetti ordini arretrati"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
+msgid "Changes to the inventory value will propagate to other versions of this product."
+msgstr "Le modifiche al valore dell'inventario si propagheranno su altre versioni di questo prodotto."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
+msgid "If unchecked, the add button won't be visible on the product page when the inventory is zero or less."
+msgstr "Se non selezionato, il pulsante per aggiungere il prodotto non sarà visibile quando l'inventario è zero o meno."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
+msgid "Inventory"
+msgstr "Inventario"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
+msgid "Minimum order quantity"
+msgstr "Minima quantità per l'ordine"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
+msgid "Out of stock message"
+msgstr "Messaggio di fine inventario"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
+msgid "This message will be displayed if the inventory is zero or less. Leave blank for the default message to be used."
+msgstr "Questo messaggio sarà mostrato se l'inventraio è minore o uguale a zero. Lasciandolo vuoto verrà usato un messaggio di default."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/InventoryBySKUProduct.cshtml"
 msgid "Changes to this product's inventory will be applied to the other products as well."
@@ -1643,6 +1675,10 @@ msgstr "Ordinato {0}"
 msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Bundle.cshtml"
 msgid "Products included in this bundle:"
 msgstr "Prodotti inclusi in questo pacchetto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Inventory.cshtml"
+msgid "This product is currently out of stock."
+msgstr "Questo prodotto non è al momento disponibile."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/ListOfWishLists.cshtml"
 msgid "Your Wish Lists:"
@@ -3063,6 +3099,10 @@ msgstr "Operatore"
 msgctxt "Nwazet.Commerce.Filters.ProductDiscountPriceFilterForm"
 msgid "Value"
 msgstr "Valore"
+
+msgctxt "Nwazet.Commerce.Filters.ProductInventoryFilter"
+msgid "Inventory"
+msgstr "Inventario"
 
 msgctxt "Nwazet.Commerce.Filters.ProductInventoryFilter"
 msgid "Product"
