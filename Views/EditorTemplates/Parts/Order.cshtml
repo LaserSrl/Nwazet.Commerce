@@ -167,7 +167,7 @@
                 <tr class="amountPaid">
                     <td colspan="3" class="label">@T("Amount Paid")</td>
                     <td class="price@(Model.Order.AmountPaid < Model.Order.Total ? " red" : "")">
-                        @Html.TextBoxFor(m => m.Order.AmountPaid, "{0:F2}", new { @class = "text-small order-amount-field" })
+                        @Html.TextBoxFor(m => m.Order.AmountPaid, "{0:F2}", new { @class = "text order-amount-field", style = "text-align: right;", pattern = "[0-9]+([\\.,][0-9]+)?" })
                     </td>
                 </tr>
             </tfoot>
