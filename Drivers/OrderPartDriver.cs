@@ -120,15 +120,18 @@ namespace Nwazet.Commerce.Drivers {
                     VersionOptions.Latest, QueryHints.Empty);
             var products = productContents
                 .ToDictionary(p => p.Id, p => p);
-            var linkToTransaction = _checkoutServices
-                .Select(s => s.GetChargeAdminUrl(part.Charge.TransactionId))
-                .FirstOrDefault(u => u != null);
+            // payment information
+            var checkoutUsed = _checkoutServices
+                .FirstOrDefault(s => s.GetChargeAdminUrl(part.Charge.TransactionId) != null);
+            var linkToTransaction = checkoutUsed.GetChargeAdminUrl(part.Charge.TransactionId);
+            var paymentProviderText = checkoutUsed.GetChargeInfo(part.Charge.TransactionId);
             var orderItems = part.Items.ToList();
             // Add attribute extension provider instances to order item attributes
             foreach (var item in orderItems) {
                 if (item.Attributes != null) {
                     foreach (var attr in item.Attributes) {
-                        attr.Value.ExtensionProviderInstance = _extensionProviders.SingleOrDefault(e => e.Name == attr.Value.ExtensionProvider);
+                        attr.Value.ExtensionProviderInstance = _extensionProviders
+                            .SingleOrDefault(e => e.Name == attr.Value.ExtensionProvider);
                     }
                 }
             }
@@ -142,6 +145,7 @@ namespace Nwazet.Commerce.Drivers {
                 StatusLabels = _orderService.StatusLabels,
                 EventCategories = OrderPart.EventCategories,
                 EventCategoryLabels = _orderService.EventCategoryLabels,
+                PaymentProviderText = paymentProviderText,
                 LinkToTransaction = linkToTransaction,
                 UserName = part.User == null ? "" : part.User.UserName,
                 UserNameNeeded = productContents

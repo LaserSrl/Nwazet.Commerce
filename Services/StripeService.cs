@@ -13,6 +13,7 @@ using Orchard.Caching;
 using Orchard.DisplayManagement;
 using Orchard.Environment.Extensions;
 using Orchard;
+using Orchard.Localization;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Stripe")]
@@ -40,7 +41,11 @@ namespace Nwazet.Commerce.Services {
             _signals = signals;
             _shapeFactory = shapeFactory;
             _productPriceService = productPriceService;
+
+            T = NullLocalizer.Instance;
         }
+
+        public Localizer T { get; set; }
 
         public string Name {get { return "Stripe"; }}
 
@@ -192,6 +197,10 @@ namespace Nwazet.Commerce.Services {
             return string.Format(
                 IsInTestMode() ? urlTestPattern : urlPattern,
                 transactionId.Substring(Name.Length + 1));
+        }
+
+        public string GetChargeInfo(string transactionId) {
+            return T("Payment made with Stripe").Text;
         }
     }
 }
