@@ -1,6 +1,8 @@
 ﻿@using System.Globalization
 @using Nwazet.Commerce.Services
 @using System.Collections.Generic
+@using Nwazet.Commerce.Models;
+@using System.Linq;
 @model Nwazet.Commerce.ViewModels.OrderEditorViewModel
 @{
     Script.Require("jQuery");
@@ -24,22 +26,25 @@
             @Html.TextBoxFor(m => m.Order.PurchaseOrder, new { @class = "text-medium order-purchase-order-edit-field" })
             <span class="hint">@T("Associate this order with a purchase order, invoice or other order.")</span>
         </div>
-        @foreach (var additionalShape in Model.AdditionalMetadataShapes) {
+        @foreach (var additionalShape in Model.AdditionalMetadataShapes)
+        {
             @Display(additionalShape)
         }
     </fieldset>
     <fieldset class="order-status">
         <legend>@T("Status:")</legend>
         <ul>
-            @foreach (var state in Model.OrderStates) {
+            @foreach (var state in Model.OrderStates)
+            {
                 var stateid = ViewData.TemplateInfo.GetFullHtmlFieldId("Status_" + state);
                 <li>
-                    @Html.RadioButtonFor(m => m.Order.Status, state, new {@id = stateid})
+                    @Html.RadioButtonFor(m => m.Order.Status, state, new { @id = stateid })
                     @Html.Label("Status_" + state, Model.StatusLabels[state].Text)
                 </li>
             }
         </ul>
-        @foreach (var additionalShape in Model.AdditionalStatusShapes) {
+        @foreach (var additionalShape in Model.AdditionalStatusShapes)
+        {
             @Display(additionalShape)
         }
     </fieldset>
@@ -51,16 +56,16 @@
                 @Html.Raw(Html.Encode(Model.ShippingAddressText).Replace(Environment.NewLine, "<br/>"))
             </div>
             <div class="address-form">
-                @Html.TextBoxFor(m => m.Order.ShippingAddress.Honorific, new {@class="text-small", title=T("Honorific")})
-                @Html.TextBoxFor(m => m.Order.ShippingAddress.FirstName, new {@class="text", title=T("First Name")})
-                @Html.TextBoxFor(m => m.Order.ShippingAddress.LastName, new {@class="text", title=T("Last Name")})<br/>
-                @Html.TextBoxFor(m => m.Order.ShippingAddress.Company, new {@class="text-medium", title=T("Company")})<br/>
-                @Html.TextBoxFor(m => m.Order.ShippingAddress.Address1, new {@class="text-medium", title=T("Address 1")})<br/>
-                @Html.TextBoxFor(m => m.Order.ShippingAddress.Address2, new {@class="text-medium", title=T("Address 2")})<br/>
-                @Html.TextBoxFor(m => m.Order.ShippingAddress.City, new {@class="text", title=T("City")})
-                @Html.TextBoxFor(m => m.Order.ShippingAddress.Province, new {@class="text-small", title=T("Province or State")})
-                @Html.TextBoxFor(m => m.Order.ShippingAddress.PostalCode, new {@class="text-small", title=T("Postal code")})<br/>
-                @Html.TextBoxFor(m => m.Order.ShippingAddress.Country, new {@class="text-medium", title=T("Country")})
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.Honorific, new { @class = "text-small", title = T("Honorific") })
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.FirstName, new { @class = "text", title = T("First Name") })
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.LastName, new { @class = "text", title = T("Last Name") })<br />
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.Company, new { @class = "text-medium", title = T("Company") })<br />
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.Address1, new { @class = "text-medium", title = T("Address 1") })<br />
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.Address2, new { @class = "text-medium", title = T("Address 2") })<br />
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.City, new { @class = "text", title = T("City") })
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.Province, new { @class = "text-small", title = T("Province or State") })
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.PostalCode, new { @class = "text-small", title = T("Postal code") })<br />
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.Country, new { @class = "text-medium", title = T("Country") })
             </div>
         </fieldset>
 
@@ -70,23 +75,24 @@
                 @Html.Raw(Html.Encode(Model.BillingAddressText).Replace(Environment.NewLine, "<br/>"))
             </div>
             <div class="address-form">
-                @Html.TextBoxFor(m => m.Order.BillingAddress.Honorific, new {@class="text-small", title=T("Honorific")})
-                @Html.TextBoxFor(m => m.Order.BillingAddress.FirstName, new {@class="text", title=T("First Name")})
-                @Html.TextBoxFor(m => m.Order.BillingAddress.LastName, new {@class="text", title=T("Last Name")})<br/>
-                @Html.TextBoxFor(m => m.Order.BillingAddress.Company, new {@class="text-medium", title=T("Company")})<br/>
-                @Html.TextBoxFor(m => m.Order.BillingAddress.Address1, new {@class="text-medium", title=T("Address 1")})<br/>
-                @Html.TextBoxFor(m => m.Order.BillingAddress.Address2, new {@class="text-medium", title=T("Address 2")})<br/>
-                @Html.TextBoxFor(m => m.Order.BillingAddress.City, new {@class="text", title=T("City")})
-                @Html.TextBoxFor(m => m.Order.BillingAddress.Province, new {@class="text-small", title=T("Province or State")})
-                @Html.TextBoxFor(m => m.Order.BillingAddress.PostalCode, new {@class="text-small", title=T("Postal code")})<br/>
-                @Html.TextBoxFor(m => m.Order.BillingAddress.Country, new {@class="text-medium", title=T("Country")})
+                @Html.TextBoxFor(m => m.Order.BillingAddress.Honorific, new { @class = "text-small", title = T("Honorific") })
+                @Html.TextBoxFor(m => m.Order.BillingAddress.FirstName, new { @class = "text", title = T("First Name") })
+                @Html.TextBoxFor(m => m.Order.BillingAddress.LastName, new { @class = "text", title = T("Last Name") })<br />
+                @Html.TextBoxFor(m => m.Order.BillingAddress.Company, new { @class = "text-medium", title = T("Company") })<br />
+                @Html.TextBoxFor(m => m.Order.BillingAddress.Address1, new { @class = "text-medium", title = T("Address 1") })<br />
+                @Html.TextBoxFor(m => m.Order.BillingAddress.Address2, new { @class = "text-medium", title = T("Address 2") })<br />
+                @Html.TextBoxFor(m => m.Order.BillingAddress.City, new { @class = "text", title = T("City") })
+                @Html.TextBoxFor(m => m.Order.BillingAddress.Province, new { @class = "text-small", title = T("Province or State") })
+                @Html.TextBoxFor(m => m.Order.BillingAddress.PostalCode, new { @class = "text-small", title = T("Postal code") })<br />
+                @Html.TextBoxFor(m => m.Order.BillingAddress.Country, new { @class = "text-medium", title = T("Country") })
             </div>
         </fieldset>
-    
+
         <p>@T("E-mail:") <a href="@("mailto:" + Model.Order.CustomerEmail)">@Model.Order.CustomerEmail</a></p>
         <p>@T("Phone:") <a href="@("tel:" + Model.Order.CustomerPhone)">@Model.Order.CustomerPhone</a></p>
 
-        @foreach (var additionalShape in Model.AdditionalAddressesShapes) {
+        @foreach (var additionalShape in Model.AdditionalAddressesShapes)
+        {
             @Display(additionalShape)
         }
     </div>
@@ -100,16 +106,19 @@
                     <th class="description">@T("Product")</th>
                     <th class="price">@T("Original price")</th>
                     <th class="price">@T("Price")</th>
-                    @if (Model.OrderItems.Any(oi => oi.LinePriceAdjustment != 0)) {
+                    @if (Model.OrderItems.Any(oi => oi.LinePriceAdjustment != 0))
+                    {
                         <th class="price">@T("Adjustment")</th>
                     }
-                    @foreach (var additionalInfo in Model.AdditionalProductInformation) {
+                    @foreach (var additionalInfo in Model.AdditionalProductInformation)
+                    {
                         <th @(string.IsNullOrEmpty(additionalInfo.HeaderClass) ? "" : "class=\"" + additionalInfo.HeaderClass + "\"")>@additionalInfo.Title</th>
                     }
                 </tr>
             </thead>
             <tbody id="order_products_table_body">
-                @foreach (var item in Model.OrderItems) {
+                @foreach (var item in Model.OrderItems)
+                {
 
                     string originalPrice = "";
                     if (item.Price != item.OriginalPrice && item.OriginalPrice != (decimal)0.0)
@@ -122,22 +131,28 @@
                         <td class="description"><a href="@Url.ItemDisplayUrl(Model.Products[item.ProductId])">@item.Title</a></td>
                         <td class="price">@Html.Raw(originalPrice)</td>
                         <td class="price">@currencyInUse.PriceAsString(item.Price, cultureInUse)</td>
-                        @if (item.LinePriceAdjustment != 0) {
+                        @if (item.LinePriceAdjustment != 0)
+                        {
                             <td class="price">@currencyInUse.PriceAsString(item.LinePriceAdjustment, cultureInUse)</td>
                         }
-                        @foreach (var additionalInfo in Model.AdditionalProductInformation) {
+                        @foreach (var additionalInfo in Model.AdditionalProductInformation)
+                        {
                             <td @(string.IsNullOrEmpty(additionalInfo.InformationClass) ? "" : "class=\"" + additionalInfo.InformationClass + "\"")>
-                                @if (additionalInfo.Information.ContainsKey(item.ProductId)) {
-		                            @additionalInfo.Information[item.ProductId]
-	                            }
+                                @if (additionalInfo.Information.ContainsKey(item.ProductId))
+                                {
+                                    @additionalInfo.Information[item.ProductId]
+                                }
                             </td>
                         }
                     </tr>
-                    if (item.Attributes != null && item.Attributes.Any(a => a.Value.ExtensionProviderInstance != null)) {
+                    if (item.Attributes != null && item.Attributes.Any(a => a.Value.ExtensionProviderInstance != null))
+                    {
                         <tr>
                             <td colspan="2">
-                                @foreach (var attr in item.Attributes) {
-                                    if (attr.Value.ExtensionProviderInstance != null) {
+                                @foreach (var attr in item.Attributes)
+                                {
+                                    if (attr.Value.ExtensionProviderInstance != null)
+                                    {
                                         @Display(attr.Value.ExtensionProviderInstance.BuildAdminShape(attr.Value.ExtendedValue))
                                     }
                                 }
@@ -172,7 +187,8 @@
                 </tr>
             </tfoot>
         </table>
-        @foreach (var additionalShape in Model.AdditionalProductShapes) {
+        @foreach (var additionalShape in Model.AdditionalProductShapes)
+        {
             @Display(additionalShape)
         }
     </fieldset>
@@ -180,7 +196,8 @@
     <fieldset>
         <legend>@T("Charged to:")</legend>
         <p>@charge.ChargeText</p>
-        @if (!string.IsNullOrEmpty(Model.LinkToTransaction)) { 
+        @if (!string.IsNullOrEmpty(Model.LinkToTransaction))
+        {
             <p>@T("Transaction <a href=\"{1}\">{0}</a>.", charge.TransactionId, Model.LinkToTransaction)</p>
         }
     </fieldset>
@@ -192,16 +209,18 @@
             <button class="edit-button link">@T("Edit")</button>
         </div>
         <div class="order-tracking-edit">
-            @Html.TextBoxFor(m => m.Order.TrackingUrl, new {@class="text-medium order-tracking-edit-field"})
+            @Html.TextBoxFor(m => m.Order.TrackingUrl, new { @class = "text-medium order-tracking-edit-field" })
             <button class="cancel-button link">@T("Cancel")</button>
         </div>
 
-        @foreach (var additionalShape in Model.AdditionalOrderTrackingShapes) {
+        @foreach (var additionalShape in Model.AdditionalOrderTrackingShapes)
+        {
             @Display(additionalShape)
         }
     </fieldset>
 
-    @if (!string.IsNullOrWhiteSpace(Model.Order.SpecialInstructions)) {
+    @if (!string.IsNullOrWhiteSpace(Model.Order.SpecialInstructions))
+    {
         <fieldset>
             <legend>@T("Special instructions:")</legend>
             @Model.Order.SpecialInstructions
@@ -212,8 +231,10 @@
               data-add-event-url="@Url.Action("AddEvent", "OrderAdmin", new {area = "Nwazet.Commerce"})" data-order-id="@Model.Order.Id">
         <legend>@T("Activity:")</legend>
         <ul class="order-event-log">
-            @if (Model.Order.Activity != null) {
-                foreach (var orderEvent in Model.Order.Activity) {
+            @if (Model.Order.Activity != null)
+            {
+                foreach (var orderEvent in Model.Order.Activity)
+                {
                     <li>
                         <p>
                             @orderEvent.Date.ToLocalTime().ToString(CultureInfo.CurrentCulture)
@@ -224,7 +245,70 @@
                 }
             }
         </ul>
-        
+
+        <ul class="order-event-log">
+            @{
+                if (Model.Order.Activity != null)
+                {
+                    var listActivity = ((IEnumerable<OrderEvent>)Model.Order.Activity.OrderByDescending(o => o.Date)).ToList();
+                    List<string> dateActivity = new List<string>();
+                    bool compareEqual = false;
+                    for (int i = 0; i < listActivity.Count; i++)
+                    {
+                        dateActivity.Add(listActivity[i].Date.ToLocalTime().ToString(CultureInfo.CurrentCulture));
+
+                        if (i + 1 == listActivity.Count)
+                        {
+                            if (compareEqual)
+                            {
+                                <li>
+                                    <p>
+                                        @T("From {0} to {1}", dateActivity.First(), dateActivity.Last())
+                                        (@listActivity[i].Category)
+                                        @Html.Raw(listActivity[i].Description)
+                                        @T("({0})", dateActivity.Count)
+                                    </p>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            if (listActivity[i].Description.Trim() != listActivity[i + 1].Description.Trim())
+                            {
+                                if (compareEqual)
+                                {
+                                    <li>
+                                        <p>
+                                            @T("From {0} to {1}", dateActivity.First(), dateActivity.Last())
+                                            (@listActivity[i].Category)
+                                            @Html.Raw(listActivity[i].Description)
+                                            @T("({0})", dateActivity.Count)
+                                        </p>
+                                    </li>
+                                    dateActivity = new List<string>();
+                                    compareEqual = false;
+                                }
+                                else
+                                {
+                                    <li>
+                                        <p>
+                                            @listActivity[i].Date.ToLocalTime().ToString(CultureInfo.CurrentCulture)
+                                            (@listActivity[i].Category)
+                                            @Html.Raw(listActivity[i].Description)
+                                        </p>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                compareEqual = true;
+                            }
+                        }
+                    }
+                }
+            }
+        </ul>
+
         <div class="order-event-add">
             <ul>
                 @foreach (var category in Model.EventCategories)
@@ -241,7 +325,8 @@
         </div>
     </fieldset>
 
-    @if (Model.UserNameNeeded) { 
+    @if (Model.UserNameNeeded)
+    {
         <fieldset class="order-user">
             <legend>@T("Order Username:")</legend>
             <div class="order-user-edit">
@@ -250,10 +335,13 @@
             </div>
         </fieldset>
     }
-    else {
+    else
+    {
         @Html.HiddenFor(m => m.UserName)
     }
 
-    <div class="order-link">@T("You may view this order at a later time by going to this address: <a href=\"{0}\">{0}</a>, using this password: \"{1}\".",
-                                Url.Action("Show", "OrderSsl", new {id = Model.Order.Id, area = "Nwazet.Commerce"}), Model.Order.Password)</div>
+    <div class="order-link">
+        @T("You may view this order at a later time by going to this address: <a href=\"{0}\">{0}</a>, using this password: \"{1}\".",
+        Url.Action("Show", "OrderSsl", new {id = Model.Order.Id, area = "Nwazet.Commerce"}), Model.Order.Password)
+    </div>
 </div>
