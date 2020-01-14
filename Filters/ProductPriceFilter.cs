@@ -42,6 +42,7 @@ namespace Nwazet.Commerce.Filters {
             return;
         }
 
+
         public LocalizedString DisplayFilter(dynamic context) {
             return FilterHelper.DisplayFilterNumeric(T, context.State, "Product Price");
         }

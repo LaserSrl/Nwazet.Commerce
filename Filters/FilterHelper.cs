@@ -11,13 +11,51 @@ using Orchard.Projections.FilterEditors.Forms;
 namespace Nwazet.Commerce.Filters {
     public static class FilterHelper {
         public enum PropertyType { StringType, NumericType };
-        public static Action<IHqlExpressionFactory> GetFilterPredicateNumeric(NumericOperator op, string property, string value, string min, string max) {
+        public static Action<IHqlExpressionFactory> GetFilterPredicateNumeric(
+            NumericOperator op, string property, string value, string min, string max) {
             decimal dmin, dmax;
             if (op == NumericOperator.Between || op == NumericOperator.NotBetween) {
                 dmin = decimal.Parse(Convert.ToString(min), CultureInfo.InvariantCulture);
                 dmax = decimal.Parse(Convert.ToString(max), CultureInfo.InvariantCulture);
             } else {
                 dmin = dmax = decimal.Parse(Convert.ToString(value), CultureInfo.InvariantCulture);
+            }
+
+            switch (op) {
+                case NumericOperator.LessThan:
+                    return x => x.Lt(property, dmax);
+                case NumericOperator.LessThanEquals:
+                    return x => x.Le(property, dmax);
+                case NumericOperator.Equals:
+                    if (dmin == dmax) {
+                        return x => x.Eq(property, dmin);
+                    }
+                    return y => y.And(x => x.Ge(property, dmin), x => x.Le(property, dmax));
+                case NumericOperator.NotEquals:
+                    return dmin == dmax
+                        ? (Action<IHqlExpressionFactory>)(x => x.Not(y => y.Eq(property, dmin)))
+                        : (y => y.Or(x => x.Lt(property, dmin), x => x.Gt(property, dmax)));
+                case NumericOperator.GreaterThan:
+                    return x => x.Gt(property, dmin);
+                case NumericOperator.GreaterThanEquals:
+                    return x => x.Ge(property, dmin);
+                case NumericOperator.Between:
+                    return y => y.And(x => x.Ge(property, dmin), x => x.Le(property, dmax));
+                case NumericOperator.NotBetween:
+                    return y => y.Or(x => x.Lt(property, dmin), x => x.Gt(property, dmax));
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public static Action<IHqlExpressionFactory> GetFilterPredicateNumeric(
+            NumericOperator op, string property, decimal? value, decimal? min, decimal? max) {
+            decimal dmin, dmax;
+            if (op == NumericOperator.Between || op == NumericOperator.NotBetween) {
+                dmin = min.HasValue ? min.Value : 0m;
+                dmax = max.HasValue ? max.Value : 0m;
+            } else {
+                dmin = dmax = value.HasValue ? value.Value : 0m;
             }
 
             switch (op) {
