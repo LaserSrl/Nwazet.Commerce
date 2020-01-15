@@ -3,11 +3,15 @@
 @using System.Collections.Generic
 @using Nwazet.Commerce.Models;
 @using System.Linq;
+@using Orchard.ContentManagement;
+
 @model Nwazet.Commerce.ViewModels.OrderEditorViewModel
 @{
     Script.Require("jQuery");
     Style.Include("order-admin.css", "order-admin.min.css");
     Script.Include("order-admin.js", "order-admin.min.js");
+
+    var _contentManager = WorkContext.Resolve<IContentManager>();
 
     var charge = Model.Order.Charge;
     Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
@@ -143,7 +147,6 @@
             <tbody id="order_products_table_body">
                 @foreach (var item in Model.OrderItems)
                 {
-
                     string originalPrice = "";
                     if (item.Price != item.OriginalPrice && item.OriginalPrice != (decimal)0.0)
                     {
@@ -152,7 +155,16 @@
 
                     <tr id="@string.Format("order_products_table_row-product_{0}", item.ProductId)">
                         <td class="quantity">@item.Quantity &times;</td>
-                        <td class="description"><a href="@Url.ItemDisplayUrl(Model.Products[item.ProductId])">@item.Title</a></td>
+                        <td class="description">
+                            @* check is a product *@
+                            @if (_contentManager.Get(item.ProductId)?.As<ProductPart>() != null) { 
+                                <a href="@Url.ItemDisplayUrl(Model.Products[item.ProductId])" target="_blank">@item.Title</a>
+                            }
+                            else
+                            {
+                                <span>@item.Title</span>
+                            }
+                        </td>
                         <td class="price">@Html.Raw(originalPrice)</td>
                         <td class="price">@currencyInUse.PriceAsString(item.Price, cultureInUse)</td>
                         @if (item.LinePriceAdjustment != 0)
@@ -267,18 +279,21 @@
                     {
                         dateActivity.Add(listActivity[i].Date.ToLocalTime().ToString(CultureInfo.CurrentCulture));
 
-                        if (i + 1 == listActivity.Count){
+                        if (i + 1 == listActivity.Count)
+                        {
                             @Html.Raw(ViewItemActivity(compareEqual, listActivity[i], dateActivity));
                         }
                         else
                         {
-                            if (listActivity[i].Description.Trim() != listActivity[i + 1].Description.Trim()) {
+                            if (listActivity[i].Description.Trim() != listActivity[i + 1].Description.Trim())
+                            {
                                 @Html.Raw(ViewItemActivity(compareEqual, listActivity[i], dateActivity));
 
                                 dateActivity = new List<string>();
                                 compareEqual = false;
                             }
-                            else {
+                            else
+                            {
                                 compareEqual = true;
                             }
                         }
