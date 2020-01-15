@@ -15,6 +15,30 @@
 
     var creationDate = (DateTime?)(((dynamic)Model.Order.ContentItem).CommonPart.CreatedUtc);
 }
+
+@helper ViewItemActivity(bool compareEqual, OrderEvent orderEvent, List<string> dateActivity)
+{
+    <li>
+        @if (compareEqual)
+        {
+            <p>
+                @T("From {0} to {1}", dateActivity.First(), dateActivity.Last())
+                (@orderEvent.Category)
+                @Html.Raw(orderEvent.Description)
+                @T("({0})", dateActivity.Count)
+            </p>
+        }
+        else
+        {
+            <p>
+                @orderEvent.Date.ToLocalTime().ToString(CultureInfo.CurrentCulture)
+                (@orderEvent.Category)
+                @Html.Raw(orderEvent.Description)
+            </p>
+        }
+    </li>
+}
+
 <div class="order-editor">
     @Html.HiddenFor(m => m.CurrencyCode)
     <fieldset class="order-metadata">
@@ -231,25 +255,11 @@
               data-add-event-url="@Url.Action("AddEvent", "OrderAdmin", new {area = "Nwazet.Commerce"})" data-order-id="@Model.Order.Id">
         <legend>@T("Activity:")</legend>
         <ul class="order-event-log">
-            @if (Model.Order.Activity != null)
-            {
-                foreach (var orderEvent in Model.Order.Activity)
-                {
-                    <li>
-                        <p>
-                            @orderEvent.Date.ToLocalTime().ToString(CultureInfo.CurrentCulture)
-                            (@orderEvent.Category)
-                            @Html.Raw(orderEvent.Description)
-                        </p>
-                    </li>
-                }
-            }
-        </ul>
-
-        <ul class="order-event-log">
             @{
                 if (Model.Order.Activity != null)
                 {
+                    // verify if there are successive identical descriptions and
+                    // writes only one line with the largest to the smallest date and number of item
                     var listActivity = ((IEnumerable<OrderEvent>)Model.Order.Activity.OrderByDescending(o => o.Date)).ToList();
                     List<string> dateActivity = new List<string>();
                     bool compareEqual = false;
@@ -257,60 +267,18 @@
                     {
                         dateActivity.Add(listActivity[i].Date.ToLocalTime().ToString(CultureInfo.CurrentCulture));
 
-                        if (i + 1 == listActivity.Count)
-                        {
-                            if (compareEqual)
-                            {
-                                <li>
-                                    <p>
-                                        @T("From {0} to {1}", dateActivity.First(), dateActivity.Last())
-                                        (@listActivity[i].Category)
-                                        @Html.Raw(listActivity[i].Description)
-                                        @T("({0})", dateActivity.Count)
-                                    </p>
-                                </li>
-                            }
-                            else
-                            {
-                                <li>
-                                    <p>
-                                        @listActivity[i].Date.ToLocalTime().ToString(CultureInfo.CurrentCulture)
-                                        (@listActivity[i].Category)
-                                        @Html.Raw(listActivity[i].Description)
-                                    </p>
-                                </li>
-                            }
+                        if (i + 1 == listActivity.Count){
+                            @Html.Raw(ViewItemActivity(compareEqual, listActivity[i], dateActivity));
                         }
                         else
                         {
-                            if (listActivity[i].Description.Trim() != listActivity[i + 1].Description.Trim())
-                            {
-                                if (compareEqual)
-                                {
-                                    <li>
-                                        <p>
-                                            @T("From {0} to {1}", dateActivity.First(), dateActivity.Last())
-                                            (@listActivity[i].Category)
-                                            @Html.Raw(listActivity[i].Description)
-                                            @T("({0})", dateActivity.Count)
-                                        </p>
-                                    </li>
-                                }
-                                else
-                                {
-                                    <li>
-                                        <p>
-                                            @listActivity[i].Date.ToLocalTime().ToString(CultureInfo.CurrentCulture)
-                                            (@listActivity[i].Category)
-                                            @Html.Raw(listActivity[i].Description)
-                                        </p>
-                                    </li>
-                                }
+                            if (listActivity[i].Description.Trim() != listActivity[i + 1].Description.Trim()) {
+                                @Html.Raw(ViewItemActivity(compareEqual, listActivity[i], dateActivity));
+
                                 dateActivity = new List<string>();
                                 compareEqual = false;
                             }
-                            else
-                            {
+                            else {
                                 compareEqual = true;
                             }
                         }
