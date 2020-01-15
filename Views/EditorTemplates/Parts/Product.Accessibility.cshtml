@@ -1,0 +1,12 @@
+﻿@using Nwazet.Commerce.Models
+@using Nwazet.Commerce.Services
+@using Orchard.ContentManagement
+@model Nwazet.Commerce.ViewModels.ProductEditorViewModel
+
+
+<fieldset class="product-part-edit product-part-accessibility">
+    <legend>@T("Accessibility")</legend>
+    @Html.CheckBoxFor(m => m.Product.AuthenticationRequired)
+    <label class="sub" for="@Html.IdFor(m => m.Product.AuthenticationRequired)">@T("authentication required")</label>
+    <span class="hint">@T("This allows for associating the order with the user but will force the user to log in prior to purchasing.")</span>
+</fieldset>
