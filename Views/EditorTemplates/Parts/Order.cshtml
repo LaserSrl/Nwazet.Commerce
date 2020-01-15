@@ -270,6 +270,16 @@
                                     </p>
                                 </li>
                             }
+                            else
+                            {
+                                <li>
+                                    <p>
+                                        @listActivity[i].Date.ToLocalTime().ToString(CultureInfo.CurrentCulture)
+                                        (@listActivity[i].Category)
+                                        @Html.Raw(listActivity[i].Description)
+                                    </p>
+                                </li>
+                            }
                         }
                         else
                         {
@@ -285,8 +295,6 @@
                                             @T("({0})", dateActivity.Count)
                                         </p>
                                     </li>
-                                    dateActivity = new List<string>();
-                                    compareEqual = false;
                                 }
                                 else
                                 {
@@ -298,6 +306,8 @@
                                         </p>
                                     </li>
                                 }
+                                dateActivity = new List<string>();
+                                compareEqual = false;
                             }
                             else
                             {
