@@ -296,6 +296,7 @@
     <Compile Include="Extensions\TerritoriesUtilities.cs" />
     <Compile Include="Features\CurrencyProviderBySiteSettingFeature.cs" />
     <Compile Include="Features\InventoryBySKUFeature.cs" />
+    <Compile Include="Filters\BaseDecimalFilterProvider.cs" />
     <Compile Include="Filters\FilterHelper.cs" />
     <Compile Include="Filters\ProductDiscountPriceFilter.cs" />
     <Compile Include="Filters\ProductDiscountPriceFilterForm.cs" />
