@@ -432,5 +432,11 @@ namespace Nwazet.Commerce.Models {
             }
             set { UserId = value == null ? -1 : value.Id; }
         }
+
+        // new property to use as key among systems
+        public string OrderKey {
+            get { return Record.OrderKey; }
+            set { Record.OrderKey = value; }
+        }
     }
 }
