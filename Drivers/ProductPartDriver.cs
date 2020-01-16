@@ -115,20 +115,38 @@ namespace Nwazet.Commerce.Drivers {
 
             part.Weight = Math.Round(part.Weight, 3);
             //part.Inventory = _productInventoryService.GetInventory(part);
-            return ContentShape("Parts_Product_Edit",
-                () => shapeHelper.EditorTemplate(
-                    TemplateName: "Parts/Product",
-                    Model: new ProductEditorViewModel {
-                        Product = part,
-                        AllowProductOverrides = allowTieredPricingOverride,
-                        PriceTiers = part.PriceTiers
-                            .Select(t => new PriceTierViewModel() {
-                                Quantity = t.Quantity,
-                                Price = (t.PricePercent != null ? t.PricePercent.ToString() + "%" : t.Price.ToString())
-                            })
-                            .ToList()
-                    },
-                    Prefix: Prefix));
+            var vm = new ProductEditorViewModel {
+                Product = part,
+                AllowProductOverrides = allowTieredPricingOverride,
+                PriceTiers = part.PriceTiers
+                    .Select(t => new PriceTierViewModel() {
+                        Quantity = t.Quantity,
+                        Price = (t.PricePercent != null ? t.PricePercent.ToString() + "%" : t.Price.ToString())
+                    })
+                    .ToList()
+            };
+            return Combined(
+                ContentShape("Parts_Product_Edit",
+                    () => shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Product",
+                        Model: vm,
+                        Prefix: Prefix)),
+                ContentShape("Parts_Product_Shipping_Edit",
+                    () => shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Product.Shipping",
+                        Model: vm,
+                        Prefix: Prefix)),
+                ContentShape("Parts_Product_Inventory_Edit",
+                    () => shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Product.Inventory",
+                        Model: vm,
+                        Prefix: Prefix)),
+                ContentShape("Parts_Product_Accessibility_Edit",
+                    () => shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Product.Accessibility",
+                        Model: vm,
+                        Prefix: Prefix))
+                );
         }
 
         //POST

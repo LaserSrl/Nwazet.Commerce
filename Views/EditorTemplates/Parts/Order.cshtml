@@ -14,6 +14,10 @@
     var _contentManager = WorkContext.Resolve<IContentManager>();
 
     var charge = Model.Order.Charge;
+    var chargeText = Model.PaymentProviderText;
+    if (string.IsNullOrWhiteSpace(chargeText)) {
+        chargeText = charge.ChargeText;
+    }
     Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
     CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
 
@@ -212,7 +216,7 @@
 
     <fieldset>
         <legend>@T("Charged to:")</legend>
-        <p>@charge.ChargeText</p>
+        <p>@chargeText</p>
         @if (!string.IsNullOrEmpty(Model.LinkToTransaction)) {
             <p>@T("Transaction <a href=\"{1}\">{0}</a>.", charge.TransactionId, Model.LinkToTransaction)</p>
         }

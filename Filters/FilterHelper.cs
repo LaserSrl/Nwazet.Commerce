@@ -9,16 +9,16 @@ using Orchard.Localization;
 using Orchard.Projections.FilterEditors.Forms;
 
 namespace Nwazet.Commerce.Filters {
-   public static class FilterHelper {
+    public static class FilterHelper {
         public enum PropertyType { StringType, NumericType };
-        public static Action<IHqlExpressionFactory> GetFilterPredicateNumeric(NumericOperator op, string property, string value, string min, string max) {
+        public static Action<IHqlExpressionFactory> GetFilterPredicateNumeric(
+            NumericOperator op, string property, string value, string min, string max) {
             decimal dmin, dmax;
             if (op == NumericOperator.Between || op == NumericOperator.NotBetween) {
-                dmin = Decimal.Parse(Convert.ToString(min), CultureInfo.InvariantCulture);
-                dmax = Decimal.Parse(Convert.ToString(max), CultureInfo.InvariantCulture);
-            }
-            else {
-                dmin = dmax = Decimal.Parse(Convert.ToString(value), CultureInfo.InvariantCulture);
+                dmin = decimal.Parse(Convert.ToString(min), CultureInfo.InvariantCulture);
+                dmax = decimal.Parse(Convert.ToString(max), CultureInfo.InvariantCulture);
+            } else {
+                dmin = dmax = decimal.Parse(Convert.ToString(value), CultureInfo.InvariantCulture);
             }
 
             switch (op) {
@@ -32,7 +32,9 @@ namespace Nwazet.Commerce.Filters {
                     }
                     return y => y.And(x => x.Ge(property, dmin), x => x.Le(property, dmax));
                 case NumericOperator.NotEquals:
-                    return dmin == dmax ? (Action<IHqlExpressionFactory>)(x => x.Not(y => y.Eq(property, dmin))) : (y => y.Or(x => x.Lt(property, dmin), x => x.Gt(property, dmax)));
+                    return dmin == dmax
+                        ? (Action<IHqlExpressionFactory>)(x => x.Not(y => y.Eq(property, dmin)))
+                        : (y => y.Or(x => x.Lt(property, dmin), x => x.Gt(property, dmax)));
                 case NumericOperator.GreaterThan:
                     return x => x.Gt(property, dmin);
                 case NumericOperator.GreaterThanEquals:
@@ -46,7 +48,44 @@ namespace Nwazet.Commerce.Filters {
             }
         }
 
-        public static  Action<IHqlExpressionFactory> GetFilterPredicateString(StringOperator op, string property, string value) {
+        public static Action<IHqlExpressionFactory> GetFilterPredicateNumeric(
+            NumericOperator op, string property, decimal? value, decimal? min, decimal? max) {
+            decimal dmin, dmax;
+            if (op == NumericOperator.Between || op == NumericOperator.NotBetween) {
+                dmin = min.HasValue ? min.Value : 0m;
+                dmax = max.HasValue ? max.Value : 0m;
+            } else {
+                dmin = dmax = value.HasValue ? value.Value : 0m;
+            }
+
+            switch (op) {
+                case NumericOperator.LessThan:
+                    return x => x.Lt(property, dmax);
+                case NumericOperator.LessThanEquals:
+                    return x => x.Le(property, dmax);
+                case NumericOperator.Equals:
+                    if (dmin == dmax) {
+                        return x => x.Eq(property, dmin);
+                    }
+                    return y => y.And(x => x.Ge(property, dmin), x => x.Le(property, dmax));
+                case NumericOperator.NotEquals:
+                    return dmin == dmax
+                        ? (Action<IHqlExpressionFactory>)(x => x.Not(y => y.Eq(property, dmin)))
+                        : (y => y.Or(x => x.Lt(property, dmin), x => x.Gt(property, dmax)));
+                case NumericOperator.GreaterThan:
+                    return x => x.Gt(property, dmin);
+                case NumericOperator.GreaterThanEquals:
+                    return x => x.Ge(property, dmin);
+                case NumericOperator.Between:
+                    return y => y.And(x => x.Ge(property, dmin), x => x.Le(property, dmax));
+                case NumericOperator.NotBetween:
+                    return y => y.Or(x => x.Lt(property, dmin), x => x.Gt(property, dmax));
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public static Action<IHqlExpressionFactory> GetFilterPredicateString(StringOperator op, string property, string value) {
             switch (op) {
                 case StringOperator.Equals:
                     return x => x.Eq(property, value);
@@ -56,7 +95,7 @@ namespace Nwazet.Commerce.Filters {
                     return x => x.Like(property, Convert.ToString(value), HqlMatchMode.Anywhere);
                 case StringOperator.ContainsAny:
                     if (string.IsNullOrEmpty((string)value))
-                        return x => x.Eq("Id", "0");
+                        return x => x.Eq("Id", "0"); // same way this is done in Orchard.Projections
                     var values1 = Convert.ToString(value).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     var predicates1 = values1.Skip(1).Select<string, Action<IHqlExpressionFactory>>(x => y => y.Like(property, x, HqlMatchMode.Anywhere)).ToArray();
                     return x => x.Disjunction(y => y.Like(property, values1[0], HqlMatchMode.Anywhere), predicates1);
@@ -74,12 +113,26 @@ namespace Nwazet.Commerce.Filters {
                     return y => y.Not(x => x.Like(property, Convert.ToString(value), HqlMatchMode.End));
                 case StringOperator.NotContains:
                     return y => y.Not(x => x.Like(property, Convert.ToString(value), HqlMatchMode.Anywhere));
+                case StringOperator.ContainsAnyIfProvided:
+                    if (string.IsNullOrWhiteSpace((string)value))
+                        return x => x.IsNotEmpty("Id"); // basically, return every possible ContentItem
+                    var values3 = Convert.ToString(value)
+                        .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    var predicates3 = values3.Skip(1)
+                        .Select<string, Action<IHqlExpressionFactory>>(x => y => y.Like(property, x, HqlMatchMode.Anywhere)).ToArray();
+                    return x => x.Disjunction(y => y.Like(property, values3[0], HqlMatchMode.Anywhere), predicates3);
+                case StringOperator.ContainsAllIfProvided:
+                    if (string.IsNullOrWhiteSpace((string)value))
+                        return x => x.IsNotEmpty("Id"); // basically, return every possible ContentItem
+                    var values4 = Convert.ToString(value).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    var predicates4 = values4.Skip(1).Select<string, Action<IHqlExpressionFactory>>(x => y => y.Like(property, x, HqlMatchMode.Anywhere)).ToArray();
+                    return x => x.Conjunction(y => y.Like(property, values4[0], HqlMatchMode.Anywhere), predicates4);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        public static LocalizedString DisplayFilterNumeric(Localizer T,dynamic contextState,  string property) {
+        public static LocalizedString DisplayFilterNumeric(Localizer T, dynamic contextState, string property) {
             string value = contextState.Value;
             string min = contextState.Min;
             string max = contextState.Max;
@@ -131,6 +184,16 @@ namespace Nwazet.Commerce.Filters {
                     return T("{0} does not end with '{1}'", property, value);
                 case StringOperator.NotContains:
                     return T("{0} does not contain '{1}'", property, value);
+                case StringOperator.ContainsAnyIfProvided:
+                    return T("{0} contains any of '{1}' (or '{1}' is empty)",
+                        property,
+                        new LocalizedString(string.Join("', '",
+                            value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))));
+                case StringOperator.ContainsAllIfProvided:
+                    return T("{0} contains all '{1}' (or '{1}' is empty)",
+                        property,
+                        new LocalizedString(string.Join("', '",
+                            value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))));
                 default:
                     throw new ArgumentOutOfRangeException();
             }

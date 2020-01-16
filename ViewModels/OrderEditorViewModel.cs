@@ -18,6 +18,10 @@ namespace Nwazet.Commerce.ViewModels {
         public string UserName { get; set; }
         public bool UserNameNeeded { get; set; }
         public string CurrencyCode { get; set; }
+        /// <summary>
+        /// Use this string as a sort of "title" for the payment provider/system used
+        /// </summary>
+        public string PaymentProviderText { get; set; }
 
         public IEnumerable<dynamic> AdditionalMetadataShapes { get; set; }
         public IEnumerable<dynamic> AdditionalStatusShapes { get; set; }
