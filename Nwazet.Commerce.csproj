@@ -207,6 +207,8 @@
     <None Include="Views\Parts\Inventory.cshtml" />
     <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />
     <None Include="Views\Parts\WishListsActions.cshtml" />
+    <Content Include="Views\ProductAdmin\CreateProduct.cshtml" />
+    <Content Include="Views\ProductAdmin\CreatableTypeList.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\CreatableTypeList.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\CreateHierarchy.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\EditHierarchy.cshtml" />
@@ -231,6 +233,7 @@
     <Compile Include="Controllers\FlexibleShippingCriterionController.cs" />
     <Compile Include="Controllers\HierarchyTerritoriesAdminController.cs" />
     <Compile Include="Controllers\InventoryBySKUSettingsAdminController.cs" />
+    <Compile Include="Controllers\ProductExecutionContext.cs" />
     <Compile Include="Controllers\ProductSettingsAdminController.cs" />
     <Compile Include="Controllers\BundleAdminController.cs" />
     <Compile Include="Controllers\AttributesAdminController.cs" />
@@ -293,6 +296,7 @@
     <Compile Include="Exceptions\TerritoryInternalDuplicateException.cs" />
     <Compile Include="Extensions\AttributeNameUtilities.cs" />
     <Compile Include="Extensions\DefaultHqlExpressionFactoryExtension.cs" />
+    <Compile Include="Extensions\ProductUtilities.cs" />
     <Compile Include="Extensions\TerritoriesUtilities.cs" />
     <Compile Include="Features\CurrencyProviderBySiteSettingFeature.cs" />
     <Compile Include="Features\InventoryBySKUFeature.cs" />

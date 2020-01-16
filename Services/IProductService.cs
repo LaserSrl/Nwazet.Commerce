@@ -1,5 +1,6 @@
 ﻿using Nwazet.Commerce.Models;
 using Orchard;
+using Orchard.ContentManagement.MetaData.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,5 +26,7 @@ namespace Nwazet.Commerce.Services {
         /// <param name="quantity"></param>
         /// <returns></returns>
         bool MayAddToCart(ProductPart product, int quantity);
+
+        IEnumerable<ContentTypeDefinition> GetProductTypes();
     }
 }

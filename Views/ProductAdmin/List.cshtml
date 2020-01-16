@@ -1,13 +1,30 @@
 @using Orchard.Core.Contents.ViewModels;
+@using Nwazet.Commerce.Models
+@using Orchard.ContentManagement.MetaData.Models;
 @using ContentsOrder = Nwazet.Commerce.ViewModels.ContentsOrder
 @{
     var pageTitle = T("Manage Products");
     var createLinkText = T("Create New Product");
     Layout.Title = pageTitle;
+
+    var AllowedProductTypes = Model.AllowedProductTypes == null
+        ? new List<ContentTypeDefinition>()
+        : (List<ContentTypeDefinition>)Model.AllowedProductTypes;
 }
 
 <div class="manage">
-    @Html.ActionLink(createLinkText.Text, "Create", "Admin", new { Area = "Contents", Id = "Product" }, new { @class = "button primaryAction" })
+    @*@Html.ActionLink(createLinkText.Text, "Create", "Admin", new { Area = "Contents", Id = "Product" }, new { @class = "button primaryAction" })*@
+    @if (AllowedProductTypes.Any()) {
+        @Html.ActionLink(createLinkText.Text,
+               "CreateProduct",
+               "ProductAdmin",
+               new {
+                   Area = "Nwazet.Commerce",
+                   ReturnUrl = Request.RawUrl,
+                   id = AllowedProductTypes.Count() == 1 ? AllowedProductTypes.FirstOrDefault().Name : ""
+               },
+               new { @class = "button primaryAction" })
+    }
 </div>
 @using (Html.BeginFormAntiForgeryPost()) {
     <fieldset class="bulk-actions">
@@ -19,7 +36,7 @@
         <button type="submit" name="submit.Filter" value="yes please">@T("Apply")</button>
     </fieldset>
     <fieldset class="contentItems bulk-items">
-@Display(Model.ContentItems)
+        @Display(Model.ContentItems)
     </fieldset>
-@Display(Model.Pager)
+    @Display(Model.Pager)
 }

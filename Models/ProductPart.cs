@@ -7,6 +7,8 @@ using Nwazet.Commerce.Services;
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.Commerce")]
     public class ProductPart : ContentPart<ProductPartVersionRecord>, IProduct {
+        public static string PartName = "ProductPart";
+
         [Required]
         public string Sku
         {

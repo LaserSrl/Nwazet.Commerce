@@ -1,0 +1,12 @@
+@{ Layout.Title = T("Create New Product").ToString(); }
+
+@foreach (var type in Model.ProductTypes) {
+    <p>
+        @Html.ActionLink((string)type.DisplayName,
+          "CreateProduct",
+          new {
+              Area = "Nwazet.Commerce",
+              id = Html.Encode((string)type.Name),
+              ReturnUrl = Request.QueryString["ReturnUrl"] })
+    </p>
+}
