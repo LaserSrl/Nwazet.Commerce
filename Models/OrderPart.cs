@@ -129,7 +129,7 @@ namespace Nwazet.Commerce.Models {
             PersistContents();
             PersistCustomer();
         }
-
+        
         private void PersistContents() {
             Record.Contents = _contentDocument.ToString(SaveOptions.None);
         }
@@ -251,6 +251,14 @@ namespace Nwazet.Commerce.Models {
                     .FromAttr(c => c.ChargeText)
                     .Context;
             }
+        }
+
+        public void UpdateCharge(ICharge charge) {
+            ContentDocument.Element(ChargeName)
+                .With(charge)
+                .ToAttr(c => c.TransactionId)
+                .ToAttr(c => c.ChargeText);
+            PersistContents();
         }
 
         public TaxAmount Taxes {
