@@ -97,7 +97,9 @@ namespace Nwazet.Commerce.Controllers {
                 SpecialInstructions: order.SpecialInstructions,
                 PurchaseOrder: order.PurchaseOrder,
                 Password: order.Password,
-                CurrencyCode: string.IsNullOrWhiteSpace(order.CurrencyCode) ? _currencyProvider.CurrencyCode : order.CurrencyCode);
+                CurrencyCode: string.IsNullOrWhiteSpace(order.CurrencyCode) 
+                    ? _currencyProvider.CurrencyCode : order.CurrencyCode,
+                OrderKey: order.OrderKey);
             
             return new ShapeResult(this, shape);
         }

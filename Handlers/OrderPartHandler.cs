@@ -14,7 +14,14 @@ namespace Nwazet.Commerce.Handlers {
             // among systems interacting with the e-commerce
             // TODO: make a service for this for future more complex
             // implementations
-            OnCreated<OrderPart>((ctx, op) => op.OrderKey = op.Id.ToString());
+            // We also need to ensure that we don't reassign the value of that
+            // if it's already populated, to prevent changing it. This will
+            // become relevant when new providers are added to compute it and
+            // in import/export scenarios.
+            OnCreated<OrderPart>((ctx, op) => 
+                op.OrderKey = string.IsNullOrWhiteSpace(op.OrderKey)
+                    ? op.Id.ToString()
+                    : op.OrderKey);
         }
 
     }
