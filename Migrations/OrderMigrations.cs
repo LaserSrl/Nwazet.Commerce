@@ -73,5 +73,11 @@ namespace Nwazet.Commerce.Migrations {
             }
             return 4;
         }
+
+        public int UpdateFrom4() {
+            SchemaBuilder.AlterTable("OrderPartRecord", table => table
+                .AddColumn<string>("OrderKey"));
+            return 5;
+        }
     }
 }

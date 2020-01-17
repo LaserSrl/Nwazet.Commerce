@@ -408,7 +408,7 @@ namespace Nwazet.Commerce.Models {
         }
 
         public string Title {
-            get { return Id + " - " +
+            get { return OrderKey + " - " +
                 Status + " - " +
                 BillingAddress.Honorific + " " + BillingAddress.FirstName + " " + BillingAddress.LastName + " - " +
                 Currency.Currencies[CurrencyCode].PriceAsString(Total, CultureInfo.CurrentCulture) +
@@ -431,6 +431,14 @@ namespace Nwazet.Commerce.Models {
                 return user;
             }
             set { UserId = value == null ? -1 : value.Id; }
+        }
+
+        // new property to use as key among systems
+        public string OrderKey {
+            get { return string.IsNullOrWhiteSpace(Record.OrderKey)
+                    ? Id.ToString() //default for retrocompatibility
+                    : Record.OrderKey; }
+            set { Record.OrderKey = value; }
         }
     }
 }

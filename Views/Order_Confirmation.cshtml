@@ -5,14 +5,16 @@
 @using System.Globalization
 @{
     var title = Layout.Title = T("Order #{0}", Model.OrderId);
-    var items = (Model.CheckoutItems as IEnumerable<CheckoutItem> ?? new CheckoutItem[] {}).ToList();
+    var items = (Model.CheckoutItems as IEnumerable<CheckoutItem> ?? new CheckoutItem[] { }).ToList();
     Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
     CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
 }
 <h1>@title</h1>
 <p class="order-status">@T("Status: {0}", Model.Status)</p>
-@if (!String.IsNullOrWhiteSpace(Model.PurchaseOrder)) {
-    <p class="order-purchase-order">@T("Purchase Order, Invoice, or Reference Order: {0}", Model.PurchaseOrder)</p>
+@* Model.PurchaseOrder is for use by the merchant and their operators
+    FrontEnd customers need the order reference represented in Model.OrderKey*@
+@if (!String.IsNullOrWhiteSpace(Model.OrderKey)) {
+    <p class="order-purchase-order">@T("Order reference: {0}", Model.OrderKey)</p>
 }
 @if (items.Any()) {
     <fieldset class="order-items">
@@ -47,7 +49,7 @@
                 </tr>
                 <tr class="taxes">
                     <td colspan="2" class="label">@T("Taxes {0}", string.IsNullOrWhiteSpace(Model.Taxes.Name) ? "" : Model.Taxes.Name)</td>
-                    <td class="price"@currencyInUse.PriceAsString(Model.Taxes.Amount, cultureInUse)></td>
+                    <td class="price" @currencyInUse.PriceAsString(Model.Taxes.Amount, cultureInUse)></td>
                 </tr>
                 <tr class="shipping">
                     <td colspan="2" class="label">@T("Shipping: {0} {1}", Model.ShippingOption.ShippingCompany, Model.ShippingOption.Description)</td>
@@ -64,14 +66,14 @@
     using (Script.Foot()) {
         <script>
             // Clear the cart contents in localStorage
-            jQuery(function($) {
+            jQuery(function ($) {
                 var nwazetCart = "nwazet.cart",
-                    emptyCart = function() {
+                    emptyCart = function () {
                         if (hasLocalStorage()) {
                             localStorage.removeItem(nwazetCart);
                         }
                     },
-                    hasLocalStorage = function() {
+                    hasLocalStorage = function () {
                         try {
                             return "localStorage" in window && window.localStorage !== null;
                         } catch (e) {
@@ -83,21 +85,20 @@
             });
         </script>
     }
-}
-else {
+} else {
     <p class="total">@T("Total: {0}", currencyInUse.PriceAsString(Model.Total, cultureInUse)) </p>
     Script.Require("jQuery");
     using (Script.Foot()) {
         <script>
             // Clear the purchase order number from localStorage
-            jQuery(function($) {
+            jQuery(function ($) {
                 var purchaseOrder = "PurchaseOrder",
-                    removePo = function() {
+                    removePo = function () {
                         if (hasLocalStorage()) {
                             localStorage.removeItem(purchaseOrder);
                         }
                     },
-                    hasLocalStorage = function() {
+                    hasLocalStorage = function () {
                         try {
                             return "localStorage" in window && window.localStorage !== null;
                         } catch (e) {
@@ -136,5 +137,7 @@ else {
     </fieldset>
 }
 
-<div class="order-link">@T("You may view this order at a later time by going to this address: <a href=\"{0}\">{0}</a>, using this password: \"{1}\".",
-                            Url.Action("Show", "OrderSsl", new {id = Model.OrderId, area = "Nwazet.Commerce"}), Model.Password)</div>
+<div class="order-link">
+    @T("You may view this order at a later time by going to this address: <a href=\"{0}\">{0}</a>, using this password: \"{1}\".",
+    Url.Action("Show", "OrderSsl", new {id = Model.OrderId, area = "Nwazet.Commerce"}), Model.Password)
+</div>

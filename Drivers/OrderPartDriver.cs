@@ -337,7 +337,8 @@ namespace Nwazet.Commerce.Drivers {
                 .FromAttr(p => p.Password)
                 .FromAttr(p => p.Status)
                 .FromAttr(p => p.TrackingUrl)
-                .FromAttr(p => p.PurchaseOrder);
+                .FromAttr(p => p.PurchaseOrder)
+                .FromAttr(p => p.OrderKey);
 
             var activityEl = xel.Element(ActivityName);
             if (activityEl != null) {
@@ -376,6 +377,7 @@ namespace Nwazet.Commerce.Drivers {
                 .ToAttr(o => o.TrackingUrl)
                 .ToAttr(o => o.PurchaseOrder)
                 .ToAttr(o => o.CurrencyCode)
+                .ToAttr(o => o.OrderKey)
                 .Element
 
                 .AddEl(new XElement(ItemsName,

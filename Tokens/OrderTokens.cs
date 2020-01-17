@@ -46,7 +46,8 @@ namespace Nwazet.Commerce.Tokens {
                 .Token("AmountPaid", T("Amount Paid"), T("The amount that the customer actually paid."))
                 .Token("Charge", T("Charge"), T("A charge, on a credit card for example."), "Charge")
                 .Token("User", T("User"), T("User associated with the order."), "User")
-                .Token("PurchaseOrder", T("Purchase Order"), T("A purchase order, invoice, or order reference number."), "Text");
+                .Token("PurchaseOrder", T("Purchase Order"), T("A purchase order, invoice, or order reference number."), "Text")
+                .Token("OrderKey", T("Unique Order Reference"), T("Key string used to represent the order in all connected systems."), "Text");
 
             context.For("CheckoutItems", T("Checkout Items"), T("The list of product quantities and prices in the order."))
                 .Token("Format:*", T("Format:<separator>:<cart format>"), T("Formats the contents of the cart using a format string that uses $quantity for the quantity, $product for the product name (with attributes), and $price for the price. For example {Cart.Items.Format:, :$quantity x $product}"), "Text");
@@ -105,7 +106,9 @@ namespace Nwazet.Commerce.Tokens {
                 .Token("User", o => o.User == null ? "" : o.User.UserName)
                 .Chain("User", "User", o => o.User)
                 .Token("PurchaseOrder", o => o.PurchaseOrder)
-                .Chain("PurchaseOrder", "Text", o => o.PurchaseOrder);
+                .Chain("PurchaseOrder", "Text", o => o.PurchaseOrder)
+                .Token("OrderKey", o => o.OrderKey)
+                .Chain("OrderKey", "Text", o => o.OrderKey);
 
             context.For<IEnumerable<CheckoutItem>>("CheckoutItems")
                 .Token(s => s.StartsWith("Format:", StringComparison.OrdinalIgnoreCase) ? s.Substring("Format:".Length) : null,

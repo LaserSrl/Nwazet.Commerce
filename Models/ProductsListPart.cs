@@ -141,7 +141,10 @@ namespace Nwazet.Commerce.Models {
             if (shipElement.Attribute("ShippingMethodId") != null) {
                 var method = (IShippingMethod)null;
                 if (int.TryParse(shipElement.Attribute("ShippingMethodId").Value, out methodId) && methodId > 0) {
-                    method = (IShippingMethod)this.ContentItem.ContentManager.Get(methodId);
+                    method = this.ContentItem.ContentManager
+                        .Get(methodId) // get the ContentItem for the method
+                        // get the part that implements the interface for shipping methods
+                        .Parts.FirstOrDefault(pa => pa is IShippingMethod) as IShippingMethod;
                     if (method == null) {
                         methodId = 0;
                     }

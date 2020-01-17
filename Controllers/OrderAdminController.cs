@@ -90,15 +90,10 @@ namespace Nwazet.Commerce.Controllers {
             model.Options.FilterOptions =
                 _orderService.StatusLabels.Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Value.Text));
 
-
-          
             if (!_orchardServices.Authorizer.Authorize(OrderPermissions.ViewAllOrders)) {
                 Orchard.Security.IUser currentUser = _orchardServices.WorkContext.CurrentUser;                
                 query = query.Join<CommonPartRecord>().Where(c => c.OwnerId == currentUser.Id).Join<OrderPartRecord>();
             }
-
-
-
 
             var pagerShape = Shape.Pager(pager).TotalItemCount(query.Count());
             var pageOfContentItems = query.Slice(pager.GetStartIndex(), pager.PageSize).ToList();
