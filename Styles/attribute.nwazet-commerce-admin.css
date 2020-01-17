@@ -44,3 +44,18 @@ ul#NwazetCommerceAttribute_AttributeValues > li > div {
 .extra-label {
     width: 175px;
 }
+
+.price-adj input.text {
+    min-width: auto;
+    width: 100% !important;
+}
+
+.option-name input.text {
+    min-width: auto;
+    width: 100%;
+}
+
+.extension select {
+    min-width: auto !important;
+    width: 100%;
+}
