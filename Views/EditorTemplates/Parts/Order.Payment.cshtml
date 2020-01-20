@@ -28,8 +28,13 @@
     <fieldset>
         <legend>@T("Charged to:")</legend>
         <p>@chargeText</p>
-        @if (!string.IsNullOrEmpty(Model.LinkToTransaction)) {
-            <p>@T("Transaction <a href=\"{1}\">{0}</a>.", charge.TransactionId, Model.LinkToTransaction)</p>
-        }
+            @if (!string.IsNullOrEmpty(Model.LinkToTransaction)) {
+                <p>
+                    @T("Transaction <a href=\"{1}\" target=\"_blank\" title=\"{2}\">{0} (<i class=\"fa fa-external-link\"></i>)</a>",
+                         charge.TransactionId,
+                         Model.LinkToTransaction,
+                         T("The link opens in another tab"))
+                </p>
+            }
     </fieldset>
 </div>
