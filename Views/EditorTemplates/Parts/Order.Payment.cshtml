@@ -1,0 +1,35 @@
+﻿@using System.Globalization
+@using Nwazet.Commerce.Services
+@using System.Collections.Generic
+@using Nwazet.Commerce.Models;
+@using System.Linq;
+@using Orchard.ContentManagement;
+
+@model Nwazet.Commerce.ViewModels.OrderEditorViewModel
+@{
+    Script.Require("jQuery");
+    Style.Include("order-admin.css", "order-admin.min.css");
+    Script.Include("order-admin.js", "order-admin.min.js");
+
+    var _contentManager = WorkContext.Resolve<IContentManager>();
+
+    var charge = Model.Order.Charge;
+    var chargeText = Model.PaymentProviderText;
+    if (string.IsNullOrWhiteSpace(chargeText)) {
+        chargeText = charge.ChargeText;
+    }
+    Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
+    CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
+
+    var creationDate = (DateTime?)(((dynamic)Model.Order.ContentItem).CommonPart.CreatedUtc);
+}
+
+<div class="order-editor">
+    <fieldset>
+        <legend>@T("Charged to:")</legend>
+        <p>@chargeText</p>
+        @if (!string.IsNullOrEmpty(Model.LinkToTransaction)) {
+            <p>@T("Transaction <a href=\"{1}\">{0}</a>.", charge.TransactionId, Model.LinkToTransaction)</p>
+        }
+    </fieldset>
+</div>

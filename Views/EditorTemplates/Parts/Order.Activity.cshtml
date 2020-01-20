@@ -1,0 +1,90 @@
+﻿@using System.Globalization
+@using Nwazet.Commerce.Services
+@using System.Collections.Generic
+@using Nwazet.Commerce.Models;
+@using System.Linq;
+@using Orchard.ContentManagement;
+
+@model Nwazet.Commerce.ViewModels.OrderEditorViewModel
+@{
+    Script.Require("jQuery");
+    Style.Include("order-admin.css", "order-admin.min.css");
+    Script.Include("order-admin.js", "order-admin.min.js");
+
+    var _contentManager = WorkContext.Resolve<IContentManager>();
+
+    var charge = Model.Order.Charge;
+    var chargeText = Model.PaymentProviderText;
+    if (string.IsNullOrWhiteSpace(chargeText)) {
+        chargeText = charge.ChargeText;
+    }
+    Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
+    CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
+
+    var creationDate = (DateTime?)(((dynamic)Model.Order.ContentItem).CommonPart.CreatedUtc);
+}
+@helper ViewItemActivity(bool compareEqual, OrderEvent orderEvent, List<string> dateActivity) {
+    <li>
+        @if (compareEqual) {
+            <p>
+                @T("From {0} to {1}", dateActivity.First(), dateActivity.Last())
+                (@orderEvent.Category)
+                @Html.Raw(orderEvent.Description)
+                @T("({0})", dateActivity.Count)
+            </p>
+        } else {
+            <p>
+                @orderEvent.Date.ToLocalTime().ToString(CultureInfo.CurrentCulture)
+                (@orderEvent.Category)
+                @Html.Raw(orderEvent.Description)
+            </p>
+        }
+    </li>
+}
+<div class="order-editor">
+    <fieldset class="order-events"
+              data-add-event-url="@Url.Action("AddEvent", "OrderAdmin", new {area = "Nwazet.Commerce"})" data-order-id="@Model.Order.Id">
+        <legend>@T("Activity:")</legend>
+        <ul class="order-event-log">
+            @{
+                if (Model.Order.Activity != null) {
+                    // verify if there are successive identical descriptions and
+                    // writes only one line with the largest to the smallest date and number of item
+                    var listActivity = ((IEnumerable<OrderEvent>)Model.Order.Activity.OrderByDescending(o => o.Date)).ToList();
+                    List<string> dateActivity = new List<string>();
+                    bool compareEqual = false;
+                    for (int i = 0; i < listActivity.Count; i++) {
+                        dateActivity.Add(listActivity[i].Date.ToLocalTime().ToString(CultureInfo.CurrentCulture));
+
+                        if (i + 1 == listActivity.Count) {
+                            @Html.Raw(ViewItemActivity(compareEqual, listActivity[i], dateActivity));
+                        } else {
+                            if (listActivity[i].Description.Trim() != listActivity[i + 1].Description.Trim()) {
+                                @Html.Raw(ViewItemActivity(compareEqual, listActivity[i], dateActivity));
+
+                                dateActivity = new List<string>();
+                                compareEqual = false;
+                            } else {
+                                compareEqual = true;
+                            }
+                        }
+                    }
+                }
+            }
+        </ul>
+
+        <div class="order-event-add">
+            <ul>
+                @foreach (var category in Model.EventCategories) {
+                    var stateid = ViewData.TemplateInfo.GetFullHtmlFieldId("EventCategory_" + category);
+                    <li>
+                        @Html.RadioButton("EventCategory", category, new { @id = stateid, @class = "new-order-event-category" })
+                        @Html.Label("EventCategory_" + category, Model.EventCategoryLabels[category].Text)
+                    </li>
+                }
+            </ul>
+            <textarea class="new-order-event-description"></textarea>
+            <button type="button" class="new-order-event-add button grey">@T("Add")</button>
+        </div>
+    </fieldset>
+</div>

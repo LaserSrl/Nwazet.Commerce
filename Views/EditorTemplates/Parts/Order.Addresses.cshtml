@@ -1,0 +1,100 @@
+﻿@using System.Globalization
+@using Nwazet.Commerce.Services
+@using System.Collections.Generic
+@using Nwazet.Commerce.Models;
+@using System.Linq;
+@using Orchard.ContentManagement;
+
+@model Nwazet.Commerce.ViewModels.OrderEditorViewModel
+@{
+    Script.Require("jQuery");
+    Style.Include("order-admin.css", "order-admin.min.css");
+    Script.Include("order-admin.js", "order-admin.min.js");
+
+    var _contentManager = WorkContext.Resolve<IContentManager>();
+
+    var charge = Model.Order.Charge;
+    var chargeText = Model.PaymentProviderText;
+    if (string.IsNullOrWhiteSpace(chargeText)) {
+        chargeText = charge.ChargeText;
+    }
+    Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
+    CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
+
+    var creationDate = (DateTime?)(((dynamic)Model.Order.ContentItem).CommonPart.CreatedUtc);
+}
+
+<div class="order-editor">
+
+    @if (Model.UserNameNeeded) {
+        <fieldset class="order-user">
+            <legend>@T("Order Username:")</legend>
+            <div class="order-user-edit">
+                @Html.TextBoxFor(m => m.UserName, new { @class = "text-medium order-user-edit-field" })
+                <span class="hint">@T("Associate this order with a username.")</span>
+            </div>
+        </fieldset>
+    } else {
+        @Html.HiddenFor(m => m.UserName)
+    }
+
+    <div class="order-link">
+        @T("You may view this order at a later time by going to this address: <a href=\"{0}\">{0}</a>, using this password: \"{1}\".",
+        Url.Action("Show", "OrderSsl", new {id = Model.Order.Id, area = "Nwazet.Commerce"}), Model.Order.Password)
+    </div>
+
+    <div class="addresses">
+        <fieldset class="shipping-address">
+            <legend>@T("Shipping to:")</legend>
+            <div class="address-view">
+                @Html.Raw(Html.Encode(Model.ShippingAddressText).Replace(Environment.NewLine, "<br/>"))
+            </div>
+            <div class="address-form">
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.Honorific, new { @class = "text-small", title = T("Honorific") })
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.FirstName, new { @class = "text", title = T("First Name") })
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.LastName, new { @class = "text", title = T("Last Name") })<br />
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.Company, new { @class = "text-medium", title = T("Company") })<br />
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.Address1, new { @class = "text-medium", title = T("Address 1") })<br />
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.Address2, new { @class = "text-medium", title = T("Address 2") })<br />
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.City, new { @class = "text", title = T("City") })
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.Province, new { @class = "text-small", title = T("Province or State") })
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.PostalCode, new { @class = "text-small", title = T("Postal code") })<br />
+                @Html.TextBoxFor(m => m.Order.ShippingAddress.Country, new { @class = "text-medium", title = T("Country") })
+            </div>
+        </fieldset>
+
+        <fieldset class="billing-address">
+            <legend>@T("Billing:")</legend>
+            <div class="address-view">
+                @Html.Raw(Html.Encode(Model.BillingAddressText).Replace(Environment.NewLine, "<br/>"))
+            </div>
+            <div class="address-form">
+                @Html.TextBoxFor(m => m.Order.BillingAddress.Honorific, new { @class = "text-small", title = T("Honorific") })
+                @Html.TextBoxFor(m => m.Order.BillingAddress.FirstName, new { @class = "text", title = T("First Name") })
+                @Html.TextBoxFor(m => m.Order.BillingAddress.LastName, new { @class = "text", title = T("Last Name") })<br />
+                @Html.TextBoxFor(m => m.Order.BillingAddress.Company, new { @class = "text-medium", title = T("Company") })<br />
+                @Html.TextBoxFor(m => m.Order.BillingAddress.Address1, new { @class = "text-medium", title = T("Address 1") })<br />
+                @Html.TextBoxFor(m => m.Order.BillingAddress.Address2, new { @class = "text-medium", title = T("Address 2") })<br />
+                @Html.TextBoxFor(m => m.Order.BillingAddress.City, new { @class = "text", title = T("City") })
+                @Html.TextBoxFor(m => m.Order.BillingAddress.Province, new { @class = "text-small", title = T("Province or State") })
+                @Html.TextBoxFor(m => m.Order.BillingAddress.PostalCode, new { @class = "text-small", title = T("Postal code") })<br />
+                @Html.TextBoxFor(m => m.Order.BillingAddress.Country, new { @class = "text-medium", title = T("Country") })
+            </div>
+        </fieldset>
+
+        <p>@T("E-mail:") <a href="@("mailto:" + Model.Order.CustomerEmail)">@Model.Order.CustomerEmail</a></p>
+        <p>@T("Phone:") <a href="@("tel:" + Model.Order.CustomerPhone)">@Model.Order.CustomerPhone</a></p>
+
+        @foreach (var additionalShape in Model.AdditionalAddressesShapes) {
+            @Display(additionalShape)
+        }
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Order.SpecialInstructions)) {
+        <fieldset>
+            <legend>@T("Special instructions:")</legend>
+            @Model.Order.SpecialInstructions
+        </fieldset>
+    }
+
+</div>

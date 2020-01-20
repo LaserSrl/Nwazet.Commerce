@@ -1,0 +1,43 @@
+﻿@using System.Globalization
+@using Nwazet.Commerce.Services
+@using System.Collections.Generic
+@using Nwazet.Commerce.Models;
+@using System.Linq;
+@using Orchard.ContentManagement;
+
+@model Nwazet.Commerce.ViewModels.OrderEditorViewModel
+@{
+    Script.Require("jQuery");
+    Style.Include("order-admin.css", "order-admin.min.css");
+    Script.Include("order-admin.js", "order-admin.min.js");
+
+    var _contentManager = WorkContext.Resolve<IContentManager>();
+
+    var charge = Model.Order.Charge;
+    var chargeText = Model.PaymentProviderText;
+    if (string.IsNullOrWhiteSpace(chargeText)) {
+        chargeText = charge.ChargeText;
+    }
+    Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
+    CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
+
+    var creationDate = (DateTime?)(((dynamic)Model.Order.ContentItem).CommonPart.CreatedUtc);
+}
+
+<div class="order-editor">
+    <fieldset class="order-status">
+        <legend>@T("Status:")</legend>
+        <ul>
+            @foreach (var state in Model.OrderStates) {
+                var stateid = ViewData.TemplateInfo.GetFullHtmlFieldId("Status_" + state);
+                <li>
+                    @Html.RadioButtonFor(m => m.Order.Status, state, new { @id = stateid })
+                    @Html.Label("Status_" + state, Model.StatusLabels[state].Text)
+                </li>
+            }
+        </ul>
+        @foreach (var additionalShape in Model.AdditionalStatusShapes) {
+            @Display(additionalShape)
+        }
+    </fieldset>
+</div>

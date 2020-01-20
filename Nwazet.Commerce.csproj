@@ -187,6 +187,12 @@
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethodCriteria.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Inventory.cshtml" />
     <None Include="Views\EditorTemplates\Parts\NewFlexibleShippingMethodCriteria.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Order.Activity.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Order.Addresses.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Order.Metadata.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Order.Payment.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Order.Shipping.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Order.Status.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Product.Accessibility.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Product.Inventory.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Product.Shipping.cshtml" />

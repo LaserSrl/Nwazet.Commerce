@@ -170,11 +170,43 @@ namespace Nwazet.Commerce.Drivers {
                 AdditionalOrderTrackingShapes = _orderAdditionalInformationProviders
                     .SelectMany(oaip => oaip.GetAdditionalOrderTrackingShapes(part))
             };
-            return ContentShape("Parts_Order_Edit",
-                () => shapeHelper.EditorTemplate(
-                    TemplateName: "Parts/Order",
-                    Model: model,
-                    Prefix: Prefix));
+            return Combined(
+                ContentShape("Parts_Order_Metadata_Edit",
+                    () => shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Order.Metadata",
+                        Model: model,
+                        Prefix: Prefix)),
+                ContentShape("Parts_Order_Status_Edit",
+                    () => shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Order.Status",
+                        Model: model,
+                        Prefix: Prefix)),
+                ContentShape("Parts_Order_Addresses_Edit",
+                    () => shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Order.Addresses",
+                        Model: model,
+                        Prefix: Prefix)),
+                ContentShape("Parts_Order_Edit", // products and prices
+                    () => shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Order",
+                        Model: model,
+                        Prefix: Prefix)),
+                ContentShape("Parts_Order_Payment_Edit",
+                    () => shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Order.Payment",
+                        Model: model,
+                        Prefix: Prefix)),
+                ContentShape("Parts_Order_Shipping_Edit",
+                    () => shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Order.Shipping",
+                        Model: model,
+                        Prefix: Prefix)),
+                ContentShape("Parts_Order_Activity_Edit",
+                    () => shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Order.Activity",
+                        Model: model,
+                        Prefix: Prefix))
+                );
         }
 
         //POST

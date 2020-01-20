@@ -1,0 +1,42 @@
+﻿@using System.Globalization
+@using Nwazet.Commerce.Services
+@using System.Collections.Generic
+@using Nwazet.Commerce.Models;
+@using System.Linq;
+@using Orchard.ContentManagement;
+
+@model Nwazet.Commerce.ViewModels.OrderEditorViewModel
+@{
+    Script.Require("jQuery");
+    Style.Include("order-admin.css", "order-admin.min.css");
+    Script.Include("order-admin.js", "order-admin.min.js");
+
+    var _contentManager = WorkContext.Resolve<IContentManager>();
+
+    var charge = Model.Order.Charge;
+    var chargeText = Model.PaymentProviderText;
+    if (string.IsNullOrWhiteSpace(chargeText)) {
+        chargeText = charge.ChargeText;
+    }
+    Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
+    CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
+
+    var creationDate = (DateTime?)(((dynamic)Model.Order.ContentItem).CommonPart.CreatedUtc);
+}
+<div class="order-editor">
+    @Html.HiddenFor(m => m.CurrencyCode)
+    @Html.HiddenFor(m => m.Order.OrderKey)
+    <fieldset class="order-metadata">
+        <legend>@T("Order:")</legend>
+        <div class="order-id">@T("ID: {0}", Model.Order.OrderKey)</div>
+        <div class="order-date">@T("Ordered {0} ({1})", Display.DateTimeRelative(dateTimeUtc: creationDate), Display.DateTime(DateTimeUtc: creationDate))</div>
+        <div class="order-user-edit">
+            @Orchard.Mvc.Html.HtmlHelperExtensions.LabelFor(Html, m => m.Order.PurchaseOrder, T("Purchase order:").Text)
+            @Html.TextBoxFor(m => m.Order.PurchaseOrder, new { @class = "text-medium order-purchase-order-edit-field" })
+            <span class="hint">@T("Associate this order with a purchase order, invoice or other order.")</span>
+        </div>
+        @foreach (var additionalShape in Model.AdditionalMetadataShapes) {
+            @Display(additionalShape)
+        }
+    </fieldset>
+</div>
