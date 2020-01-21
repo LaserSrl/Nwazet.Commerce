@@ -44,8 +44,9 @@
   <Place Parts_Order_Addresses_Edit="Content:1.30"/>
   <Place Parts_Order_Edit="Content:1.40"/>
   <Place Parts_Order_Payment_Edit="Content:1.50"/>
-  <Place Parts_Order_Shipping_Edit="Content:1.60"/>
-  <Place Parts_Order_Activity_Edit="Content:1.70"/>
+  <Place Parts_Order_PaymentInfo="Content:1.60"/>
+  <Place Parts_Order_Shipping_Edit="Content:1.70"/>
+  <Place Parts_Order_Activity_Edit="Content:1.80"/>
   <Place Parts_TerritoryHierarchy_SummaryAdmin="-"/>
   <Place Parts_TerritoryHierarchy_TerritoryManager="Content:2.1"/>
   <Place Parts_TerritoryHierarchy_TerritoryTypeSelection="Content:2.2"/>
