@@ -29,6 +29,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ISiteService _siteService;
         private readonly ITransactionManager _transactionManager;
         private readonly IOrchardServices _orchardServices;
+        private readonly IEnumerable<IOrderStatusProvider> _orderStatusProviders;
 
         private dynamic Shape { get; set; }
         public Localizer T { get; set; }
@@ -39,7 +40,8 @@ namespace Nwazet.Commerce.Controllers {
             IShapeFactory shapeFactory,
             ISiteService siteService,
             ITransactionManager transactionManager,
-            IOrchardServices orchardServices) {
+            IOrchardServices orchardServices,
+            IEnumerable<IOrderStatusProvider> orderStatusProviders) {
 
             _orderService = orderService;
             _contentManager = contentManager;
@@ -47,6 +49,8 @@ namespace Nwazet.Commerce.Controllers {
             _siteService = siteService;
             _transactionManager = transactionManager;
             _orchardServices = orchardServices;
+            _orderStatusProviders = orderStatusProviders;
+
             T = NullLocalizer.Instance;
         }
 
@@ -56,7 +60,10 @@ namespace Nwazet.Commerce.Controllers {
 
             var pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
             var query = _contentManager.Query<OrderPart, OrderPartRecord>(VersionOptions.Latest);
-            var states = OrderPart.States.ToList();
+            // states come from providers now
+            var states = _orderStatusProviders
+                .SelectMany(osp => osp.States)
+                .Distinct().ToList();
 
             if (model.Options == null) {
                 model.Options = new ContentOptions();
@@ -116,7 +123,10 @@ namespace Nwazet.Commerce.Controllers {
             var routeValues = ControllerContext.RouteData.Values;
             if (options != null) {
                 routeValues["Options.OrderBy"] = options.OrderBy;
-                if ((OrderPart.States.Union(new[] {"any", "active"})).Any(
+                // TODO: states come from providers now
+                if ((_orderStatusProviders
+                        .SelectMany(osp => osp.States)
+                        .Distinct().Union(new[] {"any", "active"})).Any(
                         ctd => string.Equals(ctd, options.SelectedFilter, StringComparison.OrdinalIgnoreCase))) {
                     routeValues["Options.SelectedFilter"] = options.SelectedFilter;
                 }

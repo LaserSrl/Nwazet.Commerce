@@ -28,6 +28,7 @@ namespace Nwazet.Commerce.Drivers {
         private readonly IEnumerable<IProductAttributeExtensionProvider> _extensionProviders;
         private readonly ICurrencyProvider _currencyProvider;
         private readonly IEnumerable<IOrderAdditionalInformationProvider> _orderAdditionalInformationProviders;
+        private readonly IEnumerable<IOrderStatusProvider> _orderStatusProviders;
 
         public OrderPartDriver(
             IOrderService orderService,
@@ -39,7 +40,8 @@ namespace Nwazet.Commerce.Drivers {
             IMembershipService membershipService,
             IEnumerable<IProductAttributeExtensionProvider> extensionProviders,
             ICurrencyProvider currencyProvider,
-            IEnumerable<IOrderAdditionalInformationProvider> orderAdditionalInformationProviders) {
+            IEnumerable<IOrderAdditionalInformationProvider> orderAdditionalInformationProviders,
+            IEnumerable<IOrderStatusProvider> orderStatusProviders) {
 
             _orderService = orderService;
             _addressFormatter = addressFormatter;
@@ -51,6 +53,7 @@ namespace Nwazet.Commerce.Drivers {
             _extensionProviders = extensionProviders;
             _currencyProvider = currencyProvider;
             _orderAdditionalInformationProviders = orderAdditionalInformationProviders;
+            _orderStatusProviders = orderStatusProviders;
 
             T = NullLocalizer.Instance;
         }
@@ -145,7 +148,9 @@ namespace Nwazet.Commerce.Drivers {
                 Products = products,
                 BillingAddressText = _addressFormatter.Format(part.BillingAddress),
                 ShippingAddressText = _addressFormatter.Format(part.ShippingAddress),
-                OrderStates = OrderPart.States,
+                OrderStates = _orderStatusProviders
+                    .SelectMany(osp=>osp.States)
+                    .Distinct(), // get these from providers
                 StatusLabels = _orderService.StatusLabels,
                 EventCategories = OrderPart.EventCategories,
                 EventCategoryLabels = _orderService.EventCategoryLabels,
@@ -249,7 +254,9 @@ namespace Nwazet.Commerce.Drivers {
                 _workflowManager.TriggerEvent("OrderStatusChanged", part,
                     () => new Dictionary<string, object> {
                         {"Content", part},
-                        {"Order", part}
+                        {"Order", part},
+                        {"PreviousStatus", previousStatus},
+                        {"CurrentStatus", part.Status}
                     });
 
                 foreach (var item in part.Items) {
@@ -258,7 +265,9 @@ namespace Nwazet.Commerce.Drivers {
                         _workflowManager.TriggerEvent("OrderStatusChangedProduct", content,
                             () => new Dictionary<string, object> {
                                 {"Content", content},
-                                {"Order", part}
+                                {"Order", part},
+                                {"PreviousStatus", previousStatus},
+                                {"CurrentStatus", part.Status}
                             });
                     }
                 }

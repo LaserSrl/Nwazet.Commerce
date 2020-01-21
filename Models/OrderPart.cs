@@ -17,11 +17,7 @@ namespace Nwazet.Commerce.Models {
         public const string Accepted = "Accepted";
         public const string Archived = "Archived";
         public const string Cancelled = "Cancelled";
-
-        public static readonly string[] States = {
-            Pending, Accepted, Archived, Cancelled
-        };
-
+        
         public const string Note = "Note";
         public const string Warning = "Warning";
         public const string Error = "Error";
@@ -138,6 +134,14 @@ namespace Nwazet.Commerce.Models {
             Record.Customer = CustomerDocument.ToString(SaveOptions.None);
         }
 
+        /// <summary>
+        /// The current order status.
+        /// </summary>
+        /// <remarks>
+        /// Since this is a string, we need to be careful when defining new states.
+        /// If they are defined with the same string, they will end up being the same
+        /// status, since there will not be an easy way to identify them uniquely.
+        /// </remarks>
         public string Status {
             get { return Record.Status; }
             set { Record.Status = value; }

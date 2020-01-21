@@ -497,6 +497,7 @@
     <Compile Include="Services\CartLifeCycleEventHandler.cs" />
     <Compile Include="Services\CommerceLocalStorageSettings.cs" />
     <Compile Include="Services\CurrencyProviderBase.cs" />
+    <Compile Include="Services\DefaultOrderStatusProvider.cs" />
     <Compile Include="Services\DefaultVatConfigurationPartDoesNotExist.cs" />
     <Compile Include="Services\DefaultVatTerritoryIsInvalid.cs" />
     <Compile Include="Services\FlexibleShippingManager.cs" />
@@ -512,6 +513,7 @@
     <Compile Include="Services\InventoryBySKUProductInventoryService.cs" />
     <Compile Include="Services\IOrderAdditionalInformationProvider.cs" />
     <Compile Include="Services\IOrderFrontEndAdditionalInformationProvider.cs" />
+    <Compile Include="Services\IOrderStatusProvider.cs" />
     <Compile Include="Services\IPersistentShoppingCartServices.cs" />
     <Compile Include="Services\IProductAttributeAdminServices.cs" />
     <Compile Include="Services\IProductAttributeLocalizationServices.cs" />
