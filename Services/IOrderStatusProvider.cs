@@ -14,6 +14,7 @@ namespace Nwazet.Commerce.Services {
         /// <remarks>
         /// Make sure that each provider doesn't return duplicate states by itself.
         /// Take care when merging results from different providers.
+        /// Status strings are compared using StringComparer.InvariantCultureIgnoreCase
         /// </remarks>
         IEnumerable<string> States { get; }
         /// <summary>

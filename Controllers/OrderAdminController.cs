@@ -63,7 +63,7 @@ namespace Nwazet.Commerce.Controllers {
             // states come from providers now
             var states = _orderStatusProviders
                 .SelectMany(osp => osp.States)
-                .Distinct().ToList();
+                .Distinct(StringComparer.InvariantCultureIgnoreCase).ToList();
 
             if (model.Options == null) {
                 model.Options = new ContentOptions();
@@ -126,7 +126,7 @@ namespace Nwazet.Commerce.Controllers {
                 // TODO: states come from providers now
                 if ((_orderStatusProviders
                         .SelectMany(osp => osp.States)
-                        .Distinct().Union(new[] {"any", "active"})).Any(
+                        .Distinct(StringComparer.InvariantCultureIgnoreCase).Union(new[] {"any", "active"})).Any(
                         ctd => string.Equals(ctd, options.SelectedFilter, StringComparison.OrdinalIgnoreCase))) {
                     routeValues["Options.SelectedFilter"] = options.SelectedFilter;
                 }

@@ -150,7 +150,7 @@ namespace Nwazet.Commerce.Drivers {
                 ShippingAddressText = _addressFormatter.Format(part.ShippingAddress),
                 OrderStates = _orderStatusProviders
                     .SelectMany(osp=>osp.States)
-                    .Distinct(), // get these from providers
+                    .Distinct(StringComparer.InvariantCultureIgnoreCase), // get these from providers
                 StatusLabels = _orderService.StatusLabels,
                 EventCategories = OrderPart.EventCategories,
                 EventCategoryLabels = _orderService.EventCategoryLabels,
