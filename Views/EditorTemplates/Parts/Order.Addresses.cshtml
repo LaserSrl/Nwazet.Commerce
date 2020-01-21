@@ -10,18 +10,6 @@
     Script.Require("jQuery");
     Style.Include("order-admin.css", "order-admin.min.css");
     Script.Include("order-admin.js", "order-admin.min.js");
-
-    var _contentManager = WorkContext.Resolve<IContentManager>();
-
-    var charge = Model.Order.Charge;
-    var chargeText = Model.PaymentProviderText;
-    if (string.IsNullOrWhiteSpace(chargeText)) {
-        chargeText = charge.ChargeText;
-    }
-    Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
-    CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
-
-    var creationDate = (DateTime?)(((dynamic)Model.Order.ContentItem).CommonPart.CreatedUtc);
 }
 
 <div class="order-editor">

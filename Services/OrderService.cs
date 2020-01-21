@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Web.Mvc;
 using Nwazet.Commerce.Models;
@@ -17,17 +18,20 @@ namespace Nwazet.Commerce.Services {
         private readonly UrlHelper _url;
         private readonly ICurrencyProvider _currencyProvider;
         private readonly IEnumerable<IOrderAdditionalInformationProvider> _orderAdditionalInformationProviders;
+        private readonly IEnumerable<IOrderStatusProvider> _orderStatusProviders;
 
         public OrderService(
-            IContentManager contentManager, 
-            UrlHelper url, 
+            IContentManager contentManager,
+            UrlHelper url,
             ICurrencyProvider currencyProvider,
-            IEnumerable<IOrderAdditionalInformationProvider> orderAdditionalInformationProviders) {
+            IEnumerable<IOrderAdditionalInformationProvider> orderAdditionalInformationProviders,
+            IEnumerable<IOrderStatusProvider> orderStatusProviders) {
 
             _contentManager = contentManager;
             _url = url;
             _currencyProvider = currencyProvider;
             _orderAdditionalInformationProviders = orderAdditionalInformationProviders;
+            _orderStatusProviders = orderStatusProviders;
 
             T = NullLocalizer.Instance;
         }
@@ -35,7 +39,7 @@ namespace Nwazet.Commerce.Services {
         public Localizer T { get; set; }
 
         public string GetDisplayUrl(OrderPart order) {
-            return _url.Action("Show", "OrderSsl", new {id = order.Id});
+            return _url.Action("Show", "OrderSsl", new { id = order.Id });
         }
 
         public string GetEditUrl(OrderPart order) {
@@ -96,12 +100,21 @@ namespace Nwazet.Commerce.Services {
 
         public IDictionary<string, LocalizedString> StatusLabels {
             get {
-                return new Dictionary<string, LocalizedString> {
-                    {OrderPart.Pending, T("Pending")},
-                    {OrderPart.Accepted, T("Accepted")},
-                    {OrderPart.Archived, T("Archived")},
-                    {OrderPart.Cancelled, T("Cancelled")}
-                };
+                // Depending on the order of the providers, we may end up
+                // with a different dictionary when different providers have the
+                // same state.
+                return _orderStatusProviders
+                    .Select(osp => osp.StatusLabels)
+                    .Aggregate(new Dictionary<string, LocalizedString>(),
+                        (partial, candidate) => {
+                            //accumulator
+                            foreach (var row in candidate) {
+                                if (!partial.ContainsKey(row.Key)) {
+                                    partial.Add(row.Key, row.Value);
+                                }
+                            }
+                            return partial;
+                        });
             }
         }
 
