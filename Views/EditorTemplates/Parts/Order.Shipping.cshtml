@@ -16,7 +16,9 @@
     <fieldset class="order-tracking">
         <legend>@T("Tracking URL:")</legend>
         <div class="order-tracking-view">
-            <a href="@Model.Order.TrackingUrl" target="_blank">@Model.Order.TrackingUrl (<i class="fa fa-external-link"></i>)</a>
+            <a href="@Model.Order.TrackingUrl" 
+               title="@T("The link opens in another tab")"
+               target="_blank">@Model.Order.TrackingUrl (<i class="fa fa-external-link"></i>)</a>
             <button class="edit-button link">@T("Edit")</button>
         </div>
         <div class="order-tracking-edit">
