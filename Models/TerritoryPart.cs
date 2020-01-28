@@ -73,11 +73,23 @@ namespace Nwazet.Commerce.Models {
         /// <returns>True if both TerritoryParts have a valid TerritoryInternalRecord, and the Ids of those match. False in 
         /// every other case.</returns>
         public bool IsSameAs(TerritoryPart other) {
-            if (this.Record != null && this.Record.TerritoryInternalRecord != null
-                && other.Record != null && other.Record.TerritoryInternalRecord != null
-                && this.Record.TerritoryInternalRecord.Id == other.Record.TerritoryInternalRecord.Id) {
+            if (other.Record != null && other.Record.TerritoryInternalRecord != null) {
+                return this.IsSameAs(other.Record.TerritoryInternalRecord);
+            }
+            return false;
+        }
 
-                return true;
+        /// <summary>
+        /// Compares the TerritoryInternlaRecord of the current TerritoryPart with
+        /// the one passsed as a parameter.
+        /// </summary>
+        /// <param name="other">The TerritoryInternlaRecord that will be compared with the current one.</param>
+        /// <returns>True if the TerritoryPart has a valid TerritoryInternalRecord, and the Ids of those match. False in 
+        /// every other case.</returns>
+        public bool IsSameAs(TerritoryInternalRecord other) {
+            if (this.Record != null && this.Record.TerritoryInternalRecord != null
+                && other != null) {
+                return this.Record.TerritoryInternalRecord.Id == other.Id;
             }
             return false;
         }

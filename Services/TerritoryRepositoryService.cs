@@ -58,9 +58,21 @@ namespace Nwazet.Commerce.Services {
         }
 
         public IEnumerable<TerritoryInternalRecord> GetTerritories(int[] itemIds) {
-            return _territoryInternalRecord
-                .Fetch(x => itemIds.Contains(x.Id))
-                .CreateSafeDuplicate(); 
+            if (itemIds.Any()) {
+                return _territoryInternalRecord
+                    .Fetch(x => itemIds.Contains(x.Id))
+                    .CreateSafeDuplicate();
+            }
+            return Enumerable.Empty<TerritoryInternalRecord>();
+        }
+
+        public IEnumerable<TerritoryInternalRecord> GetTerritories(string[] itemIds) {
+            if (itemIds.Any()) {
+                return _territoryInternalRecord
+                    .Fetch(x => itemIds.Contains(x.Name))
+                    .CreateSafeDuplicate();
+            }
+            return Enumerable.Empty<TerritoryInternalRecord>();
         }
 
         public int GetTerritoriesCount() {
