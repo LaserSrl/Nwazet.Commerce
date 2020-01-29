@@ -125,7 +125,7 @@ namespace Nwazet.Commerce.Drivers {
                 .ToDictionary(p => p.Id, p => p);
             // payment information
             var checkoutUsed = _checkoutServices
-                .FirstOrDefault(s => s.GetChargeAdminUrl(part.Charge.TransactionId) != null);
+                .FirstOrDefault(s => s.GetChargeAdminUrl(part.Charge?.TransactionId) != null);
             string linkToTransaction = string.Empty;
             string paymentProviderText = string.Empty;
             if(checkoutUsed != null) {
@@ -146,8 +146,12 @@ namespace Nwazet.Commerce.Drivers {
                 Order = part,
                 OrderItems = orderItems,
                 Products = products,
-                BillingAddressText = _addressFormatter.Format(part.BillingAddress),
-                ShippingAddressText = _addressFormatter.Format(part.ShippingAddress),
+                BillingAddressText = part.BillingAddress == null
+                    ? string.Empty
+                    : _addressFormatter.Format(part.BillingAddress),
+                ShippingAddressText = part.ShippingAddress == null
+                    ? string.Empty
+                    : _addressFormatter.Format(part.ShippingAddress),
                 OrderStates = _orderStatusProviders
                     .SelectMany(osp=>osp.States)
                     .Distinct(StringComparer.InvariantCultureIgnoreCase), // get these from providers
