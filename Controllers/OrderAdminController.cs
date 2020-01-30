@@ -16,6 +16,7 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Mvc.Extensions;
 using Orchard.Settings;
+using Orchard.UI;
 using Orchard.UI.Admin;
 using Orchard.UI.Navigation;
 using Orchard.UI.Notify;
@@ -62,7 +63,9 @@ namespace Nwazet.Commerce.Controllers {
             var query = _contentManager.Query<OrderPart, OrderPartRecord>(VersionOptions.Latest);
             // states come from providers now
             var states = _orderStatusProviders
-                .SelectMany(osp => osp.States)
+                .SelectMany(osp => osp.StatusLabels)
+                .OrderBy(st=>st.Key.Priority, new FlatPositionComparer())
+                .Select(st=>st.Key.StatusName)
                 .Distinct(StringComparer.InvariantCultureIgnoreCase).ToList();
 
             if (model.Options == null) {
@@ -95,7 +98,7 @@ namespace Nwazet.Commerce.Controllers {
                     break;
             }
             model.Options.FilterOptions =
-                _orderService.StatusLabels.Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Value.Text));
+                _orderService.StatusLabels.Select(kvp => new KeyValuePair<string, string>(kvp.Key.StatusName, kvp.Value.Text));
 
             if (!_orchardServices.Authorizer.Authorize(OrderPermissions.ViewAllOrders)) {
                 Orchard.Security.IUser currentUser = _orchardServices.WorkContext.CurrentUser;                

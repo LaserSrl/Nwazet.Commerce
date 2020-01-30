@@ -14,6 +14,7 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Workflows.Services;
 using Orchard.Security;
+using Orchard.UI;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.Orders")]
@@ -149,9 +150,13 @@ namespace Nwazet.Commerce.Drivers {
                 BillingAddressText = _addressFormatter.Format(part.BillingAddress),
                 ShippingAddressText = _addressFormatter.Format(part.ShippingAddress),
                 OrderStates = _orderStatusProviders
-                    .SelectMany(osp=>osp.States)
+                    .SelectMany(osp => osp.StatusLabels)
+                    .OrderBy(st => st.Key.Priority, new FlatPositionComparer())
+                    .Select(st => st.Key.StatusName)
                     .Distinct(StringComparer.InvariantCultureIgnoreCase), // get these from providers
-                StatusLabels = _orderService.StatusLabels,
+                StatusLabels = _orderService.StatusLabels
+                    .OrderBy(s => s.Key.Priority, new FlatPositionComparer())
+                    .ToDictionary(s => s.Key.StatusName, s => s.Value),
                 EventCategories = OrderPart.EventCategories,
                 EventCategoryLabels = _orderService.EventCategoryLabels,
                 PaymentProviderText = paymentProviderText,
@@ -249,8 +254,8 @@ namespace Nwazet.Commerce.Drivers {
 
             if (previousStatus != part.Status) {
                 eventText += T("Status changed from {0} to {1}. ",
-                        _orderService.StatusLabels[previousStatus],
-                        _orderService.StatusLabels[part.Status]).Text;
+                        _orderService.StatusLabels.FirstOrDefault(s=>s.Key.StatusName == previousStatus),
+                        _orderService.StatusLabels.FirstOrDefault(s => s.Key.StatusName == part.Status)).Text;
                 _workflowManager.TriggerEvent("OrderStatusChanged", part,
                     () => new Dictionary<string, object> {
                         {"Content", part},

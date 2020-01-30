@@ -98,14 +98,14 @@ namespace Nwazet.Commerce.Services {
             return _contentManager.Get<OrderPart>(orderId);
         }
 
-        public IDictionary<string, LocalizedString> StatusLabels {
+        public IDictionary<OrderStatus, LocalizedString> StatusLabels {
             get {
                 // Depending on the order of the providers, we may end up
                 // with a different dictionary when different providers have the
                 // same state.
                 return _orderStatusProviders
                     .Select(osp => osp.StatusLabels)
-                    .Aggregate(new Dictionary<string, LocalizedString>(),
+                    .Aggregate(new Dictionary<OrderStatus, LocalizedString>(),
                         (partial, candidate) => {
                             //accumulator
                             foreach (var row in candidate) {

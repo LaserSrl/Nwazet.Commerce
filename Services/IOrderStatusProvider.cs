@@ -18,13 +18,10 @@ namespace Nwazet.Commerce.Services {
         /// </remarks>
         IEnumerable<string> States { get; }
         /// <summary>
-        /// Localized labels for the different states.
+        /// Dictionary contains state with priority 
+        /// and localized label
         /// </summary>
-        /// <remarks>
-        /// These dictionaries should be handled carefully, because they can't be
-        /// merged without first checking for duplicate keys.
-        /// </remarks>
-        Dictionary<string, LocalizedString> StatusLabels { get; }
+        Dictionary<OrderStatus, LocalizedString> StatusLabels { get; }
     }
 
     /// <summary>
@@ -40,7 +37,17 @@ namespace Nwazet.Commerce.Services {
         public Localizer T { get; set; }
 
         public abstract IEnumerable<string> States { get; }
+        
+        public abstract Dictionary<OrderStatus, LocalizedString> StatusLabels { get; }
+    }
 
-        public abstract Dictionary<string, LocalizedString> StatusLabels { get; }
+    public class OrderStatus {
+        public string StatusName { get; set; }
+        /// <summary>
+        /// This string is saved with 1.x.x.x
+        /// it is used to place states added to the order
+        /// its sorting is managed as for the PlacementInfo with class FlatPositionComparer
+        /// </summary>
+        public string Priority { get; set; }
     }
 }

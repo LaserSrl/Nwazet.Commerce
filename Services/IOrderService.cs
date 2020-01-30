@@ -29,7 +29,7 @@ namespace Nwazet.Commerce.Services {
         string GetDisplayUrl(OrderPart order);
         string GetEditUrl(OrderPart order);
 
-        IDictionary<string, LocalizedString> StatusLabels { get; }
+        IDictionary<OrderStatus, LocalizedString> StatusLabels { get; }
         IDictionary<string, LocalizedString> EventCategoryLabels { get; }
     }
 }
