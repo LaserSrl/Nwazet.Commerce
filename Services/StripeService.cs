@@ -189,7 +189,8 @@ namespace Nwazet.Commerce.Services {
         }
 
         public string GetChargeAdminUrl(string transactionId) {
-            if (!transactionId.StartsWith(Name + ":")) return null;
+            if (string.IsNullOrWhiteSpace(transactionId)
+                || !transactionId.StartsWith(Name + ":")) return null;
 
             const string urlTestPattern = "https://manage.stripe.com/test/payments/{0}";
             const string urlPattern = "https://manage.stripe.com/payments/{0}";

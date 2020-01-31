@@ -42,6 +42,14 @@ namespace Nwazet.Commerce.Services {
         IEnumerable<TerritoryInternalRecord> GetTerritories(int[] itemIds);
 
         /// <summary>
+        /// Get the TerritoryInternalRecord objects with the given names.
+        /// </summary>
+        /// <param name="itemIds">The Names of the TerritoryInternalRecord objects</param>
+        /// <returns>An IEnumerable of TerritoryInternalRecord objects, that are deep copies 
+        /// of the objects in the storage.</returns>
+        IEnumerable<TerritoryInternalRecord> GetTerritories(string[] itemIds);
+
+        /// <summary>
         /// Get the total number of TerritoryInternalRecord objects in the storage.
         /// </summary>
         /// <returns>The total number of objects.</returns>
