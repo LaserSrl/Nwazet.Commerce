@@ -155,8 +155,8 @@ namespace Nwazet.Commerce.Drivers {
                     : _addressFormatter.Format(part.ShippingAddress),
                 OrderStates = _orderStatusProviders
                     .SelectMany(osp => osp.StatusLabels)
-                    .OrderBy(st => st.Key.Priority, new FlatPositionComparer())
-                    .Select(st => st.Key.StatusName)
+                    .OrderBy(osp => osp.Key.Priority, new FlatPositionComparer())
+                    .Select(osp => osp.Key.StatusName)
                     .Distinct(StringComparer.InvariantCultureIgnoreCase), // get these from providers
                 StatusLabels = _orderService.StatusLabels
                     .OrderBy(s => s.Key.Priority, new FlatPositionComparer())

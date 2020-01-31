@@ -16,10 +16,10 @@
 <div class="order-editor">
     <fieldset class="order-status">
         <legend>@T("Status:")</legend>
-        <ul>
+        <ul class="list-status-order">
             @foreach (var state in Model.OrderStates) {
                 var stateid = ViewData.TemplateInfo.GetFullHtmlFieldId("Status_" + state);
-                <li class="col-sm-3">
+                <li class="col-sm-6 col-md-4 col-lg-3">
                     @Html.RadioButtonFor(m => m.Order.Status, state, new { @id = stateid })
                     @Html.Label("Status_" + state, Model.StatusLabels[state].Text)
                 </li>

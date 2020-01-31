@@ -109,7 +109,7 @@ namespace Nwazet.Commerce.Services {
                         (partial, candidate) => {
                             //accumulator
                             foreach (var row in candidate) {
-                                if (!partial.ContainsKey(row.Key)) {
+                                if(partial.Keys.FirstOrDefault(s => s.StatusName == row.Key.StatusName)==null) {
                                     partial.Add(row.Key, row.Value);
                                 }
                             }
