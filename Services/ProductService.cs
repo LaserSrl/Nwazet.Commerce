@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Models;
+using Orchard.ContentManagement;
 using Orchard.ContentManagement.MetaData;
 using Orchard.ContentManagement.MetaData.Models;
 using Orchard.Environment.Extensions;
@@ -6,19 +7,23 @@ using Orchard.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CorePermissions = Orchard.Core.Contents.Permissions;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Nwazet.Commerce")]
     public class ProductService : IProductService {
         private readonly IContentDefinitionManager _contentDefinitionManager;
         private readonly IAuthorizer _authorizer;
+        private readonly IContentManager _contentManager;
 
         public ProductService(
             IContentDefinitionManager contentDefinitionManager,
-            IAuthorizer authorizer
+            IAuthorizer authorizer,
+            IContentManager contentManager
             ) {
             _contentDefinitionManager = contentDefinitionManager;
             _authorizer = authorizer;
+            _contentManager = contentManager;
         }
 
         public bool MayAddToCart(ProductPart product) {
@@ -35,9 +40,14 @@ namespace Nwazet.Commerce.Services {
 
         public IEnumerable<ContentTypeDefinition> GetProductTypes() {
             return _contentDefinitionManager.ListTypeDefinitions()
-                .Where(ctd => ctd.Parts.Any(pa => pa
-                    .PartDefinition.Name.Equals(ProductPart.PartName, StringComparison.InvariantCultureIgnoreCase) &&
-                    _authorizer.Authorize(Orchard.Core.Contents.Permissions.CreateContent)));
+                .Where(ctd => ctd.Parts.Any(ctpd => {
+                    if (ctpd.PartDefinition.Name.Equals(ProductPart.PartName, StringComparison.InvariantCultureIgnoreCase)) {
+                        // test whether we can actually create the content
+                        var dummyContent = _contentManager.New(ctpd.ContentTypeDefinition.Name);
+                        return _authorizer.Authorize(CorePermissions.CreateContent, dummyContent);
+                    }
+                    return false;
+                }));
         }
     }
 }

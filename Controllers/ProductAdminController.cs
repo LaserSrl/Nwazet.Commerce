@@ -324,8 +324,7 @@ namespace Nwazet.Commerce.Controllers {
         /// permissions to be invoking these actions.</returns>
         private IEnumerable<ContentTypeDefinition> GetAllowedProductTypes() {
             var allowedTypes = _productService.GetProductTypes();
-            if (!allowedTypes.Any() && //no dynamic permissions
-                !_authorizer.Authorize(Orchard.Core.Contents.Permissions.CreateContent) &&
+            if (!allowedTypes.Any() || //no dynamic permissions
                 !_authorizer.Authorize(CommercePermissions.ManageProducts)) {
 
                 return null;
