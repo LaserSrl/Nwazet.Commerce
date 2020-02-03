@@ -1,5 +1,5 @@
 ﻿# Orchard resource strings - it-IT
-# Copyright (c) 2019 Laser s.r.l.
+# Copyright (c) 2020 Laser s.r.l.
 
 
 # > #: msgctxt { contesto del messaggio - Originale }
@@ -468,6 +468,94 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/NewFlexibleShippi
 msgid "Validity criteria"
 msgstr "Criterio di validità"
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Activity.cshtml"
+msgid "({0})"
+msgstr "({0})"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Activity.cshtml"
+msgid "Activity:"
+msgstr "Attività:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Activity.cshtml"
+msgid "Add"
+msgstr "Aggiungi"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Activity.cshtml"
+msgid "From {0} to {1}"
+msgstr "Da {0} a {1}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Address 1"
+msgstr "Indirizzo 1"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Address 2"
+msgstr "Indirizzo 2"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Associate this order with a username."
+msgstr "Associa questo ordine con un nome utente."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Billing:"
+msgstr "Fatturazione:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "City"
+msgstr "Città"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Company"
+msgstr "Azienda"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Country"
+msgstr "Stato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "E-mail:"
+msgstr "E-mail:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "First Name"
+msgstr "Nome"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Honorific"
+msgstr "Onorifico"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Last Name"
+msgstr "Cognome"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Order Username:"
+msgstr "Nome Utente dell'Ordine:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Phone:"
+msgstr "Telefono:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Postal code"
+msgstr "CAP"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Province or State"
+msgstr "Provincia o Stato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Shipping to:"
+msgstr "Spedizione a:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Special instructions:"
+msgstr "Istruzioni speciali:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "You may view this order at a later time by going to this address: <a href=\"{0}\">{0}</a>, using this password: \"{1}\"."
+msgstr "Potrai visualizzare i dettagli del tuo ordine a questo indirizzo: <a href=\"{0}\">{0}</a>, usando questa password: \"{1}\"."
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "{0} {1}"
 msgstr "{0} {1}"
@@ -644,6 +732,70 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "You may view this order at a later time by going to this address: <a href=\"{0}\">{0}</a>, using this password: \"{1}\"."
 msgstr "Potrai visualizzare i dettagli del tuo ordine a questo indirizzo: <a href=\"{0}\">{0}</a>, usando queta password: \"{1}\"."
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Metadata.cshtml"
+msgid "Associate this order with a purchase order, invoice or other order."
+msgstr "Associa questo ordine con un ordine di acquisto, una fattura o un altro ordine."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Metadata.cshtml"
+msgid "ID: {0}"
+msgstr "ID: {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Metadata.cshtml"
+msgid "Order:"
+msgstr "Ordine:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Metadata.cshtml"
+msgid "Ordered {0} ({1})"
+msgstr "Ordinato {0} ({1})"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Metadata.cshtml"
+msgid "Purchase order:"
+msgstr "Numero d'ordine:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Payment.cshtml"
+msgid "Charged to:"
+msgstr "Addebitato a:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Payment.cshtml"
+msgid "The link opens in another tab"
+msgstr "Il link si apre in una nuova scheda"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Payment.cshtml"
+msgid "Transaction <a href=\"{1}\" target=\"_blank\" title=\"{2}\">{0} (<i class=\"fa fa-external-link\"></i>)</a>"
+msgstr "Transazione <a href=\"{1}\" target=\"_blank\" title=\"{2}\">{0} (<i class=\"fa fa-external-link\"></i>)</a>"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Shipping.cshtml"
+msgid "Cancel"
+msgstr "Annulla"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Shipping.cshtml"
+msgid "Edit"
+msgstr "Modifica"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Shipping.cshtml"
+msgid "The link opens in another tab"
+msgstr "Il link si apre in una nuova scheda"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Shipping.cshtml"
+msgid "Tracking URL:"
+msgstr "URL del tracciamento:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Status.cshtml"
+msgid "Status:"
+msgstr "Stato:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Accessibility.cshtml"
+msgid "Accessibility"
+msgstr "Accessibilità"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Accessibility.cshtml"
+msgid "authentication required"
+msgstr "Richiede Autenticazione."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Accessibility.cshtml"
+msgid "This allows for associating the order with the user but will force the user to log in prior to purchasing."
+msgstr "Questo permette di associare un ordine all'utente, ma costringerà l'utente ad autenticarsi prima dell'acquisto."
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.cshtml"
 msgid "allow back order"
 msgstr "Permetti ordini arretrati"
@@ -729,6 +881,42 @@ msgid "This message will be displayed if the inventory is zero or less. Leave bl
 msgstr "Questo messaggio sarà mostrato se l'inventraio è minore o uguale a zero. Lasciandolo vuoto verrà usato un messaggio di default."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.cshtml"
+msgid "Weight"
+msgstr "Peso"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Inventory.cshtml"
+msgid "consider inventory for digital product"
+msgstr "Considera l'inventario per il prodotto digitale."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Inventory.cshtml"
+msgid "digital product"
+msgstr "Prodotto digitale"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Inventory.cshtml"
+msgid "If checked, the digital product will be considered to be available in a limited quantity, based on the inventory."
+msgstr "Selezionando questo flag, il prodotto digitale sarà considerato disponibile in quantità limitata, sulla base dell'inventario."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Inventory.cshtml"
+msgid "Inventory"
+msgstr "Inventario"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Shipping.cshtml"
+msgid "Shipping"
+msgstr "Spedizione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Shipping.cshtml"
+msgid "Shipping Cost"
+msgstr "Prezzo di spedizione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Shipping.cshtml"
+msgid "Size"
+msgstr "Taglia"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Shipping.cshtml"
+msgid "Specify a shipping cost if you want the shipping cost to be fixed. Otherwise, leave this empty and only specify the weight. The shipping will be computed based on the shipping provider that the customer will pick."
+msgstr "Specifica un costo di spedizione se desideri che sia fisso. Altrimenti, lascia questo campo vuoto e specifica il peso. Il costo di spedizione verrà calcolato sulla base del provider di spedizione selezionato dal cliente."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Shipping.cshtml"
 msgid "Weight"
 msgstr "Peso"
 
@@ -1549,6 +1737,10 @@ msgid "Order #{0}"
 msgstr "Ordine #{0}"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "Order reference: {0}"
+msgstr "Riferimento dell'ordine: {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
 msgid "Phone:"
 msgstr "Telefono:"
 
@@ -1779,6 +1971,14 @@ msgstr "La quantità è quella minima da ordinare per passare alla fascia di pre
 msgctxt "~/Modules/Nwazet.Commerce/Views/PriceTiersAdmin.cshtml"
 msgid "Tiered Pricing"
 msgstr "Livelli di prezzo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/CreatableTypeList.cshtml"
+msgid "Create New Product"
+msgstr "Crea Nuovo Prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/CreateProduct.cshtml"
+msgid "Create New {0}"
+msgstr "Crea Nuovo {0}"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Apply"
@@ -2696,6 +2896,18 @@ msgctxt "Nwazet.Commerce.Controllers.ProductAdminController"
 msgid "Not authorized to manage products"
 msgstr "Non autorizzato a gestire i prodotti"
 
+msgctxt "Nwazet.Commerce.Controllers.ProductAdminController"
+msgid "The requested type \"{0}\" is not a Product type."
+msgstr "Il tipo \"{0}\" richiesto non è un tipo di Prodotto."
+
+msgctxt "Nwazet.Commerce.Controllers.ProductAdminController"
+msgid "Your {0} has been created."
+msgstr "Il {0} è stato creato."
+
+msgctxt "Nwazet.Commerce.Controllers.ProductAdminController"
+msgid "Your content has been created."
+msgstr "Il contenuto è stato creato."
+
 msgctxt "Nwazet.Commerce.Controllers.ProductSettingsAdminController"
 msgid "Not authorized to manage price settings"
 msgstr "Non autorizzato a gestire la configurazione dei prezzi"
@@ -2924,6 +3136,26 @@ msgctxt "Nwazet.Commerce.Drivers.VatConfigurationSiteSettingsPartDriver"
 msgid "None"
 msgstr "Nessuno"
 
+msgctxt "Nwazet.Commerce.Extensions.ProductUtilities"
+msgid "Couldn't create product"
+msgstr "Impossibile creare il prodotto"
+
+msgctxt "Nwazet.Commerce.Extensions.ProductUtilities"
+msgid "Couldn't delete product"
+msgstr "Impossibile cancellare il prodotto"
+
+msgctxt "Nwazet.Commerce.Extensions.ProductUtilities"
+msgid "Couldn't edit product"
+msgstr "Impossible modificare il prodotto"
+
+msgctxt "Nwazet.Commerce.Extensions.ProductUtilities"
+msgid "Not authorized to manage products of type \"{0}\""
+msgstr "Non autorizzato a gestire i prodotti di tipo \"{0}\""
+
+msgctxt "Nwazet.Commerce.Extensions.ProductUtilities"
+msgid "Not authorized to manage products."
+msgstr "Non autorizzato a gestire i prodotti."
+
 msgctxt "Nwazet.Commerce.Extensions.TerritoriesUtilities"
 msgid "Couldn't create hierarchy"
 msgstr "Impossibile creare la gerarchia"
@@ -2977,8 +3209,16 @@ msgid "{0} contains all '{1}'"
 msgstr "{0} contiene tutto '{1}'"
 
 msgctxt "Nwazet.Commerce.Filters.FilterHelper"
+msgid "{0} contains all '{1}' (or '{1}' is empty)"
+msgstr "{0} contiene tutti '{1}' (oppure '{1}' è vuoto)"
+
+msgctxt "Nwazet.Commerce.Filters.FilterHelper"
 msgid "{0} contains any of '{1}'"
 msgstr "{0} contiene almeno uno di '{1}'"
+
+msgctxt "Nwazet.Commerce.Filters.FilterHelper"
+msgid "{0} contains any of '{1}' (or '{1}' is empty)"
+msgstr "{0} contiene uno tra '{1}' (oppure '{1}' è vuoto)"
 
 msgctxt "Nwazet.Commerce.Filters.FilterHelper"
 msgid "{0} does not contain '{1}'"
@@ -3644,6 +3884,22 @@ msgctxt "Nwazet.Commerce.Services.BundleProductLocalizationBundleService"
 msgid "Some of the products are in the wrong culture: {0}"
 msgstr "Alcuni dei prodotti hanno la cultura sbagliata: {0}"
 
+msgctxt "Nwazet.Commerce.Services.DefaultOrderStatusProvider"
+msgid "Accepted"
+msgstr "Accettato"
+
+msgctxt "Nwazet.Commerce.Services.DefaultOrderStatusProvider"
+msgid "Archived"
+msgstr "Archiviato"
+
+msgctxt "Nwazet.Commerce.Services.DefaultOrderStatusProvider"
+msgid "Cancelled"
+msgstr "Annullato"
+
+msgctxt "Nwazet.Commerce.Services.DefaultOrderStatusProvider"
+msgid "Pending"
+msgstr "In corso"
+
 msgctxt "Nwazet.Commerce.Services.DefaultVatConfigurationPartDoesNotExist"
 msgid "No default tax product category found. Have an administrator configure one <a href=\"{0}\">here</a>."
 msgstr "Non è stata trovata una categoria fiscale di default. Un amministratore la può configurare <a href=\"{0}\">qui</a>."
@@ -3703,6 +3959,10 @@ msgstr "Metodo di spedizione basato sulla taglia"
 msgctxt "Nwazet.Commerce.Services.StateOrCountryTaxProvider"
 msgid "State or Country Tax"
 msgstr "Tassa per Stato o Nazione"
+
+msgctxt "Nwazet.Commerce.Services.StripeService"
+msgid "Payment made with Stripe"
+msgstr "Pagamento avvenuto con Stripe"
 
 msgctxt "Nwazet.Commerce.Services.TerritoriesHierarchyService"
 msgid "No TerritoryInternalRecord exists with the id provided (\"{0}\")"
@@ -4081,6 +4341,10 @@ msgid "Items"
 msgstr "Oggetti"
 
 msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
+msgid "Key string used to represent the order in all connected systems."
+msgstr "Chiave usata per rappresentare l'ordine in tutti i sistemi collegati."
+
+msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
 msgid "Last Name"
 msgstr "Cognome"
 
@@ -4195,6 +4459,10 @@ msgstr "URL del tracciamento"
 msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
 msgid "Type"
 msgstr "Tipo"
+
+msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
+msgid "Unique Order Reference"
+msgstr "Riferimento Univoco dell'Ordine"
 
 msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
 msgid "User"
