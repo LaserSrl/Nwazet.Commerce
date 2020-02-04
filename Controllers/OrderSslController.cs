@@ -81,7 +81,7 @@ namespace Nwazet.Commerce.Controllers {
                 .ToDictionary(p => p.Id, p => p);
             var shape = _shapeFactory.Order_Confirmation(
                 OrderId: order.Id,
-                Status: _orderService.StatusLabels.Select(s=>s.Key.StatusName == order.Status),
+                Status: _orderService.StatusLabels.FirstOrDefault(s => s.Key.StatusName == order.Status).Value,
                 CheckoutItems: items,
                 Products: products,
                 SubTotal: order.SubTotal,
