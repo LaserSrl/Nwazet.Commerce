@@ -40,14 +40,15 @@ namespace Nwazet.Commerce.Services {
 
         public IEnumerable<ContentTypeDefinition> GetProductTypes() {
             return _contentDefinitionManager.ListTypeDefinitions()
-                .Where(ctd => ctd.Parts.Any(ctpd => {
-                    if (ctpd.PartDefinition.Name.Equals(ProductPart.PartName, StringComparison.InvariantCultureIgnoreCase)) {
-                        // test whether we can actually create the content
-                        var dummyContent = _contentManager.New(ctpd.ContentTypeDefinition.Name);
-                        return _authorizer.Authorize(CorePermissions.CreateContent, dummyContent);
-                    }
-                    return false;
-                }));
+                // Type has ProductPart
+                .Where(ctd => ctd.Parts.Any(ctpd => ctpd
+                    .PartDefinition.Name
+                    .Equals(ProductPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
+                // We can create ContentItems of that type
+                .Where(ctd => {
+                    var dummyContent = _contentManager.New(ctd.Name);
+                    return _authorizer.Authorize(CorePermissions.CreateContent, dummyContent);
+                });
         }
     }
 }
