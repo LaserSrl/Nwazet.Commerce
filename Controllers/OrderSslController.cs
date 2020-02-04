@@ -79,9 +79,13 @@ namespace Nwazet.Commerce.Controllers {
                     VersionOptions.Latest,
                     QueryHints.Empty)
                 .ToDictionary(p => p.Id, p => p);
+            var labelsKey = _orderService.StatusLabels.Keys
+                .FirstOrDefault(s => s.StatusName.Equals(order.Status));
+            var statusLabel = labelsKey != null
+                ? _orderService.StatusLabels[labelsKey] : null;
             var shape = _shapeFactory.Order_Confirmation(
                 OrderId: order.Id,
-                Status: _orderService.StatusLabels.FirstOrDefault(s => s.Key.StatusName == order.Status).Value,
+                Status: statusLabel ?? T("No Status"),
                 CheckoutItems: items,
                 Products: products,
                 SubTotal: order.SubTotal,
