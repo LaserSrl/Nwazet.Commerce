@@ -167,7 +167,7 @@ namespace Nwazet.Commerce.Services {
             var currency = Currency.Currencies[orderPart.CurrencyCode];
             var cultureInUse = CultureInfo.GetCultureInfo(_workContextAccessor.GetContext().CurrentCulture);
             yield return new OrderEditorAdditionalProductInfoViewModel {
-                Title = T("Price before VAT").Text,
+                Title = T("Taxable").Text,
                 HeaderClass = "price",
                 Information = data
                     .ToDictionary(

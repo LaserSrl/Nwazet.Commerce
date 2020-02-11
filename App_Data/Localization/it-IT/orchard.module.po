@@ -926,7 +926,7 @@ msgstr "Aggiungi un Valore di Attributo"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
 msgid "Apply To Line"
-msgstr "Applica alla Riga"
+msgstr "Applica alla Linea"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
 msgid "Attribute Value Options"

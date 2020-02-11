@@ -26,8 +26,8 @@
                 <tr>
                     <th class="quantity"><abbr title="@T("Quantity")">@T("Qty")</abbr></th>
                     <th class="description">@T("Product")</th>
-                    <th class="price">@T("Original price")</th>
-                    <th class="price">@T("Price")</th>
+                    <th class="price">@T("Catalog Price")</th>
+                    <th class="price">@T("Selling Price")</th>
                     @if (Model.OrderItems.Any(oi => oi.LinePriceAdjustment != 0)) {
                         <th class="price">@T("Adjustment")</th>
                     }
