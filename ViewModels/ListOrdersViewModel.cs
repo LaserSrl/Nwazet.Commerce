@@ -23,7 +23,9 @@ namespace Nwazet.Commerce.ViewModels {
             BulkAction = ContentsBulkAction.None;
         }
 
-        public string Search { get; set; }
+        //public string Search { get; set; }
+        public string OrderKey { get; set; }
+        public string User { get; set; }
         public string SelectedFilter { get; set; }
         public IEnumerable<KeyValuePair<string, string>> FilterOptions { get; set; }
         public ContentsOrder OrderBy { get; set; }
