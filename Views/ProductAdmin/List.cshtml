@@ -11,29 +11,44 @@
         ? new List<ContentTypeDefinition>()
         : (List<ContentTypeDefinition>)Model.AllowedProductTypes;
 }
-
-<div class="manage">
-    @*@Html.ActionLink(createLinkText.Text, "Create", "Admin", new { Area = "Contents", Id = "Product" }, new { @class = "button primaryAction" })*@
-    @if (AllowedProductTypes.Any()) {
-        @Html.ActionLink(createLinkText.Text,
-               "CreateProduct",
-               "ProductAdmin",
-               new {
-                   Area = "Nwazet.Commerce",
-                   ReturnUrl = Request.RawUrl,
-                   id = AllowedProductTypes.Count() == 1 ? AllowedProductTypes.FirstOrDefault().Name : ""
-               },
-               new { @class = "button primaryAction" })
-    }
+<div class="row">
+    <div class="manage">
+        @*@Html.ActionLink(createLinkText.Text, "Create", "Admin", new { Area = "Contents", Id = "Product" }, new { @class = "button primaryAction" })*@
+        @if (AllowedProductTypes.Any()) {
+            @Html.ActionLink(createLinkText.Text,
+                   "CreateProduct",
+                   "ProductAdmin",
+                   new {
+                       Area = "Nwazet.Commerce",
+                       ReturnUrl = Request.RawUrl,
+                       id = AllowedProductTypes.Count() == 1 ? AllowedProductTypes.FirstOrDefault().Name : ""
+                   },
+                   new { @class = "button primaryAction" })
+        }
+    </div>
 </div>
 @using (Html.BeginFormAntiForgeryPost()) {
     <fieldset class="bulk-actions">
-        <label for="orderResults" class="bulk-order">@T("Ordered by")</label>
-        <select id="orderResults" name="Options.OrderBy">
-            @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Created, T("recently created").Text)
-            @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Modified, T("recently modified").Text)
-        </select>
-        <button type="submit" name="submit.Filter" value="yes please">@T("Apply")</button>
+        <div class="row">
+            <div class="col-xs-12 col-md-4 margin-bottom-lg">
+                <label for="orderkey">@T("A:")</label>
+                <input class="text" type="text" name="Options.OrderKey" value="" />
+            </div>
+            <div class="col-xs-12 col-md-4 margin-bottom-lg">
+                <label for="orderkey">@T("B:")</label>
+                <input class="text" type="text" name="Options.OrderKey" value="" />
+            </div>
+            <div class="col-xs-12 col-md-12 margin-bottom-lg">
+                <label for="orderResults" class="bulk-order">@T("Ordered by")</label>
+                <select id="orderResults" name="Options.OrderBy">
+                    @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Created, T("recently created").Text)
+                    @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Modified, T("recently modified").Text)
+                </select>
+            </div>
+            <div class="col-xs-12 col-md-12">
+                <button type="submit" name="submit.Filter" value="yes please">@T("Apply")</button>
+            </div>
+        </div>
     </fieldset>
     <fieldset class="contentItems bulk-items">
         @Display(Model.ContentItems)
