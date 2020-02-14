@@ -26,6 +26,8 @@ using Orchard.UI.Notify;
 using Nwazet.Commerce.Extensions;
 using Orchard.Data;
 using Orchard.ContentManagement.MetaData;
+using Nwazet.Commerce.ViewModels;
+using Orchard.Core.Title.Models;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Commerce")]
@@ -223,22 +225,34 @@ namespace Nwazet.Commerce.Controllers {
             return context.ExecutionAction(productItem);
         }
         #endregion
-
-        public ActionResult List(ListContentsViewModel model, PagerParameters pagerParameters) {
+        
+        public ActionResult List(ListProductsViewModel model, PagerParameters pagerParameters) {
             if (!_orchardServices.Authorizer.Authorize(CommercePermissions.ManageProducts, null, T("Not authorized to manage products"))) 
                 return new HttpUnauthorizedResult();
             
             var pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
             var query = _contentManager.Query<ProductPart, ProductPartVersionRecord>(VersionOptions.Latest);
 
+            if (!string.IsNullOrWhiteSpace(model.Options.Title)) {
+                query = query
+                    .Join<TitlePartRecord>()
+                    .Where(o => o.Title.Contains(model.Options.Title))
+                    .Join<ProductPartVersionRecord>();
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.Options.Sku)) {
+                query = query
+                    .Where(o => o.Sku.Contains(model.Options.Sku));
+            }
+
             switch (model.Options.OrderBy) {
-                case ContentsOrder.Modified:
+                case ContentsProduct.Modified:
                     query.OrderByDescending<CommonPartRecord>(cr => cr.ModifiedUtc);
                     break;
-                case ContentsOrder.Published:
+                case ContentsProduct.Published:
                     query.OrderByDescending<CommonPartRecord>(cr => cr.PublishedUtc);
                     break;
-                case ContentsOrder.Created:
+                case ContentsProduct.Created:
                     query.OrderByDescending<CommonPartRecord>(cr => cr.CreatedUtc);
                     break;
             }
@@ -257,6 +271,31 @@ namespace Nwazet.Commerce.Controllers {
 
             // Casting to avoid invalid (under medium trust) reflection over the protected View method and force a static invocation.
             return View((object)viewModel);
+        }
+
+        [HttpPost]
+        [ActionName("List")]
+        [Orchard.Mvc.FormValueRequired("submit.Filter")]
+        public ActionResult ListFilterPost(ContentProductOptions options) {
+            var routeValues = ControllerContext.RouteData.Values;
+            if (options != null) {
+                routeValues["Options.OrderBy"] = options.OrderBy;
+
+                if (String.IsNullOrWhiteSpace(options.Title)) {
+                    routeValues.Remove("Options.Title");
+                }
+                else {
+                    routeValues["Options.Title"] = options.Title;
+                }
+                if (String.IsNullOrWhiteSpace(options.Sku)) {
+                    routeValues.Remove("Options.Sku");
+                }
+                else {
+                    routeValues["Options.Sku"] = options.Sku;
+                }
+            }
+
+            return RedirectToAction("List", routeValues);
         }
 
         [HttpPost]

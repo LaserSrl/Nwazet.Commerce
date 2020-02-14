@@ -643,6 +643,7 @@
     <Compile Include="ViewModels\InventoryBySKUProductEditorViewModel.cs" />
     <Compile Include="ViewModels\InventoryBySKUSiteSettingsPartViewModel.cs" />
     <Compile Include="ViewModels\InventoryEditViewModel.cs" />
+    <Compile Include="ViewModels\ListProductsViewModel.cs" />
     <Compile Include="ViewModels\OrderEditorAdditionalProductInfoViewModel.cs" />
     <Compile Include="ViewModels\ProductAttributePartDisplayViewModel.cs" />
     <Compile Include="ViewModels\ProductAttributePartEditViewModel.cs" />
