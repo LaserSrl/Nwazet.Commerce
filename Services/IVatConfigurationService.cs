@@ -1,5 +1,6 @@
 ﻿using Nwazet.Commerce.Models;
 using Orchard;
+using System.Collections.Generic;
 
 namespace Nwazet.Commerce.Services {
     public interface IVatConfigurationService : IDependency {
@@ -38,7 +39,7 @@ namespace Nwazet.Commerce.Services {
         decimal GetRate(ProductPart part);
 
         /// <summary>
-        /// Given a product's configuration and a destination terriotry, find the VAT rate to apply.
+        /// Given a product's configuration and a destination territory, find the VAT rate to apply.
         /// </summary>
         /// <param name="part">The ProductPart for the product</param>
         /// <param name="destination">An object describing the destination.</param>
@@ -46,6 +47,17 @@ namespace Nwazet.Commerce.Services {
         /// <remarks>The case destination == null should be handled by computing the rate for 
         /// the default destination in the settings for the site.</remarks>
         decimal GetRate(ProductPart part, TerritoryInternalRecord destination);
+        /// <summary>
+        /// Given a product's configuration and a destination, find the VAT rate to apply.
+        /// The destination is described as a collection of territories, each more specific
+        /// than the next. E.g. { city, province, country }
+        /// </summary>
+        /// <param name="part">The ProductPart for the product</param>
+        /// <param name="destination">An object describing the destination.</param>
+        /// <returns>The rate computed for the product and the destination.</returns>
+        /// <remarks>The case destination == null should be handled by computing the rate for 
+        /// the default destination in the settings for the site.</remarks>
+        decimal GetRate(ProductPart part, IEnumerable<TerritoryInternalRecord> destination);
 
         /// <summary>
         /// Find the VAT rate a given configuration would apply in the default destination territory.
@@ -61,6 +73,16 @@ namespace Nwazet.Commerce.Services {
         /// <param name="destination">An object describing the destination.</param>
         /// <returns>The rate computed for the destination.</returns>
         decimal GetRate(VatConfigurationPart vatConfig, TerritoryInternalRecord destination);
+        /// <summary>
+        /// Find the VAT rate a given configuration would apply in a given destination.
+        /// The destination is described as a collection of territories, each more specific
+        /// than the next. E.g. { city, province, country }
+        /// </summary>
+        /// <param name="vatConfig">An object describing the VAT configuration.</param>
+        /// <param name="destination">An object describing the destination.</param>
+        /// <returns>The rate computed for the destination.</returns>
+        decimal GetRate(
+            VatConfigurationPart vatConfig, IEnumerable<TerritoryInternalRecord> destination);
 
         /// <summary>
         /// Get the default destination configured for the purpose of VAT computations.
