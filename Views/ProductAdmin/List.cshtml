@@ -1,7 +1,9 @@
 @using Orchard.Core.Contents.ViewModels;
 @using Nwazet.Commerce.Models
 @using Orchard.ContentManagement.MetaData.Models;
+@using DiscountProduct = Nwazet.Commerce.ViewModels.DiscountProduct
 @using ContentsProduct = Nwazet.Commerce.ViewModels.ContentsProduct
+
 @{
     Style.Require("Accordion").AtHead();
 
@@ -109,6 +111,15 @@
                     </select>
                 </div>
             }
+            <div class="col-xs-12 col-md-4 margin-bottom-lg">
+                <label for="orderResults" class="bulk-order">@T("Discount"):</label>
+                <select id="orderResults" name="Options.FilterDiscount">
+                    @Html.SelectOption((DiscountProduct)Model.Options.FilterDiscount, DiscountProduct.ShowAll, T("any (show all)").Text)
+                    @Html.SelectOption((DiscountProduct)Model.Options.FilterDiscount, DiscountProduct.Discount, T("Discount").Text)
+                    @Html.SelectOption((DiscountProduct)Model.Options.FilterDiscount, DiscountProduct.NoDiscount, T("No Discount").ToString())
+                </select>
+            </div>
+
             <div class="col-xs-12 col-md-4 margin-bottom-lg">
                 <label for="orderResults" class="bulk-order">@T("Ordered by"):</label>
                 <select id="orderResults" name="Options.OrderBy">

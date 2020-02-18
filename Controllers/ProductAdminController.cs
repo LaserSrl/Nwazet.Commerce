@@ -46,6 +46,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IContentDefinitionManager _contentDefinitionManager;
         private readonly ICultureManager _cultureManager;
         private readonly ICultureFilter _cultureFilter;
+        private readonly IEnumerable<IPriceProvider> _priceProviders;
 
 
         public ProductAdminController(
@@ -62,7 +63,8 @@ namespace Nwazet.Commerce.Controllers {
             ITransactionManager transactionManager,
             IContentDefinitionManager contentDefinitionManager,
             ICultureManager cultureManager,
-            ICultureFilter cultureFilter) {
+            ICultureFilter cultureFilter,
+            IEnumerable<IPriceProvider> priceProviders) {
 
             Services = services;
             _contentManager = contentManager;
@@ -79,6 +81,7 @@ namespace Nwazet.Commerce.Controllers {
             _contentDefinitionManager = contentDefinitionManager;
             _cultureManager = cultureManager;
             _cultureFilter = cultureFilter;
+            _priceProviders = priceProviders;
 
             _allowedProductType = new Lazy<IEnumerable<ContentTypeDefinition>>(GetAllowedProductTypes);
         }
@@ -262,14 +265,12 @@ namespace Nwazet.Commerce.Controllers {
 
             if (!string.IsNullOrWhiteSpace(model.Options.Title)) {
                 query = query
-                    .Join<TitlePartRecord>()
-                    .Where(o => o.Title.Contains(model.Options.Title));
+                    .Where<TitlePartRecord>(o => o.Title.Contains(model.Options.Title));
             }
 
             if (!string.IsNullOrWhiteSpace(model.Options.Sku)) {
                 query = query
-                    .Join<ProductPartVersionRecord>()
-                    .Where(o => o.Sku.Contains(model.Options.Sku));
+                    .Where<ProductPartVersionRecord>(o => o.Sku.Contains(model.Options.Sku));
             }
 
             if (!String.IsNullOrWhiteSpace(model.Options.SelectedCulture)) {
@@ -280,27 +281,36 @@ namespace Nwazet.Commerce.Controllers {
                 decimal priceFrom = decimal.TryParse(model.Options.PriceFrom, out priceFrom) ? priceFrom : 0;
                 decimal priceTo = decimal.TryParse(model.Options.PriceTo, out priceTo) ? priceTo : 0;
                 query = query
-                  .Join<ProductPartVersionRecord>()
-                  .Where(o => o.Price >= priceFrom && o.Price <= priceTo);
+                  .Where<ProductPartVersionRecord>(o => o.Price >= priceFrom && o.Price <= priceTo);
             }
 
             if (!string.IsNullOrWhiteSpace(model.Options.InventoryFrom) || !string.IsNullOrWhiteSpace(model.Options.InventoryTo)) {
                 int inventoryFrom = int.TryParse(model.Options.InventoryFrom, out inventoryFrom) ? inventoryFrom : 0;
                 int inventoryTo = int.TryParse(model.Options.InventoryTo, out inventoryTo) ? inventoryTo : 0;
                 query = query
-                  .Join<ProductPartVersionRecord>()
-                  .Where(o => o.Inventory >= inventoryFrom && o.Inventory <= inventoryTo);
+                  .Where<ProductPartVersionRecord>(o => o.Inventory >= inventoryFrom && o.Inventory <= inventoryTo);
+            }
+
+            switch (model.Options.FilterDiscount) {
+                case DiscountProduct.Discount:
+                    query = query
+                        .Where<ProductPartVersionRecord>(o=>o.DiscountPrice >= 0 && o.DiscountPrice < o.Price);
+                break;
+                case DiscountProduct.NoDiscount:
+                    query = query
+                        .Where<ProductPartVersionRecord>(o => o.DiscountPrice < 0 || o.DiscountPrice >= o.Price);
+                break;
             }
 
             switch (model.Options.OrderBy) {
                 case ContentsProduct.Modified:
-                query.OrderByDescending<CommonPartRecord>(cr => cr.ModifiedUtc);
+                    query.OrderByDescending<CommonPartRecord>(cr => cr.ModifiedUtc);
                 break;
                 case ContentsProduct.Published:
-                query.OrderByDescending<CommonPartRecord>(cr => cr.PublishedUtc);
+                    query.OrderByDescending<CommonPartRecord>(cr => cr.PublishedUtc);
                 break;
                 case ContentsProduct.Created:
-                query.OrderByDescending<CommonPartRecord>(cr => cr.CreatedUtc);
+                    query.OrderByDescending<CommonPartRecord>(cr => cr.CreatedUtc);
                 break;
             }
 
@@ -378,6 +388,7 @@ namespace Nwazet.Commerce.Controllers {
                     routeValues["Options.InventoryTo"] = options.InventoryTo;
                 }
 
+                routeValues["Options.FilterDiscount"] = options.FilterDiscount;
             }
 
             return RedirectToAction("List", routeValues);

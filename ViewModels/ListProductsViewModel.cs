@@ -29,6 +29,7 @@ namespace Nwazet.Commerce.ViewModels {
         public ContentProductOptions() {
             OrderBy = ContentsProduct.Modified;
             ContentsStatus = ContentsStatus.Latest;
+            FilterDiscount = DiscountProduct.ShowAll;
         }
 
         public string Title { get; set; }
@@ -40,6 +41,7 @@ namespace Nwazet.Commerce.ViewModels {
         public string InventoryFrom { get; set; }
         public string InventoryTo { get; set; }
 
+        public DiscountProduct FilterDiscount { get; set; }
         public ContentsStatus ContentsStatus { get; set; }
         public IEnumerable<KeyValuePair<string, string>> FilterOptions { get; set; }
         public ContentsProduct OrderBy { get; set; }
@@ -50,5 +52,11 @@ namespace Nwazet.Commerce.ViewModels {
         Modified,
         Published,
         Created
+    }
+
+    public enum DiscountProduct {
+        Discount,
+        NoDiscount,
+        ShowAll
     }
 }
