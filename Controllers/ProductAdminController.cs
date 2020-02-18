@@ -225,6 +225,10 @@ namespace Nwazet.Commerce.Controllers {
 
             var pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
 
+            // TODO : export these conditions to a service
+            // the "promotion" condition is missing
+            // add a service that manages the filters for the promotion if the feature promotion is active and if the DiscountPart is present
+
             var versionOptions = VersionOptions.Latest;
             switch (model.Options.ContentsStatus) {
                 case ContentsStatus.Published:
@@ -260,8 +264,6 @@ namespace Nwazet.Commerce.Controllers {
                 .ToList().OrderBy(kvp => kvp.Value);
 
             model.Options.Cultures = _cultureManager.ListCultures();
-
-            //var query = _contentManager.Query<ProductPart, ProductPartVersionRecord>(versionOptions);
 
             if (!string.IsNullOrWhiteSpace(model.Options.Title)) {
                 query = query
