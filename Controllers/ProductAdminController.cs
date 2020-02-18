@@ -28,6 +28,7 @@ using Orchard.Data;
 using Orchard.ContentManagement.MetaData;
 using Nwazet.Commerce.ViewModels;
 using Orchard.Core.Title.Models;
+using Orchard.Localization.Services;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Commerce")]
@@ -43,6 +44,8 @@ namespace Nwazet.Commerce.Controllers {
         private readonly INotifier _notifier;
         private readonly ITransactionManager _transactionManager;
         private readonly IContentDefinitionManager _contentDefinitionManager;
+        private readonly ICultureManager _cultureManager;
+        private readonly ICultureFilter _cultureFilter;
 
 
         public ProductAdminController(
@@ -57,7 +60,9 @@ namespace Nwazet.Commerce.Controllers {
             IAuthorizer authorizer,
             INotifier notifier,
             ITransactionManager transactionManager,
-            IContentDefinitionManager contentDefinitionManager) {
+            IContentDefinitionManager contentDefinitionManager,
+            ICultureManager cultureManager,
+            ICultureFilter cultureFilter) {
 
             Services = services;
             _contentManager = contentManager;
@@ -72,6 +77,8 @@ namespace Nwazet.Commerce.Controllers {
             _notifier = notifier;
             _transactionManager = transactionManager;
             _contentDefinitionManager = contentDefinitionManager;
+            _cultureManager = cultureManager;
+            _cultureFilter = cultureFilter;
 
             _allowedProductType = new Lazy<IEnumerable<ContentTypeDefinition>>(GetAllowedProductTypes);
         }
@@ -105,18 +112,14 @@ namespace Nwazet.Commerce.Controllers {
                 return CreatableProductsList();
             }
         }
-        private ActionResult CreateProduct(ContentTypeDefinition typeDefinition)
-        {
-            if (AllowedProductTypes == null)
-            {
+        private ActionResult CreateProduct(ContentTypeDefinition typeDefinition) {
+            if (AllowedProductTypes == null) {
                 return new HttpUnauthorizedResult(ProductUtilities.Default401ProductMessage);
             }
-            if (!AllowedProductTypes.Any(ty => ty.Name == typeDefinition.Name))
-            {
+            if (!AllowedProductTypes.Any(ty => ty.Name == typeDefinition.Name)) {
                 return new HttpUnauthorizedResult(ProductUtilities.SpecificProduct401Message(typeDefinition.DisplayName));
             }
-            if (!typeDefinition.Parts.Any(pa => pa.PartDefinition.Name == ProductPart.PartName))
-            {
+            if (!typeDefinition.Parts.Any(pa => pa.PartDefinition.Name == ProductPart.PartName)) {
                 AddModelError("", T("The requested type \"{0}\" is not a Product type.", typeDefinition.DisplayName));
                 return RedirectToAction("List");
             }
@@ -125,10 +128,8 @@ namespace Nwazet.Commerce.Controllers {
             var model = _contentManager.BuildEditor(productItem);
             return View(model);
         }
-        private ActionResult CreatableProductsList()
-        {
-            if (AllowedProductTypes == null)
-            {
+        private ActionResult CreatableProductsList() {
+            if (AllowedProductTypes == null) {
                 return new HttpUnauthorizedResult(ProductUtilities.Default401ProductMessage);
             }
             //This will be like the AdminController from Orchard.Core.Contents
@@ -139,11 +140,9 @@ namespace Nwazet.Commerce.Controllers {
 
         [HttpPost, ActionName("CreateProduct")]
         [Orchard.Mvc.FormValueRequired("submit.Save")]
-        public ActionResult CreateProductPost(string id, string returnUrl)
-        {
+        public ActionResult CreateProductPost(string id, string returnUrl) {
             return CreateProductPost(id, returnUrl, contentItem => {
-                if (!contentItem.Has<IPublishingControlAspect>() && !contentItem.TypeDefinition.Settings.GetModel<ContentTypeSettings>().Draftable)
-                {
+                if (!contentItem.Has<IPublishingControlAspect>() && !contentItem.TypeDefinition.Settings.GetModel<ContentTypeSettings>().Draftable) {
                     _contentManager.Publish(contentItem);
                 }
             });
@@ -151,8 +150,7 @@ namespace Nwazet.Commerce.Controllers {
 
         [HttpPost, ActionName("CreateProduct")]
         [Orchard.Mvc.FormValueRequired("submit.Publish")]
-        public ActionResult CreateAndPublishProductPost(string id, string returnUrl)
-        {
+        public ActionResult CreateAndPublishProductPost(string id, string returnUrl) {
             var dummyContent = _contentManager.New(id);
 
             if (!_authorizer.Authorize(Orchard.Core.Contents.Permissions.PublishContent, dummyContent, ProductUtilities.Creation401ProductMessage))
@@ -161,10 +159,8 @@ namespace Nwazet.Commerce.Controllers {
             return CreateProductPost(id, returnUrl, contentItem => _contentManager.Publish(contentItem));
         }
 
-        private ActionResult CreateProductPost(string typeName, string returnUrl, Action<ContentItem> conditionallyPublish)
-        {
-            return ExecuteProductPost(new ProductExecutionContext
-            {
+        private ActionResult CreateProductPost(string typeName, string returnUrl, Action<ContentItem> conditionallyPublish) {
+            return ExecuteProductPost(new ProductExecutionContext {
                 ProductItem = _contentManager.New(typeName),
                 Message = ProductUtilities.Creation401ProductMessage,
                 AdditionalPermissions = new Permission[] { Orchard.Core.Contents.Permissions.EditContent },
@@ -173,8 +169,7 @@ namespace Nwazet.Commerce.Controllers {
 
                     var model = _contentManager.UpdateEditor(item, this);
 
-                    if (!ModelState.IsValid)
-                    {
+                    if (!ModelState.IsValid) {
                         _transactionManager.Cancel();
                         return View(model);
                     }
@@ -191,32 +186,27 @@ namespace Nwazet.Commerce.Controllers {
             });
         }
         private ActionResult ExecuteProductPost(
-           ProductExecutionContext context)
-        {
+           ProductExecutionContext context) {
             var productItem = context.ProductItem;
             if (productItem == null)
                 return HttpNotFound();
 
             #region Authorize
-            if (AllowedProductTypes == null)
-            {
+            if (AllowedProductTypes == null) {
                 return new HttpUnauthorizedResult(ProductUtilities.Default401ProductMessage);
             }
             var typeName = productItem.ContentType;
             var typeDefinition = _contentDefinitionManager.GetTypeDefinition(typeName);
-            if (!typeDefinition.Parts.Any(pa => pa.PartDefinition.Name == ProductPart.PartName))
-            {
+            if (!typeDefinition.Parts.Any(pa => pa.PartDefinition.Name == ProductPart.PartName)) {
                 AddModelError("", T("The requested type \"{0}\" is not a Product type.", typeDefinition.DisplayName));
                 return RedirectToAction("List");
             }
             typeDefinition = AllowedProductTypes.FirstOrDefault(ctd => ctd.Name == typeName);
-            if (typeDefinition == null)
-            {
+            if (typeDefinition == null) {
                 return new HttpUnauthorizedResult(ProductUtilities.SpecificProduct401Message(typeName));
             }
-            
-            foreach (var permission in context.AdditionalPermissions)
-            {
+
+            foreach (var permission in context.AdditionalPermissions) {
                 if (!_authorizer.Authorize(permission, productItem, context.Message))
                     return new HttpUnauthorizedResult();
             }
@@ -225,36 +215,93 @@ namespace Nwazet.Commerce.Controllers {
             return context.ExecutionAction(productItem);
         }
         #endregion
-        
+
         public ActionResult List(ListProductsViewModel model, PagerParameters pagerParameters) {
-            if (!_orchardServices.Authorizer.Authorize(CommercePermissions.ManageProducts, null, T("Not authorized to manage products"))) 
+            if (!_orchardServices.Authorizer.Authorize(CommercePermissions.ManageProducts, null, T("Not authorized to manage products")))
                 return new HttpUnauthorizedResult();
-            
+
             var pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
-            var query = _contentManager.Query<ProductPart, ProductPartVersionRecord>(VersionOptions.Latest);
+
+            var versionOptions = VersionOptions.Latest;
+            switch (model.Options.ContentsStatus) {
+                case ContentsStatus.Published:
+                versionOptions = VersionOptions.Published;
+                break;
+                case ContentsStatus.Draft:
+                versionOptions = VersionOptions.Draft;
+                break;
+                case ContentsStatus.AllVersions:
+                versionOptions = VersionOptions.AllVersions;
+                break;
+                default:
+                versionOptions = VersionOptions.Latest;
+                break;
+            }
+
+            var query = _contentManager.Query(versionOptions, AllowedProductTypes.Select(ctd => ctd.Name).ToArray());
+
+            if (!string.IsNullOrEmpty(model.TypeName)) {
+                var contentTypeDefinition = _contentDefinitionManager.GetTypeDefinition(model.TypeName);
+                if (contentTypeDefinition == null)
+                    return HttpNotFound();
+
+                model.TypeDisplayName = !string.IsNullOrWhiteSpace(contentTypeDefinition.DisplayName)
+                                            ? contentTypeDefinition.DisplayName
+                                            : contentTypeDefinition.Name;
+                query = query.ForType(model.TypeName);
+            }
+
+            model.Options.SelectedFilter = model.TypeName;
+            model.Options.FilterOptions = AllowedProductTypes
+                .Select(ctd => new KeyValuePair<string, string>(ctd.Name, ctd.DisplayName))
+                .ToList().OrderBy(kvp => kvp.Value);
+
+            model.Options.Cultures = _cultureManager.ListCultures();
+
+            //var query = _contentManager.Query<ProductPart, ProductPartVersionRecord>(versionOptions);
 
             if (!string.IsNullOrWhiteSpace(model.Options.Title)) {
                 query = query
                     .Join<TitlePartRecord>()
-                    .Where(o => o.Title.Contains(model.Options.Title))
-                    .Join<ProductPartVersionRecord>();
+                    .Where(o => o.Title.Contains(model.Options.Title));
             }
 
             if (!string.IsNullOrWhiteSpace(model.Options.Sku)) {
                 query = query
+                    .Join<ProductPartVersionRecord>()
                     .Where(o => o.Sku.Contains(model.Options.Sku));
+            }
+
+            if (!String.IsNullOrWhiteSpace(model.Options.SelectedCulture)) {
+                query = _cultureFilter.FilterCulture(query, model.Options.SelectedCulture);
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.Options.PriceFrom) || !string.IsNullOrWhiteSpace(model.Options.PriceTo)) {
+                decimal priceFrom = decimal.TryParse(model.Options.PriceFrom, out priceFrom) ? priceFrom : 0;
+                decimal priceTo = decimal.TryParse(model.Options.PriceTo, out priceTo) ? priceTo : 0;
+                query = query
+                  .Join<ProductPartVersionRecord>()
+                  .Where(o => o.Price >= priceFrom && o.Price <= priceTo);
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.Options.InventoryFrom) || !string.IsNullOrWhiteSpace(model.Options.InventoryTo)) {
+                int inventoryFrom = int.TryParse(model.Options.InventoryFrom, out inventoryFrom) ? inventoryFrom : 0;
+                int inventoryTo = int.TryParse(model.Options.InventoryTo, out inventoryTo) ? inventoryTo : 0;
+                query = query
+                  .Join<ProductPartVersionRecord>()
+                  .Where(o => o.Inventory >= inventoryFrom && o.Inventory <= inventoryTo);
             }
 
             switch (model.Options.OrderBy) {
                 case ContentsProduct.Modified:
-                    query.OrderByDescending<CommonPartRecord>(cr => cr.ModifiedUtc);
-                    break;
+                query.OrderByDescending<CommonPartRecord>(cr => cr.ModifiedUtc);
+                break;
                 case ContentsProduct.Published:
-                    query.OrderByDescending<CommonPartRecord>(cr => cr.PublishedUtc);
-                    break;
+                query.OrderByDescending<CommonPartRecord>(cr => cr.PublishedUtc);
+                break;
                 case ContentsProduct.Created:
-                    query.OrderByDescending<CommonPartRecord>(cr => cr.CreatedUtc);
-                    break;
+                query.OrderByDescending<CommonPartRecord>(cr => cr.CreatedUtc);
+                break;
             }
 
             var pagerShape = Shape.Pager(pager).TotalItemCount(query.Count());
@@ -280,6 +327,8 @@ namespace Nwazet.Commerce.Controllers {
             var routeValues = ControllerContext.RouteData.Values;
             if (options != null) {
                 routeValues["Options.OrderBy"] = options.OrderBy;
+                routeValues["Options.ContentsStatus"] = options.ContentsStatus;
+                routeValues["Options.SelectedCulture"] = options.SelectedCulture;
 
                 if (String.IsNullOrWhiteSpace(options.Title)) {
                     routeValues.Remove("Options.Title");
@@ -293,6 +342,42 @@ namespace Nwazet.Commerce.Controllers {
                 else {
                     routeValues["Options.Sku"] = options.Sku;
                 }
+
+                if (AllowedProductTypes.Any(ctd => string.Equals(ctd.Name, options.SelectedFilter, StringComparison.OrdinalIgnoreCase))) {
+                    routeValues["id"] = options.SelectedFilter;
+                }
+                else {
+                    routeValues.Remove("id");
+                }
+
+                if (String.IsNullOrWhiteSpace(options.PriceFrom)) {
+                    routeValues.Remove("Options.PriceFrom");
+                }
+                else {
+                    routeValues["Options.PriceFrom"] = options.PriceFrom;
+                }
+
+                if (String.IsNullOrWhiteSpace(options.PriceTo)) {
+                    routeValues.Remove("Options.PriceTo");
+                }
+                else {
+                    routeValues["Options.PriceTo"] = options.PriceTo;
+                }
+
+                if (String.IsNullOrWhiteSpace(options.InventoryFrom)) {
+                    routeValues.Remove("Options.InventoryFrom");
+                }
+                else {
+                    routeValues["Options.InventoryFrom"] = options.InventoryFrom;
+                }
+
+                if (String.IsNullOrWhiteSpace(options.InventoryTo)) {
+                    routeValues.Remove("Options.InventoryTo");
+                }
+                else {
+                    routeValues["Options.InventoryTo"] = options.InventoryTo;
+                }
+
             }
 
             return RedirectToAction("List", routeValues);
@@ -301,7 +386,7 @@ namespace Nwazet.Commerce.Controllers {
         [HttpPost]
         public ActionResult RemoveOne(int id) {
             if (!_orchardServices.Authorizer.Authorize(CommercePermissions.ManageProducts, null, T("Not authorized to manage products")))
-                return new HttpUnauthorizedResult();            
+                return new HttpUnauthorizedResult();
 
             var product = _contentManager.Get<ProductPart>(id);
             _productInventoryService.UpdateInventory(product, -1);
@@ -315,7 +400,8 @@ namespace Nwazet.Commerce.Controllers {
                 newInventory = affectedBundles.ToDictionary(
                     b => b.As<ProductPart>().Sku,
                     b => bundleService.GetProductQuantitiesFor(b).Min(p => _productInventoryService.GetInventory(p.Product) / p.Quantity));
-            } else {
+            }
+            else {
                 newInventory = new Dictionary<string, int>(1);
             }
             newInventory.Add(product.Sku, _productInventoryService.GetInventory(product));

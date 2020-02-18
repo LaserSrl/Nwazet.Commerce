@@ -3,6 +3,8 @@
 @using Orchard.ContentManagement.MetaData.Models;
 @using ContentsProduct = Nwazet.Commerce.ViewModels.ContentsProduct
 @{
+    Style.Require("Accordion").AtHead();
+
     var pageTitle = T("Manage Products");
     var createLinkText = T("Create New Product");
     Layout.Title = pageTitle;
@@ -10,6 +12,9 @@
     var AllowedProductTypes = Model.AllowedProductTypes == null
         ? new List<ContentTypeDefinition>()
         : (List<ContentTypeDefinition>)Model.AllowedProductTypes;
+
+    IEnumerable<string> cultures = Model.Options.Cultures;
+
 }
 <div class="row">
     <div class="manage">
@@ -28,29 +33,95 @@
     </div>
 </div>
 @using (Html.BeginFormAntiForgeryPost()) {
-    <fieldset class="bulk-actions">
-        <div class="row">
-            <div class="col-xs-12 col-md-4 margin-bottom-lg">
-                <label for="title">@T("Title:")</label>
-                <input class="text" type="text" name="Options.Title" value="" />
+    <div>
+        <div class="box-header with-border">
+            <h3 class="box-title">@T("Manage content")</h3>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
+                    <label for="title">@T("Title:")</label>
+                    <input class="text" type="text" name="Options.Title" value="@(Model.Options.Title)" />
+                </div>
+                <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
+                    <label for="sku">@T("Sku"):</label>
+                    <input class="text" type="text" name="Options.Sku" value="@(Model.Options.Sku)" />
+                </div>
+                <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
+                    <label class="gray-label">@T("Status"):</label>
+                    <select id="contentResults" name="Options.ContentsStatus">
+                        @Html.SelectOption((ContentsStatus)Model.Options.ContentsStatus, ContentsStatus.Latest, T("latest").ToString())
+                        @Html.SelectOption((ContentsStatus)Model.Options.ContentsStatus, ContentsStatus.Published, T("published").ToString())
+                        @Html.SelectOption((ContentsStatus)Model.Options.ContentsStatus, ContentsStatus.Draft, T("unpublished").ToString())
+                        @Html.SelectOption((ContentsStatus)Model.Options.ContentsStatus, ContentsStatus.AllVersions, T("all versions").ToString())
+                    </select>
+                </div>
             </div>
-            <div class="col-xs-12 col-md-4 margin-bottom-lg">
-                <label for="sku">@T("Sku:")</label>
-                <input class="text" type="text" name="Options.Sku" value="" />
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-xs-12 col-md-12 col-lg-12">
+                    <a class="accordion-section-title" role="button" data-toggle="collapse" href="#collapserow" aria-expanded="false" aria-controls="collapseExample">@T("Advanced filters")</a>
+                </div>
             </div>
-            <div class="col-xs-12 col-md-12 margin-bottom-lg">
-                <label for="orderResults" class="bulk-order">@T("Ordered by")</label>
+        </div>
+        <div id="collapserow" class="collapse">
+            <div class="col-xs-12 col-md-4 col-lg-4 no-padding">
+                <div class="col-xs-12 col-md-6 col-lg-6">
+                    <label for="priceFromResults" class="bulk-filter">@T("Price From")</label>
+                    <input class="av-textbox" type="text" name="Options.PriceFrom" value="@(Model.Options.PriceFrom)" />
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-6">
+                    <label for="priceToResults" class="bulk-filter">@T("Price To")</label>
+                    <input class="av-textbox" type="text" name="Options.PriceTo" value="@(Model.Options.PriceTo)" />
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-md-2 col-lg-2 margin-bottom-lg">
+                <label for="inventoryFromResults" class="bulk-filter">@T("Inventory From")</label>
+                <input class="av-textbox" type="text" name="Options.InventoryFrom" value="@(Model.Options.InventoryFrom)" />
+            </div>
+            <div class="col-xs-12 col-md-2 col-lg-2 margin-bottom-lg">
+                <label for="inventoryToResults" class="bulk-filter">@T("Inventory To")</label>
+                <input class="av-textbox" type="text" name="Options.InventoryTo" value="@(Model.Options.InventoryTo)" />
+            </div>
+
+            @if (((IEnumerable<KeyValuePair<string, string>>)Model.Options.FilterOptions).Count() > 1) {
+                <div class="col-xs-12 col-md-4 margin-bottom-lg">
+                    <label for="filterResults" class="bulk-order">@T("Product Type"):</label>
+                    <select id="filterResults" name="Options.SelectedFilter">
+                        @Html.SelectOption((string)Model.Options.SelectedFilter, "", T("any (show all)").ToString())
+                        @foreach (var filterOption in Model.Options.FilterOptions) {
+                            @Html.SelectOption((string)Model.Options.SelectedFilter, (string)filterOption.Key, (string)filterOption.Value)
+                        }
+                    </select>
+                </div>
+            }
+
+            @if (cultures.Count() > 1) {
+                <div class="col-xs-12 col-md-4 margin-bottom-lg">
+                    <label for="filterCulture" class="bulk-culture">@T("Culture"):</label>
+                    <select id="filterCulture" name="Options.SelectedCulture">
+                        @Html.SelectOption((string)Model.Options.SelectedCulture, "", T("any (show all)").ToString())
+                        @foreach (string culture in cultures) {
+                            @Html.SelectOption((string)Model.Options.SelectedCulture, culture, System.Globalization.CultureInfo.GetCultureInfo(culture).DisplayName)
+                        }
+                    </select>
+                </div>
+            }
+            <div class="col-xs-12 col-md-4 margin-bottom-lg">
+                <label for="orderResults" class="bulk-order">@T("Ordered by"):</label>
                 <select id="orderResults" name="Options.OrderBy">
                     @Html.SelectOption((ContentsProduct)Model.Options.OrderBy, ContentsProduct.Created, T("recently created").Text)
                     @Html.SelectOption((ContentsProduct)Model.Options.OrderBy, ContentsProduct.Modified, T("recently modified").Text)
                     @Html.SelectOption((ContentsProduct)Model.Options.OrderBy, ContentsProduct.Published, T("recently published").ToString())
                 </select>
             </div>
-            <div class="col-xs-12 col-md-12">
-                <button type="submit" name="submit.Filter" value="yes please">@T("Apply")</button>
-            </div>
         </div>
-    </fieldset>
+        <div class="box-footer align-right padding-right-35 col-xs-12 col-md-12">
+            <button type="submit" name="submit.Filter" value="yes please">@T("Apply")</button>
+        </div>
+    </div>
     <fieldset class="contentItems bulk-items">
         @Display(Model.ContentItems)
     </fieldset>
