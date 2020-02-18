@@ -8,7 +8,7 @@
     <legend>@T("Inventory")</legend>
     @Html.CheckBoxFor(m => m.Product.IsDigital)
     <label class="sub" for="@Html.IdFor(m => m.Product.IsDigital)">@T("digital product")</label><br />
-    @Html.CheckBoxFor(m => m.Product.ConsiderInventory)
-    <label class="sub" for="@Html.IdFor(m => m.Product.ConsiderInventory)">@T("consider inventory for digital product")</label>
-    <span class="hint">@T("If checked, the digital product will be considered to be available in a limited quantity, based on the inventory.")</span>
+    @if (Model.Product.ConsiderInventory) {
+        <span class="hint">@T("This digital product will be considered to be available in a limited quantity, based on the inventory.")</span>
+    }
 </fieldset>
