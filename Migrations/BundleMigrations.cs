@@ -62,5 +62,10 @@ namespace Nwazet.Commerce.Migrations {
                 table => table.AddColumn<int>("Quantity", column => column.WithDefault(1)));
             return 2;
         }
+        public int UpdateFrom2() {
+            ContentDefinitionManager.AlterTypeDefinition("Bundle", bp => bp
+               .Creatable(false));
+            return 3;
+        }
     }
 }
