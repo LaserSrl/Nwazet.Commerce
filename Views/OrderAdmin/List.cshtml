@@ -8,56 +8,62 @@
 
 @using (Html.BeginFormAntiForgeryPost()) {
     <fieldset class="bulk-actions">
-        <label for="publishActions">@T("Actions:")</label>
-        <select id="publishActions" name="Options.BulkAction">
-            @Html.SelectOption((ContentsBulkAction)Model.Options.BulkAction, ContentsBulkAction.None, T("Choose action...").ToString())
-            @Html.SelectOption((ContentsBulkAction)Model.Options.BulkAction, ContentsBulkAction.Remove, T("Archive").ToString())
-        </select>
-        <button type="submit" name="submit.BulkEdit" value="yes">@T("Apply")</button>
-    </fieldset>
-    <fieldset class="bulk-actions">
-        <div class="row">
-            <div class="col-xs-12 col-md-4 m-10 margin-bottom-lg">
-                <label for="orderkey">@T("Order Key:")</label>
-                <input class="text" type="text" name="Options.OrderKey" value="@(Model.Options.OrderKey)" />
-            </div>
-            <div class="col-xs-12 col-md-4 margin-bottom-lg">
-                <label for="user">@T("User:")</label>
-                <input class="text" type="text" name="Options.User" value="@(Model.Options.User)" />
-            </div>
-            <div class="col-xs-12 col-md-4 margin-bottom-lg">
-                <label for="filterResults" class="bulk-filter">@T("Show")</label>
-                @Html.DropDownList("Options.SelectedFilter",
-                    new List<SelectListItem> {
-                        new SelectListItem {
-                            Selected = String.IsNullOrEmpty(selectedFilter) ||
-                                       selectedFilter.Equals("active", StringComparison.OrdinalIgnoreCase),
-                            Text = T("Active orders").Text,
-                            Value = "active"
-                        },
-                        new SelectListItem {
-                            Selected = selectedFilter.Equals("any", StringComparison.OrdinalIgnoreCase),
-                            Text = T("All orders").Text,
-                            Value = "any"
-                        }
-                    }
-                        .Union(((ContentOptions)Model.Options).FilterOptions.Select(
-                            o => new SelectListItem {
-                                Selected = selectedFilter.Equals(o.Key, StringComparison.OrdinalIgnoreCase),
-                                Text = o.Value,
-                                Value = o.Key
+        <div class="box-header with-border">
+            <label for="publishActions">@T("Actions:")</label>
+            <select id="publishActions" name="Options.BulkAction">
+                @Html.SelectOption((ContentsBulkAction)Model.Options.BulkAction, ContentsBulkAction.None, T("Choose action...").ToString())
+                @Html.SelectOption((ContentsBulkAction)Model.Options.BulkAction, ContentsBulkAction.Remove, T("Archive").ToString())
+            </select>
+            <button type="submit" name="submit.BulkEdit" value="yes">@T("Apply")</button>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-xs-12 col-md-4 m-10 margin-bottom-lg">
+                    <label for="orderkey">@T("Order Key:")</label>
+                    <input class="text" type="text" name="Options.OrderKey"
+                           placeholder="@T("Order Key of Order")"
+                           value="@(Model.Options.OrderKey)" />
+                </div>
+                <div class="col-xs-12 col-md-4 margin-bottom-lg">
+                    <label for="user">@T("User:")</label>
+                    <input class="text" type="text" name="Options.User"
+                           placeholder="@T("Name, Surname, E-mail")"
+                           value="@(Model.Options.User)" />
+                </div>
+                <div class="col-xs-12 col-md-4 margin-bottom-lg">
+                    <label for="filterResults" class="bulk-filter">@T("Show")</label>
+                    @Html.DropDownList("Options.SelectedFilter",
+                        new List<SelectListItem> {
+                            new SelectListItem {
+                                Selected = String.IsNullOrEmpty(selectedFilter) ||
+                                           selectedFilter.Equals("active", StringComparison.OrdinalIgnoreCase),
+                                Text = T("Active orders").Text,
+                                Value = "active"
+                            },
+                            new SelectListItem {
+                                Selected = selectedFilter.Equals("any", StringComparison.OrdinalIgnoreCase),
+                                Text = T("All orders").Text,
+                                Value = "any"
                             }
-                            )))
-            </div>
-            <div class="col-xs-12 col-md-4 margin-bottom-lg">
-                <label for="orderResults" class="bulk-order">@T("Ordered by")</label>
-                <select id="orderResults" name="Options.OrderBy">
-                    @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Created, T("recently created").Text)
-                    @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Modified, T("recently modified").Text)
-                </select>
-            </div>
-            <div class="col-xs-12 col-md-4 margin-bottom-lg">
-                <button type="submit" name="submit.Filter" value="yes please">@T("Apply")</button>
+                        }
+                            .Union(((ContentOptions)Model.Options).FilterOptions.Select(
+                                o => new SelectListItem {
+                                    Selected = selectedFilter.Equals(o.Key, StringComparison.OrdinalIgnoreCase),
+                                    Text = o.Value,
+                                    Value = o.Key
+                                }
+                                )))
+                </div>
+                <div class="col-xs-12 col-md-4 margin-bottom-lg">
+                    <label for="orderResults" class="bulk-order">@T("Ordered by")</label>
+                    <select id="orderResults" name="Options.OrderBy">
+                        @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Created, T("recently created").Text)
+                        @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Modified, T("recently modified").Text)
+                    </select>
+                </div>
+                <div class="box-footer align-right padding-right-35 col-xs-12 col-md-12">
+                    <button type="submit" name="submit.Filter" value="yes please">@T("Apply")</button>
+                </div>
             </div>
         </div>
     </fieldset>

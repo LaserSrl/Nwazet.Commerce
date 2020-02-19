@@ -18,6 +18,7 @@
     IEnumerable<string> cultures = Model.Options.Cultures;
 
 }
+
 <div class="row">
     <div class="manage">
         @*@Html.ActionLink(createLinkText.Text, "Create", "Admin", new { Area = "Contents", Id = "Product" }, new { @class = "button primaryAction" })*@
@@ -43,11 +44,15 @@
             <div class="row">
                 <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
                     <label for="title">@T("Title:")</label>
-                    <input class="text" type="text" name="Options.Title" value="@(Model.Options.Title)" />
+                    <input class="text" type="text" name="Options.Title" 
+                           placeholder="@T("Title of Product")"
+                           value="@(Model.Options.Title)" />
                 </div>
                 <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
                     <label for="sku">@T("Sku"):</label>
-                    <input class="text" type="text" name="Options.Sku" value="@(Model.Options.Sku)" />
+                    <input class="text" type="text" name="Options.Sku" 
+                           placeholder="@T("Product Identifier")"
+                           value="@(Model.Options.Sku)" />
                 </div>
                 @if (((IEnumerable<KeyValuePair<string, string>>)Model.Options.FilterOptions).Count() > 1) {
                     <div class="col-xs-12 col-md-4 margin-bottom-lg">
@@ -82,20 +87,28 @@
         </div>
         <div id="collapserow" class="collapse">
             <div class="col-xs-12 col-md-3 col-lg-3 margin-bottom-lg">
-                <label for="priceFromResults">@T("Price From")</label>
-                <input class="av-textbox ui-autocomplete-input" type="text" name="Options.PriceFrom" value="@(Model.Options.PriceFrom)" />
+                <label for="priceFromResults">@T("Price From"):</label>
+                <input class="av-textbox ui-autocomplete-input" type="text" name="Options.PriceFrom" 
+                       placeholder="@T("Price of Product (From)")"
+                       value="@(Model.Options.PriceFrom)" />
             </div>
             <div class="col-xs-12 col-md-3 col-lg-3 margin-bottom-lg">
-                <label for="priceToResults">@T("Price To")</label>
-                <input class="av-textbox ui-autocomplete-input" type="text" name="Options.PriceTo" value="@(Model.Options.PriceTo)" />
+                <label for="priceToResults">@T("Price To"):</label>
+                <input class="av-textbox ui-autocomplete-input" type="text" name="Options.PriceTo" 
+                       placeholder="@T("Price of Product (To)")"
+                       value="@(Model.Options.PriceTo)" />
             </div>
             <div class="col-xs-12 col-md-3 col-lg-3 margin-bottom-lg">
-                <label for="inventoryFromResults">@T("Inventory From")</label>
-                <input class="av-textbox ui-autocomplete-input" type="text" name="Options.InventoryFrom" value="@(Model.Options.InventoryFrom)" />
+                <label for="inventoryFromResults">@T("Inventory From"):</label>
+                <input class="av-textbox ui-autocomplete-input" type="text" name="Options.InventoryFrom" 
+                       placeholder="@T("Number Inventory (From)")"
+                       value="@(Model.Options.InventoryFrom)" />
             </div>
             <div class="col-xs-12 col-md-3 col-lg-3 margin-bottom-lg">
-                <label for="inventoryToResults">@T("Inventory To")</label>
-                <input class="av-textbox ui-autocomplete-input" type="text" name="Options.InventoryTo" value="@(Model.Options.InventoryTo)" />
+                <label for="inventoryToResults">@T("Inventory To"):</label>
+                <input class="av-textbox ui-autocomplete-input" type="text" name="Options.InventoryTo" 
+                       placeholder="@T("Number Inventory (To)")"
+                       value="@(Model.Options.InventoryTo)" />
             </div>
             <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
                 <label class="gray-label">@T("Status"):</label>
@@ -121,7 +134,9 @@
             <select id="orderResults" name="Options.OrderBy">
                 @Html.SelectOption((ContentsProduct)Model.Options.OrderBy, ContentsProduct.Created, T("recently created").Text)
                 @Html.SelectOption((ContentsProduct)Model.Options.OrderBy, ContentsProduct.Modified, T("recently modified").Text)
-                @Html.SelectOption((ContentsProduct)Model.Options.OrderBy, ContentsProduct.Published, T("recently published").ToString())
+                @Html.SelectOption((ContentsProduct)Model.Options.OrderBy, ContentsProduct.Title, T("title").Text)
+                @Html.SelectOption((ContentsProduct)Model.Options.OrderBy, ContentsProduct.Price, T("price").Text)
+                @Html.SelectOption((ContentsProduct)Model.Options.OrderBy, ContentsProduct.Inventory, T("available").Text)
             </select>
         </div>
         <div class="box-footer align-right padding-right-35 col-xs-12 col-md-12">

@@ -49,9 +49,11 @@ namespace Nwazet.Commerce.ViewModels {
     }
 
     public enum ContentsProduct {
-        Modified,
-        Published,
-        Created
+        Title,
+        Price,
+        Created,
+        Inventory,
+        Modified
     }
 
     public enum DiscountProduct {
