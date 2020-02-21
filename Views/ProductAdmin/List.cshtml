@@ -91,8 +91,11 @@
             <div id="collapserow" class="collapse">
                 <div class="box-body">
                     <div class="row">
+                        <div class="col-xs-12 col-md-12 col-lg-12 margin-bottom-lg">
+                            <label> @T("Price"):</label>
+                        </div>
                         <div class="col-xs-6 col-md-6 col-lg-6 margin-bottom-lg">
-                            <label for="priceFromResults">@T("Price From"):</label>
+                            <label for="priceFromResults">@T("From"):</label>
                             <input class="text" type="text" name="Options.PriceFrom"
                                    placeholder="@T("Price Product From")"
                                    title="@T("Digit a decimal number")"
@@ -105,8 +108,11 @@
                                    title="@T("Digit a decimal number")"
                                    value="@(Model.Options.PriceTo)" />
                         </div>
+                        <div class="col-xs-12 col-md-12 col-lg-12 margin-bottom-lg">
+                            <label> @T("Inventory"):</label>
+                        </div>
                         <div class="col-xs-6 col-md-6 col-lg-6 margin-bottom-lg">
-                            <label for="inventoryFromResults">@T("Inventory From"):</label>
+                            <label for="inventoryFromResults">@T("From"):</label>
                             <input class="text" type="text" name="Options.InventoryFrom"
                                    title="@T("Digit an integer number")"
                                    placeholder="@T("Product Quantity From")"
