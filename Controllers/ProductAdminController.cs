@@ -29,6 +29,7 @@ using Orchard.ContentManagement.MetaData;
 using Nwazet.Commerce.ViewModels;
 using Orchard.Core.Title.Models;
 using Orchard.Localization.Services;
+using System.Globalization;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Commerce")]
@@ -223,6 +224,9 @@ namespace Nwazet.Commerce.Controllers {
             if (!_orchardServices.Authorizer.Authorize(CommercePermissions.ManageProducts, null, T("Not authorized to manage products")))
                 return new HttpUnauthorizedResult();
 
+            var currentCulture = Services.WorkContext.CurrentCulture;
+            var cultureInfo = CultureInfo.GetCultureInfo(currentCulture);
+
             var pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
 
             // TODO : export these conditions to a service
@@ -279,21 +283,22 @@ namespace Nwazet.Commerce.Controllers {
                 query = _cultureFilter.FilterCulture(query, model.Options.SelectedCulture);
             }
 
+            //TODO: Manage error for incorrect populate text
             decimal priceFrom = 0;
             decimal priceTo = 0;
             if (!string.IsNullOrWhiteSpace(model.Options.PriceFrom) && string.IsNullOrWhiteSpace(model.Options.PriceTo)) {
-                priceFrom = decimal.TryParse(model.Options.PriceFrom, out priceFrom) ? priceFrom : 0;
+                priceFrom = decimal.TryParse(model.Options.PriceFrom, NumberStyles.Currency, cultureInfo, out priceFrom) ? priceFrom : 0;
                 query = query
                  .Where<ProductPartVersionRecord>(o => o.Price >= priceFrom);
             }
             else if (string.IsNullOrWhiteSpace(model.Options.PriceFrom) && !string.IsNullOrWhiteSpace(model.Options.PriceTo)) {
-                priceTo = decimal.TryParse(model.Options.PriceTo, out priceTo) ? priceTo : 0;
+                priceTo = decimal.TryParse(model.Options.PriceTo, NumberStyles.Currency, cultureInfo, out priceTo) ? priceTo : 0;
                 query = query
                     .Where<ProductPartVersionRecord>(o => o.Price <= priceTo);
             }
             else if (!string.IsNullOrWhiteSpace(model.Options.PriceFrom) && !string.IsNullOrWhiteSpace(model.Options.PriceTo)) {
-                priceFrom = decimal.TryParse(model.Options.PriceFrom, out priceFrom) ? priceFrom : 0;
-                priceTo = decimal.TryParse(model.Options.PriceTo, out priceTo) ? priceTo : 0;
+                priceFrom = decimal.TryParse(model.Options.PriceFrom, NumberStyles.Currency, CultureInfo.InvariantCulture, out priceFrom) ? priceFrom : 0;
+                priceTo = decimal.TryParse(model.Options.PriceTo, NumberStyles.Currency, CultureInfo.InvariantCulture, out priceTo) ? priceTo : 0;
                 query = query
                   .Where<ProductPartVersionRecord>(o => o.Price >= priceFrom && o.Price <= priceTo);
             }
