@@ -283,7 +283,6 @@ namespace Nwazet.Commerce.Controllers {
                 query = _cultureFilter.FilterCulture(query, model.Options.SelectedCulture);
             }
 
-            //TODO: Manage error for incorrect populate text
             decimal priceFrom = 0;
             decimal priceTo = 0;
             if (!string.IsNullOrWhiteSpace(model.Options.PriceFrom) && string.IsNullOrWhiteSpace(model.Options.PriceTo)) {

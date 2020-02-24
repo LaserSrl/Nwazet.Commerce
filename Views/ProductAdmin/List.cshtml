@@ -96,14 +96,16 @@
                         </div>
                         <div class="col-xs-6 col-md-6 col-lg-6 margin-bottom-lg">
                             <label for="priceFromResults">@T("From")</label>
-                            <input class="text" type="text" name="Options.PriceFrom"
+                            <input class="text" type="number" name="Options.PriceFrom"
+                                   step = "0.01"
                                    placeholder="@T("Price Product From")"
                                    title="@T("Digit a decimal number")"
                                    value="@(Model.Options.PriceFrom)" />
                         </div>
                         <div class="col-xs-6 col-md-6 col-lg-6 margin-bottom-lg">
                             <label for="priceToResults">@T("To")</label>
-                            <input class="text" type="text" name="Options.PriceTo"
+                            <input class="text" type="number" name="Options.PriceTo"
+                                   step = "0.01"
                                    placeholder="@T("Price Product To")"
                                    title="@T("Digit a decimal number")"
                                    value="@(Model.Options.PriceTo)" />
@@ -113,14 +115,16 @@
                         </div>
                         <div class="col-xs-6 col-md-6 col-lg-6 margin-bottom-lg">
                             <label for="inventoryFromResults">@T("From")</label>
-                            <input class="text" type="text" name="Options.InventoryFrom"
+                            <input class="text" type="number" name="Options.InventoryFrom"
+                                   step = "1"
                                    title="@T("Digit an integer number")"
                                    placeholder="@T("Product Quantity From")"
                                    value="@(Model.Options.InventoryFrom)" />
                         </div>
                         <div class="col-xs-6 col-md-6 col-lg-6 margin-bottom-lg">
                             <label for="inventoryToResults">@T("To")</label>
-                            <input class="text" type="text" name="Options.InventoryTo"
+                            <input class="text" type="number" name="Options.InventoryTo"
+                                   step = "1"
                                    title="@T("Digit an integer number")"
                                    placeholder="@T("Product Quantity To")"
                                    value="@(Model.Options.InventoryTo)" />
