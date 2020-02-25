@@ -82,9 +82,23 @@ namespace Nwazet.Commerce.Controllers {
             if (string.IsNullOrEmpty(model.StartDate) || string.IsNullOrEmpty(model.EndDate)) {
                 return Report(report, TimePeriod.Year.BeginningDate(now), now, TimePeriod.Month);
             }
+
+            DateTime startDate;
+            DateTime endDate;
+            if (DateTime.TryParse(model.StartDate,culture,DateTimeStyles.None, out startDate) &&
+                DateTime.TryParse(model.EndDate, culture, DateTimeStyles.None, out endDate)) {
+                if (startDate > endDate) {
+                    _notifier.Error(T("Start Date ({0}) cannot be greater than the End Date ({1})",startDate.ToShortDateString(), endDate.ToShortDateString()));
+                    return Report(report, TimePeriod.Year.BeginningDate(now), now, TimePeriod.Month);
+                }
+            }
+            else {
+                _notifier.Error(T("Check the format of the dates"));
+                return Report(report, TimePeriod.Year.BeginningDate(now), now, TimePeriod.Month);
+            }
             var parsedGranularity = TimePeriod.Parse(granularity);
 
-            return Report(report, Convert.ToDateTime(model.StartDate, culture),Convert.ToDateTime(model.EndDate, culture), parsedGranularity);
+            return Report(report,startDate,endDate, parsedGranularity);
         }
 
         private ActionResult Report(string report, DateTime startDate, DateTime endDate, TimePeriod granularity) {
@@ -94,35 +108,6 @@ namespace Nwazet.Commerce.Controllers {
             var reportService = _reports.FirstOrDefault(r => r.Name == report);
             if (reportService == null) {
                 return HttpNotFound(T("Report {0} not found", report).Text);
-            }
-            if (startDate > endDate) {
-                _notifier.Error(T("Start Date ({0}) cannot be greater than the End Date ({1})", 
-                    startDate.ToString(culture.DateTimeFormat.ShortDatePattern),
-                    endDate.ToString(culture.DateTimeFormat.ShortDatePattern)));
-
-                var modelOnlyData = new ReportDataViewModel {
-                    Name = reportService.Name,
-                    Description = reportService.Description,
-                    DescriptionColumnHeader = reportService.DescriptionColumnHeader,
-                    ValueColumnHeader = reportService.ValueColumnHeader,
-                    ValueFormat = reportService.ValueFormat,
-                    ChartType = reportService.ChartType,
-                    DataPoints = new List<ReportDataPoint>(),
-                    Series = new List<string>(),
-                    StartDateEditor = new DateTimeEditor {
-                        Date = _dateServices.ConvertToLocalizedDateString(startDate.ToUniversalTime()),
-                        ShowDate = true,
-                        ShowTime = false
-                    },
-                    EndDateEditor = new DateTimeEditor {
-                        Date = _dateServices.ConvertToLocalizedDateString(endDate.ToUniversalTime()),
-                        ShowDate = true,
-                        ShowTime = false
-                    },
-                    Granularity = granularity,
-                    CurrencyProvider = _currencyProvider
-                };
-                return View("Detail", modelOnlyData);
             }
             var data = reportService.GetData(startDate, endDate, granularity);
             var series = data.Series;
