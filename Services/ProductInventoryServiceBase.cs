@@ -84,7 +84,7 @@ namespace Nwazet.Commerce.Services {
 
         public virtual int GetInventory(ProductPart part) {
             IBundleService bundleService;
-            var inventory = part.As<InventoryPart>().Inventory;
+            var inventory = part.As<InventoryPart>()?.Inventory ?? 0;
             if (_workContextAccessor.GetContext().TryResolve(out bundleService) && part.Has<BundlePart>()) {
                 var bundlePart = part.As<BundlePart>();
                 var ids = bundlePart.ProductIds.ToList();

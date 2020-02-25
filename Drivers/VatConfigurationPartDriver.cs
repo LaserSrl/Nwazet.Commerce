@@ -128,19 +128,26 @@ namespace Nwazet.Commerce.Drivers {
                 // get the TerritoryHierarchyParts
                 var hierarchies = part.Hierarchies.Select(tup => tup.Item1).ToArray();
                 for (int i = 0; i < hierarchies.Length-1; i++) {
-                    var source = hierarchies[i].Territories.Select(ci => ci.As<TerritoryPart>());
+                    // territories from "first" hierarchy
+                    var source = hierarchies[i]
+                        .Record.Territories; //.Select(ci => ci.As<TerritoryPart>());
+                    // name of first hierarchy
                     var sourceString = _contentManager.GetItemMetadata(hierarchies[i]).DisplayText;
                     for (int j = i+1; j < hierarchies.Length; j++) {
-                        var other = hierarchies[j].Territories.Select(ci => ci.As<TerritoryPart>());
+                        // territories from second hierarchy
+                        var other = hierarchies[j]
+                            .Record.Territories; //.Select(ci => ci.As<TerritoryPart>());
+                        // name of second hierarchy
                         var otherString = _contentManager.GetItemMetadata(hierarchies[j]).DisplayText;
-                        var intersection = source.Intersect(other, new TerritoryPart.TerritoryPartComparer());
+                        // intersection of the sets of territories
+                        var intersection = source.Intersect(other, new TerritoryPartRecord.TerritoryPartRecordComparer());
                         if (intersection.Any()) {
                             foreach (var territory in intersection) {
 
                                 yield return new HierarchyIntersection {
                                     Hierarchy1 = sourceString,
                                     Hierarchy2 = otherString,
-                                    Territory = territory.Record.TerritoryInternalRecord.Name
+                                    Territory = territory.TerritoryInternalRecord.Name
                                 };
                             }
                         }

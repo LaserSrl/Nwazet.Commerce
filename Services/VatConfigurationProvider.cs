@@ -115,11 +115,14 @@ namespace Nwazet.Commerce.Services {
                             // we removed a VAT category configuration
                             _hierarchyVatConfigurations.Delete(intersection);
                             // We need to go through all territories and delete the configurations there as well
-                            var territories = part
-                                .As<TerritoryHierarchyPart>() // get the hierarchy
-                                ?.Territories // all its Territory ContentItems
-                                ?.Select(ci => ci.As<TerritoryVatConfigurationPart>()) // where there is an attached part to configure VAT
-                                ?.Where(tvcp => tvcp != null); // and such part is not null
+                            var territories = _contentManager
+                                // configurations
+                                .Query<TerritoryVatConfigurationPart>(VersionOptions.AllVersions)
+                                // attached to territories
+                                .Join<TerritoryPartRecord>()
+                                // that belogn to this hierarchy
+                                .Where(tpr => tpr.Hierarchy.Id == part.As<TerritoryHierarchyPart>().Record.Id)
+                                .List();
 
                             if (territories != null && territories.Any()) {
                                 var territoryIds = territories.Select(tvcp => tvcp.Record.Id);

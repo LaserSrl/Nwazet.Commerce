@@ -8,6 +8,7 @@ namespace Nwazet.Commerce.Models {
         public virtual int Id { get; set; } //Primary Key
         [StringLengthMax]
         public virtual string Name { get; set; } //Name given to the territory
+        public virtual string NameHash { get; set; } // hash of Name
 
         public TerritoryInternalRecord() {
             TerritoryParts = new List<TerritoryPartRecord>();
@@ -24,8 +25,10 @@ namespace Nwazet.Commerce.Models {
             return new TerritoryInternalRecord {
                 Id = this.Id,
                 Name = this.Name,
+                NameHash = this.NameHash,
                 TerritoryParts = this.TerritoryParts
             };
         }
+
     }
 }
