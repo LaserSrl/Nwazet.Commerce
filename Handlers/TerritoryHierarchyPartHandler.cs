@@ -58,8 +58,8 @@ namespace Nwazet.Commerce.Handlers {
 
         static void PropertySetHandlers(
             InitializingContentContext context, TerritoryHierarchyPart part) {
-
-            part.TerritoriesField.Setter(value => {
+            
+            part.TopLevelField.Setter(value => {
                 var actualItems = value.Where(ci => ci.As<TerritoryPart>() != null);
                 part.Record.Territories = actualItems.Any() ?
                     actualItems.Select(ci => ci.As<TerritoryPart>().Record).ToList() :
@@ -68,18 +68,20 @@ namespace Nwazet.Commerce.Handlers {
             });
 
             //call the setter in case a value had already been set
-            if (part.TerritoriesField.Value != null) {
-                part.TerritoriesField.Value = part.TerritoriesField.Value;
+            if (part.TopLevelField.Value != null) {
+                part.TopLevelField.Value = part.TopLevelField.Value;
             }
         }
 
         void LazyLoadHandlers(TerritoryHierarchyPart part) {
-
-            part.TerritoriesField.Loader(() => {
+            
+            part.TopLevelField.Loader(() => {
                 if (part.Record.Territories != null && part.Record.Territories.Any()) {
                     return _contentManager
-                        .GetMany<ContentItem>(part.Record.Territories.Select(tpr => tpr.ContentItemRecord.Id),
-                            VersionOptions.Latest, QueryHints.Empty);
+                        .Query(VersionOptions.Latest)
+                        .Join<TerritoryPartRecord>()
+                        .Where(tpr => tpr.Hierarchy.Id == part.Record.Id && tpr.ParentTerritory == null)
+                        .List();
                 } else {
                     return Enumerable.Empty<ContentItem>();
                 }

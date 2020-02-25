@@ -3,6 +3,8 @@ using Orchard.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Nwazet.Commerce.Extensions {
     public static class TerritoriesUtilities {
@@ -83,6 +85,35 @@ namespace Nwazet.Commerce.Extensions {
             var copy = new List<TerritoryInternalRecord>(records.Count());
             copy.AddRange(records.Select(tir => tir.CreateSafeDuplicate()));
             return copy;
+        }
+
+        /// <summary>
+        /// GIven an algorithm, computes the hash of an input string.
+        /// </summary>
+        /// <param name="hashAlgorithm"></param>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string GetHash(HashAlgorithm hashAlgorithm, string input) {
+
+            // Convert the input string to a byte array and compute the hash.
+            byte[] data = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+            // Create a new Stringbuilder to collect the bytes
+            // and create a string.
+            var sBuilder = new StringBuilder();
+
+            // Loop through each byte of the hashed data 
+            // and format each one as a hexadecimal string.
+            for (int i = 0; i < data.Length; i++) {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+
+            // Return the hexadecimal string.
+            return sBuilder.ToString();
+        }
+
+        public static HashAlgorithm GetHashAlgorithm() {
+            return SHA256.Create();
         }
     }
 }

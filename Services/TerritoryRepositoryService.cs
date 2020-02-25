@@ -7,6 +7,8 @@ using Orchard.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Territories")]
@@ -20,9 +22,12 @@ namespace Nwazet.Commerce.Services {
             _territoryInternalRecord = territoryInternalRecord;
 
             T = NullLocalizer.Instance;
+
+            _hashAlgorithm = TerritoriesUtilities.GetHashAlgorithm();
         }
 
         public Localizer T;
+        HashAlgorithm _hashAlgorithm;
 
         public TerritoryInternalRecord GetTerritoryInternal(int id) {
             var tir = _territoryInternalRecord.Get(id);
@@ -31,20 +36,13 @@ namespace Nwazet.Commerce.Services {
         }
 
         public TerritoryInternalRecord GetTerritoryInternal(string name) {
-            name = name.Trim();
-            try {
-                var tir = _territoryInternalRecord.Get(x => x.Name == name);
-                return tir == null ? null :
-                    tir.CreateSafeDuplicate();
-            } catch (Exception) {
-                //sqlCE doe not support using strings properly when their length is such that the column
-                //in the record is of type ntext.
-                var tirs = _territoryInternalRecord.Fetch(x =>
-                    x.Name.StartsWith(name) && x.Name.EndsWith(name));
-                var tir = tirs.ToList().Where(rr => rr.Name == name).FirstOrDefault();
-                return tir == null ? null :
-                    tir.CreateSafeDuplicate();
+            if (string.IsNullOrWhiteSpace(name)) {
+                return null;
             }
+            name = name.Trim();
+            var tir = ExistingRecord(name);
+            return tir == null ? null :
+                tir.CreateSafeDuplicate();
         }
 
         public IEnumerable<TerritoryInternalRecord> GetTerritories(int startIndex = 0, int pageSize = 0) {
@@ -68,8 +66,10 @@ namespace Nwazet.Commerce.Services {
 
         public IEnumerable<TerritoryInternalRecord> GetTerritories(string[] itemIds) {
             if (itemIds.Any()) {
+                var hashes = itemIds.Select(n => GetHash(n)).ToArray();
                 return _territoryInternalRecord
-                    .Fetch(x => itemIds.Contains(x.Name))
+                    .Fetch(x => hashes.Contains(x.NameHash))
+                    .Where(x => itemIds.Contains(x.Name))
                     .CreateSafeDuplicate();
             }
             return Enumerable.Empty<TerritoryInternalRecord>();
@@ -82,11 +82,46 @@ namespace Nwazet.Commerce.Services {
         public TerritoryInternalRecord AddTerritory(TerritoryInternalRecord tir) {
             ValidateTir(tir);
             tir.Name = tir.Name.Trim();
+            tir.NameHash = GetHash(tir.Name);
             if (GetSameNameIds(tir).Any()) {
                 throw new TerritoryInternalDuplicateException(T("Cannot create duplicate names. A territory with the same name already exists."));
             }
             _territoryInternalRecord.Create(tir);
             return tir.CreateSafeDuplicate();
+        }
+
+        public bool TryAddTerritory(string name) {
+            // name must be valid
+            if (string.IsNullOrWhiteSpace(name)) {
+                return false;
+            }
+            var actualName = name.Trim();
+            // duplicates aren't allowed
+            var existing = ExistingRecord(actualName);
+            if (existing != null) {
+                return false;
+            }
+            //actually create
+            _territoryInternalRecord.Create(
+                new TerritoryInternalRecord { Name = actualName, NameHash = GetHash(actualName) });
+            return true;
+        }
+
+        private TerritoryInternalRecord ExistingRecord(string name) {
+            TerritoryInternalRecord existing = null;
+            var hash = GetHash(name);
+            try {
+                existing = _territoryInternalRecord
+                    .Fetch(x => x.NameHash == hash)
+                    .FirstOrDefault(x => x.Name == name);
+            } catch (Exception) {
+                //sqlCE doe not support using strings properly when their length is such that the column
+                //in the record is of type ntext.
+                var tirs = _territoryInternalRecord
+                    .Fetch(x => x.NameHash == hash);
+                existing = tirs.ToList().Where(rr => rr.Name == name).FirstOrDefault();
+            }
+            return existing;
         }
 
         public TerritoryInternalRecord Update(TerritoryInternalRecord tir) {
@@ -119,16 +154,19 @@ namespace Nwazet.Commerce.Services {
 
         private IEnumerable<int> GetSameNameIds(TerritoryInternalRecord tir) {
             var name = tir.Name.Trim();
+            var hash = tir.NameHash;
             try {
                 return _territoryInternalRecord.Table
-                    .Where(x => x.Name == name && (tir.Id == 0 || tir.Id != x.Id)) //can have same name as its own self
+                    .Where(x => x.NameHash == hash 
+                        && (tir.Id == 0 || tir.Id != x.Id)) //can have same name as its own self
                     .ToList() //force execution of the query so it can fail in sqlCE
+                    .Where(x => x.Name == name)
                     .Select(x => x.Id);
             } catch (Exception) {
                 //sqlCE doe not support using strings properly when their length is such that the column
                 //in the record is of type ntext.
-                var tirs = _territoryInternalRecord.Fetch(x =>
-                    x.Name.StartsWith(name) && x.Name.EndsWith(name));
+                var tirs = _territoryInternalRecord
+                    .Fetch(x => x.NameHash == hash);
                 return tirs
                     .ToList() //force execution so that Linq happens on in-memory objects
                     .Where(x => x.Name == name && (tir.Id == 0 || tir.Id != x.Id))
@@ -148,5 +186,10 @@ namespace Nwazet.Commerce.Services {
                 throw new ArgumentNullException("Name");
             }
         }
+
+        private string GetHash(string input) {
+            return TerritoriesUtilities.GetHash(_hashAlgorithm, input);
+        }
+
     }
 }

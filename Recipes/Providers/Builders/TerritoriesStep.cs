@@ -91,9 +91,9 @@ namespace Nwazet.Commerce.Recipes.Providers.Builders {
                     .Add(ExportData(hierarchyTypes, hierarchyItems));
             // 2. Export Territories
             foreach (var hierarchy in hierarchyItems.Select(ci => ci.As<TerritoryHierarchyPart>())) {
-                if (hierarchy.Territories.Any()) {
+                if (hierarchy.Record.Territories.Any()) {
                     context.RecipeDocument.Element("Orchard")
-                    .Add(ExportTerritories(hierarchy.Territories));
+                    .Add(ExportTerritories(hierarchy));
                 }
             }
         }
@@ -157,6 +157,15 @@ namespace Nwazet.Commerce.Recipes.Providers.Builders {
             }
 
             return data;
+        }
+
+        private XElement ExportTerritories(TerritoryHierarchyPart hierarchy) {
+            var items = _contentManager
+                .Query(VersionOptions.Latest)
+                .Join<TerritoryPartRecord>()
+                .Where(tpr => tpr.Hierarchy.Id == hierarchy.Record.Id)
+                .List();
+            return ExportTerritories(items);
         }
 
         private XElement ExportTerritories(IEnumerable<ContentItem> contentItems) {

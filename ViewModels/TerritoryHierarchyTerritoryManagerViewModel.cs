@@ -19,7 +19,7 @@ namespace Nwazet.Commerce.ViewModels {
             Part = part;
             ContentItem = part.ContentItem;
 
-            TerritoriesCount = part.Territories?.Count() ?? 0;
+            TerritoriesCount = part.Record.Territories?.Count() ?? 0;
         }
     }
 }
