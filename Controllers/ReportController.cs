@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,7 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Localization.Services;
 using Orchard.UI.Admin;
+using Orchard.UI.Notify;
 
 namespace Nwazet.Commerce.Controllers {
     [Admin]
@@ -28,24 +30,32 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IDateLocalizationServices _dateServices;
         private readonly IContentManager _contentManager;
         private readonly ICurrencyProvider _currencyProvider;
+        private readonly INotifier _notifier;
 
         public ReportController(
+            IOrchardServices services,
             IEnumerable<ICommerceReport> reports,
             IOrchardServices orchardServices,
             IDateLocalizationServices dateServices,
             IContentManager contentManager,
-            ICurrencyProvider currencyProvider
+            ICurrencyProvider currencyProvider,
+            INotifier notifier
             ) {
             _reports = reports;
+            Services = services;
             _orchardServices = orchardServices;
             _dateServices = dateServices;
             _contentManager = contentManager;
             _currencyProvider = currencyProvider;
+            _notifier = notifier;
 
             T = NullLocalizer.Instance;
-        }
 
+            culture = CultureInfo.GetCultureInfo(Services.WorkContext.CurrentCulture);
+        }
+        private CultureInfo culture { get; }
         public Localizer T { get; set; }
+        public IOrchardServices Services { get; set; }
 
         public ActionResult Index() {
             if (!_orchardServices.Authorizer.Authorize(ReportPermissions.GenerateReports, null, T("Cannot generate reports"))) {
@@ -55,7 +65,7 @@ namespace Nwazet.Commerce.Controllers {
             return View(reports);
         }
 
-        public ActionResult Report(string report, DateTime? startDate, DateTime? endDate, string granularity, string preset) {
+        public ActionResult Report(string report, ReportDataViewModel model, string granularity, string preset) {
             var now = DateTime.Now;
             switch (preset) {
                 case "today":
@@ -69,11 +79,12 @@ namespace Nwazet.Commerce.Controllers {
                 case "yeartodate":
                     return Report(report, TimePeriod.Year.BeginningDate(now), now, TimePeriod.Month);
             }
-            if (startDate == null || endDate == null) {
+            if (string.IsNullOrEmpty(model.StartDate) || string.IsNullOrEmpty(model.EndDate)) {
                 return Report(report, TimePeriod.Year.BeginningDate(now), now, TimePeriod.Month);
             }
             var parsedGranularity = TimePeriod.Parse(granularity);
-            return Report(report, startDate.Value, endDate.Value, parsedGranularity);
+
+            return Report(report, Convert.ToDateTime(model.StartDate, culture),Convert.ToDateTime(model.EndDate, culture), parsedGranularity);
         }
 
         private ActionResult Report(string report, DateTime startDate, DateTime endDate, TimePeriod granularity) {
@@ -83,6 +94,35 @@ namespace Nwazet.Commerce.Controllers {
             var reportService = _reports.FirstOrDefault(r => r.Name == report);
             if (reportService == null) {
                 return HttpNotFound(T("Report {0} not found", report).Text);
+            }
+            if (startDate > endDate) {
+                _notifier.Error(T("Start Date ({0}) cannot be greater than the End Date ({1})", 
+                    startDate.ToString(culture.DateTimeFormat.ShortDatePattern),
+                    endDate.ToString(culture.DateTimeFormat.ShortDatePattern)));
+
+                var modelOnlyData = new ReportDataViewModel {
+                    Name = reportService.Name,
+                    Description = reportService.Description,
+                    DescriptionColumnHeader = reportService.DescriptionColumnHeader,
+                    ValueColumnHeader = reportService.ValueColumnHeader,
+                    ValueFormat = reportService.ValueFormat,
+                    ChartType = reportService.ChartType,
+                    DataPoints = new List<ReportDataPoint>(),
+                    Series = new List<string>(),
+                    StartDateEditor = new DateTimeEditor {
+                        Date = _dateServices.ConvertToLocalizedDateString(startDate.ToUniversalTime()),
+                        ShowDate = true,
+                        ShowTime = false
+                    },
+                    EndDateEditor = new DateTimeEditor {
+                        Date = _dateServices.ConvertToLocalizedDateString(endDate.ToUniversalTime()),
+                        ShowDate = true,
+                        ShowTime = false
+                    },
+                    Granularity = granularity,
+                    CurrencyProvider = _currencyProvider
+                };
+                return View("Detail", modelOnlyData);
             }
             var data = reportService.GetData(startDate, endDate, granularity);
             var series = data.Series;
