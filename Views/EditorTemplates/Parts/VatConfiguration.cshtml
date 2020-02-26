@@ -2,8 +2,15 @@
 @using Nwazet.Commerce.Models;
 @using Orchard.ContentManagement;
 @using Orchard.Core.Title.Models;
+@using System.Collections.Generic;
 
 @model Nwazet.Commerce.ViewModels.VatConfigurationPartViewModel
+@functions{
+    IContentManager _contentManager;
+}
+@{
+    _contentManager = WorkContext.Resolve<IContentManager>();
+}
 
 @helper DisplayTree(TerritoryPart part, IList<VatConfigurationTerritorySummaryViewModel> subitem) {
     <div class="vatHierarchySummaryRow" style="margin-left:15px">
@@ -15,7 +22,7 @@
             }
         }
 
-        @if (((territoryVM==null && part.Children.Count() > 0) || rate > 0) && subitem.Count()!=0) {
+        @if (((territoryVM == null && part.Children.Count() > 0) || rate > 0) && subitem.Count() != 0) {
             @Html.ItemEditLink(part.ContentItem.As<TitlePart>().Title, part.ContentItem) @T(" ({0} %)", rate)
             foreach (var child in part.Children) {
                 @DisplayTree(child.As<TerritoryPart>(), subitem);
@@ -63,11 +70,9 @@
                         @Html.ItemEditLink(item.Name, item.Item) @T(" ({0} %)", item.Rate)
 
                         @{
-                            var territories = item.Item
-                                   .As<TerritoryHierarchyPart>()
-                                   .Territories
-                                   .Where(s => s.As<TerritoryPart>().Parent == null)
-                                   .ToList();
+                           var territories = _contentManager.Query<TerritoryPart,TerritoryPartRecord>()
+                                 .Where(tpr => tpr.Hierarchy.Id == item.Item.Id && tpr.ParentTerritory == null)
+                                 .List();
                             foreach (var subitem in territories) {
                                 @DisplayTree(subitem.As<TerritoryPart>(), item.SubRegions);
                             }
