@@ -1,5 +1,6 @@
 @{ Layout.Title = T("Create New Product").ToString(); }
 
+<p><span class="text-md text-bold text-primary">@T("Select product type:")</span></p>
 @foreach (var type in Model.ProductTypes) {
     <p>
         @Html.ActionLink((string)type.DisplayName,
