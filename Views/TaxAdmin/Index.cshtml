@@ -47,9 +47,13 @@
                         @Html.ItemEditLinkWithReturnUrl(tax.ContentItem.ContentManager.GetItemMetadata(tax.ContentItem).DisplayText, tax) 
                     </td>
                     <td>
+                        @if (Authorizer.Authorize(Permissions.EditContent, tax)){
+                            @Html.ItemEditLink(T("Edit").Text, tax.ContentItem, new { returnUrl = Request.RawUrl })@T(" | ")
+                        }
                         @if (Authorizer.Authorize(Permissions.DeleteContent, tax)) {
                             @Html.Link(T("Delete").Text, Url.ItemRemoveUrl(tax, new { returnUrl }), new { itemprop = "RemoveUrl UnsafeUrl" })
-                        }else {
+                        }
+                        else {
                             @T("Not allowed to delete")
                         }
                     </td>
