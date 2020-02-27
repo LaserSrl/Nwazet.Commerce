@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,7 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Localization.Services;
 using Orchard.UI.Admin;
+using Orchard.UI.Notify;
 
 namespace Nwazet.Commerce.Controllers {
     [Admin]
@@ -28,24 +30,32 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IDateLocalizationServices _dateServices;
         private readonly IContentManager _contentManager;
         private readonly ICurrencyProvider _currencyProvider;
+        private readonly INotifier _notifier;
 
         public ReportController(
+            IOrchardServices services,
             IEnumerable<ICommerceReport> reports,
             IOrchardServices orchardServices,
             IDateLocalizationServices dateServices,
             IContentManager contentManager,
-            ICurrencyProvider currencyProvider
+            ICurrencyProvider currencyProvider,
+            INotifier notifier
             ) {
             _reports = reports;
+            Services = services;
             _orchardServices = orchardServices;
             _dateServices = dateServices;
             _contentManager = contentManager;
             _currencyProvider = currencyProvider;
+            _notifier = notifier;
 
             T = NullLocalizer.Instance;
-        }
 
+            culture = CultureInfo.GetCultureInfo(Services.WorkContext.CurrentCulture);
+        }
+        private CultureInfo culture { get; }
         public Localizer T { get; set; }
+        public IOrchardServices Services { get; set; }
 
         public ActionResult Index() {
             if (!_orchardServices.Authorizer.Authorize(ReportPermissions.GenerateReports, null, T("Cannot generate reports"))) {
@@ -55,7 +65,7 @@ namespace Nwazet.Commerce.Controllers {
             return View(reports);
         }
 
-        public ActionResult Report(string report, DateTime? startDate, DateTime? endDate, string granularity, string preset) {
+        public ActionResult Report(string report, ReportDataViewModel model, string granularity, string preset) {
             var now = DateTime.Now;
             switch (preset) {
                 case "today":
@@ -69,11 +79,26 @@ namespace Nwazet.Commerce.Controllers {
                 case "yeartodate":
                     return Report(report, TimePeriod.Year.BeginningDate(now), now, TimePeriod.Month);
             }
-            if (startDate == null || endDate == null) {
+            if (string.IsNullOrEmpty(model.StartDate) || string.IsNullOrEmpty(model.EndDate)) {
+                return Report(report, TimePeriod.Year.BeginningDate(now), now, TimePeriod.Month);
+            }
+
+            DateTime startDate;
+            DateTime endDate;
+            if (DateTime.TryParse(model.StartDate,culture,DateTimeStyles.None, out startDate) &&
+                DateTime.TryParse(model.EndDate, culture, DateTimeStyles.None, out endDate)) {
+                if (startDate > endDate) {
+                    _notifier.Error(T("Start Date ({0}) cannot be greater than the End Date ({1})",startDate.ToShortDateString(), endDate.ToShortDateString()));
+                    return Report(report, TimePeriod.Year.BeginningDate(now), now, TimePeriod.Month);
+                }
+            }
+            else {
+                _notifier.Error(T("Check the format of the dates"));
                 return Report(report, TimePeriod.Year.BeginningDate(now), now, TimePeriod.Month);
             }
             var parsedGranularity = TimePeriod.Parse(granularity);
-            return Report(report, startDate.Value, endDate.Value, parsedGranularity);
+
+            return Report(report,startDate,endDate, parsedGranularity);
         }
 
         private ActionResult Report(string report, DateTime startDate, DateTime endDate, TimePeriod granularity) {

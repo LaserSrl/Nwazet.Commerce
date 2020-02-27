@@ -1,4 +1,35 @@
-﻿@model Nwazet.Commerce.ViewModels.VatConfigurationPartViewModel
+﻿@using Nwazet.Commerce.ViewModels;
+@using Nwazet.Commerce.Models;
+@using Orchard.ContentManagement;
+@using Orchard.Core.Title.Models;
+@using System.Collections.Generic;
+
+@model Nwazet.Commerce.ViewModels.VatConfigurationPartViewModel
+@functions{
+    IContentManager _contentManager;
+}
+@{
+    _contentManager = WorkContext.Resolve<IContentManager>();
+}
+
+@helper DisplayTree(TerritoryPart part, IList<VatConfigurationTerritorySummaryViewModel> subitem) {
+    <div class="vatHierarchySummaryRow" style="margin-left:15px">
+        @{
+            decimal rate = 0;
+            var territoryVM = subitem.Where(s => s.Item.Id == part.ContentItem.Id).FirstOrDefault();
+            if (territoryVM != null) {
+                rate = territoryVM.Rate;
+            }
+        }
+
+        @if (((territoryVM == null && part.Children.Count() > 0) || rate > 0) && subitem.Count() != 0) {
+            @Html.ItemEditLink(part.ContentItem.As<TitlePart>().Title, part.ContentItem) @T(" ({0} %)", rate)
+            foreach (var child in part.Children) {
+                @DisplayTree(child.As<TerritoryPart>(), subitem);
+            }
+        }
+    </div>
+}
 
 <fieldset>
     <div>
@@ -8,7 +39,8 @@
             @if (Model.IsDefaultCategory) {
                 @T("This is the default category.")
                 @Html.HiddenFor(m => m.IsDefaultCategory)
-            } else {
+            }
+            else {
                 <span class="checkbox-and-label">
                     @Html.CheckBoxFor(m => m.IsDefaultCategory)
                     @Html.LabelFor(m => m.IsDefaultCategory, T("Set this as the default category: ").Text, new { @class = "forcheckbox" })
@@ -31,49 +63,25 @@
     <div>
         @if (Model.ItemizedSummary.Any()) {
             @T("This VAT category is configured for the following regions:")
-            <table class="vatConfigurationSummaryTable vatHierarchySummaryTable">
-                <thead>
-                    <tr>
-                        <th>@T("Region")</th>
-                        <th>@T("Rate")</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.ItemizedSummary) {
-                        // since we do not need to edit any of these, we can work with the IEnumerable
-                        // rather than being force by MVC binding to use indexes
-                        <tr class="vatHierarchySummaryRow">
-                            <td>
-                                @Html.ItemEditLink(item.Name, item.Item)
-                            </td>
-                            <td>
-                                @T("{0} %", item.Rate)
-                            </td>
-                        </tr>
-                        if (item.SubRegions.Any()) {
-                            // These are the territories whose configuration is different than the
-                            // default for the hierarchy
-                            <tr class="vatHierarchySummaryTerritoriesRow">
-                                <td colspan="2" class="vatHierarchySummaryTerritoriesRow">
-                                    <table class="vatTerritorySummaryTable">
-                                        @foreach (var subitem in item.SubRegions) {
-                                            <tr class="vatTerritorySummaryRow">
-                                                <td>
-                                                    @Html.ItemEditLink(subitem.Name, subitem.Item)
-                                                </td>
-                                                <td>
-                                                    @T("{0} %", subitem.Rate)
-                                                </td>
-                                            </tr>
-                                        }
-                                    </table>
-                                </td>
-                            </tr>
+
+            foreach (var item in Model.ItemizedSummary) {
+                <div class="vatConfigurationSummaryTable">
+                    <div class="vatHierarchySummaryRow" style="margin-left:15px">
+                        @Html.ItemEditLink(item.Name, item.Item) @T(" ({0} %)", item.Rate)
+
+                        @{
+                           var territories = _contentManager.Query<TerritoryPart,TerritoryPartRecord>()
+                                 .Where(tpr => tpr.Hierarchy.Id == item.Item.Id && tpr.ParentTerritory == null)
+                                 .List();
+                            foreach (var subitem in territories) {
+                                @DisplayTree(subitem.As<TerritoryPart>(), item.SubRegions);
+                            }
                         }
-                    }
-                </tbody>
-            </table>
-        } else {
+                    </div>
+                </div>
+            }
+        }
+        else {
             @T("There are no hierarchy configurations for this VAT category.")
         }
     </div>

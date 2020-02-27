@@ -46,7 +46,8 @@
                         @Html.ItemEditLinkWithReturnUrl(method.As<TitlePart>().Title, method) 
                     </td>
                     <td>
-                        @Html.Link(T("Delete").Text, Url.ItemRemoveUrl(method, new {returnUrl}), new {itemprop = "RemoveUrl UnsafeUrl"})
+                        @Html.ItemEditLink(T("Edit").Text, method.ContentItem, new { returnUrl = Request.RawUrl })@T(" | ")
+                        @Html.Link(T("Delete").Text, Url.ItemRemoveUrl(method, new { returnUrl }), new { itemprop = "RemoveUrl UnsafeUrl" })
                     </td>
                 </tr>
             }

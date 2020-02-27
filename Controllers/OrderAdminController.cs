@@ -71,11 +71,13 @@ namespace Nwazet.Commerce.Controllers {
             if (model.Options == null) {
                 model.Options = new ContentOptions();
             }
-            if (!string.IsNullOrWhiteSpace(model.Options.Search)) {
-                int id;
-                query = int.TryParse(model.Options.Search, out id) ?
-                    query.Where(o => o.Id == id) :
-                    query.Where(o => o.Customer.Contains(model.Options.Search));
+            if (!string.IsNullOrWhiteSpace(model.Options.OrderKey)) {
+                query = query
+                    .Where(o => o.OrderKey.Contains(model.Options.OrderKey));
+            }
+            if (!string.IsNullOrWhiteSpace(model.Options.User)) {
+                query = query
+                    .Where(o => o.Customer.Contains(model.Options.User));
             }
             var filterOption = model.Options.SelectedFilter;
             if (string.IsNullOrWhiteSpace(filterOption) ||
@@ -136,11 +138,17 @@ namespace Nwazet.Commerce.Controllers {
                 else {
                     routeValues.Remove("Options.SelectedFilter");
                 }
-                if (String.IsNullOrWhiteSpace(options.Search)) {
-                    routeValues.Remove("Options.Search");
+                if (String.IsNullOrWhiteSpace(options.OrderKey)) {
+                    routeValues.Remove("Options.OrderKey");
                 }
                 else {
-                routeValues["Options.Search"] = options.Search;
+                    routeValues["Options.OrderKey"] = options.OrderKey;
+                }
+                if (String.IsNullOrWhiteSpace(options.User)) {
+                    routeValues.Remove("Options.User");
+                }
+                else {
+                    routeValues["Options.User"] = options.User;
                 }
             }
 

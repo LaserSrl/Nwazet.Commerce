@@ -1,6 +1,8 @@
 ﻿@using Nwazet.Commerce.ViewModels
 @using System.Linq
 @{
+    Style.Include("order-admin.css", "order-admin.min.css");
+
     var pageTitle = T("Manage Orders");
     Layout.Title = pageTitle;
     var selectedFilter = (string)Model.Options.SelectedFilter ?? "";
@@ -8,47 +10,67 @@
 
 @using (Html.BeginFormAntiForgeryPost()) {
     <fieldset class="bulk-actions">
-        <label for="publishActions">@T("Actions:")</label>
-        <select id="publishActions" name="Options.BulkAction">
-            @Html.SelectOption((ContentsBulkAction)Model.Options.BulkAction, ContentsBulkAction.None, T("Choose action...").ToString())
-            @Html.SelectOption((ContentsBulkAction)Model.Options.BulkAction, ContentsBulkAction.Remove, T("Archive").ToString())
-        </select>
-        <button type="submit" name="submit.BulkEdit" value="yes">@T("Apply")</button>
-    </fieldset>
-    <fieldset class="bulk-actions">
-        <label for="orderid">@T("Search:")</label>
-        <input type="text" name="Options.Search" value="@(Model.Options.Search)" />
-        <label for="filterResults" class="bulk-filter">@T("Show")</label>
-        @Html.DropDownList("Options.SelectedFilter",
-            new List<SelectListItem> {
-                new SelectListItem {
-                    Selected = String.IsNullOrEmpty(selectedFilter) ||
-                               selectedFilter.Equals("active", StringComparison.OrdinalIgnoreCase),
-                    Text = T("Active orders").Text,
-                    Value = "active"
-                },
-                new SelectListItem {
-                    Selected = selectedFilter.Equals("any", StringComparison.OrdinalIgnoreCase),
-                    Text = T("All orders").Text,
-                    Value = "any"
-                }
-            }
-                .Union(((ContentOptions)Model.Options).FilterOptions.Select(
-                    o => new SelectListItem {
-                        Selected = selectedFilter.Equals(o.Key, StringComparison.OrdinalIgnoreCase),
-                        Text = o.Value,
-                        Value = o.Key
-                    }
-                    )))
-        <label for="orderResults" class="bulk-order">@T("Ordered by")</label>
-        <select id="orderResults" name="Options.OrderBy">
-            @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Created, T("recently created").Text)
-            @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Modified, T("recently modified").Text)
-        </select>
-        <button type="submit" name="submit.Filter" value="yes please">@T("Apply")</button>
+        <div class="box-header with-border">
+            <label for="publishActions">@T("Actions:")</label>
+            <select id="publishActions" name="Options.BulkAction">
+                @Html.SelectOption((ContentsBulkAction)Model.Options.BulkAction, ContentsBulkAction.None, T("Choose action...").ToString())
+                @Html.SelectOption((ContentsBulkAction)Model.Options.BulkAction, ContentsBulkAction.Remove, T("Archive").ToString())
+            </select>
+            <button type="submit" name="submit.BulkEdit" value="yes">@T("Apply")</button>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
+                    <label for="orderkey">@T("Order Key") : </label>
+                    <input class="text" type="text" name="Options.OrderKey"
+                           placeholder="@T("Order Key of Order")"
+                           value="@(Model.Options.OrderKey)" />
+                </div>
+                <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
+                    <label for="user">@T("User") : </label>
+                    <input class="text" type="text" name="Options.User"
+                           placeholder="@T("Name or Surname or E-mail")"
+                           value="@(Model.Options.User)" />
+                </div>
+                <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
+                    <label for="filterResults" class="bulk-filter">@T("Show") :</label>
+                    @Html.DropDownList("Options.SelectedFilter",
+                        new List<SelectListItem> {
+                            new SelectListItem {
+                                Selected = String.IsNullOrEmpty(selectedFilter) ||
+                                           selectedFilter.Equals("active", StringComparison.OrdinalIgnoreCase),
+                                Text = T("Active orders").Text,
+                                Value = "active"
+                            },
+                            new SelectListItem {
+                                Selected = selectedFilter.Equals("any", StringComparison.OrdinalIgnoreCase),
+                                Text = T("All orders").Text,
+                                Value = "any"
+                            }
+                        }
+                            .Union(((ContentOptions)Model.Options).FilterOptions.Select(
+                                o => new SelectListItem {
+                                    Selected = selectedFilter.Equals(o.Key, StringComparison.OrdinalIgnoreCase),
+                                    Text = o.Value,
+                                    Value = o.Key
+                                }
+                                )))
+                </div>
+                <div class="box-footer col-xs-12 col-md-12 margin-bottom-lg padding-left-15">
+                    <label for="orderResults">@T("Ordered by"):</label>
+                    <select id="orderResults" name="Options.OrderBy">
+                        @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Created, T("Recently created").Text)
+                        @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Modified, T("Recently modified").Text)
+                    </select>
+                </div>
+            </div>
+            <div class="box-footer align-right padding-right-35 col-xs-12 col-md-12">
+                <button type="submit" name="submit.Filter" value="yes please">@T("Apply")</button>
+            </div>
+        </div>
     </fieldset>
     <fieldset class="contentItems bulk-items">
-@Display(Model.ContentItems)
+        @Display(Model.ContentItems)
     </fieldset>
-@Display(Model.Pager)
+    @Display(Model.Pager)
 }

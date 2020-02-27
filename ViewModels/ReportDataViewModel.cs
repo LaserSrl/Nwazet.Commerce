@@ -13,8 +13,36 @@ namespace Nwazet.Commerce.ViewModels {
         public string ValueFormat { get; set; }
         public ChartType ChartType { get; set; }
         public string Preset { get; set; }
-        public DateTimeEditor StartDateEditor { get; set; }
-        public DateTimeEditor EndDateEditor { get; set; }
+        //public DateTimeEditor StartDateEditor { get; set; }
+        public string StartDate { get; set; }
+        public DateTimeEditor StartDateEditor {
+            get {
+                return new DateTimeEditor {
+                    Date = StartDate,
+                    Time = null,
+                    ShowDate = true,
+                    ShowTime = false
+                };
+            }
+            set {
+                StartDate = value.Date;
+            }
+        }
+        //public DateTimeEditor EndDateEditor { get; set; }
+        public string EndDate { get; set; }
+        public DateTimeEditor EndDateEditor {
+            get {
+                return new DateTimeEditor {
+                    Date = EndDate,
+                    Time = null,
+                    ShowDate = true,
+                    ShowTime = false
+                };
+            }
+            set {
+                EndDate = value.Date;
+            }
+        }
         public TimePeriod Granularity { get; set; }
         public IEnumerable<string> Series { get; set; } 
         public ICurrencyProvider CurrencyProvider { get; set; }
