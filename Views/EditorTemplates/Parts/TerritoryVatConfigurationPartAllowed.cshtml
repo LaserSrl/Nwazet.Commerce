@@ -21,12 +21,10 @@
                                 @Html.HiddenFor(m => m.AllVatConfigurations[i].VatConfigurationPartId)
                             </td>
                             <td>
-                                @Html.HiddenFor(m => m.AllVatConfigurations[i].RateString)
-
-                                @*@Html.TextBoxFor(m => m.AllVatConfigurations[i].RateString, "{0:F2}", new { @class = "text text-small" })*@
+                                @Html.TextBoxFor(m => m.AllVatConfigurations[i].RateString, "{0:F2}", new { @class = "text text-small" @**, @type = "number", @min = 0, @step = "any"**@})
                             </td>
                         </tr>
-                        @*using (Script.Foot()) {
+                        using (Script.Foot()) {
                             <script type="text/javascript">
                             $(document).ready(function () {
                                 var checkbox = $('#@Html.IdFor(m => m.AllVatConfigurations[i].IsSelected)');
@@ -42,7 +40,7 @@
                                 });
                             });
                             </script>
-                        }*@
+                        }
                     }
                 </tbody>
             </table>
