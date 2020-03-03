@@ -6,7 +6,7 @@
 
 @{
     Style.Require("Accordion").AtHead();
-    Style.Require("Bootstrap").AtHead();
+    Style.Include("product.nwazet-commerce-admin.css?v=1");
 
     var pageTitle = T("Manage Products");
     var createLinkText = T("Create New Product");
@@ -99,50 +99,53 @@
                 </div>
             </div>
         </div>
-        <div id="collapserow" class="collapse in" aria-expanded="true" style="">
+        <div id="collapserow" class="collapse">
             <div class="box-body">
                 <div class="row">
                     <div class="col-xs-12 col-md-6 col-lg-6 margin-bottom-lg">
                         <label> @T("Price"):</label>
-
                         <div class="col-xs-6 col-md-6 col-lg-6 no-padding margin-bottom-lg">
-                            <span for="priceFromResults">@T("From")</span>
-                            <input class="text" type="number" name="Options.PriceFrom"
-                                   style="min-width: 200px; height:30px;"
-                                   step="0.01"
-                                   placeholder="@T("Lowest price")"
-                                   title="@T("Insert a decimal number")"
-                                   value="@(Model.Options.PriceFrom)" />
+                            <div class="input-group">
+                                <span class="input-group-addon padding-5">@T("From")</span>
+                                <input class="text number-personalize" type="number" name="Options.PriceFrom"
+                                       step="0.01"
+                                       placeholder="@T("Lowest price")"
+                                       title="@T("Insert a decimal number")"
+                                       value="@(Model.Options.PriceFrom)" />
+                            </div>
                         </div>
                         <div class="col-xs-6 col-md-6 col-lg-6 no-padding margin-bottom-lg">
-                            <span for="priceToResults">@T("To")</span>
-                            <input class="text" type="number" name="Options.PriceTo"
-                                   style="min-width: 200px; height:30px;"
-                                   step="0.01"
-                                   placeholder="@T("Highest price")"
-                                   title="@T("Insert a decimal number")"
-                                   value="@(Model.Options.PriceTo)" />
+                            <div class="input-group">
+                                <span class="input-group-addon padding-5">@T("To")</span>
+                                <input class="text number-personalize" type="number" name="Options.PriceTo"
+                                       step="0.01"
+                                       placeholder="@T("Highest price")"
+                                       title="@T("Insert a decimal number")"
+                                       value="@(Model.Options.PriceTo)" />
+                            </div>
                         </div>
                     </div>
                     <div class="col-xs-12 col-md-6 col-lg-6 margin-bottom-lg">
                         <label> @T("Inventory"):</label>
                         <div class="col-xs-6 col-md-6 col-lg-6 no-padding margin-bottom-lg">
-                            <span for="inventoryFromResults">@T("From")</span>
-                            <input class="text" type="number" name="Options.InventoryFrom"
-                                   style="min-width: 200px; height:30px;"
-                                   step="1"
-                                   title="@T("Insert an integer number")"
-                                   placeholder="@T("Product Quantity From")"
-                                   value="@(Model.Options.InventoryFrom)" />
+                            <div class="input-group">
+                                <span class="input-group-addon padding-5">@T("From")</span>
+                                <input class="text number-personalize" type="number" name="Options.InventoryFrom"
+                                       step="1"
+                                       title="@T("Insert an integer number")"
+                                       placeholder="@T("Lowest product quantity")"
+                                       value="@(Model.Options.InventoryFrom)" />
+                            </div>
                         </div>
                         <div class="col-xs-6 col-md-6 col-lg-6 no-padding margin-bottom-lg">
-                            <span for="inventoryToResults">@T("To")</span>
-                            <input class="text" type="number" name="Options.InventoryTo"
-                                   style="min-width: 200px; height:30px;"
-                                   step="1"
-                                   title="@T("Insert an integer number")"
-                                   placeholder="@T("Product Quantity To")"
-                                   value="@(Model.Options.InventoryTo)" />
+                            <div class="input-group">
+                                <span class="input-group-addon padding-5">@T("To")</span>
+                                <input class="text number-personalize" type="number" name="Options.InventoryTo"
+                                       step="1"
+                                       title="@T("Insert an integer number")"
+                                       placeholder="@T("Highest product quantity")"
+                                       value="@(Model.Options.InventoryTo)" />
+                            </div>
                         </div>
                     </div>
                     <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
@@ -168,7 +171,7 @@
         <div class="box-body">
             <div class="row">
                 <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
-                    <label for="orderResults">@T("Content sorting") :</label>
+                    <label for="orderResults">@T("Content sorting")</label>
                     <select id="orderResults" name="Options.OrderBy">
                         @Html.SelectOption((ContentsProduct)Model.Options.OrderBy, ContentsProduct.Created, T("Recently created").Text)
                         @Html.SelectOption((ContentsProduct)Model.Options.OrderBy, ContentsProduct.Modified, T("Recently modified").Text)

@@ -78,7 +78,7 @@
         <div class="box-body">
             <div class="row">
                 <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
-                    <label for="orderResults">@T("Content sorting") :</label>
+                    <label for="orderResults">@T("Content sorting")</label>
                     <select id="orderResults" name="Options.OrderBy">
                         @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Created, T("Recently created").Text)
                         @Html.SelectOption((ContentsOrder)Model.Options.OrderBy, ContentsOrder.Modified, T("Recently modified").Text)
