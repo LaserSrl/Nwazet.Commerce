@@ -10,61 +10,30 @@
             @T("Removing a VAT category will also cause all its configurations relative to a specific territory to be lost.")
         </div>
 
-        <div class="container-configuration-vat">
-            <div class="row-configuration-vat">
-                <div class="cell-vat-check">
-                    <span>&nbsp;</span>
-                </div>
-                <div class="cell-category-vat">
-                    <span>@T("VAT Category")</span>
-                </div>
-                <div class="cell-ratestring-vat">
-                    <span>@T("Applied Rate")</span>
-                </div>
-            </div>
-            @for (int i = 0; i < Model.AllVatConfigurations.Length; i++) {
-                <div class="row-configuration-vat">
-                    <div class="cell-vat-check">
-                        @Html.CheckBoxFor(m => m.AllVatConfigurations[i].IsSelected)
-                    </div>
-                    <div class="cell-category-vat">
-                        @Model.AllVatConfigurations[i].VatConfigurationPartText
-                        @Html.HiddenFor(m => m.AllVatConfigurations[i].VatConfigurationPartId)
-                    </div>
-                    <div class="cell-ratestring-vat">
-                        @Html.TextBoxFor(m => m.AllVatConfigurations[i].RateString, "{0:F2}", new { @class = "text text-small" @**, @type = "number", @min = 0, @step = "any"**@})
-
-                        @Html.HiddenFor(m => m.AllVatConfigurations[i].RateString@*, "{0:F2}",new { @class = "text text-small"*, @type = "number", @min = 0, @step = "any"*}*@)
-                    </div>
-                </div>
-            }
-        </div>
-
-
-        <table class="vatConfigurationTable hierarchyVatConfigurationTable">
-            <thead>
-                <tr>
-                    <th>&nbsp;</th>
-                    <th>@T("VAT Category")</th>
-                    <th>@T("Applied Rate")</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (int i = 0; i < Model.AllVatConfigurations.Length; i++) {
+        <div class="box">
+            <table class="table">
+                <tbody>
                     <tr>
-                        <td>
-                            @Html.CheckBoxFor(m => m.AllVatConfigurations[i].IsSelected)
-                        </td>
-                        <td>
-                            @Model.AllVatConfigurations[i].VatConfigurationPartText
-                            @Html.HiddenFor(m => m.AllVatConfigurations[i].VatConfigurationPartId)
-                        </td>
-                        <td>
-                            @Html.TextBoxFor(m => m.AllVatConfigurations[i].RateString, "{0:F2}", new { @class = "text text-small" @**, @type = "number", @min = 0, @step = "any"**@})
-                        </td>
+                        <th style="width: 10px">&nbsp;</th>
+                        <th>@T("VAT Category")</th>
+                        <th>@*@T("Applied Rate")*@</th>
                     </tr>
-                    using (Script.Foot()) {
-                        <script type="text/javascript">
+                    @for (int i = 0; i < Model.AllVatConfigurations.Length; i++) {
+                        <tr>
+                            <td>
+                                @Html.CheckBoxFor(m => m.AllVatConfigurations[i].IsSelected)
+                            </td>
+                            <td>
+                                @Model.AllVatConfigurations[i].VatConfigurationPartText
+                                @Html.HiddenFor(m => m.AllVatConfigurations[i].VatConfigurationPartId)
+                            </td>
+                            <td>
+                                @*@Html.TextBoxFor(m => m.AllVatConfigurations[i].RateString, "{0:F2}", new { @class = "text text-small" })*@
+                                @Html.HiddenFor(m => m.AllVatConfigurations[i].RateString)
+                            </td>
+                        </tr>
+                        @*using (Script.Foot()) {
+                            <script type="text/javascript">
                             $(document).ready(function () {
                                 var checkbox = $('#@Html.IdFor(m => m.AllVatConfigurations[i].IsSelected)');
                                 var dependent = $('#@Html.IdFor(m => m.AllVatConfigurations[i].RateString)');
@@ -78,11 +47,12 @@
                                     dependent.toggle();
                                 });
                             });
-                        </script>
+                            </script>
+                        }*@
                     }
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     }
     else {
         <div>@T("No VAT category has been configured.")</div>

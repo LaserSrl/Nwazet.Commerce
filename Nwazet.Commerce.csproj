@@ -155,7 +155,6 @@
     <Content Include="Styles\bundle.nwazet-commerce-admin.css" />
     <Content Include="Styles\attribute.nwazet-commerce-admin.css" />
     <Content Include="Styles\images\move.gif" />
-    <Content Include="Styles\vat.nwazet-commerce-admin.css" />
     <Content Include="Styles\reports-admin.css" />
     <Content Include="Styles\territory-hierarchies-admin.css" />
     <Content Include="Styles\territory-hierarchies-admin.min.css">
