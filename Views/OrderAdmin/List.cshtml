@@ -8,27 +8,21 @@
 }
 
 @using (Html.BeginFormAntiForgeryPost()) {
-    <div class="box">
+    <div class="box form-horizontal">
         <div class="box-header with-border">
             <h3 class="box-title">@T("Manage content")</h3>
         </div>
         <div class="box-body">
             <div class="row">
-                <div class="col-xs-12 col-sm-6">
-                    <div class="col-md-2 line-height-30">
-                        <label class="align-right gray-label">@T("Actions:")</label>
-                    </div>
-                    <div class="col-xs-12 col-md-8 no-padding">
-                        <select id="publishActions" name="Options.BulkAction">
-                            @Html.SelectOption((ContentsBulkAction)Model.Options.BulkAction, ContentsBulkAction.None, T("Choose action...").ToString())
-                            @Html.SelectOption((ContentsBulkAction)Model.Options.BulkAction, ContentsBulkAction.Remove, T("Archive").ToString())
-                        </select>
-                    </div>
-                    <div class="col-xs-12 col-md-2 no-padding">
-                        <button type="submit" id="applyManageContentBtn" name="submit.BulkEdit" value="yes">@T("Apply")</button>
-                    </div>
+                <div class="col-sm-2 control-label">
+                    <label class="align-right gray-label">@T("Actions")</label>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-10">
+                    <select id="publishActions" name="Options.BulkAction">
+                        @Html.SelectOption((ContentsBulkAction)Model.Options.BulkAction, ContentsBulkAction.None, T("Choose action...").ToString())
+                        @Html.SelectOption((ContentsBulkAction)Model.Options.BulkAction, ContentsBulkAction.Remove, T("Archive").ToString())
+                    </select>
+                    <button type="submit" id="applyManageContentBtn" name="submit.BulkEdit" value="yes">@T("Apply")</button>
                 </div>
             </div>
         </div>
@@ -41,19 +35,19 @@
         <div class="box-body">
             <div class="row">
                 <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
-                    <label for="orderkey">@T("Order Key") : </label>
+                    <label for="orderkey">@T("Order Key") </label>
                     <input class="text" type="text" name="Options.OrderKey"
                            placeholder="@T("Order Key of Order")"
                            value="@(Model.Options.OrderKey)" />
                 </div>
                 <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
-                    <label for="user">@T("User") : </label>
+                    <label for="user">@T("User")</label>
                     <input class="text" type="text" name="Options.User"
                            placeholder="@T("Name or Surname or E-mail")"
                            value="@(Model.Options.User)" />
                 </div>
                 <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
-                    <label for="filterResults" class="bulk-filter">@T("Show") :</label>
+                    <label for="filterResults" class="bulk-filter">@T("Show")</label>
                     @Html.DropDownList("Options.SelectedFilter",
                         new List<SelectListItem> {
                             new SelectListItem {
