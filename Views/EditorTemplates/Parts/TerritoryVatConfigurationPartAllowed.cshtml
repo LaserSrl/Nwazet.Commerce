@@ -3,30 +3,31 @@
 <fieldset>
     <legend>Configuration for VAT Categories</legend>
     @if (Model.AllVatConfigurations.Any()) {
-        <table>
-            <thead>
-                <tr>
-                    <th>&nbsp;</th>
-                    <th>@T("VAT Category")</th>
-                    <th>@T("Applied Rate")</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (int i = 0; i < Model.AllVatConfigurations.Length; i++) {
-                <tr>
-                    <td>
-                        @Html.CheckBoxFor(m => m.AllVatConfigurations[i].IsSelected)
-                    </td>
-                    <td>
-                        @Model.AllVatConfigurations[i].VatConfigurationPartText
-                        @Html.HiddenFor(m => m.AllVatConfigurations[i].VatConfigurationPartId)
-                    </td>
-                    <td>
-                        @Html.TextBoxFor(m => m.AllVatConfigurations[i].RateString, "{0:F2}", new { @class = "text text-small" @**, @type = "number", @min = 0, @step = "any"**@ })
-                    </td>
-                </tr>
-                    using (Script.Foot()) {
-                        <script type="text/javascript">
+        <div class="box">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th style="width: 10px">&nbsp;</th>
+                        <th>@T("VAT Category")</th>
+                        <th>@*@T("Applied Rate")*@</th>
+                    </tr>
+                    @for (int i = 0; i < Model.AllVatConfigurations.Length; i++) {
+                        <tr>
+                            <td>
+                                @Html.CheckBoxFor(m => m.AllVatConfigurations[i].IsSelected)
+                            </td>
+                            <td>
+                                @Model.AllVatConfigurations[i].VatConfigurationPartText
+                                @Html.HiddenFor(m => m.AllVatConfigurations[i].VatConfigurationPartId)
+                            </td>
+                            <td>
+                                @Html.HiddenFor(m => m.AllVatConfigurations[i].RateString)
+
+                                @*@Html.TextBoxFor(m => m.AllVatConfigurations[i].RateString, "{0:F2}", new { @class = "text text-small" })*@
+                            </td>
+                        </tr>
+                        @*using (Script.Foot()) {
+                            <script type="text/javascript">
                             $(document).ready(function () {
                                 var checkbox = $('#@Html.IdFor(m => m.AllVatConfigurations[i].IsSelected)');
                                 var dependent = $('#@Html.IdFor(m => m.AllVatConfigurations[i].RateString)');
@@ -40,12 +41,14 @@
                                     dependent.toggle();
                                 });
                             });
-                        </script>
+                            </script>
+                        }*@
                     }
-                }
-            </tbody>
-        </table>
-    } else {
-        <div>@T("No VAT category has been configured in the hierarchy.")</div>
+                </tbody>
+            </table>
+        </div>
     }
+    else {
+<div>@T("No VAT category has been configured in the hierarchy.")</div>
+}
 </fieldset>
