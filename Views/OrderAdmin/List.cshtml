@@ -1,7 +1,6 @@
 ﻿@using Nwazet.Commerce.ViewModels
-@using System.Linq
 @{
-    Style.Include("order-admin.css", "order-admin.min.css");
+    Style.Include("order-admin.css?v=1.1", "order-admin.min.css");
 
     var pageTitle = T("Manage Orders");
     Layout.Title = pageTitle;
@@ -16,7 +15,9 @@
         <div class="box-body">
             <div class="row">
                 <div class="col-sm-6">
-                    <label class="col-sm-3 align-right gray-label">@T("Actions:")</label>
+                    <div class="col-sm-3 line-height-30">
+                        <label class="align-right gray-label">@T("Actions:")</label>
+                    </div>
                     <div class="col-sm-9">
                         <select id="publishActions" name="Options.BulkAction">
                             @Html.SelectOption((ContentsBulkAction)Model.Options.BulkAction, ContentsBulkAction.None, T("Choose action...").ToString())

@@ -6,7 +6,7 @@
 
 @{
     Style.Require("Accordion").AtHead();
-    Style.Include("product.nwazet-commerce-admin.css?v=1");
+    Style.Include("product-admin.css?v=1.1", "product-admin.min.css");
 
     var pageTitle = T("Manage Products");
     var createLinkText = T("Create New Product");
@@ -28,7 +28,9 @@
         <div class="box-body">
             <div class="row">
                 <div class="col-sm-6">
-                    <label class="col-sm-4 align-right gray-label">@T("Content creation:")</label>
+                    <div class="col-sm-4 line-height-30">
+                        <label class="align-right gray-label">@T("Content creation:")</label>
+                    </div>
                     @*@Html.ActionLink(createLinkText.Text, "Create", "Admin", new { Area = "Contents", Id = "Product" }, new { @class = "button primaryAction" })*@
                     @if (AllowedProductTypes.Any()) {
                         @Html.ActionLink(createLinkText.Text,
@@ -57,18 +59,18 @@
                 <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
                     <label for="title">@T("Title:")</label>
                     <input class="text" type="text" name="Options.Title"
-                           placeholder="@T("Title of Product")"
+                           placeholder="@T("Title of product")"
                            value="@(Model.Options.Title)" />
                 </div>
                 <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
                     <label for="sku">@T("Sku"):</label>
                     <input class="text" type="text" name="Options.Sku"
-                           placeholder="@T("Product Identifier")"
+                           placeholder="@T("Product identifier")"
                            value="@(Model.Options.Sku)" />
                 </div>
                 @if (((IEnumerable<KeyValuePair<string, string>>)Model.Options.FilterOptions).Count() > 1) {
                     <div class="col-xs-12 col-md-4 margin-bottom-lg">
-                        <label for="filterResults">@T("Product Type"):</label>
+                        <label for="filterResults">@T("Product type"):</label>
                         <select id="filterResults" name="Options.SelectedFilter">
                             @Html.SelectOption((string)Model.Options.SelectedFilter, "", T("Any (show all)").ToString())
                             @foreach (var filterOption in Model.Options.FilterOptions) {
