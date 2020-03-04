@@ -2,5 +2,9 @@
   {
     "outputFile": "Styles/order-admin.css",
     "inputFile": "Styles/order-admin.less"
+  },
+  {
+    "outputFile": "Styles/product-admin.css",
+    "inputFile": "Styles/product-admin.less"
   }
 ]
