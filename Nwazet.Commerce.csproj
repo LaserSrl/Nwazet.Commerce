@@ -204,6 +204,7 @@
     <None Include="Views\EditorTemplates\Parts\Product.Inventory.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Product.Shipping.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ProductVatConfiguration.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryManagerButton.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryManager.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryHierarchyTerritoryTypeSelection.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryPartCreation.cshtml" />

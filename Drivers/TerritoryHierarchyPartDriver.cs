@@ -48,18 +48,28 @@ namespace Nwazet.Commerce.Drivers {
                 //if the part is fully configured add a shape that allows managing the territories in the hierarchy
                 if (!string.IsNullOrWhiteSpace(part.TerritoryType)) {
                     if (_territoriesService.GetTerritoryTypes().Any(tt => tt.Name == part.TerritoryType)) {
+                        var TerritoryHierarchyTerritoryManagerVM = new TerritoryHierarchyTerritoryManagerViewModel(part) {
+                            TopLevelCount = _territoriesService
+                                        .GetTerritoriesQuery(part, null, VersionOptions.Latest)
+                                        .Count()
+                        };
+
                         // add the shape for the territories in the hierachy
                         shapes.Add(ContentShape("Parts_TerritoryHierarchy_TerritoryManager",
                             () => shapeHelper.EditorTemplate(
                                 TemplateName: "Parts/TerritoryHierarchyTerritoryManager",
-                                Model: new TerritoryHierarchyTerritoryManagerViewModel(part) {
-                                    TopLevelCount = _territoriesService
-                                        .GetTerritoriesQuery(part, null, VersionOptions.Latest)
-                                        .Count()
-                                },
+                                Model: TerritoryHierarchyTerritoryManagerVM,
                                 Prefix: Prefix
                                 )));
-                    } else {
+                        // add the shape with button hierarchy territory
+                        shapes.Add(ContentShape("Parts_TerritoryHierarchy_TerritoryManagerButton",
+                            () => shapeHelper.EditorTemplate(
+                                TemplateName: "Parts/TerritoryHierarchyTerritoryManagerButton",
+                                Model: TerritoryHierarchyTerritoryManagerVM,
+                                Prefix: Prefix
+                                )));
+                    }
+                    else {
                         _notifier.Warning(T("You are not allowed to manage the territories for this hierarchy."));
                     }
                 }
@@ -83,9 +93,11 @@ namespace Nwazet.Commerce.Drivers {
                 if (typeSelectionVM.MayChangeTerritoryType) {
                     if (MayChangeTerritoryType(part)) {
                         part.TerritoryType = typeSelectionVM.TerritoryType;
-                    } else if (part.TerritoryType != typeSelectionVM.TerritoryType) {
+                    }
+                    else if (part.TerritoryType != typeSelectionVM.TerritoryType) {
                         updater.AddModelError("TerritoryType", T("It became impossible to change the Type of the territories in this hierarchy."));
-                    } else {
+                    }
+                    else {
                         _notifier.Warning(T("It became impossible to change the Type of the territories in this hierarchy."));
                     }
                 }
