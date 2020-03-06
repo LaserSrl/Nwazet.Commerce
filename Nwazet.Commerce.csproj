@@ -155,6 +155,12 @@
     <Content Include="Styles\bundle.nwazet-commerce-admin.css" />
     <Content Include="Styles\attribute.nwazet-commerce-admin.css" />
     <Content Include="Styles\images\move.gif" />
+    <Content Include="Styles\product-admin.css">
+      <DependentUpon>product-admin.less</DependentUpon>
+    </Content>
+    <Content Include="Styles\product-admin.min.css">
+      <DependentUpon>product-admin.css</DependentUpon>
+    </Content>
     <Content Include="Styles\reports-admin.css" />
     <Content Include="Styles\territory-hierarchies-admin.css" />
     <Content Include="Styles\territory-hierarchies-admin.min.css">
@@ -182,6 +188,7 @@
       <DependentUpon>compilerconfig.json</DependentUpon>
     </None>
     <None Include="packages.config" />
+    <None Include="Styles\product-admin.less" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethodCriteria.cshtml" />
