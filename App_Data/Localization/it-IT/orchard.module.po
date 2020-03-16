@@ -1141,6 +1141,10 @@ msgid "Stripe Merchant Secret Key"
 msgstr "Chiave segreta negoziante Stripe"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/TerritoryHierarchyTerritoryManager.cshtml"
+msgid "Manage territories"
+msgstr "Gestisci territori"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/TerritoryHierarchyTerritoryManager.cshtml"
 msgid "Manage territories."
 msgstr "Gestisci Territori."
 
@@ -1701,6 +1705,10 @@ msgid "Manage Hierarchy"
 msgstr "Gestisci Gerarchia"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/HierarchyTerritoriesAdmin/Index.cshtml"
+msgid "Manage Territories"
+msgstr "Gestisci Territori"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/HierarchyTerritoriesAdmin/Index.cshtml"
 msgid "Save All"
 msgstr "Salva tutto"
 
@@ -1821,6 +1829,10 @@ msgid "You may view this order at a later time by going to this address: <a href
 msgstr "Potrai visualizzare i dettagli del tuo ordine a questo indirizzo: <a href=\"{0}\">{0}</a>, usando queta password: \"{1}\"."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "Actions"
+msgstr "Azioni"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Actions:"
 msgstr "Azioni:"
 
@@ -1845,6 +1857,18 @@ msgid "Choose action..."
 msgstr "Scegliere l'azione..."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "Content filtering"
+msgstr "Filtro contenuti"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "Content sorting"
+msgstr "Ordinamento contenuti"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "Manage content"
+msgstr "Gestire contenuto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Manage Orders"
 msgstr "Gestisci Ordini"
 
@@ -1866,7 +1890,7 @@ msgstr "Ordinato da"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "recently created"
-msgstr "creato di recente"
+msgstr "Creato di recente"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Recently created"
@@ -1878,7 +1902,7 @@ msgstr "Modificato di recente"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "recently modified"
-msgstr "modificato di recente"
+msgstr "Modificato di recente"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Search:"
@@ -2041,8 +2065,16 @@ msgid "Available"
 msgstr "Disponibile"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Content creation"
+msgstr "Creazione del contenuto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Content filtering"
 msgstr "Filtro contenuti"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Content sorting"
+msgstr "Ordinamento contenuti"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Create New Product"
@@ -2061,6 +2093,14 @@ msgid "From"
 msgstr "Da"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Highest price"
+msgstr "Prezzo massimo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Highest product quantity"
+msgstr "Quantità prodotto massimo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Insert a decimal number"
 msgstr "Inserire un numero decimale"
 
@@ -2075,6 +2115,18 @@ msgstr "Inventario"
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Latest"
 msgstr "Ultimo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Lowest price"
+msgstr "Prezzo minimo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Lowest product quantity"
+msgstr "Quantità prodotto minimo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Manage content"
+msgstr "Gestire contenuto"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Manage Products"
@@ -2101,6 +2153,10 @@ msgid "Price Product To"
 msgstr "Prezzo Prodotto A"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Product identifier"
+msgstr "Identificativo del prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Product Identifier"
 msgstr "Identificativo del Prodotto"
 
@@ -2117,6 +2173,10 @@ msgid "Product Type"
 msgstr "Tipo di Prodotto"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Product type"
+msgstr "Tipo di prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Published"
 msgstr "Pubblicato"
 
@@ -2126,11 +2186,11 @@ msgstr "Creato di recente"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "recently created"
-msgstr "creato di recente"
+msgstr "Creato di recente"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "recently modified"
-msgstr "modificato di recente"
+msgstr "Modificato di recente"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Recently modified"
@@ -2147,6 +2207,10 @@ msgstr "Stato"
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Title"
 msgstr "Titolo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Title of product"
+msgstr "Titolo del prodotto"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Title of Product"
