@@ -32,6 +32,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ILocalStorageSettings _localStorageSettings;
         private readonly IEnumerable<ICartLifeCycleEventHandler> _cartLifeCycleEventHandlers;
         private readonly IProductPriceService _productPriceService;
+        private readonly IEnumerable<ICartExtensionProvider> _cartExtensionProviders;
 
         public Localizer T { get; set; }
 
@@ -52,7 +53,8 @@ namespace Nwazet.Commerce.Controllers {
             ICurrencyProvider currencyProvider,
             ILocalStorageSettings localStorageSettings,
             IEnumerable<ICartLifeCycleEventHandler> cartLifeCycleEventHandlers,
-            IProductPriceService productPriceService) {
+            IProductPriceService productPriceService,
+            IEnumerable<ICartExtensionProvider> cartExtensionProviders) {
 
             _shippingMethodProviders = shippingMethodProviders;
             _shoppingCart = shoppingCart;
@@ -67,6 +69,7 @@ namespace Nwazet.Commerce.Controllers {
             _localStorageSettings = localStorageSettings;
             _cartLifeCycleEventHandlers = cartLifeCycleEventHandlers;
             _productPriceService = productPriceService;
+            _cartExtensionProviders = cartExtensionProviders;
 
             T = NullLocalizer.Instance;
         }
@@ -245,12 +248,15 @@ namespace Nwazet.Commerce.Controllers {
                 shape.CheckoutButtons = checkoutShapes;
             }
 
-
-
             shape.Subtotal = subtotal;
             shape.Taxes = taxes;
             shape.Total = _shoppingCart.Total(subtotal, taxes);
             shape.CurrencyProvider = _currencyProvider;
+
+            // Weld additional cart shapes
+            shape.CartExtensionShapes = _cartExtensionProviders
+                .SelectMany(cep => cep.CartExtensionShapes());
+
             if (isSummary) {
                 shape.Metadata.Alternates.Add("ShoppingCart_Summary");
             }

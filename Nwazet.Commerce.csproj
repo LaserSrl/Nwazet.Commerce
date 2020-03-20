@@ -516,6 +516,7 @@
     <Compile Include="Services\ICartLifeCycleEventHandler.cs" />
     <Compile Include="Services\IFlexibleShippingManager.cs" />
     <Compile Include="Services\ILocalStorageSettings.cs" />
+    <Compile Include="Services\ICartExtensionProvider.cs" />
     <Compile Include="Services\InventoriesAreNotSynchronizedBySKU.cs" />
     <Compile Include="Services\InventoryBySKUProductInventoryService.cs" />
     <Compile Include="Services\IOrderAdditionalInformationProvider.cs" />
