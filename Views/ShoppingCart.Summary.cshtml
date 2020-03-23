@@ -46,7 +46,7 @@
                         } else {
                             <a href="@Url.ItemDisplayUrl(contentItem)">@title</a>
                         }
-                        <span class="action"><a class="delete" href="#">@T("Remove")</a></span>
+                        <span class="action"><a class="delete" href="#" data-product-id="@product.Id">@T("Remove")</a></span>
                         <span class="price">
                             @if (item.ProductAttributes != null) {
                                 var attrIndex = 0;
