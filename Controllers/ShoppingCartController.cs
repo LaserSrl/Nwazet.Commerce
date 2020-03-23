@@ -178,6 +178,7 @@ namespace Nwazet.Commerce.Controllers {
 
             if (shippingOption != null) {
                 shape.ReadOnly = true;
+                ShippingService.FillFormValue(shippingOption);
                 shape.ShippingOption = shippingOption;
             }
 

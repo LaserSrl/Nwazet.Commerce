@@ -46,7 +46,7 @@
                         } else {
                             <a href="@Url.ItemDisplayUrl(contentItem)">@title</a>
                         }
-                        <span class="action"><a class="delete" href="#" data-product-id="@product.Id">@T("Remove")</a></span>
+                        <span class="action"><a class="delete" href="#" data-cart-product-id="@product.Id">@T("Remove")</a></span>
                         <span class="price">
                             @if (item.ProductAttributes != null) {
                                 var attrIndex = 0;
@@ -61,7 +61,7 @@
                             }
                             <input name="@(propertyNamePrefix + ".ProductId")" type="hidden" value="@product.Id" />
                             <span class="numeric">
-                                <input name="@(propertyNamePrefix + ".Quantity")" type="number" class="quantity addtocart-quantity" value="@quantity" min="0" />
+                                <input name="@(propertyNamePrefix + ".Quantity")" type="number" class="quantity addtocart-quantity" value="@quantity" min="0" data-cart-product-id="@product.Id"/>
                                 @if (quantity > productInventory && (!prodIsDigital || (prodIsDigital && prodConsiderInventory))) {
                                     string allowBackOrderMsg = (bool)item.AllowBackOrder ? T("Back order is allowed").Text : T("Back order is not allowed").Text;
                                     <span class="issue">

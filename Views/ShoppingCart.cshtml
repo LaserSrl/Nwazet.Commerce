@@ -102,7 +102,7 @@
                                             }
                                         }
                                         <input name="@(propertyNamePrefix + ".ProductId")" type="hidden" value="@product.Id" />
-                                        <input name="@(propertyNamePrefix + ".Quantity")" type="number" class="quantity addtocart-quantity" value="@quantity" min="0" />
+                                        <input name="@(propertyNamePrefix + ".Quantity")" type="number" class="quantity addtocart-quantity" value="@quantity" min="0" data-cart-product-id="@product.Id" />
                                         if (quantity > productInventory && (!prodIsDigital || (prodIsDigital && prodConsiderInventory))) {
                                             string allowBackOrderMsg = (bool)item.AllowBackOrder ? T("Back order is allowed").Text : T("Back order is not allowed").Text;
                                             <span class="issue">
@@ -113,7 +113,7 @@
                                 </td>
                                 <td class="numeric amount">@Model.CurrencyProvider.GetPriceString(totalPrice)</td>
                                 @if (!readOnly) {
-                                    <td class="action"><a class="delete" href="#" data-product-id="@product.Id">@T("Remove")</a></td>
+                                    <td class="action"><a class="delete" href="#" data-product-cart-id="@product.Id">@T("Remove")</a></td>
                                 }
                             </tr>
                         }
