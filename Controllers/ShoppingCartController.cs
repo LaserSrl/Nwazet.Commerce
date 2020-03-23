@@ -175,19 +175,32 @@ namespace Nwazet.Commerce.Controllers {
             Dictionary<int, List<string>> productMessages = null) {
 
             var shape = _shapeFactory.ShoppingCart();
-
-            if (shippingOption != null) {
-                shape.ReadOnly = true;
-                ShippingService.FillFormValue(shippingOption);
-                shape.ShippingOption = shippingOption;
-            }
-
+            
             var productQuantities = _shoppingCart
                 .GetProducts()
                 .Where(p => p.Quantity > 0)
                 .ToList();
             var productShapes = GetProductShapesFromQuantities(productQuantities, country, zipCode, productMessages);
             shape.ShopItems = productShapes;
+
+            // We need to make sure that the selected shipping option (if any) is still valid
+            // for whatever the current parameters and cart contents are
+            var shippingMethods = _shippingMethodProviders
+                .SelectMany(p => p.GetShippingMethods())
+                .ToList();
+            var allShippingOptions = ShippingService
+                .GetShippingOptions(
+                    shippingMethods, productQuantities, country, zipCode, _wca).ToList();
+
+            if (shippingOption != null) {
+                ShippingService.FillFormValue(shippingOption);
+                var comparer = new ShippingOption.ShippingOptionComparer();
+                if (allShippingOptions.Any(so => comparer.Equals(so, shippingOption))) {
+                    shape.ReadOnly = true;
+                    shape.ShippingOption = shippingOption;
+
+                }
+            }
 
             var shopItemsAllDigital = !(productQuantities.Any(pq => !(pq.Product.IsDigital)));
             shape.ShopItemsAllDigital = shopItemsAllDigital;
@@ -206,13 +219,8 @@ namespace Nwazet.Commerce.Controllers {
 
                 if (!shopItemsAllDigital) {
                     if (!isSummary && shippingOption == null) {
-                        var shippingMethods = _shippingMethodProviders
-                            .SelectMany(p => p.GetShippingMethods())
-                            .ToList();
-                        shape.ShippingOptions =
-                            ShippingService
-                                .GetShippingOptions(
-                                    shippingMethods, productQuantities, country, zipCode, _wca).ToList();
+                        
+                        shape.ShippingOptions = allShippingOptions;
                     }
                 }
             }
