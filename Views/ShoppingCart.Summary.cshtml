@@ -41,10 +41,10 @@
                     bool prodConsiderInventory = (bool)item.ConsiderInventory;
                     <li>
                         @if (imageUrl != null) {
-                            <a href="@Url.ItemDisplayUrl(contentItem)" class="product-image-link"><img src="@Href(imageUrl)" alt="@title" class="product-image" /></a>
-                            <a href="@Url.ItemDisplayUrl(contentItem)" class="product-name">@title</a>
+                            <a href="@Url.ItemDisplayUrl(contentItem)" class="product-image-link" data-product-id="@contentItem.Id"><img src="@Href(imageUrl)" alt="@title" class="product-image" /></a>
+                            <a href="@Url.ItemDisplayUrl(contentItem)" class="product-name" data-product-id="@contentItem.Id">@title</a>
                         } else {
-                            <a href="@Url.ItemDisplayUrl(contentItem)">@title</a>
+                            <a href="@Url.ItemDisplayUrl(contentItem)" data-product-id="@contentItem.Id">@title</a>
                         }
                         <span class="action"><a class="delete" href="#" data-cart-product-id="@product.Id">@T("Remove")</a></span>
                         <span class="price">
