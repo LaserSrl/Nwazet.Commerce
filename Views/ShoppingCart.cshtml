@@ -73,13 +73,13 @@
                             <tr>
                                 @if (imageUrl != null) {
                                     <td>
-                                        <a href="@Url.ItemDisplayUrl(contentItem)" class="product-image-link"><img src="@Href(imageUrl)" alt="@title" class="product-image" /></a>
+                                        <a href="@Url.ItemDisplayUrl(contentItem)" class="product-image-link" data-product-id="@contentItem.Id"><img src="@Href(imageUrl)" alt="@title" class="product-image" /></a>
                                     </td>
                                     <td>
-                                        <a href="@Url.ItemDisplayUrl(contentItem)" class="product-name">@title</a>
+                                        <a href="@Url.ItemDisplayUrl(contentItem)" class="product-name" data-product-id="@contentItem.Id">@title</a>
                                     </td>
                                 } else {
-                                    <td colspan="2"><a href="@Url.ItemDisplayUrl(contentItem)">@title</a></td>
+                                    <td colspan="2"><a href="@Url.ItemDisplayUrl(contentItem)" data-product-id="@contentItem.Id">@title</a></td>
                                 }
                                 <td class="numeric">@Html.Raw(originalUnitPrice)</td>
                                 <td class="numeric">@Model.CurrencyProvider.GetPriceString(unitPrice)</td>
