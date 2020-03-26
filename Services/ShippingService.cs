@@ -26,23 +26,27 @@ namespace Nwazet.Commerce.Services {
                     quantities, methods, country, zipCode, workContextAccessor);
                 foreach (var shippingOption in shippingOptions) {
                     shippingOption.ShippingCompany = method.ShippingCompany;
-                    // Prepare a crypto version of the option so we can round-trip an option
-                    // without having to re-query the web service or whatever generated the option.
-                    var binaryValue = Encoding.UTF8.GetBytes(
-                                          "Description:" + shippingOption.Description +
-                                          "\nCompany:" + shippingOption.ShippingCompany +
-                                          "\nIncluded:" + String.Join(",", shippingOption.IncludedShippingAreas ?? new string[0]) +
-                                          "\nExcluded:" + String.Join(",", shippingOption.ExcludedShippingAreas ?? new string[0]) +
-                                          "\nPrice:" + shippingOption.Price +
-                                          "\nShippingMethodId:" + shippingOption.ShippingMethodId +
-                                          "\nDefaultPrice:" + shippingOption.DefaultPrice);
-                    shippingOption.FormValue = Convert.ToBase64String(MachineKey.Protect(binaryValue, EncryptionPurpose));
+                    FillFormValue(shippingOption);
                     if (!alreadyFound.Contains(shippingOption)) {
                         alreadyFound.Add(shippingOption);
                         yield return shippingOption;
                     }
                 }
             }
+        }
+
+        public static void FillFormValue(ShippingOption shippingOption) {
+            // Prepare a crypto version of the option so we can round-trip an option
+            // without having to re-query the web service or whatever generated the option.
+            var binaryValue = Encoding.UTF8.GetBytes(
+                                  "Description:" + shippingOption.Description +
+                                  "\nCompany:" + shippingOption.ShippingCompany +
+                                  "\nIncluded:" + String.Join(",", shippingOption.IncludedShippingAreas ?? new string[0]) +
+                                  "\nExcluded:" + String.Join(",", shippingOption.ExcludedShippingAreas ?? new string[0]) +
+                                  "\nPrice:" + shippingOption.Price +
+                                  "\nShippingMethodId:" + shippingOption.ShippingMethodId +
+                                  "\nDefaultPrice:" + shippingOption.DefaultPrice);
+            shippingOption.FormValue = Convert.ToBase64String(MachineKey.Protect(binaryValue, EncryptionPurpose));
         }
 
         public static ShippingOption RebuildShippingOption(string base64String) {
