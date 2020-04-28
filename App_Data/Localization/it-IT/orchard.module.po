@@ -749,6 +749,10 @@ msgid "ID: {0}"
 msgstr "ID: {0}"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Metadata.cshtml"
+msgid "Order Key: {0}"
+msgstr "Chiave dell'ordine: {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Metadata.cshtml"
 msgid "Order:"
 msgstr "Ordine:"
 
@@ -907,6 +911,10 @@ msgstr "Selezionando questo flag, il prodotto digitale sarà considerato disponi
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Inventory.cshtml"
 msgid "Inventory"
 msgstr "Inventario"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Inventory.cshtml"
+msgid "This digital product will be considered to be available in a limited quantity, based on the inventory."
+msgstr "Questo prodotto digitale sarà considerato disponibile in quantità limitata, in base all'inventario."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Shipping.cshtml"
 msgid "Shipping"
@@ -1453,6 +1461,10 @@ msgid "Default Rate for territories outside the hierarchy"
 msgstr "Aliquota di default per territori fuori dalla gerarchia"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/VatConfiguration.cshtml"
+msgid "No specific configuration"
+msgstr "Nessuna configurazione specifica"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/VatConfiguration.cshtml"
 msgid "Priority"
 msgstr "Priorità"
 
@@ -1923,6 +1935,10 @@ msgstr "{0} &times; {1}"
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderSummaryAdmin.cshtml"
 msgid "Ordered {0}"
 msgstr "Ordinato {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderSummaryAdmin.cshtml"
+msgid "Ordered {0} ({1})"
+msgstr "Ordinato {0} ({1})"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Bundle.cshtml"
 msgid "Products included in this bundle:"
