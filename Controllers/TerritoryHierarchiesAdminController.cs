@@ -372,7 +372,7 @@ namespace Nwazet.Commerce.Controllers {
                 ContentItem = part.ContentItem,
                 TypeDisplayName = typeDisplayName,
                 IsDraft = !part.ContentItem.IsPublished(),
-                TerritoriesCount = part.Territories.Count(),
+                TerritoriesCount = part.Record.Territories.Count(),
                 TerritoryTypeDisplayName = territoryDisplayName
             };
         }

@@ -37,7 +37,7 @@ namespace Nwazet.Commerce.Drivers {
         protected override DriverResult Display(TerritoryHierarchyPart part, string displayType, dynamic shapeHelper) {
             return Combined(
                 ContentShape("Parts_TerritoryHierarchy_SummaryAdmin",
-                    () => shapeHelper.Parts_TerritoryHierarchy_SummaryAdmin(TerritoriesCount: part.Territories.Count())
+                    () => shapeHelper.Parts_TerritoryHierarchy_SummaryAdmin(TerritoriesCount: part.Record.Territories.Count())
                     ));
         }
 
@@ -107,7 +107,7 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         private bool MayChangeTerritoryType(TerritoryHierarchyPart part) {
-            return !(part.Territories?.Any() ?? false) &&
+            return !(part.Record.Territories?.Any() ?? false) &&
                 part.Settings.GetModel<TerritoryHierarchyPartSettings>().MayChangeTerritoryTypeOnItem;
         }
 

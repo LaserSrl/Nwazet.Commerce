@@ -242,6 +242,7 @@
     <Compile Include="ApplicabilityCriteria\CartSubTotalCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\CartWeightCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\NumericCriterionBase.cs" />
+    <Compile Include="Aspects\ITerritoryAddressAspect.cs" />
     <Compile Include="Commands\TerritoriesCommands.cs" />
     <Compile Include="Controllers\ECommerceSettingsAdminController.cs" />
     <Compile Include="Controllers\FlexibleShippingCriterionController.cs" />
@@ -517,6 +518,7 @@
     <Compile Include="Services\ICartLifeCycleEventHandler.cs" />
     <Compile Include="Services\IFlexibleShippingManager.cs" />
     <Compile Include="Services\ILocalStorageSettings.cs" />
+    <Compile Include="Services\ICartExtensionProvider.cs" />
     <Compile Include="Services\InventoriesAreNotSynchronizedBySKU.cs" />
     <Compile Include="Services\InventoryBySKUProductInventoryService.cs" />
     <Compile Include="Services\IOrderAdditionalInformationProvider.cs" />

@@ -2,6 +2,8 @@
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Nwazet.Commerce.Services {
@@ -116,22 +118,117 @@ namespace Nwazet.Commerce.Services {
         }
 
         public decimal GetRate(VatConfigurationPart vatConfig, TerritoryInternalRecord destination) {
-            var hierarchyConfigs = vatConfig
-                .Hierarchies
-                ?.Where(tup => {
-                    var thp = tup.Item1;
-                    return thp
-                        .Record
-                        .Territories
-                        .Any(tpr => tpr.TerritoryInternalRecord != null
-                            && tpr.TerritoryInternalRecord.Id == destination.Id);
-                });
+            // find the territory in the configured hierarchies
+            var hierarchyConfigs = FindConfiguredHierarchies(vatConfig, destination);
 
             if (hierarchyConfigs == null || !hierarchyConfigs.Any()) {
                 // territory is not in the hierarchies, so use the default rate
                 return vatConfig.DefaultRate / 100.0m;
             }
 
+            // get the territory exception if it exists
+            var territoryConfig = FindTerritoryExceptions(vatConfig, destination);
+
+            if (territoryConfig == null || !territoryConfig.Any()) {
+                // there is no territory-specific configuration
+
+                // We handle the error case where we have multiple territories satisfying the query by
+                // sending the minimum of the rates. If there is only a single configuration for hierarchies
+                // (the correct case) the following instruction will return the only rate.
+                return hierarchyConfigs.Select(tup => tup.Item2).Min() / 100.0m;
+            }
+
+            // We handle the error case where we have multiple territories satisfying the query by
+            // sending the minimum of the rates. If there is only a single configuration for territories
+            // (the correct case) the following instruction will return the only rate.
+            return territoryConfig.Select(tup => tup.Item2).Min() / 100.0m;
+
+            // the way this method is written, having a configuration specific for a territory "fixes" the 
+            // error condition where the territory is in more than one hierarchy
+        }
+
+        public decimal GetRate(ProductPart part, IEnumerable<TerritoryInternalRecord> destination) {
+            if (destination == null) {
+                return GetRate(part);
+            }
+
+            var vatConfig = GetVatConfiguration(part);
+
+            if (vatConfig == null) {
+                // No vat configuration exists
+                return 0;
+            }
+            if (!destination.Any(d => d != null)) {
+                return GetRate(vatConfig);
+            }
+            return GetRate(vatConfig, destination);
+        }
+
+        public decimal GetRate(
+            VatConfigurationPart vatConfig, IEnumerable<TerritoryInternalRecord> destination) {
+            // the destination collection contains the territories from the most to the least
+            // specific (e.g. city -> province -> country).
+
+            // We want to find the most specific configuration
+            var hierarchyConfigs = destination
+                // for each territory "level", find the Hierarchies configured for VAT
+                .Select(tir => FindConfiguredHierarchies(vatConfig, tir))
+                // get the first valid configured hierarchy, because the territories
+                // in destination are ordered from most to least specific
+                .FirstOrDefault(ch => ch != null && ch.Any());
+
+            // We found no valid configuration
+            if (hierarchyConfigs == null || !hierarchyConfigs.Any()) {
+                // territory is not in the hierarchies, so use the default rate
+                return vatConfig.DefaultRate / 100.0m;
+            }
+
+            // Find territory Exceptions
+            var territoryConfig = destination
+                // for each territory "level", find the territory exception
+                .Select(tir => FindTerritoryExceptions(vatConfig, tir))
+                // get the first valid configured exception, since it would be the
+                // "deepest"
+                .FirstOrDefault(te => te != null && te.Any());
+
+            // Finally, get the desired rate
+            if (territoryConfig == null || !territoryConfig.Any()) {
+                // there is no territory-specific configuration
+
+                // We handle the error case where we have multiple territories satisfying the query by
+                // sending the minimum of the rates. If there is only a single configuration for hierarchies
+                // (the correct case) the following instruction will return the only rate.
+                return hierarchyConfigs.Select(tup => tup.Item2).Min() / 100.0m;
+            }
+
+            // We handle the error case where we have multiple territories satisfying the query by
+            // sending the minimum of the rates. If there is only a single configuration for territories
+            // (the correct case) the following instruction will return the only rate.
+            return territoryConfig.Select(tup => tup.Item2).Min() / 100.0m;
+
+            // the way this method is written, having a configuration specific for a territory "fixes" the 
+            // error condition where the territory is in more than one hierarchy
+        }
+
+        public TerritoryInternalRecord GetDefaultDestination() {
+            if (Settings.DefaultTerritoryForVatId == 0) {
+                return null;
+            }
+
+            return _territoriesRepositoryService
+                .GetTerritoryInternal(Settings.DefaultTerritoryForVatId);
+        }
+
+
+        private VatConfigurationPart GetVatConfiguration(ProductPart part) {
+            return part
+                ?.As<ProductVatConfigurationPart>()
+                ?.VatConfigurationPart
+                ?? GetDefaultCategory();
+        }
+
+        private IEnumerable<Tuple<TerritoryPart, decimal>> FindTerritoryExceptions
+            (VatConfigurationPart vatConfig, TerritoryInternalRecord destination) {
             // get the territory exception if it exists
             var territoryConfig = vatConfig
                 .Territories
@@ -169,42 +266,23 @@ namespace Nwazet.Commerce.Services {
                         return isChild;
                     });
             }
-
-            if (territoryConfig == null || !territoryConfig.Any()) {
-                // there is no territory-specific configuration
-
-                // We handle the error case where we have multiple territories satisfying the query by
-                // sending the minimum of the rates. If there is only a single configuration for hierarchies
-                // (the correct case) the following instruction will return the only rate.
-                return hierarchyConfigs.Select(tup => tup.Item2).Min() / 100.0m;
-            }
-
-            // We handle the error case where we have multiple territories satisfying the query by
-            // sending the minimum of the rates. If there is only a single configuration for territories
-            // (the correct case) the following instruction will return the only rate.
-            return territoryConfig.Select(tup => tup.Item2).Min() / 100.0m;
-
-            // the way this method is written, having a configuration specific for a territory "fixes" the 
-            // error condition where the territory is ni more than one hierarchy
+            return territoryConfig;
         }
 
-        public TerritoryInternalRecord GetDefaultDestination() {
-            if (Settings.DefaultTerritoryForVatId == 0) {
-                return null;
-            }
-
-            return _territoriesRepositoryService
-                .GetTerritoryInternal(Settings.DefaultTerritoryForVatId);
+        private IEnumerable<Tuple<TerritoryHierarchyPart, decimal>> FindConfiguredHierarchies
+           (VatConfigurationPart vatConfig, TerritoryInternalRecord destination) {
+            // find the territory in the configured hierarchies
+            return vatConfig
+                .Hierarchies // Tuple<Hierarchy, Rate>
+                ?.Where(tup => {
+                    var thp = tup.Item1; // hierarchy
+                    return thp
+                        .Record
+                        .Territories // territories in the hierarchy
+                                     // is the destination among those territories?
+                        .Any(tpr => tpr.TerritoryInternalRecord != null
+                            && tpr.TerritoryInternalRecord.Id == destination.Id);
+                });
         }
-
-
-        private VatConfigurationPart GetVatConfiguration(ProductPart part) {
-            return part
-                ?.As<ProductVatConfigurationPart>()
-                ?.VatConfigurationPart
-                ?? GetDefaultCategory();
-        }
-
-
     }
 }

@@ -86,8 +86,12 @@ namespace Nwazet.Commerce.Handlers {
             part.ChildrenField.Loader(() => {
                 if (part.Record.Children != null && part.Record.Children.Any()) {
                     return _contentManager
-                        .GetMany<ContentItem>(part.Record.Children.Select(tpr => tpr.ContentItemRecord.Id),
-                            VersionOptions.Latest, QueryHints.Empty);
+                        .Query(VersionOptions.Latest)
+                        .Join<TerritoryPartRecord>()
+                        .Where(tpr => tpr.Hierarchy.Id == part.Record.Hierarchy.Id
+                            && tpr.ParentTerritory != null
+                            && tpr.ParentTerritory.Id == part.Record.Id)
+                        .List();
                 } else {
                     return Enumerable.Empty<ContentItem>();
                 }

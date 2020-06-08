@@ -15,6 +15,7 @@ using System.Globalization;
 using Orchard;
 using Orchard.DisplayManagement;
 using System.Xml.Linq;
+using Nwazet.Commerce.Aspects;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Nwazet.AdvancedVAT")]
@@ -54,7 +55,8 @@ namespace Nwazet.Commerce.Services {
             // order is created. 
 
             // We will need the destination TerritoryInternalRecord to figure out VAT
-            var destination = FindDestination(orderPart.ShippingAddress, orderPart.BillingAddress);
+            var destination = FindDestination(orderPart)
+                .Where(d => d != null);
 
             var products = _contentManager
                 .GetMany<ProductPart>(orderPart.Items.Select(ci => ci.ProductId),
@@ -67,6 +69,7 @@ namespace Nwazet.Commerce.Services {
                 .Select(tup => {
                     var productPart = tup.Item1;
                     var checkoutItem = tup.Item2;
+                    // destination is ordered from most to least specific territory
                     var rate = _vatConfigurationService.GetRate(productPart, destination);
                     // productPart.Price is what has been input in the editor for the ContentItem. It may
                     // not be the taxable amount in case there are discounts of any form.
@@ -93,7 +96,7 @@ namespace Nwazet.Commerce.Services {
                         });
                 }).ToDictionary(tup => tup.Item1, tup => tup.Item2);
 
-            // add Vat infor related to shipping, if it's even there
+            // add Vat info related to shipping, if it's even there
             if (orderPart.ShippingOption != null) {
                 var shippingVatPart = _contentManager.Get<ProductVatConfigurationPart>(orderPart.ShippingOption.ShippingMethodId);
                 if (shippingVatPart != null) {
@@ -107,6 +110,19 @@ namespace Nwazet.Commerce.Services {
                             PriceBeforeTax = orderPart.ShippingOption.DefaultPrice
                         });
                 }
+            }
+
+            // store information related to the destination. This way, even if the addresses for the order
+            // are changed later, we can still mark the destination used for computing the VAT information.
+            var specificityCounter = 0; // use this to mark specificity when storing territories
+            foreach (var tir in destination) {
+                // we are hacking what we currently store: 
+                // the ids for destinations are positive and may clash with products and such
+                // However, we are allowed to use negative keys for our data. By using (-Id) as
+                // key, we identify entries in the dictionary that represent territories.
+                // We use the value object to store an information that will allow us to sort
+                // the territories back in the correct specificity order (from most to least specific)
+                data.Add(-tir.Id, new RateAndPrice { Rate = specificityCounter++ });
             }
 
             // Now store
@@ -229,15 +245,97 @@ namespace Nwazet.Commerce.Services {
 
         public override IEnumerable<dynamic> GetAdditionalOrderAddressesShapes(OrderPart orderPart) {
             // We will need the destination TerritoryInternalRecord to figure out VAT
-            var destination = FindDestination(orderPart.ShippingAddress, orderPart.BillingAddress);
+            var destination = FindDestination(orderPart);
 
-            if (destination == null) {
+            if (destination == null || !destination.Any()) {
                 yield break;
             }
-
+            var name = string.Join(" - ", destination.Select(d => d.Name));
             yield return _shapeFactory.VatAdditionalOrderAddressesShapes(
-                Destination: destination.Name
+                Destination: name
                 );
+        }
+
+        private IEnumerable<TerritoryInternalRecord> FindDestination(OrderPart order) {
+            // See whether we stored the destination in the additional records for the 
+            // order
+            var results = DestinationFromRecord(order);
+            if (results != null && results.Any()) {
+                return results;
+            }
+            // use the new IAspect to figure this information out and 
+            // only eventually fallback to the "old" logic based on the information
+            // from OrderPart
+            results = DestinationFromAspect(order);
+            if (results != null && results.Any()) {
+                return results;
+            }
+            // Fallback: try to parse the information in the address in case we were
+            // unable to find territories before this.
+            return new TerritoryInternalRecord[] {
+                FindDestination(order.ShippingAddress, order.BillingAddress)
+            };
+        }
+
+        private IEnumerable<TerritoryInternalRecord> DestinationFromRecord(OrderPart order) {
+            // See whether we stored the destination in the additional records for the 
+            // order
+            var info = _vatOrderRepository
+                .Fetch(ovr => ovr.OrderPartRecord == order.Record)
+                .FirstOrDefault();
+            if (info != null) {
+                var data = DeserializeInformation(info.Information);
+                if (data.Keys.Any(k => k < 0)) {
+                    // we use negative keys to store the ids of territories, so we don't
+                    // mistake them for products.
+                    // We use the Rate we stored for those keys to sort them. 
+                    // Lower Rate means higher specificity.
+                    return data
+                        // "records" representing territories
+                        .Where(kvp => kvp.Key < 0)
+                        // sort ascending by rate
+                        .OrderBy(kvp => kvp.Value.Rate)
+                        .Select(kvp => _territoriesRepositoryService
+                            .GetTerritoryInternal(-kvp.Key));
+                }
+            }
+            return null;
+        }
+
+        private IEnumerable<TerritoryInternalRecord> DestinationFromAspect(OrderPart order) {
+            var addressAspect = order.As<ITerritoryAddressAspect>();
+            if (addressAspect != null) {
+                var foundTerritory = false;
+                var tir = _territoriesRepositoryService
+                    .GetTerritoryInternal(addressAspect.CityId);
+                if (tir != null) {
+                    foundTerritory = true;
+                    yield return tir;
+                }
+                tir = _territoriesRepositoryService
+                    .GetTerritoryInternal(addressAspect.ProvinceId);
+                if (tir != null) {
+                    foundTerritory = true;
+                    yield return tir;
+                }
+                tir = _territoriesRepositoryService
+                    .GetTerritoryInternal(addressAspect.CountryId);
+                if (tir != null) {
+                    foundTerritory = true;
+                    yield return tir;
+                }
+                // If we could not find the specific information, fallback to trying to
+                // return everything
+                if (!foundTerritory) {
+                    foreach (var id in addressAspect.TerritoriesIds) {
+                        tir = _territoriesRepositoryService.GetTerritoryInternal(id);
+                        if (tir != null) {
+                            foundTerritory = true;
+                            yield return tir;
+                        }
+                    }
+                }
+            }
         }
 
         private TerritoryInternalRecord FindDestination(Address shippingAddress, Address billingAddress) {

@@ -65,6 +65,14 @@ namespace Nwazet.Commerce.Services {
         TerritoryInternalRecord AddTerritory(TerritoryInternalRecord tir);
 
         /// <summary>
+        /// Adds a new TerritoryInternalRecord object to the repository if no
+        /// record exists with the given name.
+        /// </summary>
+        /// <param name="name">The name of the TerritoryInternalRecord object we wish to add</param>
+        /// <returns>true if the record was added, false otherwise.</returns>
+        bool TryAddTerritory(string name);
+
+        /// <summary>
         /// Updates the TerritoryInternalRecord object. The object is identified by the id.
         /// </summary>
         /// <param name="tir">The TerritoryInternalRecord object we wish to update.</param>

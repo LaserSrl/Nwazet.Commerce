@@ -99,26 +99,74 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         private List<VatConfigurationHierarchySummaryViewModel> BuildSummary(VatConfigurationPart part) {
+            var summary = new List<VatConfigurationHierarchySummaryViewModel>();
+            if (part.Hierarchies == null || !part.Hierarchies.Any()) {
+                return summary;
+            }
+            foreach (var hierarchyConfig in part.Hierarchies) {
+                var subRegions = new List<VatConfigurationTerritorySummaryViewModel>();
+                var territories = part.Territories
+                    .Where(tpd => tpd.Item1.Record.Hierarchy.Id == hierarchyConfig.Item1.Record.Id);
+                // build the tree of these territories
+                var allRegions = new List<VatConfigurationTerritorySummaryViewModel>();
+                foreach (var territoryConfig in territories) {
+                    // build a view model for the territory
+                    var vm = new VatConfigurationTerritorySummaryViewModel {
+                        Name = _contentManager.GetItemMetadata(territoryConfig.Item1).DisplayText,
+                        Part = territoryConfig.Item1,
+                        Item = territoryConfig.Item1.ContentItem,
+                        Rate = territoryConfig.Item2
+                    };
+                    // add to the temporary list of all TerritoryVMs
+                    allRegions.Add(vm);
+                    subRegions.Add(vm);
+                }
+                // for each current subregion (these are the ones that have a configured rate)
+                // build its tree towards the root (the hierarchy). We can do this by
+                // building the vm for the parent if it is missing.
+                foreach (var region in subRegions) {
+                    var parentRecord = region.Part.Record.ParentTerritory;
+                    var current = region;
+                    while (parentRecord != null) {
+                        // find the parent among the existing regions if it's there
+                        var parent = allRegions
+                            .FirstOrDefault(r => r.Part.Record.Id == parentRecord.Id);
+                        if (parent != null) {
+                            parent.SubRegions.Add(current);
+                            // exit condition from the loop
+                            parentRecord = null;
+                        } else {
+                            // get the part from the record
+                            var parentPart = _contentManager
+                                .Get<TerritoryPart>(parentRecord.Id);
+                            parent = new VatConfigurationTerritorySummaryViewModel {
+                                Name = _contentManager.GetItemMetadata(parentPart).DisplayText,
+                                Part = parentPart,
+                                Item = parentPart.ContentItem,
+                                Rate = -1 // negative rate as special case marker
+                            };
+                            parent.SubRegions.Add(current);
+                            allRegions.Add(parent);
+                            // check its parent next
+                            current = parent;
+                            parentRecord = parentRecord.ParentTerritory;
+                        }
 
-            return part.Hierarchies == null
-                ? new List<VatConfigurationHierarchySummaryViewModel>()
-                : part.Hierarchies
-                    .Select(tup => new VatConfigurationHierarchySummaryViewModel {
-                        Name = _contentManager.GetItemMetadata(tup.Item1).DisplayText,
-                        Item = tup.Item1.ContentItem,
-                        Rate = tup.Item2,
-                        SubRegions = part.Territories == null
-                            ? new List<VatConfigurationTerritorySummaryViewModel>()
-                            :part.Territories
-                                .Where(tpd => tpd.Item1.HierarchyPart.Record == tup.Item1.Record)
-                                .Select(tpd => new VatConfigurationTerritorySummaryViewModel {
-                                    Name = _contentManager.GetItemMetadata(tpd.Item1).DisplayText,
-                                    Item = tpd.Item1.ContentItem,
-                                    Rate = tpd.Item2
-                                })
-                                .ToList()
-                    })
-                    .ToList();
+                    }
+                }
+
+                summary.Add(
+                    new VatConfigurationHierarchySummaryViewModel {
+                        Name = _contentManager.GetItemMetadata(hierarchyConfig.Item1).DisplayText,
+                        Item = hierarchyConfig.Item1.ContentItem,
+                        Rate = hierarchyConfig.Item2,
+                        SubRegions = allRegions
+                            // the top level
+                            .Where(vm => vm.Part.Record.ParentTerritory == null)
+                            .ToList()
+                    });
+            }
+            return summary;
         }
 
         private IEnumerable<HierarchyIntersection> CheckIntersectionsBetweenHierarchies(VatConfigurationPart part) {
@@ -128,19 +176,26 @@ namespace Nwazet.Commerce.Drivers {
                 // get the TerritoryHierarchyParts
                 var hierarchies = part.Hierarchies.Select(tup => tup.Item1).ToArray();
                 for (int i = 0; i < hierarchies.Length-1; i++) {
-                    var source = hierarchies[i].Territories.Select(ci => ci.As<TerritoryPart>());
+                    // territories from "first" hierarchy
+                    var source = hierarchies[i]
+                        .Record.Territories; //.Select(ci => ci.As<TerritoryPart>());
+                    // name of first hierarchy
                     var sourceString = _contentManager.GetItemMetadata(hierarchies[i]).DisplayText;
                     for (int j = i+1; j < hierarchies.Length; j++) {
-                        var other = hierarchies[j].Territories.Select(ci => ci.As<TerritoryPart>());
+                        // territories from second hierarchy
+                        var other = hierarchies[j]
+                            .Record.Territories; //.Select(ci => ci.As<TerritoryPart>());
+                        // name of second hierarchy
                         var otherString = _contentManager.GetItemMetadata(hierarchies[j]).DisplayText;
-                        var intersection = source.Intersect(other, new TerritoryPart.TerritoryPartComparer());
+                        // intersection of the sets of territories
+                        var intersection = source.Intersect(other, new TerritoryPartRecord.TerritoryPartRecordComparer());
                         if (intersection.Any()) {
                             foreach (var territory in intersection) {
 
                                 yield return new HierarchyIntersection {
                                     Hierarchy1 = sourceString,
                                     Hierarchy2 = otherString,
-                                    Territory = territory.Record.TerritoryInternalRecord.Name
+                                    Territory = territory.TerritoryInternalRecord.Name
                                 };
                             }
                         }

@@ -9,24 +9,16 @@ namespace Nwazet.Commerce.Models {
     public class TerritoryHierarchyPart : ContentPart<TerritoryHierarchyPartRecord> {
 
         public static string PartName = "TerritoryHierarchyPart";
-
-        private readonly LazyField<IEnumerable<ContentItem>> _territories = 
+        
+        private readonly LazyField<IEnumerable<ContentItem>> _topLevel =
             new LazyField<IEnumerable<ContentItem>>();
 
-        public LazyField<IEnumerable<ContentItem>> TerritoriesField {
-            get { return _territories; }
+        public LazyField<IEnumerable<ContentItem>> TopLevelField {
+            get { return _topLevel; }
         }
-
-        public IEnumerable<ContentItem> Territories {
-            get { return _territories.Value; }
-            // no setter, because this is "filled" thatnks to a 1-to-n relationship to TerritoryPartRecords 
-            //set { _territories.Value = value; }
-        }
-
         public IEnumerable<ContentItem> TopLevel {
             get {
-                return Territories
-                  .Where(ci => ci.As<TerritoryPart>().Record.ParentTerritory == null);
+                return _topLevel.Value;
             }
         }
 
