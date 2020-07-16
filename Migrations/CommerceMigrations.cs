@@ -9,6 +9,8 @@ using Orchard.Indexing;
 using System.Linq;
 using System.Collections.Generic;
 using Orchard.ContentManagement;
+using Orchard.Projections.Models;
+using Orchard.Localization;
 
 namespace Nwazet.Commerce.Migrations {
     [OrchardFeature("Nwazet.Commerce")]
@@ -17,19 +19,30 @@ namespace Nwazet.Commerce.Migrations {
         private readonly IRepository<ProductPartRecord> _repository;
         IRepository<ProductPartVersionRecord> _versionRepository;
         IRepository<InventoryPartRecord> _inventoryPartRepository;
+        IRepository<PricePartRecord> _pricePartRepository;
         private readonly IContentManager _contentManager;
+        private readonly IRepository<MemberBindingRecord> _memberBindingRepository;
+
 
         public CommerceMigrations(
             IRepository<ProductPartRecord> repository,
             IRepository<ProductPartVersionRecord> versionRepository,
             IRepository<InventoryPartRecord> inventoryPartRepository,
-            IContentManager contentManager) {
+            IRepository<PricePartRecord> pricePartRepository,
+            IContentManager contentManager,
+            IRepository<MemberBindingRecord> memberBindingRepository) {
 
             _repository = repository;
             _versionRepository = versionRepository;
             _inventoryPartRepository = inventoryPartRepository;
+            _pricePartRepository = pricePartRepository;
             _contentManager = contentManager;
+            _memberBindingRepository = memberBindingRepository;
+
+            T = NullLocalizer.Instance;
         }
+
+        public Localizer T { get; set; }
 
         public int Create() {
             SchemaBuilder.CreateTable("ProductPartRecord", table => table
@@ -255,5 +268,55 @@ namespace Nwazet.Commerce.Migrations {
         // we should drop the constraints first (or SQL will fail). Since there is no trivial way
         // to identify those constraints through code, we keep those unused columns for now.
 
+
+        // Added PricePartRecord:
+        // This is step 0.1 of upgrading the management of prices.
+        public int UpdateFrom14() {
+            // create table
+            SchemaBuilder.CreateTable("PricePartRecord", table => table
+               .ContentPartVersionRecord()
+               .Column("EffectiveUnitPrice", DbType.Decimal)
+            );
+            // new part to for advanced price management
+            ContentDefinitionManager.AlterPartDefinition("PricePart",
+              builder => builder
+                .WithDescription("This part provides advanced ways to manage and use price for a product."));
+            // attach to product parts
+            var productTypes = ContentDefinitionManager
+                .ListTypeDefinitions()
+                .Where(ctd => ctd.Parts.Any(ctpd => ctpd.PartDefinition.Name.Equals("ProductPart")));
+            foreach (var pt in productTypes) {
+                ContentDefinitionManager.AlterTypeDefinition(pt.Name, cfg => cfg
+                    .WithPart("PricePart"));
+            }
+            // set values
+            var allProducts = _contentManager
+                .Query<ProductPart>(VersionOptions.Latest)
+                .List();
+            foreach (var product in allProducts) {
+                // these products have no InventoryPart yet
+                var oldRecord = product.Record;
+                // compute effective price
+                var effPrice = oldRecord.DiscountPrice > 0 && oldRecord.DiscountPrice < oldRecord.Price
+                    ? oldRecord.DiscountPrice
+                    : oldRecord.Price;
+                var newRecord = new PricePartRecord {
+                    // pair with ContentItem
+                    ContentItemVersionRecord = oldRecord.ContentItemVersionRecord,
+                    // copy values
+                    EffectiveUnitPrice = effPrice
+                };
+                _pricePartRepository.Create(newRecord);
+            }
+
+            // add member binding record.
+            _memberBindingRepository.Create(new MemberBindingRecord {
+                Type = typeof(PricePartRecord).FullName,
+                Member = "EffectiveUnitPrice",
+                DisplayName = T("Effective Price").Text,
+                Description = T("The effective unit price for the product.").Text
+            });
+            return 15;
+        }
     }
 }
