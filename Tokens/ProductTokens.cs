@@ -3,6 +3,7 @@ using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Tokens;
+using System.Globalization;
 
 namespace Nwazet.Commerce.Tokens {
     [OrchardFeature("Nwazet.Commerce")]
@@ -22,6 +23,7 @@ namespace Nwazet.Commerce.Tokens {
                 .Token("ShippingCost", T("Shipping Cost"), T("The fixed shipping cost of the product."))
                 .Token("Weight", T("Weight"), T("The weight of the item."))
                 .Token("AuthenticationRequired", T("Authentication Required"), T("True if this product requires user to be logged in to purchase."))
+                .Token("FrontendPriceString", T("Frontend Price as String"), T("The price of the product as showsn on frontend (it may be after taxes)."))
                 ;
         }
 
@@ -34,6 +36,10 @@ namespace Nwazet.Commerce.Tokens {
                 .Token("Weight", content => content.As<ProductPart>().Weight)
                 .Token("MinimumOrderQuantity", content => content.As<ProductPart>().MinimumOrderQuantity)
                 .Token("AuthenticationRequired", content => content.As<ProductPart>().AuthenticationRequired)
+                .Token("FrontendPriceString", content => content.As<PricePart>()
+                    .FrontendUnitPrice
+                    .ToString("c", CultureInfo.InvariantCulture)
+                    .Replace(CultureInfo.InvariantCulture.NumberFormat.CurrencySymbol, ""))
                 ;
         }
     }
