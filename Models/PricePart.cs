@@ -17,5 +17,15 @@ namespace Nwazet.Commerce.Models {
             get { return Retrieve(r => r.EffectiveUnitPrice); }
             set { Store(r => r.EffectiveUnitPrice, value); }
         }
+
+        public decimal FrontendUnitPrice {
+            get {
+                var product = this.As<ProductPart>();
+                if (product != null && product.ProductPriceService != null) {
+                    return product.ProductPriceService.GetPrice(product, EffectiveUnitPrice);
+                }
+                return EffectiveUnitPrice;
+            }
+        }
     }
 }
