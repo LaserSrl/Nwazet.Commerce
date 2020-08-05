@@ -283,6 +283,7 @@
     <Compile Include="Drivers\InventoryBySKUSiteSettingsPartDriver.cs" />
     <Compile Include="Drivers\InventoryPartDriver.cs" />
     <Compile Include="Drivers\OrderPartDriver.cs" />
+    <Compile Include="Drivers\PricePartDriver.cs" />
     <Compile Include="Drivers\ProductPartWishListDriver.cs" />
     <Compile Include="Drivers\ProductSettingsPartDriver.cs" />
     <Compile Include="Drivers\ProductsListPartDriver.cs" />
@@ -341,6 +342,7 @@
     <Compile Include="Handlers\InventoryPartHandler.cs" />
     <Compile Include="Handlers\LocalizationAttributePartHandler.cs" />
     <Compile Include="Handlers\OrderPartHandler.cs" />
+    <Compile Include="Handlers\PricePartHandler.cs" />
     <Compile Include="Handlers\ProductPartVersioningHandler.cs" />
     <Compile Include="Handlers\ProductSettingsPartHandler.cs" />
     <Compile Include="Handlers\ProductVatConfigurationPartHandler.cs" />
@@ -405,6 +407,8 @@
     <Compile Include="Models\InventoryPartRecord.cs" />
     <Compile Include="Models\OrderVatRecord.cs" />
     <Compile Include="Models\PersistentShoppingCart.cs" />
+    <Compile Include="Models\PricePart.cs" />
+    <Compile Include="Models\PricePartRecord.cs" />
     <Compile Include="Models\ProductsListPart.cs" />
     <Compile Include="Models\OrderEvent.cs" />
     <Compile Include="Models\OrderPart.cs" />
