@@ -1,6 +1,7 @@
 ﻿using Nwazet.Commerce.Models;
 using Orchard;
 using Orchard.Environment.Extensions;
+using System;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Nwazet.AdvancedVAT")]
@@ -36,7 +37,7 @@ namespace Nwazet.Commerce.Services {
         }
 
         public override decimal GetPrice(ProductPart part, decimal basePrice) {
-            return basePrice + basePrice * GetRate(part);
+            return Math.Round(basePrice * (1 + GetRate(part)), 2);
         }
 
         public override decimal GetPrice(ProductPart part, string country, string zipCode) {
@@ -44,7 +45,7 @@ namespace Nwazet.Commerce.Services {
         }
 
         public override decimal GetPrice(ProductPart part, decimal basePrice, string country, string zipCode) {
-            return basePrice + basePrice * GetRate(part, FindDestination(country, zipCode));
+            return Math.Round(basePrice * (1 + GetRate(part, FindDestination(country, zipCode))), 2);
         }
 
         private decimal GetRate(ProductPart part) {
