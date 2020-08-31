@@ -13,5 +13,5 @@
     @Html.TextBox("ShippingCompany", method.ShippingCompany, new { @class = "text" })<br />
     <label class="sub" for="@Html.Id("DefaultPrice")">@T("Price")</label><br />
     @Html.TextBox("DefaultPrice", method.DefaultPrice, new { @class = "text" })<br />
-    <span class="hint">@T("The base price for shipping. In cases where VAT or similar taxes are applied on shipping, this is the price before tax.")</span><br />
+    <span class="hint" for="@Html.Id("DefaultPrice")">@T("The base price for shipping. In cases where VAT or similar taxes are applied on shipping, this is the price before tax.")</span><br />
 </fieldset>
