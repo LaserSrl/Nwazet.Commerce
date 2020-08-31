@@ -75,6 +75,15 @@ namespace Nwazet.Commerce.Drivers {
                         Prefix: Prefix)));
             }
 
+            shapes.Add(ContentShape("Parts_ShippingMethodShippingAreas_Edit",
+                () => shapeHelper.EditorTemplate(
+                    TemplateName: "Parts/ShippingMethodAreas",
+                    Model: shapeHelper.ShippingEditor(
+                        ShippingMethod: part,
+                        ShippingAreas: _shippingAreaProviders.SelectMany(ap => ap.GetAreas()),
+                        Prefix: Prefix),
+                    Prefix: Prefix)));
+
             shapes.Add(ContentShape("Parts_FlexibleShippingMethod_Edit",
                 () => shapeHelper.EditorTemplate(
                     TemplateName: "Parts/FlexibleShippingMethod",
