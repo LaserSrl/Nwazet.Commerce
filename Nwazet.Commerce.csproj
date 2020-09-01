@@ -190,6 +190,7 @@
     <None Include="packages.config" />
     <None Include="Styles\product-admin.less" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethodCriteria.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Inventory.cshtml" />
