@@ -41,14 +41,28 @@ namespace Nwazet.Commerce.Drivers {
 
         //GET
         protected override DriverResult Editor(SizeBasedShippingMethodPart part, dynamic shapeHelper) {
-            return ContentShape("Parts_SizeBasedShippingMethod_Edit",
+
+            var shapes = new List<DriverResult>(2);
+
+            shapes.Add(ContentShape("Parts_SizeBasedShippingMethod_Edit",
                 () => shapeHelper.EditorTemplate(
                     TemplateName: "Parts/SizeBasedShippingMethod",
                     Model: shapeHelper.SizeShippingEditor(
                         ShippingMethod: part,
                         ShippingAreas: _shippingAreaProviders.SelectMany(ap => ap.GetAreas()),
                         Prefix: Prefix),
-                    Prefix: Prefix));
+                    Prefix: Prefix)));
+
+            shapes.Add(ContentShape("Parts_ShippingMethodShippingAreas_Edit",
+                () => shapeHelper.EditorTemplate(
+                    TemplateName: "Parts/ShippingMethodAreas",
+                    Model: shapeHelper.ShippingEditor(
+                        ShippingMethod: part,
+                        ShippingAreas: _shippingAreaProviders.SelectMany(ap => ap.GetAreas()),
+                        Prefix: Prefix),
+                    Prefix: Prefix)));
+
+            return Combined(shapes.ToArray());
         }
 
         private class LocalViewModel {
