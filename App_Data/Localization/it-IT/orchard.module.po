@@ -1060,6 +1060,18 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductVatConfigu
 msgid "VAT Category."
 msgstr "Categoria IVA."
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ShippingMethodAreas.cshtml"
+msgid "Areas for which this method is not valid:"
+msgstr "Aree per cui questo metodo non è valido:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ShippingMethodAreas.cshtml"
+msgid "Areas for which this method is valid:"
+msgstr "Aree per cui questo metodo è valido:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ShippingMethodAreas.cshtml"
+msgid "Use this to restrict what areas this method is available from. For example, an international shipping method would have World included, but US excluded, so that it can't be selected for domestic shipping."
+msgstr "Usa questo per limitare le aree in cui quest metodo sia disponibile. Per esempio, un metodo di spedizione internazionale includerebbe il Mondo, ma escluderebbe gli USA, in modo da non potere essere selzionato per spedizioni sul territorio statunitense."
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/SizeBasedShippingMethod.cshtml"
 msgid "Areas for which this method is not valid:"
 msgstr "Aree per cui questo metodo non è valido:"
@@ -4016,6 +4028,14 @@ msgctxt "Nwazet.Commerce.Menus.TerritoriesAdminMenu"
 msgid "Territories"
 msgstr "Territori"
 
+msgctxt "Nwazet.Commerce.Migrations.CommerceMigrations"
+msgid "Effective Price"
+msgstr "Prezzo Effettivo"
+
+msgctxt "Nwazet.Commerce.Migrations.CommerceMigrations"
+msgid "The effective unit price for the product."
+msgstr "Il prezzo unitario effettivo per il prodotto."
+
 msgctxt "Nwazet.Commerce.Models.CreditCardCharge"
 msgid "Card **** **** **** {0} expiring {1}/{2}."
 msgstr "Carta **** **** **** {0} con scadenza {1}/{2}."
@@ -4745,6 +4765,10 @@ msgid "Content Items"
 msgstr "Contenuti"
 
 msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
+msgid "Frontend Price as String"
+msgstr "Prezzo Frontend come Stringa"
+
+msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
 msgid "Is Digital"
 msgstr "È digitale"
 
@@ -4763,6 +4787,10 @@ msgstr "SKU"
 msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
 msgid "The fixed shipping cost of the product."
 msgstr "Il costo di spedizione fisso del prodotto."
+
+msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
+msgid "The price of the product as showsn on frontend (it may be after taxes)."
+msgstr "Il prezzo del prodotto come mostrato sul frontend (potrebbe essere al netto delle tasse)."
 
 msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
 msgid "The price of the product."
