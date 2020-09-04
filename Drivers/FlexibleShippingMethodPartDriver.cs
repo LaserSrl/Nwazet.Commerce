@@ -158,7 +158,12 @@ namespace Nwazet.Commerce.Drivers {
                .FromAttr(p => p.DefaultPrice);
 
             // ApplicabilityCriteria
-            part.ApplicabilityCriteria.Clear();
+            if (part.ApplicabilityCriteria != null) { 
+                part.ApplicabilityCriteria.Clear();
+            }
+            else {
+                part.ApplicabilityCriteria = new List<ApplicabilityCriterionRecord>();
+            }
             foreach (var item in element
                 .Element("ApplicabilityCriteria")
                 .Elements("Criterion")
