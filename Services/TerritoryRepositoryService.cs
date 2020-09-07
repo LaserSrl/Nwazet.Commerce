@@ -112,7 +112,7 @@ namespace Nwazet.Commerce.Services {
             var hash = GetHash(name);
             try {
                 existing = _territoryInternalRecord
-                    .Fetch(x => x.NameHash == hash)
+                    .Table.Where(x => x.NameHash == hash)
                     .FirstOrDefault(x => x.Name == name);
             } catch (Exception) {
                 //sqlCE doe not support using strings properly when their length is such that the column
