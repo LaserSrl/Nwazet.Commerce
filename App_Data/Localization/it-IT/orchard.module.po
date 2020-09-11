@@ -426,7 +426,7 @@ msgstr "Categoria IVA"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
 msgid "allow back order"
-msgstr "Permetti ordini arretrati"
+msgstr "permetti ordini ad inventario 0"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
 msgid "Changes to the inventory value will propagate to other versions of this product."
@@ -810,7 +810,7 @@ msgstr "Questo permette di associare un ordine all'utente, ma costringerà l'ute
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.cshtml"
 msgid "allow back order"
-msgstr "Permetti ordini arretrati"
+msgstr "permetti ordini ad inventario 0"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.cshtml"
 msgid "authentication required"
@@ -2466,11 +2466,11 @@ msgstr "Articolo"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
 msgid "Back order is allowed"
-msgstr "Sono permessi ordini arretrati"
+msgstr "Sono permessi ordini ad inventario 0"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
 msgid "Back order is not allowed"
-msgstr "Non sono permessi ordini arretrati"
+msgstr "Non sono permessi ordini ordini ad inventario 0"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
 msgid "Click <a href=\"{0}\">here</a> to choose a different shipping option."
@@ -2538,11 +2538,11 @@ msgstr "Non hai oggetti nel carrello."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.Summary.cshtml"
 msgid "Back order is allowed"
-msgstr "Sono permessi ordini arretrati"
+msgstr "Sono permessi ordini ad inventario 0"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.Summary.cshtml"
 msgid "Back order is not allowed"
-msgstr "Non sono permessi ordini arretrati"
+msgstr "Non sono permessi ordini ad inventario 0"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.Summary.cshtml"
 msgid "Only {0} in stock. {1}."

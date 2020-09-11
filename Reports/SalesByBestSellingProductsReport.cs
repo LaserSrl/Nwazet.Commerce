@@ -102,6 +102,7 @@ namespace Nwazet.Commerce.Reports {
                             .Items
                             .Where(item => seriesProductIds.Contains(item.ProductId)))
                         .GroupBy(item => item.ProductId)
+                        .Where(group => series.ContainsKey(group.Key))
                         .ToDictionary(
                             group => series[group.Key],
                             group => new ReportDataPoint {
@@ -113,7 +114,9 @@ namespace Nwazet.Commerce.Reports {
             }
             return new ReportData {
                 DataPoints = results,
-                Series = seriesProductIds.Select(id => series[id]).ToList()
+                Series = seriesProductIds
+                    .Where(id => series.ContainsKey(id))
+                    .Select(id => series[id]).ToList()
             };
         }
     }
