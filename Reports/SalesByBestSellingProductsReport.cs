@@ -114,7 +114,9 @@ namespace Nwazet.Commerce.Reports {
             }
             return new ReportData {
                 DataPoints = results,
-                Series = seriesProductIds.Select(id => series[id]).ToList()
+                Series = seriesProductIds
+                    .Where(id => series.ContainsKey(id))
+                    .Select(id => series[id]).ToList()
             };
         }
     }
