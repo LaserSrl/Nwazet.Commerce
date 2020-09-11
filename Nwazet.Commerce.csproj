@@ -337,11 +337,13 @@
     <Compile Include="Handlers\AttributePartHandler.cs" />
     <Compile Include="Handlers\AttributesPartHandler.cs" />
     <Compile Include="Handlers\ECommerceCurrencySiteSettingsPartHandler.cs" />
+    <Compile Include="Handlers\FlexibleShippingMethodPartAuthorizationEventHandler.cs" />
     <Compile Include="Handlers\FlexibleShippingMethodPartHandler.cs" />
     <Compile Include="Handlers\HierarchyVatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\InventoryBySKUSiteSettingsPartHandler.cs" />
     <Compile Include="Handlers\InventoryPartHandler.cs" />
     <Compile Include="Handlers\LocalizationAttributePartHandler.cs" />
+    <Compile Include="Handlers\OrderPartAuthorizationEventHandler.cs" />
     <Compile Include="Handlers\OrderPartHandler.cs" />
     <Compile Include="Handlers\PricePartHandler.cs" />
     <Compile Include="Handlers\ProductPartVersioningHandler.cs" />
@@ -357,6 +359,7 @@
     <Compile Include="Handlers\StripeSettingsPartHandler.cs" />
     <Compile Include="Handlers\DiscountPartHandler.cs" />
     <Compile Include="Handlers\SizeBasedShippingMethodPartHandler.cs" />
+    <Compile Include="Handlers\VatConfigurationPartAuthorizationEventHandler.cs" />
     <Compile Include="Handlers\VatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\WeightBasedShippingMethodPartHandler.cs" />
     <Compile Include="Handlers\ProductPartHandler.cs" />
