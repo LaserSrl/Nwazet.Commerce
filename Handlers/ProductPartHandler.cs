@@ -29,6 +29,9 @@ namespace Nwazet.Commerce.Handlers {
                 part.ProductPriceService = _productPriceService;
                 part.ProductInventoryService = _productInventoryService;
             });
+
+            OnIndexing<ProductPart>((ctx, part) => ctx.DocumentIndex
+                                           .Add("sku", part.Sku).Analyze().Store());
         }
         
         protected override void GetItemMetadata(GetContentItemMetadataContext context) {
