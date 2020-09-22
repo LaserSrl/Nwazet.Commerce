@@ -16,10 +16,12 @@ namespace Nwazet.Commerce.Services {
 
         public override IEnumerable<ProductPart> GetProductsWithSameInventory(ProductPart part) {
             var sSet = base.GetProductsWithSameInventory(part).ToList();
-            sSet.AddRange(_contentManager
-                .Query<ProductPart, ProductPartVersionRecord>(VersionOptions.Latest)
-                .Where(pa => pa.Sku == part.Record.Sku && pa.ContentItemRecord.Id != part.Record.ContentItemRecord.Id)
-                .List());
+            if(part.Record.Sku != null && part.Record.ContentItemRecord != null) { 
+                sSet.AddRange(_contentManager
+                    .Query<ProductPart, ProductPartVersionRecord>(VersionOptions.Latest)
+                    .Where(pa => pa.Sku == part.Record.Sku && pa.ContentItemRecord.Id != part.Record.ContentItemRecord.Id)
+                    .List());
+            }
             return sSet;
         }
 
