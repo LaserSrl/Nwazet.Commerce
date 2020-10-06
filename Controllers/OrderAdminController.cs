@@ -31,6 +31,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ITransactionManager _transactionManager;
         private readonly IOrchardServices _orchardServices;
         private readonly IEnumerable<IOrderStatusProvider> _orderStatusProviders;
+        private readonly IWorkContextAccessor _workContext;
 
         private dynamic Shape { get; set; }
         public Localizer T { get; set; }
@@ -42,7 +43,8 @@ namespace Nwazet.Commerce.Controllers {
             ISiteService siteService,
             ITransactionManager transactionManager,
             IOrchardServices orchardServices,
-            IEnumerable<IOrderStatusProvider> orderStatusProviders) {
+            IEnumerable<IOrderStatusProvider> orderStatusProviders,
+            IWorkContextAccessor workContext) {
 
             _orderService = orderService;
             _contentManager = contentManager;
@@ -51,6 +53,7 @@ namespace Nwazet.Commerce.Controllers {
             _transactionManager = transactionManager;
             _orchardServices = orchardServices;
             _orderStatusProviders = orderStatusProviders;
+            _workContext = workContext;
 
             T = NullLocalizer.Instance;
         }
@@ -150,6 +153,17 @@ namespace Nwazet.Commerce.Controllers {
                 else {
                     routeValues["Options.User"] = options.User;
                 }
+            }
+
+            // Remove to querystring  default parameters and add another parameter
+            // if it were present remove the page because it is not said that the new filter we have for example page 3
+            var keysAdded = _workContext.GetContext().HttpContext.Request.QueryString
+                .AllKeys.ToList()
+                .Where(key => key.ToString() != "Options.OrderBy" && key.ToString() != "Options.SelectedFilter" &&
+                           key.ToString() != "Options.OrderKey" && key.ToString() != "Options.User" && key.ToString() != "page");
+
+            foreach (var key in keysAdded) {
+                routeValues[key] = _workContext.GetContext().HttpContext.Request[key];
             }
 
             return RedirectToAction("List", routeValues);

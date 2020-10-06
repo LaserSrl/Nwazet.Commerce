@@ -75,6 +75,15 @@ namespace Nwazet.Commerce.Drivers {
                         Prefix: Prefix)));
             }
 
+            shapes.Add(ContentShape("Parts_ShippingMethodShippingAreas_Edit",
+                () => shapeHelper.EditorTemplate(
+                    TemplateName: "Parts/ShippingMethodAreas",
+                    Model: shapeHelper.ShippingEditor(
+                        ShippingMethod: part,
+                        ShippingAreas: _shippingAreaProviders.SelectMany(ap => ap.GetAreas()),
+                        Prefix: Prefix),
+                    Prefix: Prefix)));
+
             shapes.Add(ContentShape("Parts_FlexibleShippingMethod_Edit",
                 () => shapeHelper.EditorTemplate(
                     TemplateName: "Parts/FlexibleShippingMethod",
@@ -119,18 +128,20 @@ namespace Nwazet.Commerce.Drivers {
                 .ToAttr(p => p.ShippingCompany)
                 .ToAttr(p => p.IncludedShippingAreas)
                 .ToAttr(p => p.ExcludedShippingAreas)
-                .ToAttr(p => p.DefaultPrice);
-            // ApplicabilityCriteria
-            if (part.ApplicabilityCriteria != null && part.ApplicabilityCriteria.Any()) {
-                element.Add(new XElement("ApplicabilityCriteria",
-                    part.ApplicabilityCriteria.Select(criterion => {
-                        return new XElement("Criterion",
-                            new XAttribute("Category", criterion.Category),
-                            new XAttribute("Description", criterion.Description),
-                            new XAttribute("Type", criterion.Type),
-                            new XAttribute("State", criterion.State));
-                    })));
-            }
+                .ToAttr(p => p.DefaultPrice)
+                .Element
+                // ApplicabilityCriteria
+                .AddEl(new XElement("ApplicabilityCriteria", (part.ApplicabilityCriteria != null && part.ApplicabilityCriteria.Any()) ? 
+                     part.ApplicabilityCriteria.Select(criterion => {
+                         var attrEl = new XElement("Criterion");
+                         attrEl.SetAttributeValue("Category", criterion.Category);
+                         attrEl.SetAttributeValue("Description", criterion.Description);
+                         attrEl.SetAttributeValue("Type", criterion.Type);
+                         attrEl.SetAttributeValue("State", criterion.State);
+                         return attrEl;
+                     })
+                     : new List<XElement>()) 
+                );
         }
 
         protected override void Importing(FlexibleShippingMethodPart part, ImportContentContext context) {
@@ -145,16 +156,22 @@ namespace Nwazet.Commerce.Drivers {
                .FromAttr(p => p.IncludedShippingAreas)
                .FromAttr(p => p.ExcludedShippingAreas)
                .FromAttr(p => p.DefaultPrice);
+
             // ApplicabilityCriteria
-            part.Record.ApplicabilityCriteria.Clear();
+            if (part.ApplicabilityCriteria != null) { 
+                part.ApplicabilityCriteria.Clear();
+            }
+            else {
+                part.ApplicabilityCriteria = new List<ApplicabilityCriterionRecord>();
+            }
             foreach (var item in element
                 .Element("ApplicabilityCriteria")
                 .Elements("Criterion")
                 .Select(criterion => {
-                    var category = criterion.Attribute("Category").Value;
-                    var description = criterion.Attribute("Description").Value;
-                    var type = criterion.Attribute("Type").Value;
-                    var state = criterion.Attribute("State").Value;
+                    var category = criterion.Attribute("Category") != null ? criterion.Attribute("Category").Value : string.Empty;
+                    var description = criterion.Attribute("Description") != null ? criterion.Attribute("Description").Value : string.Empty;
+                    var type = criterion.Attribute("Type") != null ? criterion.Attribute("Type").Value : string.Empty;
+                    var state = criterion.Attribute("State") != null ? criterion.Attribute("State").Value : string.Empty;
                     var descriptor = _flexibleShippingManager
                         .GetCriteria(category, type);
                     if (descriptor != null) {
@@ -167,7 +184,7 @@ namespace Nwazet.Commerce.Drivers {
                         State = state
                     };
                 })) {
-                part.Record.ApplicabilityCriteria.Add(item);
+                part.ApplicabilityCriteria.Add(item);
             }
         }
     }

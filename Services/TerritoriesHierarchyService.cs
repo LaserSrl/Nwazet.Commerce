@@ -2,6 +2,8 @@
 using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
 using Orchard.ContentManagement.MetaData;
+using Orchard.ContentManagement.Records;
+using Orchard.Data;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using System;
@@ -14,13 +16,19 @@ namespace Nwazet.Commerce.Services {
 
         private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
         private readonly IContentDefinitionManager _contentDefinitionManager;
+        private readonly IRepository<TerritoryPartRecord> _territoriesPartRepository;
+        private readonly IRepository<ContentItemVersionRecord> _civrRepository;
 
         public TerritoriesHierarchyService(
             ITerritoriesRepositoryService territoriesRepositoryService,
-            IContentDefinitionManager contentDefinitionManager) {
+            IContentDefinitionManager contentDefinitionManager,
+            IRepository<TerritoryPartRecord> territoriesPartRepository,
+            IRepository<ContentItemVersionRecord> civrRepository) {
 
             _territoriesRepositoryService = territoriesRepositoryService;
             _contentDefinitionManager = contentDefinitionManager;
+            _territoriesPartRepository = territoriesPartRepository;
+            _civrRepository = civrRepository;
 
             T = NullLocalizer.Instance;
         }
@@ -53,13 +61,25 @@ namespace Nwazet.Commerce.Services {
                         .Record
                         .Children
                         .Where(tpr => tpr.TerritoryInternalRecord != null)
-                        .Select(tpr => tpr.TerritoryInternalRecord.Id));
+                        .Select(tpr => tpr.TerritoryInternalRecord.Id))
+                        ;
                 }
                 if (internalRecords.Any()) {
-                    if (hierarchy.Record
-                        .Territories
-                        .Select(tpr => tpr.TerritoryInternalRecord.Id)
-                        .Any(tir => internalRecords.Contains(tir))) {
+                    var existing = _territoriesPartRepository
+                        .Table
+                        .Join(
+                            _civrRepository.Table,//.Where(civr => civr.Published),
+                            tpr => tpr.Id,
+                            civr => civr.Id,
+                            (tpr, cvr) => new { pub = cvr.Published, ter = tpr })
+                        .Where(x => x.pub)
+                        .Select(x => x.ter)
+                        .Where(tpr =>
+                            // belongs to this hierarchy
+                            tpr.Hierarchy.Id == hierarchy.Record.Id
+                            // and has the same internal record
+                            && internalRecords.Contains(tpr.TerritoryInternalRecord.Id));
+                    if (existing.Any()) {
                         throw new TerritoryInternalDuplicateException(T("The territory being moved is already assigned in the current hierarchy."));
                     }
                 }
@@ -147,11 +167,25 @@ namespace Nwazet.Commerce.Services {
             // check that the internal record does not exist yet in the same hierarchy
             var hierarchyRecord = territory.Record.Hierarchy;
             if (hierarchyRecord != null) {
-                if (hierarchyRecord
-                        .Territories
-                        .Where(tpr => tpr.Id != territory.Record.Id) // exclude current territory
-                        .Select(tpr => tpr.TerritoryInternalRecord)
-                        .Any(tir => tir.Id == internalRecord.Id)) {
+                var existing = _territoriesPartRepository
+                    .Table
+                    .Join(
+                        _civrRepository.Table, //.Where(civr => civr.Published),
+                        tpr => tpr.Id,
+                        civr => civr.Id,
+                        (tpr, cvr) => new  { pub = cvr.Published, ter = tpr })
+                    .Where(x => x.pub)
+                    .Select(x => x.ter)
+                    .Where(tpr =>
+                        tpr != null
+                        // not the territory we are testing
+                        && tpr.Id != territory.Record.Id
+                        // but in the same hierarchy
+                        && tpr.Hierarchy.Id == territory.Record.Hierarchy.Id
+                        // and with the same internal record
+                        && tpr.TerritoryInternalRecord.Id == internalRecord.Id);
+                
+                if (existing.Any()) {
 
                     throw new TerritoryInternalDuplicateException(T("The selected territory is already assigned in the current hierarchy."));
                 }

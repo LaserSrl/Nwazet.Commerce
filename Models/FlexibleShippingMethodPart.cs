@@ -38,6 +38,7 @@ namespace Nwazet.Commerce.Models {
 
         public IList<ApplicabilityCriterionRecord> ApplicabilityCriteria {
             get { return Record.ApplicabilityCriteria; }
+            set { Record.ApplicabilityCriteria = value; }
         }
 
         public IEnumerable<ShippingOption> ComputePrice(
