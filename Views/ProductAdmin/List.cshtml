@@ -6,7 +6,10 @@
 
 @{
     Style.Require("Accordion").AtHead();
+    Script.Require("Select2").AtHead();
+
     Style.Include("product-admin.css?v=1.1", "product-admin.min.css");
+    Style.Require("Select2").AtHead();
 
     var pageTitle = T("Manage Products");
     var createLinkText = T("Create New Product");
@@ -17,7 +20,15 @@
         : (List<ContentTypeDefinition>)Model.AllowedProductTypes;
 
     IEnumerable<string> cultures = Model.Options.Cultures;
-
+    using (Script.Foot()) {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#termsResults').select2({
+                    placeholder: '@T("any (show all)")'
+                });
+            });
+        </script>
+    }
 }
 
 @using (Html.BeginFormAntiForgeryPost()) {
@@ -33,14 +44,14 @@
                 @*@Html.ActionLink(createLinkText.Text, "Create", "Admin", new { Area = "Contents", Id = "Product" }, new { @class = "button primaryAction" })*@
                 @if (AllowedProductTypes.Any()) {
                     @Html.ActionLink(createLinkText.Text,
-                           "CreateProduct",
-                           "ProductAdmin",
-                           new {
-                               Area = "Nwazet.Commerce",
-                               ReturnUrl = Request.RawUrl,
-                               id = AllowedProductTypes.Count() == 1 ? AllowedProductTypes.FirstOrDefault().Name : ""
-                           },
-                           new { @class = "button primaryAction" })
+                    "CreateProduct",
+                    "ProductAdmin",
+                    new {
+                        Area = "Nwazet.Commerce",
+                        ReturnUrl = Request.RawUrl,
+                        id = AllowedProductTypes.Count() == 1 ? AllowedProductTypes.FirstOrDefault().Name : ""
+                    },
+                    new { @class = "button primaryAction" })
                 }
             </div>
         </div>
@@ -163,6 +174,34 @@
                             @Html.SelectOption((DiscountProduct)Model.Options.FilterDiscount, DiscountProduct.NoDiscount, T("No Discount").ToString())
                         </select>
                     </div>
+                    <div class="col-xs-12 col-md-4">
+                        @try {
+                            if (Model.TaxonomiesOptions != null && Model.TaxonomiesOptions.Count > 0) {
+                                <label for="termsResults" class="bulk-filter">@T("Terms")</label>
+                                <select id="termsResults" name="Options.SelectedTermIds" multiple="multiple" style="width:100%;max-width:100%;">
+                                    @{ int optgroupinserted = 0;
+                                        foreach (var taxOption in Model.TaxonomiesOptions) {
+                                            if ((string)taxOption.Key.ToString() == "-1") {
+                                                if (optgroupinserted > 0) {
+                                                    Html.Raw("</optgroup>");
+                                                }
+                                                optgroupinserted = 1;
+                                                @Html.Raw("<optgroup label=\"" + (string)taxOption.Value + "\">");
+                                            }
+                                            else {
+                                                <option value="@taxOption.Key.ToString()" @(Model.Options.SelectedTermIds != null && Model.Options.SelectedTermIds.Contains(taxOption.Key) ? "selected=\"selected\"" : "")>@taxOption.Value</option>
+                                            }
+                                        }
+                                        if (optgroupinserted > 0) {
+                                            @Html.Raw("</optgroup>");
+                                        }
+                                    }
+                                </select>
+                                            }
+                                        }
+                                        catch { }
+                    </div>
+
                 </div>
             </div>
         </div>
