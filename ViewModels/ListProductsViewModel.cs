@@ -36,6 +36,8 @@ namespace Nwazet.Commerce.ViewModels {
         public string Sku { get; set; }
         public string SelectedCulture { get; set; }
         public string SelectedFilter { get; set; }
+        public List<int> SelectedTermIds { get; set; }
+
         public string PriceFrom { get; set; }
         public string PriceTo { get; set; }
         public string InventoryFrom { get; set; }
