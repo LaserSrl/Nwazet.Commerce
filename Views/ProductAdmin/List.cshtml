@@ -23,6 +23,13 @@
     using (Script.Foot()) {
         <script type="text/javascript">
             $(document).ready(function () {
+                $('#applyFiltersButton').click(
+                    function (e) {
+                        var newOption = new Option("None", "0", false, true);
+                        if ($('#termsResults').find(':selected').length == 0) {
+                            $('#termsResults').append(newOption).trigger('change');
+                        }
+                    });
                 $('#termsResults').select2({
                     placeholder: '@T("any (show all)")'
                 });
@@ -220,7 +227,7 @@
             </div>
         </div>
         <div class="box-footer align-right padding-right-35">
-            <button type="submit" name="submit.Filter" value="yes please">@T("Apply")</button>
+            <button type="submit" id="applyFiltersButton" name="submit.Filter" value="yes please">@T("Apply")</button>
         </div>
     </div>
 
