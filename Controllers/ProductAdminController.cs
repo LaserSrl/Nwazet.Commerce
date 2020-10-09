@@ -396,7 +396,9 @@ namespace Nwazet.Commerce.Controllers {
                 routeValues["Options.ContentsStatus"] = options.ContentsStatus;
                 routeValues["Options.SelectedCulture"] = options.SelectedCulture;
                 for (int i = 0; i < (options.SelectedTermIds != null ? options.SelectedTermIds.Count() : 0); i++) {
-                    routeValues.Add("Options.SelectedTermIds[" + i + "]", options.SelectedTermIds[i]); //todo: don't hard-code the key
+                    if (options.SelectedTermIds[i] > 0) {
+                        routeValues.Add("Options.SelectedTermIds[" + i + "]", options.SelectedTermIds[i]); //todo: don't hard-code the key
+                    }
                 }
 
                 if (String.IsNullOrWhiteSpace(options.Title)) {
@@ -538,8 +540,13 @@ namespace Nwazet.Commerce.Controllers {
             var listContentTypes = GetAllowedProductTypes();
 
             foreach (var ct in listContentTypes) {
-                var taxFields = _contentDefinitionService.GetType(ct.Name).Fields.Where(w =>
-                    w._Definition.FieldDefinition.Name == "TaxonomyField");
+                var contentType = _contentDefinitionService.GetType(ct.Name);
+                var taxFields = contentType.Fields.Where(w =>
+                    w._Definition.FieldDefinition.Name == "TaxonomyField").ToList(); //TaxonomyFields within the content
+                var taxPartFields = contentType.Parts
+                    /*.Where(w => w._Definition.PartDefinition.Fields.Any(x => x.Name == "TaxonomyField"))*/
+                    .SelectMany(x => x.PartDefinition.Fields).Where(x => x.FieldDefinition.Name == "TaxonomyField"); //TaxonomyFields within the parts of the content
+                taxFields.AddRange(taxPartFields);
                 foreach (var tf in taxFields) {
                     var taxName = tf.Settings.GetModel<TaxonomyFieldSettings>().Taxonomy;
                     if (string.IsNullOrWhiteSpace(taxName)) {
