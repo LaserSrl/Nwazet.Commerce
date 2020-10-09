@@ -450,7 +450,7 @@ msgstr "Messaggio di fine inventario"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
 msgid "This message will be displayed if the inventory is zero or less. Leave blank for the default message to be used."
-msgstr "Questo messaggio sarà mostrato se l'inventraio è minore o uguale a zero. Lasciandolo vuoto verrà usato un messaggio di default."
+msgstr "Questo messaggio sarà mostrato se l'inventario è minore o uguale a zero. Lasciandolo vuoto verrà usato un messaggio di default."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/InventoryBySKUProduct.cshtml"
 msgid "Changes to this product's inventory will be applied to the other products as well."
@@ -890,7 +890,7 @@ msgstr "QUesto permette di associare un ordine all'utente, ma costringerà l'ute
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.cshtml"
 msgid "This message will be displayed if the inventory is zero or less. Leave blank for the default message to be used."
-msgstr "Questo messaggio sarà mostrato se l'inventraio è minore o uguale a zero. Lasciandolo vuoto verrà usato un messaggio di default."
+msgstr "Questo messaggio sarà mostrato se l'inventario è minore o uguale a zero. Lasciandolo vuoto verrà usato un messaggio di default."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.cshtml"
 msgid "Weight"
