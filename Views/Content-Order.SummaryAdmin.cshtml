@@ -35,9 +35,9 @@
 
         @if (hasManageOrderPermission) {
             @Display(Model.Actions)
-            @Html.ItemEditLink(T("Edit").Text, contentItem)@T(" | ")
+            @Html.ItemEditLink(T("Edit").Text, contentItem)@T("  |  ")
             if (order.Status == OrderPart.Archived) {
-                @Html.Link(T("Unarchive").Text, Url.Action("Unarchive", "OrderAdmin", new {@id = order.Id, returnUrl}), new {itemprop = "UnsafeUrl"})@T(" | ")
+                @Html.Link(T("Unarchive").Text, Url.Action("Unarchive", "OrderAdmin", new {@id = order.Id, returnUrl}), new {itemprop = "UnsafeUrl"})@T("  |  ")
                 @Html.Link(T("Delete").Text, Url.ItemRemoveUrl(contentItem, new {returnUrl}), new {itemprop = "RemoveUrl UnsafeUrl"})
             }
             else {

@@ -426,7 +426,7 @@ msgstr "Categoria IVA"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
 msgid "allow back order"
-msgstr "Permetti ordini arretrati"
+msgstr "permetti ordini ad inventario 0"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
 msgid "Changes to the inventory value will propagate to other versions of this product."
@@ -601,6 +601,10 @@ msgid "Cancel"
 msgstr "Annulla"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
+msgid "Catalog Price"
+msgstr "Prezzo da Catalogo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "Charged to:"
 msgstr "Addebitato a:"
 
@@ -693,6 +697,10 @@ msgid "Quantity"
 msgstr "Quantità"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
+msgid "Selling Price"
+msgstr "Prezzo di Vendita"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "Shipping to:"
 msgstr "Spedizione a:"
 
@@ -739,6 +747,10 @@ msgstr "Associa questo ordine con un ordine di acquisto, una fattura o un altro 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Metadata.cshtml"
 msgid "ID: {0}"
 msgstr "ID: {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Metadata.cshtml"
+msgid "Order Key: {0}"
+msgstr "Chiave dell'ordine: {0}"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Metadata.cshtml"
 msgid "Order:"
@@ -798,7 +810,7 @@ msgstr "Questo permette di associare un ordine all'utente, ma costringerà l'ute
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.cshtml"
 msgid "allow back order"
-msgstr "Permetti ordini arretrati"
+msgstr "permetti ordini ad inventario 0"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.cshtml"
 msgid "authentication required"
@@ -899,6 +911,10 @@ msgstr "Selezionando questo flag, il prodotto digitale sarà considerato disponi
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Inventory.cshtml"
 msgid "Inventory"
 msgstr "Inventario"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Inventory.cshtml"
+msgid "This digital product will be considered to be available in a limited quantity, based on the inventory."
+msgstr "Questo prodotto digitale sarà considerato disponibile in quantità limitata, in base all'inventario."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Shipping.cshtml"
 msgid "Shipping"
@@ -1044,6 +1060,18 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductVatConfigu
 msgid "VAT Category."
 msgstr "Categoria IVA."
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ShippingMethodAreas.cshtml"
+msgid "Areas for which this method is not valid:"
+msgstr "Aree per cui questo metodo non è valido:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ShippingMethodAreas.cshtml"
+msgid "Areas for which this method is valid:"
+msgstr "Aree per cui questo metodo è valido:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ShippingMethodAreas.cshtml"
+msgid "Use this to restrict what areas this method is available from. For example, an international shipping method would have World included, but US excluded, so that it can't be selected for domestic shipping."
+msgstr "Usa questo per limitare le aree in cui quest metodo sia disponibile. Per esempio, un metodo di spedizione internazionale includerebbe il Mondo, ma escluderebbe gli USA, in modo da non potere essere selzionato per spedizioni sul territorio statunitense."
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/SizeBasedShippingMethod.cshtml"
 msgid "Areas for which this method is not valid:"
 msgstr "Aree per cui questo metodo non è valido:"
@@ -1131,6 +1159,10 @@ msgstr "Chiave pubblica negoziante Stripe"
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/StripeSettings.cshtml"
 msgid "Stripe Merchant Secret Key"
 msgstr "Chiave segreta negoziante Stripe"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/TerritoryHierarchyTerritoryManager.cshtml"
+msgid "Manage territories"
+msgstr "Gestisci territori"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/TerritoryHierarchyTerritoryManager.cshtml"
 msgid "Manage territories."
@@ -1421,6 +1453,10 @@ msgid "Weight padding (ounces)"
 msgstr "Peso aggiuntivo (once)"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/VatConfiguration.cshtml"
+msgid " ({0} %)"
+msgstr "({0} %)"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/VatConfiguration.cshtml"
 msgid "{0} %"
 msgstr "{0} %"
 
@@ -1435,6 +1471,10 @@ msgstr "Spunta per impostare questa categoria come default."
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/VatConfiguration.cshtml"
 msgid "Default Rate for territories outside the hierarchy"
 msgstr "Aliquota di default per territori fuori dalla gerarchia"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/VatConfiguration.cshtml"
+msgid "No specific configuration"
+msgstr "Nessuna configurazione specifica"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/VatConfiguration.cshtml"
 msgid "Priority"
@@ -1689,6 +1729,10 @@ msgid "Manage Hierarchy"
 msgstr "Gestisci Gerarchia"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/HierarchyTerritoriesAdmin/Index.cshtml"
+msgid "Manage Territories"
+msgstr "Gestisci Territori"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/HierarchyTerritoriesAdmin/Index.cshtml"
 msgid "Save All"
 msgstr "Salva tutto"
 
@@ -1809,6 +1853,10 @@ msgid "You may view this order at a later time by going to this address: <a href
 msgstr "Potrai visualizzare i dettagli del tuo ordine a questo indirizzo: <a href=\"{0}\">{0}</a>, usando queta password: \"{1}\"."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "Actions"
+msgstr "Azioni"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Actions:"
 msgstr "Azioni:"
 
@@ -1833,8 +1881,32 @@ msgid "Choose action..."
 msgstr "Scegliere l'azione..."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "Content filtering"
+msgstr "Filtro contenuti"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "Content sorting"
+msgstr "Ordinamento contenuti"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "Manage content"
+msgstr "Gestire contenuto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Manage Orders"
 msgstr "Gestisci Ordini"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "Name or Surname or E-mail"
+msgstr "Nome o Cognome o E-Mail"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "Order Key"
+msgstr "Chiave dell'ordine"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "Order Key of Order"
+msgstr "Chiave dell'ordine"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Ordered by"
@@ -1842,11 +1914,19 @@ msgstr "Ordinato da"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "recently created"
-msgstr "creato di recente"
+msgstr "Creato di recente"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "Recently created"
+msgstr "Creato di recente"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "Recently modified"
+msgstr "Modificato di recente"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "recently modified"
-msgstr "modificato di recente"
+msgstr "Modificato di recente"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Search:"
@@ -1856,6 +1936,10 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Show"
 msgstr "Visualizza"
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
+msgid "User"
+msgstr "Utente"
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderSummaryAdmin.cshtml"
 msgid "{0} &times; {1}"
 msgstr "{0} &times; {1}"
@@ -1863,6 +1947,10 @@ msgstr "{0} &times; {1}"
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderSummaryAdmin.cshtml"
 msgid "Ordered {0}"
 msgstr "Ordinato {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/OrderSummaryAdmin.cshtml"
+msgid "Ordered {0} ({1})"
+msgstr "Ordinato {0} ({1})"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Bundle.cshtml"
 msgid "Products included in this bundle:"
@@ -1976,33 +2064,197 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/CreatableTypeList.cshtml"
 msgid "Create New Product"
 msgstr "Crea Nuovo Prodotto"
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/CreatableTypeList.cshtml"
+msgid "Select product type:"
+msgstr "Selezionare il tipo di prodotto"
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/CreateProduct.cshtml"
 msgid "Create New {0}"
 msgstr "Crea Nuovo {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Advanced filters"
+msgstr "Filtri avanzati"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "All versions"
+msgstr "Tutte le versioni"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Any (show all)"
+msgstr "Qualsiasi (visualizza tutti)"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Apply"
 msgstr "Applica"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Available"
+msgstr "Disponibile"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Content creation"
+msgstr "Creazione del contenuto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Content filtering"
+msgstr "Filtro contenuti"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Content sorting"
+msgstr "Ordinamento contenuti"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Create New Product"
 msgstr "Crea Nuovo Prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Culture"
+msgstr "Cultura"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Discount"
+msgstr "Sconto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "From"
+msgstr "Da"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Highest price"
+msgstr "Prezzo massimo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Highest product quantity"
+msgstr "Quantità prodotto massimo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Insert a decimal number"
+msgstr "Inserire un numero decimale"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Insert an integer number"
+msgstr "Inserire un numero intero"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Inventory"
+msgstr "Inventario"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Latest"
+msgstr "Ultimo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Lowest price"
+msgstr "Prezzo minimo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Lowest product quantity"
+msgstr "Quantità prodotto minimo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Manage content"
+msgstr "Gestire contenuto"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Manage Products"
 msgstr "Gestisci Prodotti"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "No Discount"
+msgstr "Nessuno Sconto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Ordered by"
 msgstr "Ordinato da"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Price"
+msgstr "Prezzo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Price Product From"
+msgstr "Prezzo Prodotto Da"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Price Product To"
+msgstr "Prezzo Prodotto A"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Product identifier"
+msgstr "Identificativo del prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Product Identifier"
+msgstr "Identificativo del Prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Product Quantity From"
+msgstr "Quantità Prodotto Da"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Product Quantity To"
+msgstr "Quantità Prodotto A"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Product Type"
+msgstr "Tipo di Prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Product type"
+msgstr "Tipo di prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Published"
+msgstr "Pubblicato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Recently created"
+msgstr "Creato di recente"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "recently created"
-msgstr "creato di recente"
+msgstr "Creato di recente"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "recently modified"
-msgstr "modificato di recente"
+msgstr "Modificato di recente"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Recently modified"
+msgstr "Modificato di recente"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Sku"
+msgstr "Sku"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Status"
+msgstr "Stato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Title"
+msgstr "Titolo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Title of product"
+msgstr "Titolo del prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Title of Product"
+msgstr "Titolo del Prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Title:"
+msgstr "Titolo:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "To"
+msgstr "A"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Unpublished"
+msgstr "Non pubblicato"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAttributesAdminList.cshtml"
 msgid "Delete"
@@ -2161,6 +2413,10 @@ msgid "Delete"
 msgstr "Elimina"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShippingAdmin/Index.cshtml"
+msgid "Edit"
+msgstr "Modifica"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShippingAdmin/Index.cshtml"
 msgid "Manage Shipping Methods"
 msgstr "Gestisci Metodi di Spedizione"
 
@@ -2210,11 +2466,11 @@ msgstr "Articolo"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
 msgid "Back order is allowed"
-msgstr "Sono permessi ordini arretrati"
+msgstr "Sono permessi ordini ad inventario 0"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
 msgid "Back order is not allowed"
-msgstr "Non sono permessi ordini arretrati"
+msgstr "Non sono permessi ordini ordini ad inventario 0"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
 msgid "Click <a href=\"{0}\">here</a> to choose a different shipping option."
@@ -2282,11 +2538,11 @@ msgstr "Non hai oggetti nel carrello."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.Summary.cshtml"
 msgid "Back order is allowed"
-msgstr "Sono permessi ordini arretrati"
+msgstr "Sono permessi ordini ad inventario 0"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.Summary.cshtml"
 msgid "Back order is not allowed"
-msgstr "Non sono permessi ordini arretrati"
+msgstr "Non sono permessi ordini ad inventario 0"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.Summary.cshtml"
 msgid "Only {0} in stock. {1}."
@@ -2523,6 +2779,10 @@ msgstr "Aggiungi un nuovo {0}"
 msgctxt "~/Modules/Nwazet.Commerce/Views/TaxAdmin/Index.cshtml"
 msgid "Delete"
 msgstr "Elimina"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/TaxAdmin/Index.cshtml"
+msgid "Edit"
+msgstr "Modifica"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/TaxAdmin/Index.cshtml"
 msgid "Manage Taxes"
@@ -2881,6 +3141,10 @@ msgid "Orders successfully archived."
 msgstr "Ordini archiviati con successo."
 
 msgctxt "Nwazet.Commerce.Controllers.OrderSslController"
+msgid "No Status"
+msgstr "Nessuno Stato"
+
+msgctxt "Nwazet.Commerce.Controllers.OrderSslController"
 msgid "Sign In to visualize your order history."
 msgstr "Fai login per visualizzare lo storico dei tuoi ordini."
 
@@ -2925,6 +3189,10 @@ msgid "Cannot generate reports"
 msgstr "Impossibile generare i report."
 
 msgctxt "Nwazet.Commerce.Controllers.ReportController"
+msgid "Check the format of the dates"
+msgstr "Controlla il formato delle date"
+
+msgctxt "Nwazet.Commerce.Controllers.ReportController"
 msgid "Country"
 msgstr "Stato"
 
@@ -2947,6 +3215,10 @@ msgstr "Report {0} non trovato"
 msgctxt "Nwazet.Commerce.Controllers.ReportController"
 msgid "Shipping"
 msgstr "Spedizione"
+
+msgctxt "Nwazet.Commerce.Controllers.ReportController"
+msgid "Start Date ({0}) cannot be greater than the End Date ({1})"
+msgstr "La Data di Inizio ({0}) non può essere maggiore della Data di Fine ({1})"
 
 msgctxt "Nwazet.Commerce.Controllers.ReportController"
 msgid "SubTotal"
@@ -3756,6 +4028,14 @@ msgctxt "Nwazet.Commerce.Menus.TerritoriesAdminMenu"
 msgid "Territories"
 msgstr "Territori"
 
+msgctxt "Nwazet.Commerce.Migrations.CommerceMigrations"
+msgid "Effective Price"
+msgstr "Prezzo Effettivo"
+
+msgctxt "Nwazet.Commerce.Migrations.CommerceMigrations"
+msgid "The effective unit price for the product."
+msgstr "Il prezzo unitario effettivo per il prodotto."
+
 msgctxt "Nwazet.Commerce.Models.CreditCardCharge"
 msgid "Card **** **** **** {0} expiring {1}/{2}."
 msgstr "Carta **** **** **** {0} con scadenza {1}/{2}."
@@ -4031,6 +4311,10 @@ msgstr "Configurazione della Categoria IVA"
 msgctxt "Nwazet.Commerce.Services.VatOrderAdditionalInformationProvider"
 msgid "Price before VAT"
 msgstr "Prezzo prima dell'IVA"
+
+msgctxt "Nwazet.Commerce.Services.VatOrderAdditionalInformationProvider"
+msgid "Taxable"
+msgstr "Imponibile"
 
 msgctxt "Nwazet.Commerce.Services.VatOrderAdditionalInformationProvider"
 msgid "VAT Rate"
@@ -4481,6 +4765,10 @@ msgid "Content Items"
 msgstr "Contenuti"
 
 msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
+msgid "Frontend Price as String"
+msgstr "Prezzo Frontend come Stringa"
+
+msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
 msgid "Is Digital"
 msgstr "È digitale"
 
@@ -4499,6 +4787,10 @@ msgstr "SKU"
 msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
 msgid "The fixed shipping cost of the product."
 msgstr "Il costo di spedizione fisso del prodotto."
+
+msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
+msgid "The price of the product as showsn on frontend (it may be after taxes)."
+msgstr "Il prezzo del prodotto come mostrato sul frontend (potrebbe essere al netto delle tasse)."
 
 msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
 msgid "The price of the product."

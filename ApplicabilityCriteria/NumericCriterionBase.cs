@@ -21,14 +21,14 @@ namespace Nwazet.Commerce.ApplicabilityCriteria {
             if (op == NumericOperator.Between || op == NumericOperator.NotBetween) {
                 min = decimal.Parse(
                     Convert.ToString(context.State.Min),
-                    CultureInfo.InvariantCulture);
+                    CultureInfo.CurrentCulture);
                 max = decimal.Parse(
                     Convert.ToString(context.State.Max),
-                    CultureInfo.InvariantCulture);
+                    CultureInfo.CurrentCulture);
             } else {
                 min = max = decimal.Parse(
                     Convert.ToString(context.State.Value),
-                    CultureInfo.InvariantCulture);
+                    CultureInfo.CurrentCulture);
             }
             // get the comparison func
             return Test(op, min, max);

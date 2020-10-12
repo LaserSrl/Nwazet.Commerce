@@ -12,21 +12,11 @@
     _contentManager = WorkContext.Resolve<IContentManager>();
 }
 
-@helper DisplayTree(TerritoryPart part, IList<VatConfigurationTerritorySummaryViewModel> subitem) {
-    <div class="vatHierarchySummaryRow" style="margin-left:15px">
-        @{
-            decimal rate = 0;
-            var territoryVM = subitem.Where(s => s.Item.Id == part.ContentItem.Id).FirstOrDefault();
-            if (territoryVM != null) {
-                rate = territoryVM.Rate;
-            }
-        }
-
-        @if (((territoryVM == null && part.Children.Count() > 0) || rate > 0) && subitem.Count() != 0) {
-            @Html.ItemEditLink(part.ContentItem.As<TitlePart>().Title, part.ContentItem) @T(" ({0} %)", rate)
-            foreach (var child in part.Children) {
-                @DisplayTree(child.As<TerritoryPart>(), subitem);
-            }
+@helper DisplayTree(VatConfigurationTerritorySummaryViewModel item) { 
+    <div class="vatTerritorySummaryRow" style="margin-left:15px">
+        @Html.ItemEditLink(item.Name, item.Item) @(item.Rate >= 0 ? T(" ({0} %)", item.Rate) : T("No specific configuration"))
+        @foreach(var subitem in item.SubRegions) {
+            @DisplayTree(subitem)
         }
     </div>
 }
@@ -56,9 +46,9 @@
         <span class="hint">@T("The priority to apply this tax. The highest priority wins. This makes it possible to create a hierarchy of taxes.")</span>
     </div>
     <div>
-        @Html.LabelFor(m => m.DefaultRate, T("Default Rate for territories outside the hierarchy").Text, new { @class = "sub" })
-        @Html.TextBoxFor(m => m.DefaultRate, new { @class = "text text-small", @type = "number" })
-        <span class="hint">@T("The default percent rate for this VAT that will be applied when the destination for products is not found in any of the hierarchies for territories selected for this VAT configuration.")</span>
+        @*@Html.LabelFor(m => m.DefaultRate, T("Default Rate for territories outside the hierarchy").Text, new { @class = "sub" })*@
+        @Html.HiddenFor(m => m.DefaultRate)
+        @*<span class="hint">@T("The default percent rate for this VAT that will be applied when the destination for products is not found in any of the hierarchies for territories selected for this VAT configuration.")</span>*@
     </div>
     <div>
         @if (Model.ItemizedSummary.Any()) {
@@ -68,14 +58,8 @@
                 <div class="vatConfigurationSummaryTable">
                     <div class="vatHierarchySummaryRow" style="margin-left:15px">
                         @Html.ItemEditLink(item.Name, item.Item) @T(" ({0} %)", item.Rate)
-
-                        @{
-                           var territories = _contentManager.Query<TerritoryPart,TerritoryPartRecord>()
-                                 .Where(tpr => tpr.Hierarchy.Id == item.Item.Id && tpr.ParentTerritory == null)
-                                 .List();
-                            foreach (var subitem in territories) {
-                                @DisplayTree(subitem.As<TerritoryPart>(), item.SubRegions);
-                            }
+                        @foreach(var subitem in item.SubRegions) {
+                            @DisplayTree(subitem)
                         }
                     </div>
                 </div>

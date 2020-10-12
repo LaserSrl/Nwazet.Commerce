@@ -155,6 +155,12 @@
     <Content Include="Styles\bundle.nwazet-commerce-admin.css" />
     <Content Include="Styles\attribute.nwazet-commerce-admin.css" />
     <Content Include="Styles\images\move.gif" />
+    <Content Include="Styles\product-admin.css">
+      <DependentUpon>product-admin.less</DependentUpon>
+    </Content>
+    <Content Include="Styles\product-admin.min.css">
+      <DependentUpon>product-admin.css</DependentUpon>
+    </Content>
     <Content Include="Styles\reports-admin.css" />
     <Content Include="Styles\territory-hierarchies-admin.css" />
     <Content Include="Styles\territory-hierarchies-admin.min.css">
@@ -182,7 +188,9 @@
       <DependentUpon>compilerconfig.json</DependentUpon>
     </None>
     <None Include="packages.config" />
+    <None Include="Styles\product-admin.less" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethodCriteria.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Inventory.cshtml" />
@@ -276,6 +284,7 @@
     <Compile Include="Drivers\InventoryBySKUSiteSettingsPartDriver.cs" />
     <Compile Include="Drivers\InventoryPartDriver.cs" />
     <Compile Include="Drivers\OrderPartDriver.cs" />
+    <Compile Include="Drivers\PricePartDriver.cs" />
     <Compile Include="Drivers\ProductPartWishListDriver.cs" />
     <Compile Include="Drivers\ProductSettingsPartDriver.cs" />
     <Compile Include="Drivers\ProductsListPartDriver.cs" />
@@ -328,12 +337,15 @@
     <Compile Include="Handlers\AttributePartHandler.cs" />
     <Compile Include="Handlers\AttributesPartHandler.cs" />
     <Compile Include="Handlers\ECommerceCurrencySiteSettingsPartHandler.cs" />
+    <Compile Include="Handlers\FlexibleShippingMethodPartAuthorizationEventHandler.cs" />
     <Compile Include="Handlers\FlexibleShippingMethodPartHandler.cs" />
     <Compile Include="Handlers\HierarchyVatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\InventoryBySKUSiteSettingsPartHandler.cs" />
     <Compile Include="Handlers\InventoryPartHandler.cs" />
     <Compile Include="Handlers\LocalizationAttributePartHandler.cs" />
+    <Compile Include="Handlers\OrderPartAuthorizationEventHandler.cs" />
     <Compile Include="Handlers\OrderPartHandler.cs" />
+    <Compile Include="Handlers\PricePartHandler.cs" />
     <Compile Include="Handlers\ProductPartVersioningHandler.cs" />
     <Compile Include="Handlers\ProductSettingsPartHandler.cs" />
     <Compile Include="Handlers\ProductVatConfigurationPartHandler.cs" />
@@ -347,6 +359,7 @@
     <Compile Include="Handlers\StripeSettingsPartHandler.cs" />
     <Compile Include="Handlers\DiscountPartHandler.cs" />
     <Compile Include="Handlers\SizeBasedShippingMethodPartHandler.cs" />
+    <Compile Include="Handlers\VatConfigurationPartAuthorizationEventHandler.cs" />
     <Compile Include="Handlers\VatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\WeightBasedShippingMethodPartHandler.cs" />
     <Compile Include="Handlers\ProductPartHandler.cs" />
@@ -398,6 +411,8 @@
     <Compile Include="Models\InventoryPartRecord.cs" />
     <Compile Include="Models\OrderVatRecord.cs" />
     <Compile Include="Models\PersistentShoppingCart.cs" />
+    <Compile Include="Models\PricePart.cs" />
+    <Compile Include="Models\PricePartRecord.cs" />
     <Compile Include="Models\ProductsListPart.cs" />
     <Compile Include="Models\OrderEvent.cs" />
     <Compile Include="Models\OrderPart.cs" />
@@ -510,6 +525,7 @@
     <Compile Include="Services\ICartLifeCycleEventHandler.cs" />
     <Compile Include="Services\IFlexibleShippingManager.cs" />
     <Compile Include="Services\ILocalStorageSettings.cs" />
+    <Compile Include="Services\ICartExtensionProvider.cs" />
     <Compile Include="Services\InventoriesAreNotSynchronizedBySKU.cs" />
     <Compile Include="Services\InventoryBySKUProductInventoryService.cs" />
     <Compile Include="Services\IOrderAdditionalInformationProvider.cs" />
@@ -822,6 +838,10 @@
       <Project>{66fccd76-2761-47e3-8d11-b45d0001ddaa}</Project>
       <Name>Orchard.Autoroute</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Orchard\src\Orchard.Web\Modules\Orchard.ContentTypes\Orchard.ContentTypes.csproj">
+      <Project>{0e7646e8-fe8f-43c1-8799-d97860925ec4}</Project>
+      <Name>Orchard.ContentTypes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Orchard\src\Orchard.Web\Modules\Orchard.Fields\Orchard.Fields.csproj">
       <Project>{3787dde5-e5c8-4841-bda7-dcb325388064}</Project>
       <Name>Orchard.Fields</Name>
@@ -853,6 +873,10 @@
     <ProjectReference Include="..\Orchard\src\Orchard.Web\Modules\Orchard.SecureSocketsLayer\Orchard.SecureSocketsLayer.csproj">
       <Project>{36b82383-d69e-4897-a24a-648babdf80ec}</Project>
       <Name>Orchard.SecureSocketsLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Orchard\src\Orchard.Web\Modules\Orchard.Taxonomies\Orchard.Taxonomies.csproj">
+      <Project>{E649EA64-D213-461B-87F7-D67035801443}</Project>
+      <Name>Orchard.Taxonomies</Name>
     </ProjectReference>
     <ProjectReference Include="..\Orchard\src\Orchard.Web\Modules\Orchard.Tokens\Orchard.Tokens.csproj">
       <Project>{6f759635-13d7-4e94-bcc9-80445d63f117}</Project>
