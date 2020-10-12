@@ -258,8 +258,8 @@ namespace Nwazet.Commerce.Drivers {
 
             if (previousStatus != part.Status) {
                 eventText += T("Status changed from {0} to {1}. ",
-                        _orderService.StatusLabels.FirstOrDefault(s=>s.Key.StatusName == previousStatus),
-                        _orderService.StatusLabels.FirstOrDefault(s => s.Key.StatusName == part.Status)).Text;
+                        _orderService.StatusLabels.FirstOrDefault(s=>s.Key.StatusName == previousStatus).Value,
+                        _orderService.StatusLabels.FirstOrDefault(s => s.Key.StatusName == part.Status).Value).Text;
                 _workflowManager.TriggerEvent("OrderStatusChanged", part,
                     () => new Dictionary<string, object> {
                         {"Content", part},
