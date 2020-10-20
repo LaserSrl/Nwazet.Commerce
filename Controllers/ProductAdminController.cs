@@ -6,6 +6,7 @@ using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services;
 using Orchard;
 using Orchard.ContentManagement;
+using Orchard.ContentTypes.Services;
 using Orchard.Core.Common.Models;
 using Orchard.Core.Contents.ViewModels;
 using Orchard.DisplayManagement;
@@ -30,6 +31,11 @@ using Nwazet.Commerce.ViewModels;
 using Orchard.Core.Title.Models;
 using Orchard.Localization.Services;
 using System.Globalization;
+using Orchard.Taxonomies.Settings;
+using Orchard.Taxonomies.Services;
+using Orchard.Localization.Models;
+using Orchard.Taxonomies.Helpers;
+using Orchard.Taxonomies.Models;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Commerce")]
@@ -48,7 +54,9 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ICultureManager _cultureManager;
         private readonly ICultureFilter _cultureFilter;
         private readonly IEnumerable<IPriceProvider> _priceProviders;
-
+        private readonly IContentDefinitionService _contentDefinitionService;
+        private readonly ITaxonomyService _taxonomyService;
+        private readonly ILocalizationService _localizationService;
 
         public ProductAdminController(
             IOrchardServices services,
@@ -63,8 +71,11 @@ namespace Nwazet.Commerce.Controllers {
             INotifier notifier,
             ITransactionManager transactionManager,
             IContentDefinitionManager contentDefinitionManager,
+            IContentDefinitionService contentDefinitionService,
             ICultureManager cultureManager,
             ICultureFilter cultureFilter,
+            ITaxonomyService taxonomyService,
+            ILocalizationService localizationService,
             IEnumerable<IPriceProvider> priceProviders) {
 
             Services = services;
@@ -83,7 +94,9 @@ namespace Nwazet.Commerce.Controllers {
             _cultureManager = cultureManager;
             _cultureFilter = cultureFilter;
             _priceProviders = priceProviders;
-
+            _contentDefinitionService = contentDefinitionService;
+            _taxonomyService = taxonomyService;
+            _localizationService = localizationService;
             _allowedProductType = new Lazy<IEnumerable<ContentTypeDefinition>>(GetAllowedProductTypes);
         }
 
@@ -236,17 +249,17 @@ namespace Nwazet.Commerce.Controllers {
             var versionOptions = VersionOptions.Latest;
             switch (model.Options.ContentsStatus) {
                 case ContentsStatus.Published:
-                versionOptions = VersionOptions.Published;
-                break;
+                    versionOptions = VersionOptions.Published;
+                    break;
                 case ContentsStatus.Draft:
-                versionOptions = VersionOptions.Draft;
-                break;
+                    versionOptions = VersionOptions.Draft;
+                    break;
                 case ContentsStatus.AllVersions:
-                versionOptions = VersionOptions.AllVersions;
-                break;
+                    versionOptions = VersionOptions.AllVersions;
+                    break;
                 default:
-                versionOptions = VersionOptions.Latest;
-                break;
+                    versionOptions = VersionOptions.Latest;
+                    break;
             }
 
             var query = _contentManager.Query(versionOptions, AllowedProductTypes.Select(ctd => ctd.Name).ToArray());
@@ -325,30 +338,35 @@ namespace Nwazet.Commerce.Controllers {
             switch (model.Options.FilterDiscount) {
                 case DiscountProduct.Discount:
                     query = query
-                        .Where<ProductPartVersionRecord>(o=>o.DiscountPrice >= 0 && o.DiscountPrice < o.Price);
-                break;
+                        .Where<ProductPartVersionRecord>(o => o.DiscountPrice >= 0 && o.DiscountPrice < o.Price);
+                    break;
                 case DiscountProduct.NoDiscount:
                     query = query
                         .Where<ProductPartVersionRecord>(o => o.DiscountPrice < 0 || o.DiscountPrice >= o.Price);
-                break;
+                    break;
+            }
+            // terms query
+            if (model.Options.SelectedTermIds != null && model.Options.SelectedTermIds.Count() > 0) {
+                var termIds = model.Options.SelectedTermIds;
+                query = query.Join<TermsPartRecord>().Where(x => x.Terms.Any(a => termIds.Contains(a.TermRecord.Id)));
             }
 
             switch (model.Options.OrderBy) {
                 case ContentsProduct.Modified:
                     query.OrderByDescending<CommonPartRecord>(cr => cr.ModifiedUtc);
-                break;
+                    break;
                 case ContentsProduct.Created:
                     query.OrderByDescending<CommonPartRecord>(cr => cr.CreatedUtc);
-                break;
+                    break;
                 case ContentsProduct.Title:
                     query.OrderByDescending<TitlePartRecord>(p => p.Title);
-                break;
+                    break;
                 case ContentsProduct.Price:
                     query.OrderByDescending<ProductPartVersionRecord>(p => p.Price);
-                break;
+                    break;
                 case ContentsProduct.Inventory:
                     query.OrderByDescending<ProductPartVersionRecord>(p => p.Inventory);
-                break;
+                    break;
             }
 
             var pagerShape = Shape.Pager(pager).TotalItemCount(query.Count());
@@ -361,7 +379,8 @@ namespace Nwazet.Commerce.Controllers {
                 .ContentItems(list)
                 .Pager(pagerShape)
                 .Options(model.Options)
-                .AllowedProductTypes(AllowedProductTypes.ToList());
+                .AllowedProductTypes(AllowedProductTypes.ToList())
+                .TaxonomiesOptions(GetTaxonomiesOptions());
 
             // Casting to avoid invalid (under medium trust) reflection over the protected View method and force a static invocation.
             return View((object)viewModel);
@@ -376,6 +395,11 @@ namespace Nwazet.Commerce.Controllers {
                 routeValues["Options.OrderBy"] = options.OrderBy;
                 routeValues["Options.ContentsStatus"] = options.ContentsStatus;
                 routeValues["Options.SelectedCulture"] = options.SelectedCulture;
+                for (int i = 0; i < (options.SelectedTermIds != null ? options.SelectedTermIds.Count() : 0); i++) {
+                    if (options.SelectedTermIds[i] > 0) {
+                        routeValues.Add("Options.SelectedTermIds[" + i + "]", options.SelectedTermIds[i]); //todo: don't hard-code the key
+                    }
+                }
 
                 if (String.IsNullOrWhiteSpace(options.Title)) {
                     routeValues.Remove("Options.Title");
@@ -505,7 +529,59 @@ namespace Nwazet.Commerce.Controllers {
 
             return allowedTypes;
         }
+        private IEnumerable<KeyValuePair<int, string>> GetTaxonomiesOptions() {
 
+            var termList = new List<KeyValuePair<int, string>>();
+            var listTaxonomyIds = new List<int>();
+
+            /* there is a filter for a specific type?
+                    yes: get only the filterd one 
+                    no: get all listable types */
+            var listContentTypes = GetAllowedProductTypes();
+
+            foreach (var ct in listContentTypes) {
+                var contentType = _contentDefinitionService.GetType(ct.Name);
+                var taxFields = contentType.Fields.Where(w =>
+                    w._Definition.FieldDefinition.Name == "TaxonomyField").ToList(); //TaxonomyFields within the content
+                var taxPartFields = contentType.Parts
+                    /*.Where(w => w._Definition.PartDefinition.Fields.Any(x => x.Name == "TaxonomyField"))*/
+                    .SelectMany(x => x.PartDefinition.Fields).Where(x => x.FieldDefinition.Name == "TaxonomyField"); //TaxonomyFields within the parts of the content
+                taxFields.AddRange(taxPartFields);
+                foreach (var tf in taxFields) {
+                    var taxName = tf.Settings.GetModel<TaxonomyFieldSettings>().Taxonomy;
+                    if (string.IsNullOrWhiteSpace(taxName)) {
+                        continue;//TaxonomyField is not yet set
+                    }
+                    else {
+                        var taxonomySetForField = _taxonomyService.GetTaxonomyByName(tf.Settings.GetModel<TaxonomyFieldSettings>().Taxonomy);
+                        if (taxonomySetForField == null) continue; //handles missing taxonomy name
+                                                                   // show taxonomies and their localizations 
+                        listTaxonomyIds.Add(taxonomySetForField.Id);
+                        if (taxonomySetForField.As<LocalizationPart>() != null) {
+                            listTaxonomyIds.AddRange(_localizationService.GetLocalizations(taxonomySetForField).Select(x => x.Id));
+                        }
+                    }
+
+                }
+
+            }
+            //TODO: optimize code 
+            foreach (var taxonomy in _taxonomyService.GetTaxonomies().Where(x => listTaxonomyIds.Contains(x.Id))) {
+                termList.Add(new KeyValuePair<int, string>(-1, taxonomy.Name));
+                foreach (var term in _taxonomyService.GetTerms(taxonomy.Id)) {
+                    var gap = new string('-', term.GetLevels());
+
+                    if (gap.Length > 0) {
+                        gap += " ";
+                    }
+                    termList.Add(new KeyValuePair<int, string>(term.Id, gap + term.Name));
+                }
+            }
+
+
+
+            return termList;
+        }
         #region IUpdateModel implementation
         public void AddModelError(string key, LocalizedString errorMessage) {
             ModelState.AddModelError(key, errorMessage.ToString());
