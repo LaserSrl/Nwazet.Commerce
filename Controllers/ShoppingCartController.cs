@@ -142,12 +142,23 @@ namespace Nwazet.Commerce.Controllers {
                     this,
                     BuildCartShape(true, _shoppingCart.Country, _shoppingCart.ZipCode, null, productMessages));
             }
-            return RedirectToAction("Index", productMessages);
+            // added tempdata because passing the parameter to the redirecttoaction
+            // there were 2 problems:
+            // 1 - severe - the parameter so complex is not read from the index
+            // 2 - the content to decode has been added in the query string, a bit ugly to see
+            TempData["ProductMessages"] = productMessages;
+            return RedirectToAction("Index");
         }
 
         [Themed]
         [OutputCache(Duration = 0)]
         public ActionResult Index(Dictionary<int, List<string>> productMessages = null) {
+            if (productMessages == null || productMessages.Count==0) {
+                if (TempData["ProductMessages"] != null) {
+                    productMessages = (Dictionary<int, List<string>>)TempData["ProductMessages"];
+                }
+            }
+
             _wca.GetContext().Layout.IsCartPage = true;
             try {
                 return new ShapeResult(
