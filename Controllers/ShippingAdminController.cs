@@ -45,11 +45,19 @@ namespace Nwazet.Commerce.Controllers {
             var shippingMethods = _shippingMethodProviders
                 .SelectMany(smp => smp.GetShippingMethods())
                 .ToList();
-            var paginatedMethods = shippingMethods
-                .OrderBy(sm => sm.Name)
-                .Skip(pager.GetStartIndex())
-                .Take(pager.PageSize)
-                .ToList();
+            var paginatedMethods = (pagerParameters.PageSize != null && pagerParameters.PageSize==0) ?
+                shippingMethods
+                    .OrderBy(sm => sm.Name)
+                    .Skip(pager.GetStartIndex())
+                    .Take(shippingMethods.Count())
+                    .ToList()
+                  :
+                  shippingMethods
+                    .OrderBy(sm => sm.Name)
+                    .Skip(pager.GetStartIndex())
+                    .Take(pager.PageSize)
+                    .ToList()
+                  ;
             var pagerShape = Shape.Pager(pager).TotalItemCount(shippingMethods.Count());
             var vm = new ShippingMethodIndexViewModel {
                 ShippingMethodProviders = _shippingMethodProviders.ToList(),
