@@ -18,5 +18,8 @@ namespace Nwazet.Commerce.Models {
         decimal Total(decimal subTotal = 0, TaxAmount taxes = null);
         double ItemCount();
         void Clear();
+
+
+        List<CartPriceAlteration> PriceAlterations { get; set; }
     }
 }

@@ -246,6 +246,7 @@
     <Compile Include="ApplicabilityCriteria\NumericCriterionBase.cs" />
     <Compile Include="Aspects\ITerritoryAddressAspect.cs" />
     <Compile Include="Commands\TerritoriesCommands.cs" />
+    <Compile Include="Controllers\CouponController.cs" />
     <Compile Include="Controllers\CouponingAdminController.cs" />
     <Compile Include="Controllers\ECommerceSettingsAdminController.cs" />
     <Compile Include="Controllers\FlexibleShippingCriterionController.cs" />
@@ -401,6 +402,7 @@
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\AdvancedSKUsSiteSettingPart.cs" />
     <Compile Include="Models\ApplicabilityCriterionRecord.cs" />
+    <Compile Include="Models\CartPriceAlteration.cs" />
     <Compile Include="Models\CheckoutError.cs" />
     <Compile Include="Models\CheckoutItem.cs" />
     <Compile Include="Models\ConversionUtilities.cs" />
@@ -521,7 +523,10 @@
     <Compile Include="Services\BundleServiceBase.cs" />
     <Compile Include="Services\CartLifeCycleEventHandler.cs" />
     <Compile Include="Services\CommerceLocalStorageSettings.cs" />
+    <Compile Include="Services\Couponing\CouponApplicationService.cs" />
+    <Compile Include="Services\Couponing\CouponCartExtensionProvider.cs" />
     <Compile Include="Services\Couponing\CouponingRepositoryService.cs" />
+    <Compile Include="Services\Couponing\ICouponApplicationService.cs" />
     <Compile Include="Services\Couponing\ICouponRepositoryService.cs" />
     <Compile Include="Services\CurrencyProviderBase.cs" />
     <Compile Include="Services\DefaultOrderStatusProvider.cs" />
@@ -660,6 +665,7 @@
     <Compile Include="ViewModels\AdancedSKUsSiteSettingsViewModel.cs" />
     <Compile Include="ViewModels\AdvancedSKUProductEditorViewModel.cs" />
     <Compile Include="ViewModels\ApplicabilityCriterionEntry.cs" />
+    <Compile Include="ViewModels\Couponing\CouponFrontendViewModel.cs" />
     <Compile Include="ViewModels\CriteriaAddViewModel.cs" />
     <Compile Include="ViewModels\CriterionEditViewModel.cs" />
     <Compile Include="ViewModels\ECommerceCurrencySiteSettingsViewModel.cs" />
