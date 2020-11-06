@@ -11,7 +11,7 @@ namespace Nwazet.Commerce.Models {
 
         public virtual TerritoryHierarchyPartRecord Hierarchy { get; set; }
 
-        public virtual IList<TerritoryPartRecord> Children { get; set; }
+        //public virtual IList<TerritoryPartRecord> Children { get; set; }
 
 
         /// <summary>

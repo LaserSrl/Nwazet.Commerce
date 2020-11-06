@@ -182,14 +182,12 @@ namespace Nwazet.Commerce.Drivers {
                     // territories from "first" hierarchy
                     var source = _territoryPartRecordService
                         .GetHierarchyTerritories(hierarchies[i]);
-                        //hierarchies[i].Record.Territories; //.Select(ci => ci.As<TerritoryPart>());
                     // name of first hierarchy
                     var sourceString = _contentManager.GetItemMetadata(hierarchies[i]).DisplayText;
                     for (int j = i+1; j < hierarchies.Length; j++) {
                         // territories from second hierarchy
                         var other = _territoryPartRecordService
                             .GetHierarchyTerritories(hierarchies[j]);
-                        //hierarchies[j].Record.Territories; //.Select(ci => ci.As<TerritoryPart>());
                         // name of second hierarchy
                         var otherString = _contentManager.GetItemMetadata(hierarchies[j]).DisplayText;
                         // intersection of the sets of territories

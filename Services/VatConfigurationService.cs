@@ -281,7 +281,6 @@ namespace Nwazet.Commerce.Services {
                     var thp = tup.Item1; // hierarchy
                     return _territoryPartRecordService
                         .GetHierarchyTerritories(thp)
-                        //thp.Record.Territories 
                         // territories in the hierarchy
                         // is the destination among those territories?
                         .Any(tpr => tpr.TerritoryInternalRecord != null

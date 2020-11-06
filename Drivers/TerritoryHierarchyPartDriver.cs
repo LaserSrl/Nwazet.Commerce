@@ -99,7 +99,7 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         private bool MayChangeTerritoryType(TerritoryHierarchyPart part) {
-            return !(_territoryPartRecordService.GetHierarchyTerritoriesCount(part)>0) &&   //!(part.Record.Territories?.Any() ?? false) &&
+            return !(_territoryPartRecordService.GetHierarchyTerritoriesCount(part)>0) && 
                 part.Settings.GetModel<TerritoryHierarchyPartSettings>().MayChangeTerritoryTypeOnItem;
         }
 
