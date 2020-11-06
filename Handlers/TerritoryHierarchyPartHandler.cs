@@ -1,5 +1,6 @@
 ﻿using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Services;
 using Nwazet.Commerce.Settings;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
@@ -14,12 +15,15 @@ namespace Nwazet.Commerce.Handlers {
     public class TerritoryHierarchyPartHandler : ContentHandler {
 
         private readonly IContentManager _contentManager;
+        private readonly ITerritoryPartRecordService _territoryPartRecordService;
 
         public TerritoryHierarchyPartHandler(
             IRepository<TerritoryHierarchyPartRecord> repository,
-            IContentManager contentManager) {
+            IContentManager contentManager,
+            ITerritoryPartRecordService territoryPartRecordService) {
 
             _contentManager = contentManager;
+            _territoryPartRecordService = territoryPartRecordService;
 
             Filters.Add(StorageFilter.For(repository));
 
@@ -61,9 +65,10 @@ namespace Nwazet.Commerce.Handlers {
             
             part.TopLevelField.Setter(value => {
                 var actualItems = value.Where(ci => ci.As<TerritoryPart>() != null);
-                part.Record.Territories = actualItems.Any() ?
-                    actualItems.Select(ci => ci.As<TerritoryPart>().Record).ToList() :
-                    new List<TerritoryPartRecord>();
+                //// commented because now the territories are extracted on the spot from the database
+                //part.Record.Territories = actualItems.Any() ?
+                //    actualItems.Select(ci => ci.As<TerritoryPart>().Record).ToList() :
+                //    new List<TerritoryPartRecord>();
                 return actualItems;
             });
 
@@ -76,7 +81,8 @@ namespace Nwazet.Commerce.Handlers {
         void LazyLoadHandlers(TerritoryHierarchyPart part) {
             
             part.TopLevelField.Loader(() => {
-                if (part.Record.Territories != null && part.Record.Territories.Any()) {
+                //if (part.Record.Territories != null && part.Record.Territories.Any()) {
+                if (_territoryPartRecordService.GetHierarchyTerritoriesCount(part)>0) { 
                     return _contentManager
                         .Query(VersionOptions.Latest)
                         .Join<TerritoryPartRecord>()

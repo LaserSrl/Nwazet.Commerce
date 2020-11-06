@@ -22,19 +22,22 @@ namespace Nwazet.Commerce.Drivers {
         private readonly IVatConfigurationService _vatConfigurationService;
         private readonly IAuthorizer _authorizer;
         private readonly INotifier _notifier;
+        private readonly ITerritoryPartRecordService _territoryPartRecordService;
 
         public VatConfigurationPartDriver(
             IContentManager contentManager,
             ITerritoriesService territoriesService,
             IVatConfigurationService vatConfigurationService,
             IAuthorizer authorizer,
-            INotifier notifier) {
+            INotifier notifier,
+            ITerritoryPartRecordService territoryPartRecordService) {
 
             _contentManager = contentManager;
             _territoriesService = territoriesService;
             _vatConfigurationService = vatConfigurationService;
             _authorizer = authorizer;
             _notifier = notifier;
+            _territoryPartRecordService = territoryPartRecordService;
 
             T = NullLocalizer.Instance;
         }
@@ -177,14 +180,16 @@ namespace Nwazet.Commerce.Drivers {
                 var hierarchies = part.Hierarchies.Select(tup => tup.Item1).ToArray();
                 for (int i = 0; i < hierarchies.Length-1; i++) {
                     // territories from "first" hierarchy
-                    var source = hierarchies[i]
-                        .Record.Territories; //.Select(ci => ci.As<TerritoryPart>());
+                    var source = _territoryPartRecordService
+                        .GetHierarchyTerritories(hierarchies[i]);
+                        //hierarchies[i].Record.Territories; //.Select(ci => ci.As<TerritoryPart>());
                     // name of first hierarchy
                     var sourceString = _contentManager.GetItemMetadata(hierarchies[i]).DisplayText;
                     for (int j = i+1; j < hierarchies.Length; j++) {
                         // territories from second hierarchy
-                        var other = hierarchies[j]
-                            .Record.Territories; //.Select(ci => ci.As<TerritoryPart>());
+                        var other = _territoryPartRecordService
+                            .GetHierarchyTerritories(hierarchies[j]);
+                        //hierarchies[j].Record.Territories; //.Select(ci => ci.As<TerritoryPart>());
                         // name of second hierarchy
                         var otherString = _contentManager.GetItemMetadata(hierarchies[j]).DisplayText;
                         // intersection of the sets of territories

@@ -37,6 +37,13 @@ namespace Nwazet.Commerce.Services {
                 .ToList();
         }
 
+        public List<TerritoryPartRecord> GetTerritoriesChild(TerritoryPartRecord territory) {
+            return _territoryPartRecord
+                .Table
+                .Where(tpr => tpr.ParentTerritory.Id == territory.Id)
+                .ToList();
+        }
+
         public int GetTerritoriesChildCount(TerritoryPart territory) {
             return _territoryPartRecord
                 .Table

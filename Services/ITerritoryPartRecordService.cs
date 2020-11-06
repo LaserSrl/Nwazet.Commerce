@@ -31,5 +31,12 @@ namespace Nwazet.Commerce.Services {
         /// <param name="territory"></param>
         /// <returns></returns>
         List<TerritoryPartRecord> GetTerritoriesChild(TerritoryPart territory);
+
+        /// <summary>
+        /// given the territory record returns the list child of territories
+        /// </summary>
+        /// <param name="territory"></param>
+        /// <returns></returns>
+        List<TerritoryPartRecord> GetTerritoriesChild(TerritoryPartRecord territory);
     }
 }
