@@ -189,6 +189,7 @@
     </None>
     <None Include="packages.config" />
     <None Include="Styles\product-admin.less" />
+    <None Include="Views\CouponingAdmin\Index.cshtml" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />
@@ -221,6 +222,7 @@
     <None Include="Views\Parts\Inventory.cshtml" />
     <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />
     <None Include="Views\Parts\WishListsActions.cshtml" />
+    <None Include="Views\CouponingAdmin\CouponsListPartial.cshtml" />
     <Content Include="Views\ProductAdmin\CreateProduct.cshtml" />
     <Content Include="Views\ProductAdmin\CreatableTypeList.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\CreatableTypeList.cshtml" />
@@ -244,6 +246,7 @@
     <Compile Include="ApplicabilityCriteria\NumericCriterionBase.cs" />
     <Compile Include="Aspects\ITerritoryAddressAspect.cs" />
     <Compile Include="Commands\TerritoriesCommands.cs" />
+    <Compile Include="Controllers\CouponingAdminController.cs" />
     <Compile Include="Controllers\ECommerceSettingsAdminController.cs" />
     <Compile Include="Controllers\FlexibleShippingCriterionController.cs" />
     <Compile Include="Controllers\HierarchyTerritoriesAdminController.cs" />
@@ -311,6 +314,7 @@
     <Compile Include="Exceptions\StripeException.cs" />
     <Compile Include="Exceptions\TerritoryInternalDuplicateException.cs" />
     <Compile Include="Extensions\AttributeNameUtilities.cs" />
+    <Compile Include="Extensions\CouponingUtilities.cs" />
     <Compile Include="Extensions\DefaultHqlExpressionFactoryExtension.cs" />
     <Compile Include="Extensions\ProductUtilities.cs" />
     <Compile Include="Extensions\TerritoriesUtilities.cs" />
@@ -365,6 +369,7 @@
     <Compile Include="Handlers\ProductPartHandler.cs" />
     <Compile Include="Handlers\WishListItemPartHandler.cs" />
     <Compile Include="Handlers\WishListListPartHandler.cs" />
+    <Compile Include="Menus\CouponingAdminMenu.cs" />
     <Compile Include="Menus\ECommerceSettingsAdminMenu.cs" />
     <Compile Include="Menus\ReportsAdminMenu.cs" />
     <Compile Include="Menus\ProductSettingsAdminMenu.cs" />
@@ -383,6 +388,7 @@
     <Compile Include="Migrations\BundlesLocalizationExtensionsMigrations.cs" />
     <Compile Include="Migrations\CommerceMigrations.cs" />
     <Compile Include="Migrations\AttributesMigrations.cs" />
+    <Compile Include="Migrations\CouponingMigrations.cs" />
     <Compile Include="Migrations\FlexibleShippingMethodMigrations.cs" />
     <Compile Include="Migrations\OrderMigrations.cs" />
     <Compile Include="Migrations\PersistentCartMigrations.cs" />
@@ -399,6 +405,8 @@
     <Compile Include="Models\CheckoutItem.cs" />
     <Compile Include="Models\ConversionUtilities.cs" />
     <Compile Include="Models\Charge.cs" />
+    <Compile Include="Models\Couponing\CouponRecord.cs" />
+    <Compile Include="Models\Couponing\CouponType.cs" />
     <Compile Include="Models\ECommerceCurrencySiteSettingsPart.cs" />
     <Compile Include="Models\FlexibleShippingMethodPart.cs" />
     <Compile Include="Models\FlexibleShippingMethodRecord.cs" />
@@ -481,6 +489,7 @@
     <Compile Include="Models\ShoppingCartQuantityProduct.cs" />
     <Compile Include="Models\ShoppingCartWidgetPart.cs" />
     <Compile Include="Permissions\CommercePermissions.cs" />
+    <Compile Include="Permissions\CouponingPermissions.cs" />
     <Compile Include="Permissions\ITerritoriesPermissionProvider.cs" />
     <Compile Include="Permissions\ReportPermissions.cs" />
     <Compile Include="Permissions\OrderPermissions.cs" />
@@ -512,6 +521,8 @@
     <Compile Include="Services\BundleServiceBase.cs" />
     <Compile Include="Services\CartLifeCycleEventHandler.cs" />
     <Compile Include="Services\CommerceLocalStorageSettings.cs" />
+    <Compile Include="Services\Couponing\CouponingRepositoryService.cs" />
+    <Compile Include="Services\Couponing\ICouponRepositoryService.cs" />
     <Compile Include="Services\CurrencyProviderBase.cs" />
     <Compile Include="Services\DefaultOrderStatusProvider.cs" />
     <Compile Include="Services\DefaultVatConfigurationPartDoesNotExist.cs" />

@@ -1,0 +1,12 @@
+﻿<h1>@T("Coupons")</h1>
+
+<div class="manage">
+    @Html.ActionLink(
+        T("Add").Text, 
+        "Create", 
+        "CouponingAdmin", 
+        null, 
+        new { @class = "button primaryAction" })
+</div>
+
+@Html.Partial("CouponsListPartial")
