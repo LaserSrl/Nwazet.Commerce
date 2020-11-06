@@ -1,4 +1,5 @@
-﻿using Orchard.Data.Conventions;
+﻿using Nwazet.Commerce.Models.Couponing;
+using Orchard.Data.Conventions;
 using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nwazet.Commerce.Models.Couponing {
+namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.Couponing")]
     public class CouponRecord {
         public virtual int Id { get; set; } //Primary Key

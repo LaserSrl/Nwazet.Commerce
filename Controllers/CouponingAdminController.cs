@@ -7,6 +7,7 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Security;
 using Orchard.Settings;
+using Orchard.UI.Admin;
 using Orchard.UI.Navigation;
 using Orchard.UI.Notify;
 using System;
@@ -18,6 +19,8 @@ using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Couponing")]
+    [Admin]
+    [ValidateInput(false)]
     public class CouponingAdminController : Controller, IUpdateModel {
 
         private readonly IAuthorizer _authorizer;

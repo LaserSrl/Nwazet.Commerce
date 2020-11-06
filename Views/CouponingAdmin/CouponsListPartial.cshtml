@@ -1,7 +1,7 @@
-﻿@using Nwazet.Commerce.Models.Couponing;
+﻿@using Nwazet.Commerce.Models;
 
 @{ 
-    var items = (IEnumerable<CouponRecord>)Model.Territories;
+    var items = (IEnumerable<CouponRecord>)Model.Coupons;
 }
 @using (Html.BeginFormAntiForgeryPost()) {
     <fieldset class="contentItems bulk-items">

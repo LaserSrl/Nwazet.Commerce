@@ -1,4 +1,5 @@
-﻿using Nwazet.Commerce.Models.Couponing;
+﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Models.Couponing;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -12,7 +12,10 @@ namespace Nwazet.Commerce.Migrations {
     public class CouponingMigrations : DataMigrationImpl {
 
         public int Create() {
-
+            // this only works if CouponRecord is in the 
+            // Nwazet.Commerce.Models namepspace.
+            // Using e.g. Nwazet.Commerce.Models.Couponing
+            // causes everything to fail down the line.
             SchemaBuilder.CreateTable("CouponRecord", table => table
                 .Column<int>("Id", col => col.Identity().PrimaryKey())
                 .Column<string>("Name", col => col.NotNull().Unlimited())

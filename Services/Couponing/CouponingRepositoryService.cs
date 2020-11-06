@@ -7,6 +7,7 @@ using Nwazet.Commerce.Models.Couponing;
 using Orchard.Data;
 using Nwazet.Commerce.Extensions;
 using Orchard.Environment.Extensions;
+using Nwazet.Commerce.Models;
 
 namespace Nwazet.Commerce.Services.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
