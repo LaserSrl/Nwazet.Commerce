@@ -1,12 +1,15 @@
-﻿<h1>@T("Coupons")</h1>
+﻿@using Nwazet.Commerce.ViewModels.Couponing
+@{
+    Layout.Title = T("Manage coupons").Text;
+}
 
 <div class="manage">
     @Html.ActionLink(
-        T("Add").Text, 
-        "Create", 
-        "CouponingAdmin", 
-        null, 
+        T("Add").Text,
+        "Create",
+        "CouponingAdmin",
+        null,
         new { @class = "button primaryAction" })
 </div>
 
-@Html.Partial("CouponsListPartial")
+@Html.Partial("_CouponsListPartial")

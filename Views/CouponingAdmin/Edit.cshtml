@@ -1,0 +1,14 @@
+﻿@using Orchard.ContentManagement
+@using Orchard.Utility.Extensions
+
+@{
+    Layout.Title = T("Edit Coupon {0}", Model.Name).Text;
+}
+
+@model Nwazet.Commerce.ViewModels.Couponing.Coupon
+@using (Html.BeginFormAntiForgeryPost(Url.Action("Edit"),
+                                        FormMethod.Post, new {
+                                            @class = "no-multisubmit"
+                                        })) {
+    @Html.Partial("_CouponPartial", Model)
+}

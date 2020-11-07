@@ -189,6 +189,9 @@
     </None>
     <None Include="packages.config" />
     <None Include="Styles\product-admin.less" />
+    <None Include="Views\CouponingAdmin\_CouponPartial.cshtml" />
+    <None Include="Views\CouponingAdmin\Create.cshtml" />
+    <None Include="Views\CouponingAdmin\Edit.cshtml" />
     <None Include="Views\CouponingAdmin\Index.cshtml" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />
@@ -222,7 +225,7 @@
     <None Include="Views\Parts\Inventory.cshtml" />
     <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />
     <None Include="Views\Parts\WishListsActions.cshtml" />
-    <None Include="Views\CouponingAdmin\CouponsListPartial.cshtml" />
+    <None Include="Views\CouponingAdmin\_CouponsListPartial.cshtml" />
     <Content Include="Views\ProductAdmin\CreateProduct.cshtml" />
     <Content Include="Views\ProductAdmin\CreatableTypeList.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\CreatableTypeList.cshtml" />
@@ -660,6 +663,8 @@
     <Compile Include="ViewModels\AdancedSKUsSiteSettingsViewModel.cs" />
     <Compile Include="ViewModels\AdvancedSKUProductEditorViewModel.cs" />
     <Compile Include="ViewModels\ApplicabilityCriterionEntry.cs" />
+    <Compile Include="ViewModels\Couponing\Coupon.cs" />
+    <Compile Include="ViewModels\Couponing\FilterOptions.cs" />
     <Compile Include="ViewModels\CriteriaAddViewModel.cs" />
     <Compile Include="ViewModels\CriterionEditViewModel.cs" />
     <Compile Include="ViewModels\ECommerceCurrencySiteSettingsViewModel.cs" />

@@ -1,20 +1,18 @@
 ﻿using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services.Couponing;
+using Nwazet.Commerce.ViewModels.Couponing;
 using Orchard.ContentManagement;
 using Orchard.Data;
 using Orchard.DisplayManagement;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
+using Orchard.Mvc.Extensions;
 using Orchard.Security;
 using Orchard.Settings;
 using Orchard.UI.Admin;
 using Orchard.UI.Navigation;
 using Orchard.UI.Notify;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Controllers {
@@ -52,7 +50,7 @@ namespace Nwazet.Commerce.Controllers {
         dynamic _shapeFactory;
 
         [HttpGet]
-        public ActionResult Index(PagerParameters pagerParameters) {
+        public ActionResult Index(FilterOptions filterOptions, PagerParameters pagerParameters) {
             if (!_authorizer.Authorize(CouponingPermissions.ManageCoupons)) {
                 return new HttpUnauthorizedResult();
             }
@@ -72,6 +70,99 @@ namespace Nwazet.Commerce.Controllers {
 
             return View((object)viewModel);
         }
+
+        [HttpPost, ActionName("Index")]
+        [Orchard.Mvc.FormValueRequired("submit.Filter")]
+        public ActionResult IndexPost(FilterOptions filterOptions, PagerParameters pagerParameters) {
+            if (!_authorizer.Authorize(CouponingPermissions.ManageCoupons)) {
+                return new HttpUnauthorizedResult();
+            }
+            return null;
+        }
+
+        [HttpGet]
+        public ActionResult Create() {
+            if (!_authorizer.Authorize(CouponingPermissions.ManageCoupons)) {
+                return new HttpUnauthorizedResult();
+            }
+            var model = new Coupon();
+            return View(model);
+        }
+
+        [HttpPost, ActionName("Create")]
+        [Orchard.Mvc.FormValueRequired("submit.Save")]
+        public ActionResult CreatePost() {
+            //TODO: read the record from the DB and update it with the Model
+            if (!_authorizer.Authorize(CouponingPermissions.ManageCoupons)) {
+                return new HttpUnauthorizedResult();
+            }
+            var model = new Coupon();
+            if (!TryUpdateModel(model, null, null, new[] { "Id" })) {
+                _transactionManager.Cancel();
+                return View(model);
+            }
+            try {
+                model.Id = _couponRepositoryService.CreateRecord(model);
+            }
+            catch (Exception ex) {
+                _transactionManager.Cancel();
+                AddModelError("CouponingRepositoryError", ex.Message);
+                return View(model);
+            }
+            _notifier.Add(NotifyType.Information, T("The coupon has been created."));
+            return RedirectToAction("Edit", new { id = model.Id });
+        }
+
+        [HttpGet]
+        public ActionResult Edit(int id) {
+            //TODO: read the record from the DB
+            if (!_authorizer.Authorize(CouponingPermissions.ManageCoupons)) {
+                return new HttpUnauthorizedResult();
+            }
+            var model = _couponRepositoryService.Get(id);
+            return View(model);
+        }
+
+        [HttpPost, ActionName("Edit")]
+        [Orchard.Mvc.FormValueRequired("submit.Save")]
+        public ActionResult EditPost(int id) {
+            //TODO: read the record from the DB and update it with the Model
+            if (!_authorizer.Authorize(CouponingPermissions.ManageCoupons)) {
+                return new HttpUnauthorizedResult();
+            }
+            var model = _couponRepositoryService.Get(id);
+            if (!TryUpdateModel(model, null, null, new[] { "Id" })) {
+                _transactionManager.Cancel();
+                return View(model);
+            }
+            try {
+                _couponRepositoryService.UpdateRecord(model);
+            }
+            catch (Exception ex) {
+                _transactionManager.Cancel();
+                AddModelError("CouponingRepositoryError", ex.Message);
+                return View(model);
+            }
+            _notifier.Add(NotifyType.Information, T("The coupon has been updated."));
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Delete(int id, string returnUrl) {
+            if (!_authorizer.Authorize(CouponingPermissions.ManageCoupons)) {
+                return new HttpUnauthorizedResult();
+            }
+            try {
+                _couponRepositoryService.DeleteRecord(id);
+            }
+            catch (Exception ex) {
+                _transactionManager.Cancel();
+                AddModelError("CouponingRepositoryError", ex.Message);
+            }
+            _notifier.Add(NotifyType.Information, T("The coupon has been permanently deleted."));
+            return this.RedirectLocal(returnUrl, () => RedirectToAction("Index"));
+        }
+
 
         #region IUpdateModel implementation
         bool IUpdateModel.TryUpdateModel<TModel>(TModel model, string prefix, string[] includeProperties, string[] excludeProperties) {
