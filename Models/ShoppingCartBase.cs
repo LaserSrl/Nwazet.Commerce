@@ -62,6 +62,15 @@ namespace Nwazet.Commerce.Models {
             set { _cartStorage.ZipCode = value; }
         }
 
+        // These are things that modify the cart's final total,
+        // but not its subtotal. They may increase or decrease
+        // the total. Practical example of these: coupons. Each
+        // one of these has its own provider and rules.
+        public virtual List<CartPriceAlteration> PriceAlterations {
+            get { return _cartStorage.PriceAlterations; }
+            set { _cartStorage.PriceAlterations = value; }
+        }
+
         public abstract void Add(int productId, int quantity = 1, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues = null);
         public virtual void AddRange(IEnumerable<ShoppingCartItem> items) {
             foreach (var item in items) {
@@ -136,6 +145,8 @@ namespace Nwazet.Commerce.Models {
                 return subTotal + ShippingOption.Price;
             }
             if (ShippingOption == null) return subTotal + taxes.Amount;
+            // TODO: this should become 
+            // subTotal + taxes.Amount + PriceAlterations + ShippingOption.Price
             return subTotal + taxes.Amount + ShippingOption.Price;
         }
         public abstract void UpdateItems();
