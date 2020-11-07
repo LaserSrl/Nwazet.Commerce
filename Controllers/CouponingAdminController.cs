@@ -1,6 +1,7 @@
 ﻿using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services.Couponing;
 using Nwazet.Commerce.ViewModels.Couponing;
+using Nwazet.Commerce.Extensions;
 using Orchard.ContentManagement;
 using Orchard.Data;
 using Orchard.DisplayManagement;
@@ -13,7 +14,9 @@ using Orchard.UI.Admin;
 using Orchard.UI.Navigation;
 using Orchard.UI.Notify;
 using System;
+using System.Linq;
 using System.Web.Mvc;
+
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Couponing")]
@@ -58,10 +61,10 @@ namespace Nwazet.Commerce.Controllers {
 
             var pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
             var pagerShape = _shapeFactory.Pager(pager)
-                .TotalItemCount(_couponRepositoryService.GetCouponsCount());
+                .TotalItemCount(_couponRepositoryService.GetCoupons().Count());
 
             var items = _couponRepositoryService
-                .GetCoupons(pager.GetStartIndex(), pager.PageSize);
+                .GetCoupons().OrderBy(x => x.Code).Paginate(pager.GetStartIndex(), pager.PageSize).ToCoupon();
 
             dynamic viewModel = _shapeFactory.ViewModel()
                 .Coupons(items)

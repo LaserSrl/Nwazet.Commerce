@@ -1,6 +1,7 @@
 ﻿using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Models.Couponing;
 using Nwazet.Commerce.ViewModels.Couponing;
+using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Extensions {
+    [OrchardFeature("Nwazet.Couponing")]
     public static class CouponingUtilities {
 
         /// <summary>
@@ -43,5 +45,22 @@ namespace Nwazet.Commerce.Extensions {
             record.CouponType = coupon.CouponType;
             record.Published = coupon.Published;
         }
+
+        #region [IQueryable]
+        public static IQueryable<CouponRecord> Paginate(this IQueryable<CouponRecord> table, int startIndex = 0, int pageSize = 0) {
+            var result = table
+                .Skip(startIndex >= 0 ? startIndex : 0);
+
+            if (pageSize > 0) {
+                return result.Take(pageSize);
+            }
+            return result;
+        }
+
+        public static IQueryable<CouponRecord> IsPublished(this IQueryable<CouponRecord> table) {
+            return table.Where(x => x.Published);
+        }
+        #endregion
+
     }
 }

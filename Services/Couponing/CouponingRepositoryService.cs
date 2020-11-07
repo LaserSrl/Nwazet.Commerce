@@ -9,6 +9,7 @@ using Nwazet.Commerce.Extensions;
 using Orchard.Environment.Extensions;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.ViewModels.Couponing;
+using Orchard.ContentManagement;
 
 namespace Nwazet.Commerce.Services.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
@@ -22,18 +23,8 @@ namespace Nwazet.Commerce.Services.Couponing {
             _couponsRepository = couponsRepository;
         }
 
-        public IEnumerable<Coupon> GetCoupons(int startIndex = 0, int pageSize = 0) {
-            var result = _couponsRepository.Table
-                .Skip(startIndex >= 0 ? startIndex : 0);
-
-            if (pageSize > 0) {
-                return result.Take(pageSize).ToCoupon();
-            }
-            return result.ToList().ToCoupon();
-        }
-
-        public int GetCouponsCount() {
-            return _couponsRepository.Table.Count();
+        public IQueryable<CouponRecord> GetCoupons() {
+            return _couponsRepository.Table;
         }
 
         public Coupon Get(int id) {

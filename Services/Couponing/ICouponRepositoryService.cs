@@ -11,20 +11,7 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Services.Couponing {
     public interface ICouponRepositoryService : IDependency {
 
-        /// <summary>
-        /// Get the total number of CouponRecord objects in the storage.
-        /// </summary>
-        /// <returns>The total number of objects.</returns>
-        int GetCouponsCount();
-        /// <summary>
-        /// Gets the CouponRecord objects based on the pagination
-        /// </summary>
-        /// <param name="startIndex">Start index for pagination</param>
-        /// <param name="pageSize">Page size (maximum number of objects)</param>
-        /// <returns>An IEnumerable of TerritoryInternalRecord objects, that are deep copies 
-        /// of the objects in the storage.</returns>
-        IEnumerable<Coupon> GetCoupons(int startIndex = 0, int pageSize = 0);
-
+        IQueryable<CouponRecord> GetCoupons();
         /// <summary>
         /// Retrieve from storage the record with the id, and returns a coupon entity
         /// </summary>
