@@ -109,13 +109,12 @@ namespace Nwazet.Commerce.Services {
             }
         }
 
-        public IEnumerable<TerritoryInternalRecord> GetAvailableTerritoryInternals(TerritoryHierarchyPart hierarchyPart) {
+        public IEnumerable<TerritoryInternalRecord> GetAvailableTerritoryInternals(TerritoryHierarchyPart hierarchyPart, List<TerritoryPartRecord> hierarchyTerritories) {
             TerritoriesUtilities.ValidateArgument(hierarchyPart, nameof(hierarchyPart));
 
             return _territoriesRepositoryService
                     .GetTerritories()
-                    .Where(tir => !_territoryPartRecordService.
-                        GetHierarchyTerritories(hierarchyPart)
+                    .Where(tir => !hierarchyTerritories
                         //!hierarchyPart.Record.Territories
                         .Where(tpr => tpr.TerritoryInternalRecord != null)
                         //.Where(ci => ci.As<TerritoryPart>()
