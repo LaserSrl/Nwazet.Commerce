@@ -112,6 +112,11 @@ namespace Nwazet.Commerce.Controllers {
                 AddModelError("CouponingRepositoryError", ex.Message);
                 return View(model);
             }
+            if (!_couponRepositoryService.Validate(model)) {
+                _transactionManager.Cancel();
+                AddModelError("CouponingRepositoryError", T("The coupon is not valid."));
+                return View(model);
+            }
             _notifier.Add(NotifyType.Information, T("The coupon has been created."));
             return RedirectToAction("Edit", new { id = model.Id });
         }
@@ -146,6 +151,13 @@ namespace Nwazet.Commerce.Controllers {
                 AddModelError("CouponingRepositoryError", ex.Message);
                 return View(model);
             }
+
+            if (!_couponRepositoryService.Validate(model)) {
+                _transactionManager.Cancel();
+                AddModelError("CouponingRepositoryError", T("The coupon is not valid."));
+                return View(model);
+            }
+
             _notifier.Add(NotifyType.Information, T("The coupon has been updated."));
             return View(model);
         }

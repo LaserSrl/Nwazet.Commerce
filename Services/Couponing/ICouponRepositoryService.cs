@@ -36,5 +36,11 @@ namespace Nwazet.Commerce.Services.Couponing {
         /// </summary>
         /// <param name="id">the record id to delete</param>
         void DeleteRecord(int id);
+
+        /// <summary>
+        /// Validate the coupon against records
+        /// </summary>
+        /// <param name="id">the coupon to validate</param>
+        bool Validate(Coupon coupon);
     }
 }

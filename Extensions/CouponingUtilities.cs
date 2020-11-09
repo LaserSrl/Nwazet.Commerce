@@ -60,6 +60,16 @@ namespace Nwazet.Commerce.Extensions {
         public static IQueryable<CouponRecord> IsPublished(this IQueryable<CouponRecord> table) {
             return table.Where(x => x.Published);
         }
+
+        public static CouponRecord GetByCode(this IQueryable<CouponRecord> table, string code, bool published = true) {
+            if (published) {
+                return table.IsPublished().SingleOrDefault(x => x.Code.ToLowerInvariant().Equals(code.ToLowerInvariant()));
+            }
+            else {
+                return table.SingleOrDefault(x => x.Code.ToLowerInvariant().Equals(code.ToLowerInvariant()));
+            }
+        }
+
         #endregion
 
     }

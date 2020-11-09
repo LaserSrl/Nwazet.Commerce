@@ -49,5 +49,13 @@ namespace Nwazet.Commerce.Services.Couponing {
             _couponsRepository.Delete(record);
         }
 
+        public bool Validate(Coupon coupon) {
+            var isValid = CheckUnicity(coupon);
+
+            return isValid;
+        }
+        private bool CheckUnicity(Coupon coupon) {
+            return Query().Any(x => x.Code.ToLowerInvariant().Equals(coupon.Code.ToLowerInvariant()) && x.Id != coupon.Id) == false;
+        }
     }
 }

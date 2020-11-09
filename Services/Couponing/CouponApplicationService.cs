@@ -1,4 +1,5 @@
-﻿using Nwazet.Commerce.Models;
+﻿using Nwazet.Commerce.Extensions;
+using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Models.Couponing;
 using Orchard;
 using System;
@@ -9,13 +10,15 @@ using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Services.Couponing {
     public class CouponApplicationService : ICouponApplicationService {
+        private readonly ICouponRepositoryService _couponRepositoryService;
         private readonly IShoppingCart _shoppingCart;
         private readonly IWorkContextAccessor _workContextAccessor;
 
         public CouponApplicationService(
+            ICouponRepositoryService couponRepositoryService,
             IShoppingCart shoppingCart,
             IWorkContextAccessor workContextAccessor) {
-
+            _couponRepositoryService = couponRepositoryService;
             _shoppingCart = shoppingCart;
             _workContextAccessor = workContextAccessor;
         }
@@ -52,17 +55,7 @@ namespace Nwazet.Commerce.Services.Couponing {
         }
 
         private CouponRecord GetCouponFromCode(string code) {
-            //TODO
-            if (code.Equals("NATALE20", StringComparison.InvariantCultureIgnoreCase)) {
-                return new CouponRecord {
-                    Name = "Buon Natale",
-                    Code = "NATALE20",
-                    Published = true,
-                    Value = 10m,
-                    CouponType = CouponType.Percent
-                };
-            }
-            return null;
+            return _couponRepositoryService.Query().GetByCode(code);
         }
         
         private bool Applies(CouponRecord coupon) {
