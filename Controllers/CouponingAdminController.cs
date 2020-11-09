@@ -61,10 +61,10 @@ namespace Nwazet.Commerce.Controllers {
 
             var pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
             var pagerShape = _shapeFactory.Pager(pager)
-                .TotalItemCount(_couponRepositoryService.GetCoupons().Count());
+                .TotalItemCount(_couponRepositoryService.Query().Count());
 
             var items = _couponRepositoryService
-                .GetCoupons().OrderBy(x => x.Code).Paginate(pager.GetStartIndex(), pager.PageSize).ToCoupon();
+                .Query().OrderBy(x => x.Code).Paginate(pager.GetStartIndex(), pager.PageSize).ToCoupon();
 
             dynamic viewModel = _shapeFactory.ViewModel()
                 .Coupons(items)

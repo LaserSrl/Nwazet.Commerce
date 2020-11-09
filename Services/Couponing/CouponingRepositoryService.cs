@@ -23,7 +23,7 @@ namespace Nwazet.Commerce.Services.Couponing {
             _couponsRepository = couponsRepository;
         }
 
-        public IQueryable<CouponRecord> GetCoupons() {
+        public IQueryable<CouponRecord> Query() {
             return _couponsRepository.Table;
         }
 

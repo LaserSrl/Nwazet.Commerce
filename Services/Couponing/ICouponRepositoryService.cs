@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Services.Couponing {
     public interface ICouponRepositoryService : IDependency {
 
-        IQueryable<CouponRecord> GetCoupons();
+        IQueryable<CouponRecord> Query();
         /// <summary>
         /// Retrieve from storage the record with the id, and returns a coupon entity
         /// </summary>
