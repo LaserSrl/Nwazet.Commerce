@@ -28,25 +28,7 @@ namespace Nwazet.Commerce.Models {
         public virtual decimal Value { get; set; }
         public virtual CouponType CouponType { get; set; }
         #endregion
-
-        /// <summary>
-        /// Returns a copy of this CouponRecord.
-        /// </summary>
-        /// <returns>>A copy of this CouponRecord that can be safely manipulated
-        /// without affecting records in the database.</returns>
-        public virtual CouponRecord CreateSafeDuplicate() {
-            return new CouponRecord {
-                Id = this.Id,
-                // Coupon
-                Name = this.Name,
-                Code = this.Code,
-                // Conditions
-                Published = this.Published,
-                // Actions
-                Value = this.Value,
-                CouponType = this.CouponType
-            };
-        }
+        
     }
     
 }

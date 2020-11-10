@@ -9,7 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Services.Couponing {
-    public class CouponApplicationService : ICouponApplicationService {
+    public class CouponApplicationService : 
+        ICouponApplicationService{
+
         private readonly ICouponRepositoryService _couponRepositoryService;
         private readonly IShoppingCart _shoppingCart;
         private readonly IWorkContextAccessor _workContextAccessor;
@@ -21,7 +23,13 @@ namespace Nwazet.Commerce.Services.Couponing {
             _couponRepositoryService = couponRepositoryService;
             _shoppingCart = shoppingCart;
             _workContextAccessor = workContextAccessor;
+
+            _loadedCoupons = new Dictionary<string, CouponRecord>();
         }
+
+        // prevent loading the same coupon several times per request
+        private Dictionary<string, CouponRecord> _loadedCoupons;
+
 
         public void ApplyCoupon(string code) {
             // given the code, find the coupon
@@ -35,6 +43,8 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
         }
 
+        public string AlterationType => "Coupon";
+
         private void Apply(CouponRecord coupon) {
             //TODO
             // based on the coupon, we add a CartPriceAlteration to the shoppingCart
@@ -44,7 +54,7 @@ namespace Nwazet.Commerce.Services.Couponing {
             // to write to the user that the coupon is "active".
             var allAlterations = new List<CartPriceAlteration> {
                 new CartPriceAlteration {
-                    AlterationType = "Coupon",
+                    AlterationType = AlterationType,
                     Key = coupon.Code,
                     Weight = 1
                 } };
@@ -55,12 +65,18 @@ namespace Nwazet.Commerce.Services.Couponing {
         }
 
         private CouponRecord GetCouponFromCode(string code) {
-            return _couponRepositoryService.Query().GetByCode(code);
+            if (!_loadedCoupons.ContainsKey(code)) {
+                _loadedCoupons.Add(code,
+                    _couponRepositoryService.Query().GetByCode(code));
+            }
+            return _loadedCoupons[code];
         }
-        
+
         private bool Applies(CouponRecord coupon) {
-            //TODO
-            return true;
+            //TODO: use criteria to actually check whether the coupon can be used
+            return coupon.Published;
         }
+
+        
     }
 }

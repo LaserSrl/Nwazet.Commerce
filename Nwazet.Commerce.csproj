@@ -525,6 +525,7 @@
     <Compile Include="Services\BundleProductLocalizationServices.cs" />
     <Compile Include="Services\BundleServiceBase.cs" />
     <Compile Include="Services\CartLifeCycleEventHandler.cs" />
+    <Compile Include="Services\CartPriceAlterationProcessor.cs" />
     <Compile Include="Services\CommerceLocalStorageSettings.cs" />
     <Compile Include="Services\Couponing\CouponApplicationService.cs" />
     <Compile Include="Services\Couponing\CouponCartExtensionProvider.cs" />
@@ -542,6 +543,7 @@
     <Compile Include="Services\IBundleProductLocalizationServices.cs" />
     <Compile Include="Services\IBundleService.cs" />
     <Compile Include="Services\ICartLifeCycleEventHandler.cs" />
+    <Compile Include="Services\ICartPriceAlterationProcessor.cs" />
     <Compile Include="Services\IFlexibleShippingManager.cs" />
     <Compile Include="Services\ILocalStorageSettings.cs" />
     <Compile Include="Services\ICartExtensionProvider.cs" />
@@ -668,6 +670,7 @@
     <Compile Include="ViewModels\AdancedSKUsSiteSettingsViewModel.cs" />
     <Compile Include="ViewModels\AdvancedSKUProductEditorViewModel.cs" />
     <Compile Include="ViewModels\ApplicabilityCriterionEntry.cs" />
+    <Compile Include="ViewModels\CartPriceAlterationAmount.cs" />
     <Compile Include="ViewModels\Couponing\Coupon.cs" />
     <Compile Include="ViewModels\Couponing\FilterOptions.cs" />
     <Compile Include="ViewModels\Couponing\CouponFrontendViewModel.cs" />

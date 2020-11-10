@@ -74,7 +74,7 @@ namespace Nwazet.Commerce.Services {
         public List<CartPriceAlteration> PriceAlterations {
             get {
                 var context = GetHttpContext();
-                var serialized = context.Session["Nwazet.ShippingOption"] as string ?? string.Empty;
+                var serialized = context.Session["Nwazet.PriceAlterations"] as string ?? string.Empty;
 
                 return JsonConvert.DeserializeObject<List<CartPriceAlteration>>(serialized)
                     ?? new List<CartPriceAlteration>();
@@ -82,7 +82,7 @@ namespace Nwazet.Commerce.Services {
 
             set {
                 var context = GetHttpContext();
-                context.Session["Nwazet.ShippingOption"] = JsonConvert.SerializeObject(value);
+                context.Session["Nwazet.PriceAlterations"] = JsonConvert.SerializeObject(value);
             }
         }
 

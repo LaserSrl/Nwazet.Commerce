@@ -134,6 +134,14 @@
                                 <td class="numeric amount">@Model.CurrencyProvider.GetPriceString(Model.Taxes.Amount)</td>
                             </tr>
                         }
+                        @if (Model.PriceAlterations != null) {
+                            foreach (var alteration in Model.PriceAlterations) {
+                                <tr class="total">
+                                    <td class="numeric label" colspan="5">@alteration.Label</td>
+                                    <td class="numeric amount">@Model.CurrencyProvider.GetPriceString(alteration.Amount)</td>
+                                </tr>
+                            }
+                        }
                         @if (!Model.ShopItemsAllDigital && Model.ShippingOption != null) {
                             var shippingOption = (ShippingOption)Model.ShippingOption;
                             <tr class="total">

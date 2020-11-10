@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Nwazet.Commerce.ViewModels;
 using Orchard;
 
 namespace Nwazet.Commerce.Models {
@@ -21,5 +22,6 @@ namespace Nwazet.Commerce.Models {
 
 
         List<CartPriceAlteration> PriceAlterations { get; set; }
+        IEnumerable<CartPriceAlterationAmount> PriceAlterationAmounts { get; }
     }
 }

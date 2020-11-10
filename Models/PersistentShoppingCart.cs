@@ -20,7 +20,8 @@ namespace Nwazet.Commerce.Models {
             INotifier notifier,
             IPersistentShoppingCartServices persistentShoppingCartServices,
             ITaxProviderService taxProviderService,
-            IProductPriceService productPriceService)
+            IProductPriceService productPriceService,
+            IEnumerable<ICartPriceAlterationProcessor> cartPriceAlterationProcessors)
             : base(contentManager,
                 cartStorage,
                 priceService,
@@ -28,7 +29,8 @@ namespace Nwazet.Commerce.Models {
                 taxProviders,
                 notifier,
                 taxProviderService,
-                productPriceService) {
+                productPriceService,
+                cartPriceAlterationProcessors) {
             
             _persistentShoppingCartServices = persistentShoppingCartServices;
         }
