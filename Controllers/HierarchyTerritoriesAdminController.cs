@@ -96,7 +96,7 @@ namespace Nwazet.Commerce.Controllers {
                 .GetTerritoriesQuery(hierarchyPart, null, VersionOptions.Latest)
                 .List().ToList();
 
-            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchyPart);
+            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchyPart).ToList();
             var model = new TerritoryHierarchyTerritoriesViewModel {
                 HierarchyPart = hierarchyPart,
                 HierarchyItem = hierarchyItem,
@@ -198,7 +198,7 @@ namespace Nwazet.Commerce.Controllers {
             }
 
             // There must be "unused" TerritoryInternalRecords for this hierarchy.
-            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchyPart);
+            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchyPart).ToList();
             if (_territoriesService
                 .GetAvailableTerritoryInternals(hierarchyPart,hierarchyTerritories)
                 .Any()) {

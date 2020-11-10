@@ -360,7 +360,7 @@ namespace Nwazet.Commerce.Tests.Territories {
 
             var hierarchy = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
             hierarchy.Record = null;
-            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchy);
+            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchy).ToList();
             Assert.Throws<ArgumentException>(() => _territoriesService.GetAvailableTerritoryInternals(hierarchy, hierarchyTerritories));
         }
 

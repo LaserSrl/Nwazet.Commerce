@@ -73,7 +73,7 @@ namespace Nwazet.Commerce.Drivers {
                 InvalidHierarchyOnCreation();
             } else {
                 // Healthy situation
-                var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchy);
+                var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchy).ToList();
                 var territoryInternals = _territoriesService.GetAvailableTerritoryInternals(hierarchy, hierarchyTerritories).ToList();
                 if (territoryInternals.Any()) {
                     // There are TerritoryInternalRecords we can pick from
@@ -107,7 +107,7 @@ namespace Nwazet.Commerce.Drivers {
             var shapes = new List<DriverResult>();
 
             // The territory here must exist in a hierarchy and with a selected unique record.
-            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(part.HierarchyPart);
+            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(part.HierarchyPart).ToList();
             var territoryInternals = _territoriesService
                 .GetAvailableTerritoryInternals(part.HierarchyPart, hierarchyTerritories)
                 .ToList();
@@ -155,7 +155,7 @@ namespace Nwazet.Commerce.Drivers {
                 if (hierarchy == null) {
                     updater.AddModelError("Hierarchy", InvalidHierarchyErrorMessage());
                 } else {
-                    var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchy);
+                    var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchy).ToList();
                     var avalaibleInternals = _territoriesService.GetAvailableTerritoryInternals(hierarchy, hierarchyTerritories);
                     int selectedId;
                     if (int.TryParse(viewModel.SelectedRecordId, out selectedId)) {
