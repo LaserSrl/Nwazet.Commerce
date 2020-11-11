@@ -47,8 +47,8 @@ namespace Nwazet.Commerce.Services.Couponing {
             //TODO
             // based on the coupon, we add a CartPriceAlteration to the shoppingCart
             // this object will be used in computing the total cart price by the 
-            // implementation of ICartPriceAlterationProcessor for coupons
-            // (this same service). It will also be used by CouponCartExtensionProvider
+            // implementation of ICartPriceAlterationProcessor for coupons.
+            // It will also be used by CouponCartExtensionProvider
             // to write to the user that the coupon is "active".
             var allAlterations = new List<CartPriceAlteration> {
                 new CartPriceAlteration {
@@ -72,6 +72,15 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         private bool Applies(CouponRecord coupon) {
             //TODO: use criteria to actually check whether the coupon can be used
+            if (_shoppingCart?.PriceAlterations != null) {
+                // is this coupon already applied?
+                if (_shoppingCart.PriceAlterations.Any(cpa => 
+                    CouponingUtilities.CouponAlterationType.Equals(cpa.AlterationType)
+                    && coupon.Code.Equals(cpa.Key, StringComparison.InvariantCultureIgnoreCase))) {
+                    // can't apply the same coupon twice
+                    return false;
+                }
+            }
             return coupon.Published;
         }
 

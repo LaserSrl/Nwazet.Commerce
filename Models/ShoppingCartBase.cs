@@ -160,13 +160,6 @@ namespace Nwazet.Commerce.Models {
             if (subTotal.Equals(0)) {
                 subTotal = Subtotal();
             }
-            //if (taxes == null || taxes.Amount <= 0) {
-            //    if (ShippingOption == null) return subTotal;
-            //    return subTotal + ShippingOption.Price;
-            //}
-            //if (ShippingOption == null) return subTotal + taxes.Amount;
-            // TODO: this should become 
-            // subTotal + taxes.Amount + PriceAlterations + ShippingOption.Price
 
             var taxAmount = taxes?.Amount ?? 0m;
             taxAmount = taxAmount <= 0m ? 0m : taxAmount;
