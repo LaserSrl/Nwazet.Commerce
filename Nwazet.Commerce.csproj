@@ -525,11 +525,12 @@
     <Compile Include="Services\BundleProductLocalizationServices.cs" />
     <Compile Include="Services\BundleServiceBase.cs" />
     <Compile Include="Services\CartLifeCycleEventHandler.cs" />
-    <Compile Include="Services\CartPriceAlterationProcessor.cs" />
+    <Compile Include="Services\Couponing\CouponCartPriceAlterationProcessor.cs" />
     <Compile Include="Services\CommerceLocalStorageSettings.cs" />
     <Compile Include="Services\Couponing\CouponApplicationService.cs" />
     <Compile Include="Services\Couponing\CouponCartExtensionProvider.cs" />
     <Compile Include="Services\Couponing\CouponingRepositoryService.cs" />
+    <Compile Include="Services\Couponing\CouponOrderAdditionalInformationProvider.cs" />
     <Compile Include="Services\Couponing\ICouponApplicationService.cs" />
     <Compile Include="Services\Couponing\ICouponRepositoryService.cs" />
     <Compile Include="Services\CurrencyProviderBase.cs" />
@@ -576,6 +577,7 @@
     <Compile Include="Services\LocalizationSKUUniquenessHelper.cs" />
     <Compile Include="Services\IProductAttributeNameService.cs" />
     <Compile Include="Services\BaseTaxProviderService.cs" />
+    <Compile Include="Services\OrderContext.cs" />
     <Compile Include="Services\PersistentCartLocalStorageSettings.cs" />
     <Compile Include="Services\PersistentShoppingCartServices.cs" />
     <Compile Include="Services\ProductAttributeAdminServices.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.ViewModels;
 using Orchard.ContentManagement.Handlers;
@@ -15,6 +16,10 @@ namespace Nwazet.Commerce.Services {
     /// </summary>
     public abstract class BaseOrderAdditionalInformationProvider : IOrderAdditionalInformationProvider {
         public virtual void Exporting(OrderPart part, ExportContentContext context) { }
+
+        public virtual IEnumerable<XElement> PrepareAdditionalInformation(OrderContext context) {
+            return Enumerable.Empty<XElement>();
+        }
 
         public virtual IEnumerable<dynamic> GetAdditionalOrderAddressesShapes(OrderPart orderPart) {
             return Enumerable.Empty<dynamic>();

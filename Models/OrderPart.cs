@@ -17,7 +17,7 @@ namespace Nwazet.Commerce.Models {
         public const string Accepted = "Accepted";
         public const string Archived = "Archived";
         public const string Cancelled = "Cancelled";
-        
+
         public const string Note = "Note";
         public const string Warning = "Warning";
         public const string Error = "Error";
@@ -34,7 +34,7 @@ namespace Nwazet.Commerce.Models {
 
         private const string ActivityName = "activity";
         private const string BillingAddressName = "billingAddress";
-        private const string ChargeName = "charge"; 
+        private const string ChargeName = "charge";
         private const string CardName = "card";
         private const string ContentName = "content";
         private const string CustomerName = "customer";
@@ -55,6 +55,7 @@ namespace Nwazet.Commerce.Models {
         private const string AmountName = "amountPaid";
         private const string PurchaseOrderName = "purchaseOrder";
         private const string CurrencyCodeName = "currencyCode";
+        private const string AdditionalInformationName = "additionalOrderInformation";
 
         public void Build(
             ICharge charge,
@@ -67,10 +68,11 @@ namespace Nwazet.Commerce.Models {
             Address billingAddress,
             string customerEmail,
             string customerPhone,
-            string specialInstructions, 
+            string specialInstructions,
             string currencyCode,
             decimal amountPaid = default(decimal),
-            string purchaseOrder = "") {
+            string purchaseOrder = "",
+            IEnumerable<XElement> additionalElements = null) {
 
             _contentDocument = new XElement(ContentName)
                 .Attr(SubtotalName, subTotal)
@@ -78,39 +80,59 @@ namespace Nwazet.Commerce.Models {
                 .Attr(AmountName, amountPaid == default(decimal) ? total : amountPaid)
                 .Attr(PurchaseOrderName, purchaseOrder)
                 .Attr(CurrencyCodeName, currencyCode)
+                // charge information
                 .AddEl(new XElement(ChargeName).With(charge)
                     .ToAttr(c => c.TransactionId)
                     .ToAttr(c => c.ChargeText)
                     .Element)
+                // checkout items
                 .AddEl(new XElement(ItemsName, items.Select(it =>
                     new XElement(ItemName).With(it)
                         .ToAttr(i => i.ProductId)
                         .ToAttr(i => i.Quantity)
                         .ToAttr(i => i.Title)
                         .ToAttr(i => i.Price)
-                        .ToAttr(i => i.OriginalPrice)                        
+                        .ToAttr(i => i.OriginalPrice)
                         .ToAttr(i => i.LinePriceAdjustment)
                         .ToAttr(i => i.PromotionId)
                         .Element
+                    // product attributes
                     .AddEl(new XElement(AttributesName, it.Attributes != null ? it.Attributes.Select(at => {
-                            var attrEl = new XElement(AttributeName);
-                            attrEl.SetAttributeValue("Key", at.Key);
-                            attrEl.SetAttributeValue("Value", at.Value.Value);
-                            attrEl.SetAttributeValue("Extra", at.Value.ExtendedValue);
-                            attrEl.SetAttributeValue("ExtensionProvider", at.Value.ExtensionProvider);
-                            return attrEl;
-                            }) : null)))))
+                        var attrEl = new XElement(AttributeName);
+                        attrEl.SetAttributeValue("Key", at.Key);
+                        attrEl.SetAttributeValue("Value", at.Value.Value);
+                        attrEl.SetAttributeValue("Extra", at.Value.ExtendedValue);
+                        attrEl.SetAttributeValue("ExtensionProvider", at.Value.ExtensionProvider);
+                        return attrEl;
+                    }) : null)))))
+                // taxes (this is distinct from VAT)
                 .AddEl(new XElement(TaxesName).With(taxes)
                     .ToAttr(t => t.Name)
                     .ToAttr(t => t.Amount)
                     .Element)
+                // Shipping information
                 .AddEl(new XElement(ShippingName).With(shippingOption)
                     .ToAttr(s => s.Description)
                     .ToAttr(s => s.ShippingCompany)
-                    .ToAttr(s => s.Price)  
+                    .ToAttr(s => s.Price)
                     .ToAttr(s => s.ShippingMethodId)
                     .ToAttr(s => s.DefaultPrice)
                     .Element);
+            // Additional order elements: e.g. coupons. Really, this allows adding any kind
+            // of additional information in the xml for this order. The XML for this will look like:
+            // <content {order attributes}>
+            //   ...
+            //   <additionalOrderInformation>
+            //     {each additional element}
+            //   </additionalOrderInformation>
+            // </content>
+            // Care should be taken in naming those additional elements in case their name is 
+            // later used to as "key" for other operations: validation may become tricky there.
+            if (additionalElements != null && additionalElements.Any()) {
+                _contentDocument.AddEl(
+                    new XElement(AdditionalInformationName)
+                        .AddEl(additionalElements.ToArray()));
+            }
 
             var shippingAddressElement = Address.Set(new XElement(ShippingAddressName), shippingAddress);
             var billingAddressElement = Address.Set(new XElement(BillingAddressName), billingAddress);
@@ -125,7 +147,7 @@ namespace Nwazet.Commerce.Models {
             PersistContents();
             PersistCustomer();
         }
-        
+
         private void PersistContents() {
             Record.Contents = _contentDocument.ToString(SaveOptions.None);
         }
@@ -193,18 +215,15 @@ namespace Nwazet.Commerce.Models {
 
         public decimal SubTotal {
             get {
-                return (decimal) ContentDocument.Attribute(SubtotalName);
+                return (decimal)ContentDocument.Attribute(SubtotalName);
             }
         }
 
-        public string CurrencyCode
-        {
-            get
-            {
+        public string CurrencyCode {
+            get {
                 return (string)ContentDocument.Attribute(CurrencyCodeName);
             }
-            set
-            {
+            set {
                 ContentDocument.SetAttributeValue(CurrencyCodeName, value);
                 PersistContents();
             }
@@ -212,7 +231,7 @@ namespace Nwazet.Commerce.Models {
 
         public decimal Total {
             get {
-                return (decimal) ContentDocument.Attribute(TotalName);
+                return (decimal)ContentDocument.Attribute(TotalName);
             }
         }
 
@@ -220,7 +239,7 @@ namespace Nwazet.Commerce.Models {
             get {
                 var attr = ContentDocument.Attribute(AmountName);
                 if (attr == null) return Total;
-                return (decimal) attr;
+                return (decimal)attr;
             }
             set {
                 ContentDocument.SetAttributeValue(AmountName, value);
@@ -376,7 +395,7 @@ namespace Nwazet.Commerce.Models {
             internal set {
                 _activityDocument =
                     new XElement(ActivityName,
-                        new XElement(EventsName, 
+                        new XElement(EventsName,
                             value.Select(ev => new XElement(EventName).With(ev)
                                 .ToAttr(e => e.Date)
                                 .ToAttr(e => e.Category)
@@ -451,6 +470,14 @@ namespace Nwazet.Commerce.Models {
                     ? Id.ToString() //default for retrocompatibility
                     : Record.OrderKey; }
             set { Record.OrderKey = value; }
+        }
+
+        // additional elements from teh order's xml document
+        public IEnumerable<XElement> AdditionalElements{
+            get {
+                var el = _contentDocument.Element(AdditionalInformationName);
+                return el?.Elements() ?? Enumerable.Empty<XElement>();
+            }
         }
     }
 }

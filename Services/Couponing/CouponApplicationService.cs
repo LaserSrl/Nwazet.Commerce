@@ -42,9 +42,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                 }
             }
         }
-
-        public string AlterationType => "Coupon";
-
+        
         private void Apply(CouponRecord coupon) {
             //TODO
             // based on the coupon, we add a CartPriceAlteration to the shoppingCart
@@ -54,7 +52,7 @@ namespace Nwazet.Commerce.Services.Couponing {
             // to write to the user that the coupon is "active".
             var allAlterations = new List<CartPriceAlteration> {
                 new CartPriceAlteration {
-                    AlterationType = AlterationType,
+                    AlterationType = CouponingUtilities.CouponAlterationType,
                     Key = coupon.Code,
                     Weight = 1
                 } };

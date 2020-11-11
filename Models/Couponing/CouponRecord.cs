@@ -11,6 +11,13 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.Couponing")]
     public class CouponRecord {
+
+        // IMPORTANT
+        // Objects of this class are serialized to XML in the 
+        // ToXMLElement extension method of CouponingUtilities.
+        // When properties are added, changed, removed, make sure to
+        // also update that method to avoid unexpected behavior.
+
         public virtual int Id { get; set; } //Primary Key
 
         #region Coupon definition

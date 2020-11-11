@@ -26,6 +26,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly INotifier _notifier;
         private readonly IEnumerable<ICartLifeCycleEventHandler> _cartLifeCycleEventHandlers;
         private readonly IShoppingCart _shoppingCart;
+        private readonly IEnumerable<IOrderAdditionalInformationProvider> _orderAdditionalInformationProviders;
 
         public StripeController(
             IStripeService stripeService,
@@ -34,7 +35,8 @@ namespace Nwazet.Commerce.Controllers {
             IWorkflowManager workflowManager,
             INotifier notifier,
             IEnumerable<ICartLifeCycleEventHandler> cartLifeCycleEventHandlers,
-            IShoppingCart shoppingCart) {
+            IShoppingCart shoppingCart,
+            IEnumerable<IOrderAdditionalInformationProvider> orderAdditionalInformationProviders) {
 
             _stripeService = stripeService;
             _orderService = orderService;
@@ -43,6 +45,7 @@ namespace Nwazet.Commerce.Controllers {
             _notifier = notifier;
             _cartLifeCycleEventHandlers = cartLifeCycleEventHandlers;
             _shoppingCart = shoppingCart;
+            _orderAdditionalInformationProviders = orderAdditionalInformationProviders;
 
             Logger = NullLogger.Instance;
             T = NullLocalizer.Instance;
@@ -137,8 +140,12 @@ namespace Nwazet.Commerce.Controllers {
             var currentUser = _wca.GetContext().CurrentUser;
             if (currentUser != null) {
                 userId = currentUser.Id;            
-            }           
-
+            }
+            var orderContext = new OrderContext {
+                WorkContextAccessor = _wca,
+                ShoppingCart = _shoppingCart,
+                Charge = stripeCharge
+            };
             var order = _orderService.CreateOrder(
                 stripeCharge,
                 checkoutData.CheckoutItems,
@@ -157,7 +164,9 @@ namespace Nwazet.Commerce.Controllers {
                 userId,
                 total,
                 checkoutData.PurchaseOrder,
-                _stripeService.GetSettings().Currency);
+                _stripeService.GetSettings().Currency,
+                _orderAdditionalInformationProviders
+                    .SelectMany(oaip => oaip.PrepareAdditionalInformation(orderContext)));
             TempData["OrderId"] = order.Id;
             _workflowManager.TriggerEvent(
                 isProductOrder ? "NewOrder" : "NewPayment",

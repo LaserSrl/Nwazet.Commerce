@@ -1,16 +1,20 @@
 ﻿using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Models.Couponing;
 using Nwazet.Commerce.ViewModels.Couponing;
+using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Nwazet.Commerce.Extensions {
     [OrchardFeature("Nwazet.Couponing")]
     public static class CouponingUtilities {
+
+        public const string CouponAlterationType = "Coupon";
 
         /// <summary>
         /// Returns a copy of the CouponRecords
@@ -44,6 +48,24 @@ namespace Nwazet.Commerce.Extensions {
             record.Value = coupon.Value;
             record.CouponType = coupon.CouponType;
             record.Published = coupon.Published;
+        }
+
+        public static XElement ToXMLElement(this CouponRecord record) {
+            // The record's properties are serialized as attributes of the
+            // resulting XElement. This will result in an XML element that looks
+            // like this:
+            // <Coupon Name="name" Code="code" {...more attributes} />
+            return new XElement(CouponAlterationType)
+                .With(record)
+                // definition
+                .ToAttr(c => c.Name)
+                .ToAttr(c => c.Code)
+                // conditions
+                .ToAttr(c => c.Published)
+                // actions
+                .ToAttr(c => c.Value)
+                .ToAttr(c => c.CouponType)
+                ;
         }
 
         #region [IQueryable]
