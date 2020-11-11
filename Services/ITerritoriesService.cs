@@ -110,11 +110,12 @@ namespace Nwazet.Commerce.Services {
         /// in the hierarchy that we are processing.
         /// </summary>
         /// <param name="hierarchy">The hierarchy we are working on.</param>
+        /// <param name="hierarchyTerritories">The list of Hierarchy Territories.</param>
         /// <returns>An IEnumerable of the TerritoryInternalRecord that have not yet been used in the current hierarchy.</returns>
         /// <exception cref="ArgumentNullException">Throws an ArgumentNullException if the TerritoryHierarchyPart
         /// argument is null.</exception>
         /// <exception cref="ArgumentException">Throws an ArgumentException if the TerritoryHierarchyPart
         /// argument has a null underlying record.</exception>
-        IEnumerable<TerritoryInternalRecord> GetAvailableTerritoryInternals(TerritoryHierarchyPart hierarchyPart);
+        IEnumerable<TerritoryInternalRecord> GetAvailableTerritoryInternals(TerritoryHierarchyPart hierarchyPart,List<TerritoryPartRecord> hierarchyTerritories);
     }
 }

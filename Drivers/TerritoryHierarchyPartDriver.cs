@@ -17,13 +17,17 @@ namespace Nwazet.Commerce.Drivers {
 
         private ITerritoriesService _territoriesService;
         private readonly INotifier _notifier;
+        private readonly ITerritoryPartRecordService _territoryPartRecordService;
+
 
         public TerritoryHierarchyPartDriver(
             ITerritoriesService territoriesService,
-            INotifier notifier) {
+            INotifier notifier,
+            ITerritoryPartRecordService territoryPartRecordService) {
 
             _territoriesService = territoriesService;
             _notifier = notifier;
+            _territoryPartRecordService = territoryPartRecordService;
 
             T = NullLocalizer.Instance;
         }
@@ -37,7 +41,7 @@ namespace Nwazet.Commerce.Drivers {
         protected override DriverResult Display(TerritoryHierarchyPart part, string displayType, dynamic shapeHelper) {
             return Combined(
                 ContentShape("Parts_TerritoryHierarchy_SummaryAdmin",
-                    () => shapeHelper.Parts_TerritoryHierarchy_SummaryAdmin(TerritoriesCount: part.Record.Territories.Count())
+                    () => shapeHelper.Parts_TerritoryHierarchy_SummaryAdmin(TerritoriesCount: _territoryPartRecordService.GetHierarchyTerritoriesCount(part))//part.Record.Territories.Count()
                     ));
         }
 
@@ -52,7 +56,7 @@ namespace Nwazet.Commerce.Drivers {
                         shapes.Add(ContentShape("Parts_TerritoryHierarchy_TerritoryManager",
                             () => shapeHelper.EditorTemplate(
                                 TemplateName: "Parts/TerritoryHierarchyTerritoryManager",
-                                Model: new TerritoryHierarchyTerritoryManagerViewModel(part) {
+                                Model: new TerritoryHierarchyTerritoryManagerViewModel(part,_territoryPartRecordService) {
                                     TopLevelCount = _territoriesService
                                         .GetTerritoriesQuery(part, null, VersionOptions.Latest)
                                         .Count()
@@ -95,7 +99,7 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         private bool MayChangeTerritoryType(TerritoryHierarchyPart part) {
-            return !(part.Record.Territories?.Any() ?? false) &&
+            return !(_territoryPartRecordService.GetHierarchyTerritoriesCount(part)>0) && 
                 part.Settings.GetModel<TerritoryHierarchyPartSettings>().MayChangeTerritoryTypeOnItem;
         }
 
