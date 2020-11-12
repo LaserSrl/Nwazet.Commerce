@@ -472,11 +472,20 @@ namespace Nwazet.Commerce.Models {
             set { Record.OrderKey = value; }
         }
 
-        // additional elements from teh order's xml document
+        // additional elements from the order's xml document.
+        // These should be classified by the providers adding them so it's possible to know 
+        // whether they "apply" to a single checkout item or to the order as a whole.
         public IEnumerable<XElement> AdditionalElements{
             get {
                 var el = _contentDocument.Element(AdditionalInformationName);
                 return el?.Elements() ?? Enumerable.Empty<XElement>();
+            }
+        }
+        public IEnumerable<OrderLineInformation> LineInformation {
+            get {
+                return _contentDocument.Element(AdditionalInformationName)
+                    .Elements(OrderLineInformation.ElementName)
+                    .Select(el => OrderLineInformation.FromXML(el));
             }
         }
     }

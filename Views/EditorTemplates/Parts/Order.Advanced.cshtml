@@ -1,0 +1,159 @@
+﻿@using System.Globalization
+@using Nwazet.Commerce.Services
+@using System.Collections.Generic
+@using Nwazet.Commerce.Models;
+@using System.Linq;
+@using Orchard.ContentManagement;
+
+@model Nwazet.Commerce.ViewModels.OrderEditorViewModel
+@{
+    Script.Require("jQuery");
+    Style.Include("order-admin.css", "order-admin.min.css");
+    Script.Include("order-admin.js", "order-admin.min.js");
+
+    var _contentManager = WorkContext.Resolve<IContentManager>();
+
+    Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
+    CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
+}
+
+<div class="order-editor">
+
+    <fieldset class="order-items">
+        <legend>@T("Products:")</legend>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Prodotto</th>
+                    <th>Imponibile Base</th>
+                    <th>Imponibile a carrello</th>
+                    <th>Qtà</th>
+                    <th>Subtotal (imponibile)</th>
+                    <th>Variazione linea (imponibile)</th>
+                    <th>Totale linea (imponibile)</th>
+                    <th>VAT %</th>
+                    <th>Total linea (ivato)</th>
+                </tr>
+            </thead>
+            <tbody id="order_products_table_body">
+                <tr>
+                    <td>Testo salvato a DB come ora</td>
+                    <td>Il prezzo originale salvato sul prodotto</td>
+                    <td>Il prezzo di prodotto usato. Potrebbe essere diverso dal precendente se nel prodotto stesso si è marcato uno sconto.</td>
+                    <td>Quanti di questi prodotti sono nell'ordine.</td>
+                    <td>qtà * prezzo imponibile usato</td>
+                    <td>Somma di tutte le variazioni sull'imponibile di linea</td>
+                    <td>Subtotal - sconti</td>
+                    <td>numero</td>
+                    <td>imponibile * (1+VAT)</td>
+                </tr>
+                
+                <tr>
+                    <td>Nel checkoutItem</td>
+                    <td>Nel checkoutItem</td>
+                    <td>Nel checkoutItem</td>
+                    <td>Nel checkoutItem</td>
+                    <td>Nel checkoutItem?</td>
+                    <td>costruito da estensioni</td>
+                    <td>calcolato?</td>
+                    <td>costruito da estensioni</td>
+                    <td>calcolato?</td>
+                </tr>
+                @foreach (var item in Model.OrderItems) {
+                    
+                    var lineInformation = Model.Order
+                        .LineInformation
+                        .Where(ola => ola.ProductId == item.ProductId);
+
+                    <tr id="@string.Format("order_products_table_row-product_{0}", item.ProductId)">
+                        <td class="description">
+                            @* check is a product *@
+                            @if (_contentManager.Get(item.ProductId)?.As<ProductPart>() != null) {
+                                <a href="@Url.ItemDisplayUrl(Model.Products[item.ProductId])" target="_blank">@item.Title</a>
+                            }
+                            else {
+                                <span>@item.Title</span>
+                            }
+                        </td>
+                        @{ 
+                            var baseInfo = lineInformation.SelectMany(ola => ola.Details
+                                .Where(old => old.InformationType == OrderInformationType.OriginalData));
+                            var discountPrice = baseInfo
+                                .FirstOrDefault(old => old.Label.Equals("DiscountPrice", StringComparison.InvariantCultureIgnoreCase))
+                                ?.Value ?? 0.0m;
+                            var basePrice = baseInfo
+                                .FirstOrDefault(old => old.Label.Equals("OriginalPrice", StringComparison.InvariantCultureIgnoreCase))
+                                ?.Value ?? item.OriginalPrice;
+
+                            discountPrice = discountPrice > 0.0m && discountPrice < basePrice
+                                ? discountPrice
+                                : basePrice;
+                        }
+                        <td class="price">@currencyInUse.PriceAsString(basePrice, cultureInUse)</td>
+                        <td class="price">@currencyInUse.PriceAsString(item.Price, cultureInUse)</td>
+                        <td class="quantity">&times; @item.Quantity</td>
+
+                        @{ 
+                            var lineSubtotal = item.Price * item.Quantity;
+                        }
+                        <td class="price">@currencyInUse.PriceAsString(lineSubtotal, cultureInUse)</td>
+                        
+                        @{ 
+                            var lineVariations = 0.0m;
+                            lineVariations = lineInformation
+                                .SelectMany(ola => ola.Details
+                                    .Where(old => old.InformationType == OrderInformationType.RawLinePrice))
+                                .Sum(old => old.Value);
+                        }
+                        <td class="price">TODO: @currencyInUse.PriceAsString(lineVariations, cultureInUse)</td>
+
+                        <td class="price">TODO: @currencyInUse.PriceAsString(lineSubtotal + lineVariations, cultureInUse)</td>
+
+                        @{ 
+                            var vatRate = 0.0m;
+                            var vatAlteration = lineInformation
+                                .FirstOrDefault(ola => ola.Details
+                                    .Any(old => old.InformationType == OrderInformationType.VAT));
+                            if (vatAlteration != null) {
+                                vatRate = vatAlteration.Details
+                                    .First(old => old.InformationType == OrderInformationType.VAT)
+                                    .Value;
+                            }
+                        }
+                        <td>TODO: @string.Format("{0} %", (vatRate * 100m).ToString())</td>
+                        
+                        @{ 
+                            var lineTotal = (lineSubtotal + lineVariations) * (1.0m + vatRate);
+                        }
+                        <td class="price">TODO: @currencyInUse.PriceAsString(lineTotal, cultureInUse)</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>somma dei subtotal (imponibili)</td>
+                    <td>vai sotto la colonna corretta</td>
+                </tr>
+                <tr>
+                    <td>Somma degli sconti (totale € per l'ordine)</td>
+                    <td>vai sotto la colonna corretta</td>
+                </tr>
+                <tr>
+                    <td>VAT totale per l'ordine sui prodotti</td>
+                    <td>vai sotto la colonna corretta</td>
+                </tr>
+                <tr>
+                    <td>Shipping: nome</td>
+                    <td>numero: mettere i prezzi sotto le colonne corrette</td>
+                </tr>
+                <tr>
+                    <td>Totale dell'ordine</td>
+                    <td>sotto le colonne corrette</td>
+                </tr>
+            </tfoot>
+        </table>
+
+    </fieldset>
+
+</div>

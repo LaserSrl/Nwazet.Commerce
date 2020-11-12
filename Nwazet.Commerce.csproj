@@ -194,6 +194,7 @@
     <None Include="Views\CouponingAdmin\Edit.cshtml" />
     <None Include="Views\CouponingAdmin\Index.cshtml" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Order.Advanced.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethodCriteria.cshtml" />
@@ -422,6 +423,8 @@
     <Compile Include="Models\InventoryBySKUSiteSettingsPart.cs" />
     <Compile Include="Models\InventoryPart.cs" />
     <Compile Include="Models\InventoryPartRecord.cs" />
+    <Compile Include="Models\OrderInformationDetail.cs" />
+    <Compile Include="Models\OrderLineInformation.cs" />
     <Compile Include="Models\OrderVatRecord.cs" />
     <Compile Include="Models\PersistentShoppingCart.cs" />
     <Compile Include="Models\PricePart.cs" />
@@ -577,6 +580,7 @@
     <Compile Include="Services\LocalizationSKUUniquenessHelper.cs" />
     <Compile Include="Services\IProductAttributeNameService.cs" />
     <Compile Include="Services\BaseTaxProviderService.cs" />
+    <Compile Include="Services\OrderAdditionalInformationProvider.cs" />
     <Compile Include="Services\OrderContext.cs" />
     <Compile Include="Services\PersistentCartLocalStorageSettings.cs" />
     <Compile Include="Services\PersistentShoppingCartServices.cs" />

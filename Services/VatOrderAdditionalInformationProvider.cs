@@ -50,6 +50,48 @@ namespace Nwazet.Commerce.Services {
 
         public Localizer T { get; set; }
 
+        public override IEnumerable<XElement> PrepareAdditionalInformation(OrderContext context) {
+            // new method to inject additional information in the order
+            
+            // We will need the destination TerritoryInternalRecord to figure out VAT
+            var destination = FindDestination(context.ShippingAddress, context.BillingAddress);
+
+            var cart = context.ShoppingCart;
+            var productLines = cart?.GetProducts();
+            foreach (var productLine in productLines) {
+                var productPart = productLine.Product;
+                var vatConfigurationPart = productPart
+                    ?.As<ProductVatConfigurationPart>()
+                    ?.VatConfigurationPart
+                    ?? _vatConfigurationService.GetDefaultCategory();
+                var rate = _vatConfigurationService.GetRate(productPart, destination);
+
+                var source = new XElement("VAT")
+                    .Attr("TaxProductCategory", vatConfigurationPart.TaxProductCategory)
+                    .Attr("Rate", rate);
+                if (destination != null) {
+                    source.AddEl(new XElement("DestinationTerritoryInternalRecord")
+                        .With(destination)
+                        .ToAttr(tir => tir.Id)
+                        .ToAttr(tir => tir.Name)
+                        .ToAttr(tir => tir.NameHash));
+                }
+
+                yield return new OrderLineInformation() {
+                    ProductId = productLine.Product.Id,
+                    Source = source,
+                    Details = new OrderInformationDetail[] {
+                        new OrderInformationDetail {
+                            Label = "VAT",
+                            Value = rate,
+                            InformationType = OrderInformationType.VAT,
+                            ProcessorClass = this.GetType().FullName
+                        }
+                    }
+                }.ToXML();
+            }
+        }
+
         public override void StoreAdditionalInformation(OrderPart orderPart) {
             // We have to save, for each product in the order, what is the applied rate at the time the
             // order is created. 

@@ -144,7 +144,9 @@ namespace Nwazet.Commerce.Controllers {
             var orderContext = new OrderContext {
                 WorkContextAccessor = _wca,
                 ShoppingCart = _shoppingCart,
-                Charge = stripeCharge
+                Charge = stripeCharge,
+                ShippingAddress = checkoutData.ShippingAddress,
+                BillingAddress = checkoutData.BillingAddress
             };
             var order = _orderService.CreateOrder(
                 stripeCharge,

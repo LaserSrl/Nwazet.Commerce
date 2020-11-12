@@ -203,7 +203,7 @@ namespace Nwazet.Commerce.Drivers {
                         Prefix: Prefix)),
                 ContentShape("Parts_Order_Edit", // products and prices
                     () => shapeHelper.EditorTemplate(
-                        TemplateName: "Parts/Order",
+                        TemplateName: part.AdditionalElements.Any() ? "Parts/Order.Advanced" : "Parts/Order",
                         Model: model,
                         Prefix: Prefix)),
                 ContentShape("Parts_Order_Payment_Edit",

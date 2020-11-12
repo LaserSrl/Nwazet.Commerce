@@ -12,5 +12,7 @@ namespace Nwazet.Commerce.Services {
         public IShoppingCart ShoppingCart { get; set; }
         public ICharge Charge { get; set; }
         
+        public Address ShippingAddress { get; set; }
+        public Address BillingAddress { get; set; }
     }
 }

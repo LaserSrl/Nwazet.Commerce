@@ -69,10 +69,11 @@ namespace Nwazet.Commerce.Services.Couponing {
                 var coupon = GetCouponFromCode(alteration.Key);
                 switch (coupon.CouponType) {
                     case CouponType.Percent:
+                        // Consider price as input, before VAT and such
                         var itemPrice = cartLine.Product.DiscountPrice >= 0 && cartLine.Product.DiscountPrice < cartLine.Product.Price
-                            ? _productPriceService.GetDiscountPrice(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode)
-                            : _productPriceService.GetPrice(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode);
-                        var linePrice = itemPrice * cartLine.Quantity
+                            ? cartLine.Product.DiscountPrice //_productPriceService.GetDiscountPrice(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode)
+                            : cartLine.Product.Price; // _productPriceService.GetPrice(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode);
+                        var linePrice = Math.Round(itemPrice,2) * cartLine.Quantity
                             + cartLine.LinePriceAdjustment;
                         return -linePrice * (coupon.Value / 100m);
                     case CouponType.Amount:
@@ -120,6 +121,11 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         private bool Applies(CouponRecord coupon, IShoppingCart shoppingCart) {
             //TODO: use criteria to actually check whether the coupon can be used
+            // even more, the criteria will tell us whether this service cna process
+            // the coupon. In principle, we could have one very specific service for
+            // each coupon configuration.
+            // for example, one service would handle coupons that work on a % of the 
+            // whole cart, another those that have a fixed amount and so on.
             return coupon.Published;
         }
 
