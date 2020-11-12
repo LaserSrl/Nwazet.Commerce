@@ -91,11 +91,11 @@
                                 : basePrice;
                         }
                         <td class="price">@currencyInUse.PriceAsString(basePrice, cultureInUse)</td>
-                        <td class="price">@currencyInUse.PriceAsString(item.Price, cultureInUse)</td>
+                        <td class="price">@currencyInUse.PriceAsString(discountPrice, cultureInUse)</td>
                         <td class="quantity">&times; @item.Quantity</td>
 
                         @{ 
-                            var lineSubtotal = item.Price * item.Quantity;
+                            var lineSubtotal = discountPrice * item.Quantity;
                         }
                         <td class="price">@currencyInUse.PriceAsString(lineSubtotal, cultureInUse)</td>
                         
