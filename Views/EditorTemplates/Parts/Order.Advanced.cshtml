@@ -15,6 +15,11 @@
 
     Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
     CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
+
+    // sums:
+    var subSum = 0.0m; // sum of taxable subtotals (before discounts too)
+    var discountsSum = 0.0m; //sum of line alterations like coupons
+    var totalSum = 0.0m; // some of order total including VAT
 }
 
 <div class="order-editor">
@@ -96,6 +101,7 @@
 
                         @{ 
                             var lineSubtotal = discountPrice * item.Quantity;
+                            subSum += lineSubtotal;
                         }
                         <td class="price">@currencyInUse.PriceAsString(lineSubtotal, cultureInUse)</td>
                         
@@ -105,10 +111,11 @@
                                 .SelectMany(ola => ola.Details
                                     .Where(old => old.InformationType == OrderInformationType.RawLinePrice))
                                 .Sum(old => old.Value);
+                            discountsSum += lineVariations;
                         }
-                        <td class="price">TODO: @currencyInUse.PriceAsString(lineVariations, cultureInUse)</td>
+                        <td class="price">@currencyInUse.PriceAsString(lineVariations, cultureInUse)</td>
 
-                        <td class="price">TODO: @currencyInUse.PriceAsString(lineSubtotal + lineVariations, cultureInUse)</td>
+                        <td class="price">@currencyInUse.PriceAsString(lineSubtotal + lineVariations, cultureInUse)</td>
 
                         @{ 
                             var vatRate = 0.0m;
@@ -121,35 +128,38 @@
                                     .Value;
                             }
                         }
-                        <td>TODO: @string.Format("{0} %", (vatRate * 100m).ToString())</td>
+                        <td>@string.Format("{0} %", (vatRate * 100m).ToString())</td>
                         
                         @{ 
                             var lineTotal = (lineSubtotal + lineVariations) * (1.0m + vatRate);
+                            totalSum += lineTotal;
                         }
-                        <td class="price">TODO: @currencyInUse.PriceAsString(lineTotal, cultureInUse)</td>
+                        <td class="price">@currencyInUse.PriceAsString(lineTotal, cultureInUse)</td>
                     </tr>
                 }
             </tbody>
             <tfoot>
                 <tr>
-                    <td>somma dei subtotal (imponibili)</td>
-                    <td>vai sotto la colonna corretta</td>
+                    <td colspan="4" class="label">somma dei subtotal (imponibili)</td>
+                    <td class="price">@currencyInUse.PriceAsString(subSum, cultureInUse)</td>
                 </tr>
                 <tr>
-                    <td>Somma degli sconti (totale € per l'ordine)</td>
-                    <td>vai sotto la colonna corretta</td>
+                    <td colspan="4" class="label">Somma degli sconti (totale € per l'ordine)</td>
+                    <td></td>
+                    <td class="price">@currencyInUse.PriceAsString(discountsSum, cultureInUse)</td>
                 </tr>
                 <tr>
-                    <td>VAT totale per l'ordine sui prodotti</td>
-                    <td>vai sotto la colonna corretta</td>
+                    <td colspan="4" class="label">VAT totale per l'ordine sui prodotti</td>
+                    <td class="price">TODO: vai sotto la colonna corretta</td>
                 </tr>
                 <tr>
-                    <td>Shipping: nome</td>
-                    <td>numero: mettere i prezzi sotto le colonne corrette</td>
+                    <td colspan="4" class="label">Shipping: nome</td>
+                    <td class="price">TODO:numero: mettere i prezzi sotto le colonne corrette</td>
                 </tr>
                 <tr>
-                    <td>Totale dell'ordine</td>
-                    <td>sotto le colonne corrette</td>
+                    <td colspan="4" class="label">Totale dell'ordine</td>
+                    <td colspan="4"></td>
+                    <td class="price">@currencyInUse.PriceAsString(Model.Order.Total, cultureInUse)</td>
                 </tr>
             </tfoot>
         </table>
