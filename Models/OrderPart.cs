@@ -488,5 +488,12 @@ namespace Nwazet.Commerce.Models {
                     .Select(el => OrderLineInformation.FromXML(el));
             }
         }
+        public IEnumerable<OrderAdditionalInformation> AdditionalOrderInformation {
+            get {
+                return _contentDocument.Element(AdditionalInformationName)
+                    .Elements(OrderAdditionalInformation.ElementName)
+                    .Select(el => OrderAdditionalInformation.FromXML(el));
+            }
+        }
     }
 }

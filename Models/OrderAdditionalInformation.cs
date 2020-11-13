@@ -8,34 +8,30 @@ using System.Xml.Linq;
 
 namespace Nwazet.Commerce.Models {
     /// <summary>
-    /// Used to specify details for specific order lines
+    /// Used to specify details for the whole order
     /// </summary>
-    public class OrderLineInformation {
-        public const string ElementName = "OrderLineInformation";
+    public class OrderAdditionalInformation {
+        public const string ElementName = "OrderAdditionalInformation";
 
-        public OrderLineInformation() {
+        public OrderAdditionalInformation() {
             Details = Enumerable.Empty<OrderInformationDetail>();
         }
-
-        public int ProductId { get; set; }
 
         public IEnumerable<OrderInformationDetail> Details { get; set; }
 
         public XElement Source { get; set; }
-        
+
         public XElement ToXML() {
             return new XElement(ElementName)
-                .Attr("ProductId", ProductId)
                 .AddEl(new XElement("Source", Source))
                 .AddEl(Details
                     .Select(d => d.ToXML())
                     .ToArray());
         }
 
-        public static OrderLineInformation FromXML(XElement el) {
+        public static OrderAdditionalInformation FromXML(XElement el) {
             var ola = el
-                .With(new OrderLineInformation())
-                .FromAttr(e => e.ProductId)
+                .With(new OrderAdditionalInformation())
                 .Context;
             ola.Source = el.Element("Source");
             ola.Details = el.Elements(OrderInformationDetail.ElementName)

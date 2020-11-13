@@ -66,12 +66,14 @@ namespace Nwazet.Commerce.Services.Couponing {
                     if (coupon != null) { // sanity check
                         var xCoupon = coupon.ToXMLElement();
                         // The coupon should potentially add several XElements:
+                        // - 1 element containing "summary" information, telling a coupon was there
                         // - 0+ LineAlteration elements, that apply to a single CheckoutItem
                         // - 0+ OrderAlteration elements, that apply to the order as a whole
                         // - 0+ other? TODO
                         // These elements should contain all the information that will be
                         // required to eventually repeat their computations, but also the 
                         // results.
+
                         // get the processors that are able to manipulate and evaluate the coupon:
                         var processors = _cartPriceAlterationProcessors
                             .Where(cpap => cpap.CanProcess(alteration, cart));
@@ -97,6 +99,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                                     .Select(p => new OrderInformationDetail {
                                         Label = p.AlterationLabel(alteration, cart, productLine),
                                         Value = p.AlterationAmount(alteration, cart, productLine),
+                                        ValueType = OrderValueType.Currency,
                                         InformationType = OrderInformationType.RawLinePrice,
                                         ProcessorClass = p.GetType().FullName
                                     })
@@ -111,47 +114,80 @@ namespace Nwazet.Commerce.Services.Couponing {
                                 }
                             }
                             //  - By what "value" does the coupon affect the cart as a whole?
-                        }
+                            // A coupon set as a % amount is applied, for the order, on each line, rather than
+                            // on the whole cart, so it will not introduce an additional element here. On the other
+                            // hand, a coupon for a flat amount (e.g. "-10€") would be here.
+                            // TODO: do this, paying attention to taxable amounts and VAT
 
-                        // we need to add to this XElement all the "dynamic" results of having 
-                        // the coupon in the current context.
-                        if (processors.Any()) {
-                            
-                            //  - By what "value" does the coupon affect the cart as a whole?
-                            var cartValues = processors
-                                .Select(p => new {
-                                    Label = p.AlterationLabel(alteration, cart),
-                                    Value = p.AlterationAmount(alteration, cart),
-                                    AlterationType = p.AlterationType,
-                                    ProcessorClass = p.GetType().FullName
-                                })
-                                .Where(o => o.Value != 0.0m);
-                            if (cartValues.Any()) {
-                                // there are values affected by the coupon. We add XML like this:
-                                // <CartAlteration">
-                                //   <AlterationDetali 
-                                //     Label ="{Label computed}" 
-                                //     Value ="{alteration amount}"
-                                //     AlterationType = "Coupon" 
-                                //     ProcessorClass = "{name of the C# class for the processor}" />
-                                // </CartAlteration>
-                                // For each line in the order there may be one LineAlteration element, containing
-                                // one AlterationDetail element for each processor that gave results for
-                                // the coupon.
-                                xCoupon
-                                    .AddEl(new XElement("CartAlteration",
-                                        cartValues.Select(v =>
-                                            new XElement("AlterationDetail")
-                                                .Attr("Label", v.Label)
-                                                .Attr("Value", v.Value)
-                                                .Attr("AlterationType", v.AlterationType)
-                                                .Attr("ProcessorClass", v.ProcessorClass))));
-                            }
+                            // "summary" element
+                            yield return new OrderAdditionalInformation() {
+                                Source = xCoupon,
+                                Details = processors.Select(p =>
+                                    new OrderInformationDetail {
+                                        Label = p.AlterationLabel(alteration, cart),
+                                        Value = p.AlterationAmount(alteration, cart),
+                                        Description = coupon.ToString(),
+                                        ValueType = OrderValueType.Currency,
+                                        InformationType = OrderInformationType.TextInfo,
+                                        ProcessorClass = p.GetType().FullName
+                                    })
+                            }.ToXML();
+                            yield return new OrderAdditionalInformation() {
+                                Source = xCoupon,
+                                Details = processors.Select(p =>
+                                    new OrderInformationDetail {
+                                        Label = p.AlterationLabel(alteration, cart),
+                                        Value = p.AlterationAmount(alteration, cart),
+                                        Description = coupon.ToString(),
+                                        ValueType = OrderValueType.Currency,
+                                        InformationType = OrderInformationType.FrontEndInfo,
+                                        ProcessorClass = p.GetType().FullName
+                                    })
+                            }.ToXML();
                         }
-                        yield return xCoupon;
+                        // we need to also return the XElement that will be used in frontend to
+                        // report to the customer that they have used the coupon
+
+                        //// we need to add to this XElement all the "dynamic" results of having 
+                        //// the coupon in the current context.
+                        //if (processors.Any()) {
+                            
+                        //    //  - By what "value" does the coupon affect the cart as a whole?
+                        //    var cartValues = processors
+                        //        .Select(p => new {
+                        //            Label = p.AlterationLabel(alteration, cart),
+                        //            Value = p.AlterationAmount(alteration, cart),
+                        //            AlterationType = p.AlterationType,
+                        //            ProcessorClass = p.GetType().FullName
+                        //        })
+                        //        .Where(o => o.Value != 0.0m);
+                        //    if (cartValues.Any()) {
+                        //        // there are values affected by the coupon. We add XML like this:
+                        //        // <CartAlteration">
+                        //        //   <AlterationDetali 
+                        //        //     Label ="{Label computed}" 
+                        //        //     Value ="{alteration amount}"
+                        //        //     AlterationType = "Coupon" 
+                        //        //     ProcessorClass = "{name of the C# class for the processor}" />
+                        //        // </CartAlteration>
+                        //        // For each line in the order there may be one LineAlteration element, containing
+                        //        // one AlterationDetail element for each processor that gave results for
+                        //        // the coupon.
+                        //        xCoupon
+                        //            .AddEl(new XElement("CartAlteration",
+                        //                cartValues.Select(v =>
+                        //                    new XElement("AlterationDetail")
+                        //                        .Attr("Label", v.Label)
+                        //                        .Attr("Value", v.Value)
+                        //                        .Attr("AlterationType", v.AlterationType)
+                        //                        .Attr("ProcessorClass", v.ProcessorClass))));
+                        //    }
+                        //}
+                        //yield return xCoupon;
                     }
                 }
             }
         }
+
     }
 }

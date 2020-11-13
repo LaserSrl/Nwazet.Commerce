@@ -35,7 +35,11 @@ namespace Nwazet.Commerce.Models {
         public virtual decimal Value { get; set; }
         public virtual CouponType CouponType { get; set; }
         #endregion
-        
+
+
+        public override string ToString() {
+            return $"(Coupon {Code}) {Name}: {Value.ToString("#.##")} {CouponType.ToString()}";
+        }
     }
     
 }

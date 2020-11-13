@@ -84,6 +84,7 @@ namespace Nwazet.Commerce.Services {
                         new OrderInformationDetail {
                             Label = "VAT",
                             Value = rate,
+                            ValueType = OrderValueType.Percent,
                             InformationType = OrderInformationType.VAT,
                             ProcessorClass = this.GetType().FullName
                         }

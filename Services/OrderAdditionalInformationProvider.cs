@@ -26,13 +26,21 @@ namespace Nwazet.Commerce.Services {
                             new OrderInformationDetail {
                                 Label = "OriginalPrice",
                                 Value = productPart.Price,
-                                InformationType = OrderInformationType.OriginalData,
+                                ValueType = OrderValueType.Currency,
+                                InformationType = OrderInformationType.OriginalLineData,
                                 ProcessorClass = this.GetType().FullName
                             },
                             new OrderInformationDetail {
                                 Label = "DiscountPrice",
                                 Value = productPart.DiscountPrice,
-                                InformationType = OrderInformationType.OriginalData,
+                                ValueType = OrderValueType.Currency,
+                                InformationType = OrderInformationType.OriginalLineData,
+                                ProcessorClass = this.GetType().FullName
+                            },
+                            new OrderInformationDetail {
+                                Label = "SKU",
+                                Description = productPart.Sku,
+                                InformationType = OrderInformationType.OriginalLineData,
                                 ProcessorClass = this.GetType().FullName
                             }
                         }

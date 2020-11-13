@@ -423,6 +423,7 @@
     <Compile Include="Models\InventoryBySKUSiteSettingsPart.cs" />
     <Compile Include="Models\InventoryPart.cs" />
     <Compile Include="Models\InventoryPartRecord.cs" />
+    <Compile Include="Models\OrderAdditionalInformation.cs" />
     <Compile Include="Models\OrderInformationDetail.cs" />
     <Compile Include="Models\OrderLineInformation.cs" />
     <Compile Include="Models\OrderVatRecord.cs" />

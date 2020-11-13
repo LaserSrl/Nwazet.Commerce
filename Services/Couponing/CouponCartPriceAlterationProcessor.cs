@@ -73,7 +73,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                         var itemPrice = cartLine.Product.DiscountPrice >= 0 && cartLine.Product.DiscountPrice < cartLine.Product.Price
                             ? cartLine.Product.DiscountPrice //_productPriceService.GetDiscountPrice(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode)
                             : cartLine.Product.Price; // _productPriceService.GetPrice(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode);
-                        var linePrice = Math.Round(itemPrice,2) * cartLine.Quantity
+                        var linePrice = Math.Round(itemPrice * cartLine.Quantity, 2)
                             + cartLine.LinePriceAdjustment;
                         return -linePrice * (coupon.Value / 100m);
                     case CouponType.Amount:
