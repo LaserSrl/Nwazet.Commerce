@@ -12,8 +12,7 @@ using System.Xml.Linq;
 namespace Nwazet.Commerce.Services.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
     public class CouponOrderAdditionalInformationProvider :
-        BaseOrderAdditionalInformationProvider,
-        IOrderFrontEndAdditionalInformationProvider {
+        BaseOrderAdditionalInformationProvider {
 
         private readonly ICouponRepositoryService _couponRepositoryService;
         protected readonly IEnumerable<ICartPriceAlterationProcessor> _cartPriceAlterationProcessors;
@@ -65,6 +64,8 @@ namespace Nwazet.Commerce.Services.Couponing {
                     var coupon = GetCouponFromCode(alteration.Key);
                     if (coupon != null) { // sanity check
                         var xCoupon = coupon.ToXMLElement();
+                        // the coupon itself will also be in the AdditionalElements property of the order
+                        yield return xCoupon; 
                         // The coupon should potentially add several XElements:
                         // - 1 element containing "summary" information, telling a coupon was there
                         // - 0+ LineAlteration elements, that apply to a single CheckoutItem

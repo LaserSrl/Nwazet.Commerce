@@ -77,17 +77,17 @@ namespace Nwazet.Commerce.Models {
         public IEnumerable<CartPriceAlterationAmount> PriceAlterationAmounts {
             get {
                 return PriceAlterations
-                .Select(cpa => {
-                    var processor = _cartPriceAlterationProcessors.FirstOrDefault(p => p.CanProcess(cpa, this));
-                    if (processor != null) {
-                        return new CartPriceAlterationAmount() {
-                            Label = processor.AlterationLabel(cpa, this),
-                            Amount = processor.AlterationAmount(cpa, this)
-                        };
-                    }
-                    return null;
-                })
-                .Where(vm => vm != null);
+                    .Select(cpa => {
+                        var processor = _cartPriceAlterationProcessors.FirstOrDefault(p => p.CanProcess(cpa, this));
+                        if (processor != null) {
+                            return new CartPriceAlterationAmount() {
+                                Label = processor.AlterationLabel(cpa, this),
+                                Amount = processor.AlterationAmount(cpa, this)
+                            };
+                        }
+                        return null;
+                    })
+                    .Where(vm => vm != null);
             }
         }
 

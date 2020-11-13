@@ -477,22 +477,24 @@ namespace Nwazet.Commerce.Models {
         // whether they "apply" to a single checkout item or to the order as a whole.
         public IEnumerable<XElement> AdditionalElements{
             get {
-                var el = _contentDocument.Element(AdditionalInformationName);
+                var el = ContentDocument.Element(AdditionalInformationName);
                 return el?.Elements() ?? Enumerable.Empty<XElement>();
             }
         }
         public IEnumerable<OrderLineInformation> LineInformation {
             get {
-                return _contentDocument.Element(AdditionalInformationName)
-                    .Elements(OrderLineInformation.ElementName)
-                    .Select(el => OrderLineInformation.FromXML(el));
+                return ContentDocument.Element(AdditionalInformationName)
+                    ?.Elements(OrderLineInformation.ElementName)
+                    ?.Select(el => OrderLineInformation.FromXML(el))
+                    ?? Enumerable.Empty<OrderLineInformation>();
             }
         }
         public IEnumerable<OrderAdditionalInformation> AdditionalOrderInformation {
             get {
-                return _contentDocument.Element(AdditionalInformationName)
-                    .Elements(OrderAdditionalInformation.ElementName)
-                    .Select(el => OrderAdditionalInformation.FromXML(el));
+                return ContentDocument.Element(AdditionalInformationName)
+                    ?.Elements(OrderAdditionalInformation.ElementName)
+                    ?.Select(el => OrderAdditionalInformation.FromXML(el))
+                    ?? Enumerable.Empty<OrderAdditionalInformation>();
             }
         }
     }

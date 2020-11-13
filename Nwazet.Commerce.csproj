@@ -193,6 +193,7 @@
     <None Include="Views\CouponingAdmin\Create.cshtml" />
     <None Include="Views\CouponingAdmin\Edit.cshtml" />
     <None Include="Views\CouponingAdmin\Index.cshtml" />
+    <Content Include="Views\CouponingCartExtension.cshtml" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Advanced.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />

@@ -14,14 +14,11 @@ namespace Nwazet.Commerce.Services.Couponing {
     public class CouponCartPriceAlterationProcessor : ICartPriceAlterationProcessor {
 
         private readonly ICouponRepositoryService _couponRepositoryService;
-        private readonly IProductPriceService _productPriceService;
 
         public CouponCartPriceAlterationProcessor(
-            ICouponRepositoryService couponRepositoryService,
-            IProductPriceService productPriceService) {
+            ICouponRepositoryService couponRepositoryService) {
 
             _couponRepositoryService = couponRepositoryService;
-            _productPriceService = productPriceService;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
         }

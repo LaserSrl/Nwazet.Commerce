@@ -1,0 +1,32 @@
+﻿@{ 
+    
+    Script.Require("jQuery");
+    Script.Require("Nwazet.ShoppingCart");
+
+    var guid = Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
+
+    var applyDivId = "applydiv" + guid;
+}
+
+@* This may be inside a form, but nested forms are not allowed. 
+    We still make a form, just in case, but we also add the button's formaction*@
+
+
+<div class="apply-coupon-wrapper" id="@applyDivId">
+    @using(Html.BeginFormAntiForgeryPost(
+        Url.Action("Apply", "Coupon", new { area = "Nwazet.Commerce" }))) {
+    
+        <input type="text" 
+               placeholder="@T("Enter Your Coupon Code")" 
+               required=""
+               name="newCoupon.Code">
+        <button class="btn btn__bg btn__sqr" 
+                type="submit" 
+                formaction="@Url.Action("Apply", "Coupon", new { area = "Nwazet.Commerce" })"
+                >@T("Apply Coupon")</button>
+    
+    }
+</div>
+
+
+
