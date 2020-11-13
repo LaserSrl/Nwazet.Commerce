@@ -21,10 +21,20 @@ namespace Nwazet.Commerce.Controllers {
         }
 
         [HttpPost]
-        public ActionResult Apply(CouponFrontendViewModel newCoupon) {
+        public ActionResult Apply(CouponFrontendViewModel coupon) {
 
-            if (newCoupon != null && !string.IsNullOrWhiteSpace(newCoupon.Code)) {
-                _couponApplicationService.ApplyCoupon(newCoupon.Code);
+            if (coupon != null && !string.IsNullOrWhiteSpace(coupon.Code)) {
+                _couponApplicationService.ApplyCoupon(coupon.Code);
+            }
+
+            return RedirectToAction("Index", "ShoppingCart");
+        }
+
+        [HttpPost]
+        public ActionResult Remove(CouponFrontendViewModel coupon) {
+
+            if (coupon != null && !string.IsNullOrWhiteSpace(coupon.Code)) {
+                //TODO
             }
 
             return RedirectToAction("Index", "ShoppingCart");

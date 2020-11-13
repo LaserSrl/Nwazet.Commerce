@@ -530,6 +530,7 @@
     <Compile Include="Services\BundleProductLocalizationServices.cs" />
     <Compile Include="Services\BundleServiceBase.cs" />
     <Compile Include="Services\CartLifeCycleEventHandler.cs" />
+    <Compile Include="Services\Couponing\CouponCartLifeCycleEventHandler.cs" />
     <Compile Include="Services\Couponing\CouponCartPriceAlterationProcessor.cs" />
     <Compile Include="Services\CommerceLocalStorageSettings.cs" />
     <Compile Include="Services\Couponing\CouponApplicationService.cs" />

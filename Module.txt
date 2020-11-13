@@ -133,4 +133,4 @@ Features:
 		Name: Nwazet Couponing
 		Description: Enables the configuration and use of coupons for your e-commerce.
 		Category: Commerce
-		Dependencies: Nwazet.Commerce
+		Dependencies: Nwazet.Commerce, Nwazet.Orders

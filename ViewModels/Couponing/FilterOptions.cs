@@ -8,6 +8,6 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.ViewModels.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
     public class FilterOptions {
-
+        //TODO
     }
 }

@@ -2,6 +2,7 @@
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Models.Couponing;
 using Orchard;
+using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.UI.Notify;
 using System;
@@ -11,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Services.Couponing {
+    [OrchardFeature("Nwazet.Couponing")]
     public class CouponApplicationService : 
         ICouponApplicationService{
 
