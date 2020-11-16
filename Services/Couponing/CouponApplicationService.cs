@@ -16,23 +16,26 @@ using System.Web.Mvc;
 namespace Nwazet.Commerce.Services.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
     public class CouponApplicationService : 
-        ICouponApplicationService{
+        ICouponApplicationService {
 
         private readonly ICouponRepositoryService _couponRepositoryService;
         private readonly IShoppingCart _shoppingCart;
         private readonly IWorkContextAccessor _workContextAccessor;
         private readonly INotifier _notifier;
+        private readonly IEnumerable<ICouponApplicabilityCriterion> _applicabilityCriteria;
 
         public CouponApplicationService(
             ICouponRepositoryService couponRepositoryService,
             IShoppingCart shoppingCart,
             IWorkContextAccessor workContextAccessor,
-            INotifier notifier) {
+            INotifier notifier,
+            IEnumerable<ICouponApplicabilityCriterion> applicabilityCriteria) {
 
             _couponRepositoryService = couponRepositoryService;
             _shoppingCart = shoppingCart;
             _workContextAccessor = workContextAccessor;
             _notifier = notifier;
+            _applicabilityCriteria = applicabilityCriteria;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
 
@@ -52,6 +55,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                 // given the coupon, check whether it's usable
                 // then check whether it applies to the current "transaction"
                 if (Applies(coupon)) {
+
                     Apply(coupon);
                     _notifier.Information(T("Coupon {0} was successfully applied", coupon.Code));
                 }
@@ -89,21 +93,24 @@ namespace Nwazet.Commerce.Services.Couponing {
         }
 
         private bool Applies(CouponRecord coupon) {
-            //TODO: use criteria to actually check whether the coupon can be used
-            if (_shoppingCart?.PriceAlterations != null) {
-                // is this coupon already applied?
-                if (_shoppingCart.PriceAlterations.Any(cpa => 
-                    CouponingUtilities.CouponAlterationType.Equals(cpa.AlterationType)
-                    && coupon.Code.Equals(cpa.Key, StringComparison.InvariantCultureIgnoreCase))) {
-                    // can't apply the same coupon twice
-                    _notifier.Warning(T("Coupon code {0} is already in use.", coupon.Code));
-                    return false;
+            var context = new CouponApplicabilityContext {
+                Coupon = coupon,
+                ShoppingCart = _shoppingCart,
+                WorkContext = _workContextAccessor.GetContext(),
+                IsApplicable = coupon.Published
+            };
+            foreach (var criterion in _applicabilityCriteria) {
+                criterion.CanBeAdded(context);
+            }
+            var result = context.IsApplicable;
+            if (!result) {
+                if (context.Message != null && !string.IsNullOrWhiteSpace(context.Message.Text)) {
+                    _notifier.Warning(context.Message);
+                } else {
+                    _notifier.Warning(T("Coupon code {0} is not valid", coupon.Code));
                 }
             }
-            if (!coupon.Published) {
-                _notifier.Warning(T("Coupon code {0} is not valid", coupon.Code));
-            }
-            return coupon.Published;
+            return result;
         }
 
         private string GetRemoveActionUrl() {

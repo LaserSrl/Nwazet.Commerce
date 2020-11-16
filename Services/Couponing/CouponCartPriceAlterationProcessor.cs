@@ -2,6 +2,7 @@
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Models.Couponing;
 using Nwazet.Commerce.Services.Couponing;
+using Orchard;
 using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,17 @@ namespace Nwazet.Commerce.Services.Couponing {
     public class CouponCartPriceAlterationProcessor : ICartPriceAlterationProcessor {
 
         private readonly ICouponRepositoryService _couponRepositoryService;
+        private readonly IEnumerable<ICouponApplicabilityCriterion> _applicabilityCriteria;
+        private readonly IWorkContextAccessor _workContextAccessor;
 
         public CouponCartPriceAlterationProcessor(
-            ICouponRepositoryService couponRepositoryService) {
+            ICouponRepositoryService couponRepositoryService,
+            IEnumerable<ICouponApplicabilityCriterion> applicabilityCriteria,
+            IWorkContextAccessor workContextAccessor) {
 
             _couponRepositoryService = couponRepositoryService;
+            _applicabilityCriteria = applicabilityCriteria;
+            _workContextAccessor = workContextAccessor;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
         }
@@ -91,7 +98,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                 // get the coupon corresponding to the alteration
                 var coupon = GetCouponFromCode(alteration.Key);
                 // TODO: do the computation
-                return coupon.Name;
+                return coupon.Code;
             }
             return null;
         }
@@ -103,7 +110,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                 // get the coupon corresponding to the alteration
                 var coupon = GetCouponFromCode(alteration.Key);
                 // TODO: do the computation
-                return coupon.Name;
+                return coupon.Code;
             }
             return null;
         }
@@ -116,14 +123,28 @@ namespace Nwazet.Commerce.Services.Couponing {
             return _loadedCoupons[code];
         }
 
-        private bool Applies(CouponRecord coupon, IShoppingCart shoppingCart) {
-            //TODO: use criteria to actually check whether the coupon can be used
-            // even more, the criteria will tell us whether this service cna process
+        protected bool Applies(CouponRecord coupon, IShoppingCart shoppingCart) {
+           
+            // even more, this will tell us whether this service cna process
             // the coupon. In principle, we could have one very specific service for
             // each coupon configuration.
             // for example, one service would handle coupons that work on a % of the 
             // whole cart, another those that have a fixed amount and so on.
-            return coupon.Published;
+
+            var context = new CouponApplicabilityContext {
+                Coupon = coupon,
+                ShoppingCart = shoppingCart,
+                WorkContext = _workContextAccessor.GetContext(),
+                IsApplicable = coupon.Published
+            };
+            //TODO: before calling the criteria, check whether this processor
+            // can even handle the coupon we are looking at
+            foreach (var criterion in _applicabilityCriteria) {
+                criterion.CanBeProcessed(context);
+            }
+            var result = context.IsApplicable;
+            //
+            return result;
         }
 
 
