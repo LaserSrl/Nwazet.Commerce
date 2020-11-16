@@ -12,7 +12,7 @@
 <div class="form-group">
     @Html.LabelFor(m => m.Code, T("Code").Text, new { @for = Html.FieldIdFor(m => m.Code) })
     @Html.TextBoxFor(m => m.Code, new { @class = "form-control text medium", id = Html.FieldIdFor(m => m.Code), aria_describedby = "couponCodeHelp", placeholder = T("Coupon's unique code") })
-    <small id="couponCodeHelp" class="form-text text-muted hint">@T("The coupon's code.")</small>
+    <small id="couponCodeHelp" class="form-text text-muted hint">@T("The coupon's code. You may only use alphanumeric characters (letters and digits).")</small>
 </div>
 <div class="form-group">
     @Html.LabelFor(m => m.Value, T("Value/Amount").Text, new { @for = Html.FieldIdFor(m => m.Value) })
