@@ -15,6 +15,11 @@ namespace Nwazet.Commerce.Extensions {
     public static class CouponingUtilities {
 
         public const string CouponAlterationType = "Coupon";
+        /// <summary>
+        /// Use this as attribute name when we need to get the
+        /// name of the coupon from the XML.
+        /// </summary>
+        public const string CouponAttributeName = "Code";
 
         /// <summary>
         /// Returns a copy of the CouponRecords
