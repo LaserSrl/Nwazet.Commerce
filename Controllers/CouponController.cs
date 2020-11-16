@@ -34,7 +34,7 @@ namespace Nwazet.Commerce.Controllers {
         public ActionResult Remove(CouponFrontendViewModel coupon) {
 
             if (coupon != null && !string.IsNullOrWhiteSpace(coupon.Code)) {
-                //TODO
+                _couponApplicationService.RemoveCoupon(coupon.Code);
             }
 
             return RedirectToAction("Index", "ShoppingCart");

@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Services.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
@@ -69,7 +71,8 @@ namespace Nwazet.Commerce.Services.Couponing {
                 new CartPriceAlteration {
                     AlterationType = CouponingUtilities.CouponAlterationType,
                     Key = coupon.Code,
-                    Weight = 1
+                    Weight = 1,
+                    RemovalAction = GetRemoveActionUrl()
                 } };
             if (_shoppingCart.PriceAlterations != null) {
                 allAlterations.AddRange(_shoppingCart.PriceAlterations);
@@ -103,6 +106,30 @@ namespace Nwazet.Commerce.Services.Couponing {
             return coupon.Published;
         }
 
+        private string GetRemoveActionUrl() {
+            UrlHelper urlHelper = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            return urlHelper.Action("Remove", "Coupon", new { area = "Nwazet.Commerce" });
+        }
+
+        public void RemoveCoupon(string code) {
+            if (!string.IsNullOrWhiteSpace(code)) {
+                if (_shoppingCart.PriceAlterations
+                    .Any(cap =>
+                        CouponingUtilities.CouponAlterationType.Equals(cap.AlterationType, StringComparison.InvariantCultureIgnoreCase)
+                        && code.Equals(cap.Key, StringComparison.InvariantCultureIgnoreCase))) {
+                    // we do that if before actually attempting to remove just so we can give a notification
+                    // otherwise we may end up giving it even when we are not removing anything
+                    _shoppingCart.PriceAlterations = _shoppingCart.PriceAlterations
+                        .Where(cap =>
+                            // Do not remove alterations that are not coupons
+                            !CouponingUtilities.CouponAlterationType.Equals(cap.AlterationType, StringComparison.InvariantCultureIgnoreCase)
+                            // Use the give key to remove a coupon (if it exists)
+                            || !code.Equals(cap.Key, StringComparison.InvariantCultureIgnoreCase))
+                        .ToList();
+                    _notifier.Information(T("Coupon {0} was removed", code));
+                }
+            }
+        }
         
     }
 }

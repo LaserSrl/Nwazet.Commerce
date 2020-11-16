@@ -9,5 +9,9 @@ namespace Nwazet.Commerce.ViewModels {
 
         public string Label { get; set; }
         public decimal Amount { get; set; }
+
+
+        public string Key { get; set; }
+        public string RemovalAction { get; set; }
     }
 }

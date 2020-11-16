@@ -20,5 +20,9 @@ namespace Nwazet.Commerce.Models {
         /// In case we need to give a specific order to alterations
         /// </summary>
         public int Weight { get; set; }
+        /// <summary>
+        /// Action to remove this CartPriceAlteration from the cart.
+        /// </summary>
+        public string RemovalAction { get; set; }
     }
 }

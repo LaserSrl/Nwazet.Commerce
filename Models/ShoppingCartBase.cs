@@ -82,7 +82,9 @@ namespace Nwazet.Commerce.Models {
                         if (processor != null) {
                             return new CartPriceAlterationAmount() {
                                 Label = processor.AlterationLabel(cpa, this),
-                                Amount = processor.AlterationAmount(cpa, this)
+                                Amount = processor.AlterationAmount(cpa, this),
+                                Key = cpa.Key,
+                                RemovalAction = cpa.RemovalAction
                             };
                         }
                         return null;
