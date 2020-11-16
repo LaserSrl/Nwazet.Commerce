@@ -138,5 +138,14 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
         }
         
+
+        public void ReevaluateValidity(CouponLifeUpdateContext context) {
+            //TODO
+        }
+
+        public void CouponUsed(CouponLifeUpdateContext context) {
+            //TODO
+            // Maybe it would make sense to fire off coupon-related events?
+        }
     }
 }

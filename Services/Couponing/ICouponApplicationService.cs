@@ -17,5 +17,8 @@ namespace Nwazet.Commerce.Services.Couponing {
         /// </summary>
         /// <param name="code"></param>
         void RemoveCoupon(string code);
+
+        void ReevaluateValidity(CouponLifeUpdateContext context);
+        void CouponUsed(CouponLifeUpdateContext context);
     }
 }
