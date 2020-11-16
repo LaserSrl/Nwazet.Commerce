@@ -48,8 +48,8 @@ namespace Nwazet.Commerce.Services.Couponing {
                 switch (coupon.CouponType) {
                     case CouponType.Percent:
                         return -shoppingCart.Subtotal() * (coupon.Value / 100m);
-                    case CouponType.Amount:
-                        return -coupon.Value;
+                    //case CouponType.Amount:
+                    //    return -coupon.Value;
                     default:
                         return 0.0m;
                 }
@@ -73,9 +73,9 @@ namespace Nwazet.Commerce.Services.Couponing {
                         var linePrice = Math.Round(itemPrice * cartLine.Quantity, 2)
                             + cartLine.LinePriceAdjustment;
                         return -linePrice * (coupon.Value / 100m);
-                    case CouponType.Amount:
-                        // flat coupon on the cart? That does nothing clear
-                        // to a single product line
+                    //case CouponType.Amount:
+                    //    // flat coupon on the cart? That does nothing clear
+                    //    // to a single product line
                     default:
                         return 0.0m;
                 }

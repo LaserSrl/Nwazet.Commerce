@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Models.Couponing {
     public enum CouponType {
         Percent,
-        Amount
+        //Amount //TODO
     }
 }
