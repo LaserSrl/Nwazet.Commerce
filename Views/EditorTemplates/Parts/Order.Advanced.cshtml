@@ -1,0 +1,247 @@
+﻿@using System.Globalization
+@using Nwazet.Commerce.Services
+@using System.Collections.Generic
+@using Nwazet.Commerce.Models;
+@using System.Linq;
+@using Orchard.ContentManagement;
+
+@model Nwazet.Commerce.ViewModels.OrderEditorViewModel
+@{
+    Script.Require("jQuery");
+    Style.Include("order-admin.css", "order-admin.min.css");
+    Script.Include("order-admin.js", "order-admin.min.js");
+
+    var _contentManager = WorkContext.Resolve<IContentManager>();
+
+    Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
+    CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
+
+    // sums:
+    var subSum = 0.0m; // sum of taxable subtotals (before discounts too)
+    var discountsSum = 0.0m; //sum of line alterations like coupons
+    var taxableSum = 0.0m;
+    var totalSum = 0.0m; // sum of order total including VAT
+    var vatSum = 0.0m; // sum of VAT applied to products
+}
+
+<div class="order-editor">
+
+    <fieldset class="order-items">
+        <legend>@T("Products:")</legend>
+
+        <table>
+            <thead>
+                <tr>
+                    <th title="@T("The SKU for the product for a line of the order.")">@T("SKU")</th>
+                    <th title="@T("The product for a line of the order.")">@T("Product")</th>
+                    <th title="@T("Original taxable price for the product.")">@T("Base product price")</th>
+                    <th title="@T("Taxable price for the product in this order. This may differ from the previous value in case the product is subject to specific discounts.")">@T("Taxable product price")</th>
+                    <th title="@T("Quantity.")">@T("Qty")</th>
+                    <th title="@T("The price multiplied by the quantity.")">@T("Taxable subtotal")</th>
+                    <th title="@T("Changes to a line's taxable amount. E.g.: a coupon reducing price by 10% would contribute to this.")">@T("Taxable line variation")</th>
+                    <th title="@T("Total taxable amount for a line.")">@T("Taxable line total")</th>
+                    <th title="@T("VAT rate.")">@T("VAT")</th>
+                    <th title="@T("The amount the customer should pay for a line. It's the result of applying VAT on the taxable amount.")">@T("Line total")</th>
+                </tr>
+            </thead>
+            <tbody id="order_products_table_body">
+                @foreach (var item in Model.OrderItems) {
+                    
+                    var lineInformation = Model.Order
+                        .LineInformation
+                        .Where(ola => ola.ProductId == item.ProductId);
+                    var baseLineInfo = lineInformation.SelectMany(ola => ola.Details
+                        .Where(old => old.InformationType == OrderInformationType.OriginalLineData));
+
+                    <tr id="@string.Format("order_products_table_row-product_{0}", item.ProductId)">
+                        <td class="description">
+                            @{ 
+                                var sku = baseLineInfo
+                                    .FirstOrDefault(old => old.Label.Equals("SKU", StringComparison.InvariantCultureIgnoreCase))
+                                    ?.Description;
+                            }
+                            <span>@sku</span>
+                        </td>
+                        <td class="description">
+                            @{ 
+                                var itemTitle = item.Title;
+                            }
+                            @* check is a product *@
+                            @if (_contentManager.Get(item.ProductId)?.As<ProductPart>() != null) {
+                                <a href="@Url.ItemDisplayUrl(Model.Products[item.ProductId])" target="_blank">@itemTitle</a>
+                            }
+                            else {
+                                <span>@itemTitle</span>
+                            }
+                        </td>
+                        @{ 
+                            var discountPrice = baseLineInfo
+                                .FirstOrDefault(old => old.Label.Equals("DiscountPrice", StringComparison.InvariantCultureIgnoreCase))
+                                ?.Value ?? 0.0m;
+                            var basePrice = baseLineInfo
+                                .FirstOrDefault(old => old.Label.Equals("OriginalPrice", StringComparison.InvariantCultureIgnoreCase))
+                                ?.Value ?? item.OriginalPrice;
+
+                            discountPrice = discountPrice > 0.0m && discountPrice < basePrice
+                                ? discountPrice
+                                : basePrice;
+                        }
+                        <td class="price">@currencyInUse.PriceAsString(basePrice, cultureInUse)</td>
+                        <td class="price">@currencyInUse.PriceAsString(discountPrice, cultureInUse)</td>
+                        <td class="quantity">&times; @item.Quantity</td>
+
+                        @{ 
+                            var lineSubtotal = discountPrice * item.Quantity;
+                            subSum += lineSubtotal;
+                        }
+                        <td class="price">@currencyInUse.PriceAsString(lineSubtotal, cultureInUse)</td>
+                        
+                        @{ 
+                            var lineVariations = 0.0m;
+                            lineVariations = lineInformation
+                                .SelectMany(ola => ola.Details
+                                    .Where(old => old.InformationType == OrderInformationType.RawLinePrice))
+                                .Sum(old => old.Value);
+                            discountsSum += lineVariations;
+
+                            taxableSum += lineSubtotal + lineVariations;
+                        }
+                        <td class="price">@currencyInUse.PriceAsString(lineVariations, cultureInUse)</td>
+
+                        <td class="price">@currencyInUse.PriceAsString(lineSubtotal + lineVariations, cultureInUse)</td>
+
+                        @{ 
+                            var vatRate = 0.0m;
+                            var vatAlteration = lineInformation
+                                .FirstOrDefault(ola => ola.Details
+                                    .Any(old => old.InformationType == OrderInformationType.VAT));
+                            if (vatAlteration != null) {
+                                vatRate = vatAlteration.Details
+                                    .First(old => old.InformationType == OrderInformationType.VAT)
+                                    .Value;
+                            }
+                        }
+                        <td>@string.Format("{0} %", (vatRate * 100m).ToString())</td>
+                        
+                        @{ 
+                            var lineTotal = (lineSubtotal + lineVariations) * (1.0m + vatRate);
+                            totalSum += lineTotal;
+                            vatSum += Math.Round(lineTotal, 2) - Math.Round(lineSubtotal + lineVariations, 2);
+                        }
+                        <td class="price">@currencyInUse.PriceAsString(lineTotal, cultureInUse)</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5" class="label">@T("Sum of subtotals.")</td>
+                    <td class="price">@currencyInUse.PriceAsString(subSum, cultureInUse)</td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="label">@T("Total of line variations.")</td>
+                    <td></td>
+                    <td class="price">@currencyInUse.PriceAsString(discountsSum, cultureInUse)</td>
+                </tr>
+                @{ 
+                    var additionalVariations = Model.Order.AdditionalOrderInformation
+                        .SelectMany(oai => oai.Details
+                            .Where(old => old.InformationType != OrderInformationType.TextInfo
+                                && old.InformationType != OrderInformationType.FrontEndInfo));
+                    // TODO
+                }
+                @if (additionalVariations.Any()) {
+                    <tr>
+                        <td colspan="5" class="label">@T("Cart level variations.")</td>
+                        <td></td>
+                        <td class="price">@currencyInUse.PriceAsString(0.0m, cultureInUse)</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="5" class="label">@T("Total taxable amount for products.")</td>
+                    <td colspan="2"></td>
+                    <td class="price">@currencyInUse.PriceAsString(taxableSum, cultureInUse)</td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="label">@T("Total VAT for products.")</td>
+                    <td colspan="3"></td>
+                    <td class="price">@currencyInUse.PriceAsString(vatSum, cultureInUse)</td>
+                </tr>
+                @if (Model.Order.Taxes != null && Model.Order.Taxes.Amount > 0.0m) {
+                    <tr class="taxes">
+                        <td colspan="5" class="label">@T("Taxes {0}.", string.IsNullOrWhiteSpace(Model.Order.Taxes.Name) ? T("Taxes").Text : Model.Order.Taxes.Name)</td>
+                        <td colspan="3"></td>
+                        <td class="price">@currencyInUse.PriceAsString(Model.Order.Taxes.Amount, cultureInUse)</td>
+                    </tr>
+                }
+                @if (Model.Order.ShippingOption != null) {
+                    <tr>
+                        <td colspan="5" class="label">@T("{0} {1}.", Model.Order.ShippingOption.ShippingCompany, Model.Order.ShippingOption.Description)</td>
+                        <td colspan="4"></td>
+                        <td class="price">@currencyInUse.PriceAsString(Model.Order.ShippingOption.Price, cultureInUse)</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="5" class="label">@T("Total.")</td>
+                    <td colspan="4"></td>
+                    <td class="price">@currencyInUse.PriceAsString(Model.Order.Total, cultureInUse)</td>
+                </tr>
+                <tr class="amountPaid">
+                    <td colspan="5" class="label">@T("Amount Paid.")</td>
+                    <td colspan="4"></td>
+                    <td class="price@(Model.Order.AmountPaid < Model.Order.Total ? " red" : "")">
+                        @Html.TextBoxFor(m => m.Order.AmountPaid, "{0:F2}", new { @class = "text order-amount-field", style = "text-align: right;", pattern = "[0-9]+([\\.,][0-9]+)?" })
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        
+    </fieldset>
+    @{ 
+        var textInfoElements = Model.Order.AdditionalOrderInformation
+            .SelectMany(oai => oai.Details.Where(old => old.InformationType == OrderInformationType.TextInfo));
+    }
+    @if (textInfoElements.Any()) {
+        <fieldset class="order-items">
+            <legend>@T("Additional details")</legend>
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>@T("Description")</th>
+                        <th>@T("Value")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var element in textInfoElements) {
+                        <tr>
+                            <td class="description">
+                                @element.Label
+                            </td>
+                            <td class="description">
+                                @element.Description
+                            </td>
+                            <td @if(element.ValueType == OrderValueType.Currency) { <text>class="price"</text>}>
+                                @{ 
+                                    var valueText = "";
+                                    switch(element.ValueType) {
+                                        case OrderValueType.Currency:
+                                            valueText = currencyInUse.PriceAsString(element.Value, cultureInUse);
+                                            break;
+                                        case OrderValueType.Percent:
+                                            valueText = string.Format("{0} %", (element.Value * 100m).ToString());
+                                            break;
+                                        case OrderValueType.Number:
+                                        default:
+                                            valueText = element.Value.ToString();
+                                            break;
+                                    }
+                                }
+                                @valueText
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </fieldset>
+    }
+</div>

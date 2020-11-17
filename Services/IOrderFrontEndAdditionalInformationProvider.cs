@@ -9,7 +9,7 @@ namespace Nwazet.Commerce.Services {
     /// This is another version of the interface whose implementations provide
     /// additional stuff to be displayed alongside the basic order information.
     /// The idea is that implementations of this are specific for visualization
-    /// on the front-nd (i.e. when a user sees their own order).
+    /// on the front-end (i.e. when a user sees their own order).
     /// </summary>
     public interface IOrderFrontEndAdditionalInformationProvider : IOrderAdditionalInformationProvider {
     }

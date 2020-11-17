@@ -84,6 +84,7 @@ namespace Nwazet.Commerce.Controllers {
             var statusLabel = labelsKey != null
                 ? _orderService.StatusLabels[labelsKey] : null;
             var shape = _shapeFactory.Order_Confirmation(
+                Order: order,
                 OrderId: order.Id,
                 Status: statusLabel ?? T("No Status"),
                 CheckoutItems: items,

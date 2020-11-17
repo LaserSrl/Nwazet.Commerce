@@ -17,7 +17,8 @@ namespace Nwazet.Commerce.Models {
             IEnumerable<ITaxProvider> taxProviders,
             INotifier notifier,
             ITaxProviderService taxProviderService,
-            IProductPriceService productPriceService)
+            IProductPriceService productPriceService,
+            IEnumerable<ICartPriceAlterationProcessor> cartPriceAlterationProcessors)
             : base (contentManager,
                   cartStorage,
                   priceService,
@@ -25,7 +26,8 @@ namespace Nwazet.Commerce.Models {
                   taxProviders,
                   notifier,
                   taxProviderService,
-                  productPriceService) {
+                  productPriceService,
+                  cartPriceAlterationProcessors) {
         }
         
         public override IEnumerable<ShoppingCartItem> Items {

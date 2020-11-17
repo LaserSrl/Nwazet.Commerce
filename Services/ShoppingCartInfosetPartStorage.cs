@@ -56,6 +56,16 @@ namespace Nwazet.Commerce.Services {
             }
         }
 
+        public List<CartPriceAlteration> PriceAlterations {
+            get {
+                return _persistentShoppingCartServices.PriceAlterations;
+            }
+
+            set {
+                _persistentShoppingCartServices.PriceAlterations = value;
+            }
+        }
+
         public List<ShoppingCartItem> Retrieve() {
             return _persistentShoppingCartServices.RetrieveCartItems();
         }

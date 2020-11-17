@@ -8,5 +8,7 @@ namespace Nwazet.Commerce.Services {
         string Country { get; set; }
         string ZipCode { get; set; }
         ShippingOption ShippingOption { get; set; }
+
+        List<CartPriceAlteration> PriceAlterations { get; set; }
     }
 }

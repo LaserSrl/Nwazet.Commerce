@@ -129,3 +129,8 @@ Features:
 		Description: Faceted configuration options for shipping
 		Category: Commerce
 		Dependencies: Nwazet.Shipping, Orchard.Forms
+	Nwazet.Couponing:
+		Name: Nwazet Couponing
+		Description: Enables the configuration and use of coupons for your e-commerce.
+		Category: Commerce
+		Dependencies: Nwazet.Commerce, Nwazet.Orders

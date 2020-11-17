@@ -273,6 +273,8 @@ namespace Nwazet.Commerce.Controllers {
             shape.Total = _shoppingCart.Total(subtotal, taxes);
             shape.CurrencyProvider = _currencyProvider;
 
+            shape.PriceAlterations = _shoppingCart.PriceAlterationAmounts;
+
             // Weld additional cart shapes
             shape.CartExtensionShapes = _cartExtensionProviders
                 .SelectMany(cep => cep.CartExtensionShapes());

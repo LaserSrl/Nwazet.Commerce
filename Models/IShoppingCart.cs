@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Nwazet.Commerce.ViewModels;
 using Orchard;
 
 namespace Nwazet.Commerce.Models {
@@ -18,5 +19,9 @@ namespace Nwazet.Commerce.Models {
         decimal Total(decimal subTotal = 0, TaxAmount taxes = null);
         double ItemCount();
         void Clear();
+
+
+        List<CartPriceAlteration> PriceAlterations { get; set; }
+        IEnumerable<CartPriceAlterationAmount> PriceAlterationAmounts { get; }
     }
 }

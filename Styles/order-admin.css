@@ -60,6 +60,7 @@
 .order-editor .order-items table tfoot .label {
   text-align: right;
   color: black;
+  display: table-cell;
 }
 .order-editor .order-items table tfoot .total td {
   font-weight: bold;

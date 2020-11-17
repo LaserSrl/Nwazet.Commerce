@@ -17,5 +17,6 @@ namespace Nwazet.Commerce.Tests.Stubs {
         public string Country { get; set; }
         public string ZipCode { get; set; }
         public ShippingOption ShippingOption { get; set; }
+        public List<CartPriceAlteration> PriceAlterations { get; set; }
     }
 }

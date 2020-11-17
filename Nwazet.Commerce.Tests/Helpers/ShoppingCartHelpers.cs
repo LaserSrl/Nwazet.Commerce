@@ -78,7 +78,8 @@ namespace Nwazet.Commerce.Tests.Helpers {
                 taxProviders, 
                 new Notifier(), 
                 new BaseTaxProviderService(taxComputationHelpers ?? Enumerable.Empty<ITaxComputationHelper>()), 
-                new ProductPriceService());
+                new ProductPriceService(),
+                Enumerable.Empty<ICartPriceAlterationProcessor>());
             FillCart(cart);
 
             return cart;

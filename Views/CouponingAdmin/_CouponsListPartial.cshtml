@@ -1,0 +1,39 @@
+﻿@using Nwazet.Commerce.ViewModels.Couponing;
+@{
+    var items = (IEnumerable<Coupon>)Model.Coupons;
+    var returnUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl;
+
+}
+@using (Html.BeginFormAntiForgeryPost()) {
+    <fieldset class="contentItems bulk-items">
+        <table class="items" summary="@T("Territories table")">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="check-all" /></th>
+                    <th>@T("Name")</th>
+                    <th>@T("Code")</th>
+                    <th>@T("Value")</th>
+                    <th>@T("Status")</th>
+                    <th>@T("Actions")</th>
+                </tr>
+            </thead>
+            @foreach (var cr in items) {
+                <tr>
+                    <td><input type="checkbox" value="@cr.Id" name="itemIds" /></td>
+                    <td>@cr.Name</td>
+                    <td>@cr.Code</td>
+                    <td>@cr.Value.ToString("#.##")  @cr.CouponType.ToString()</td>
+                    <td>@(cr.Published ? T("Published") : T("Unpublished"))</td>
+                    <td>
+                        @Html.ActionLink(T("Edit").Text, "Edit", "CouponingAdmin", new { id = cr.Id }, null) |
+                        @Html.ActionLink(T("Delete").Text, "Delete", "CouponingAdmin", new { id = cr.Id, returnurl = returnUrl }, new { itemprop = "RemoveUrl UnsafeUrl" })
+                    </td>
+                </tr>
+            }
+        </table>
+    </fieldset>
+}
+
+@Display(Model.Pager)
+
+@Html.AntiForgeryTokenOrchard()

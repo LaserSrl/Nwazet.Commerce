@@ -4,6 +4,7 @@ using System.Web;
 using Nwazet.Commerce.Models;
 using Orchard;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Nwazet.Commerce.Services {
     public class ShoppingCartSessionStorage : IShoppingCartStorage {
@@ -67,6 +68,21 @@ namespace Nwazet.Commerce.Services {
             set {
                 var context = GetHttpContext();
                 context.Session["Nwazet.ShippingOption"] = value;
+            }
+        }
+
+        public List<CartPriceAlteration> PriceAlterations {
+            get {
+                var context = GetHttpContext();
+                var serialized = context.Session["Nwazet.PriceAlterations"] as string ?? string.Empty;
+
+                return JsonConvert.DeserializeObject<List<CartPriceAlteration>>(serialized)
+                    ?? new List<CartPriceAlteration>();
+            }
+
+            set {
+                var context = GetHttpContext();
+                context.Session["Nwazet.PriceAlterations"] = JsonConvert.SerializeObject(value);
             }
         }
 
