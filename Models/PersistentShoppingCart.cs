@@ -67,8 +67,12 @@ namespace Nwazet.Commerce.Models {
         public override void Clear() {
             _products = null;
             _persistentShoppingCartServices.ClearCart();
-            // TODO: clear selected shipping option, zipcode, country...
-            // TODO: clear price alterations
+            // clear selected shipping option, zipcode, country...
+            ShippingOption = null;
+            Country = null;
+            ZipCode = null;
+            // clear price alterations
+            PriceAlterations = new List<CartPriceAlteration>();
             UpdateItems();
         }
 
