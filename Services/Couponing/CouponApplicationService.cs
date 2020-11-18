@@ -76,7 +76,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                     AlterationType = CouponingUtilities.CouponAlterationType,
                     Key = coupon.Code,
                     Weight = 1,
-                    RemovalAction = GetRemoveActionUrl()
+                    RemovalAction = GetRemoveActionUrl(coupon.Code)
                 } };
             if (_shoppingCart.PriceAlterations != null) {
                 allAlterations.AddRange(_shoppingCart.PriceAlterations);
@@ -116,6 +116,15 @@ namespace Nwazet.Commerce.Services.Couponing {
         private string GetRemoveActionUrl() {
             UrlHelper urlHelper = new UrlHelper(HttpContext.Current.Request.RequestContext);
             return urlHelper.Action("Remove", "Coupon", new { area = "Nwazet.Commerce" });
+        }
+        private string GetRemoveActionUrl(string code) {
+            if (string.IsNullOrWhiteSpace(code)) {
+                return GetRemoveActionUrl();
+            }
+            UrlHelper urlHelper = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            return urlHelper
+                .Action("Remove", "Coupon", new { area = "Nwazet.Commerce" })
+                + "?coupon.Code=" + code;
         }
 
         public void RemoveCoupon(string code) {

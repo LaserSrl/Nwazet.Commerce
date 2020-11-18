@@ -112,7 +112,7 @@
                         }
                     } else {
                         setLoading(false);
-                        localStorage.removeItem("nwazet.cart");
+                        localStorage.removeItem(nwazetCart);
                         localStorage.removeItem("nwazet-cart-loading");
                     }
                 }

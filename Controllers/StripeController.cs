@@ -181,7 +181,7 @@ namespace Nwazet.Commerce.Controllers {
             foreach (var handler in _cartLifeCycleEventHandlers) {
                 handler.Finalized();
             }
-            _shoppingCart.Clear();
+            _shoppingCart.ClearAll();
             order.LogActivity(OrderPart.Event, T("Order created.").Text);
             // Clear checkout info from temp data
             TempData.Remove(NwazetStripeCheckout);

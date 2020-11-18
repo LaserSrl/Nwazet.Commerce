@@ -93,6 +93,10 @@ namespace Nwazet.Commerce.Models {
         public override void Clear() {
             _products = null;
             ItemsInternal.Clear();
+        }
+        public override void ClearAll() {
+            _products = null;
+            ItemsInternal.Clear();
             // clear selected shipping option, zipcode, country...
             ShippingOption = null;
             Country = null;
