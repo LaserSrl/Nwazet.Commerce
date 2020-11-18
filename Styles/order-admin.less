@@ -1,6 +1,7 @@
 ﻿.order-editor {
     fieldset {
         margin-top: 16px;
+
         legend {
             font-weight: bold;
         }
@@ -66,6 +67,18 @@
                 tr:last-child td {
                     border-bottom: 1px solid lightgray;
                 }
+
+                td {
+                    padding-right: 0.5rem;
+
+                    &.label {
+                        font-size: 100%;
+                    }
+                }
+
+                td:not(.description) {
+                    white-space: nowrap;
+                }
             }
 
             tfoot {
@@ -83,6 +96,40 @@
 
                 .red input {
                     border: 1px solid red;
+                }
+
+                tr {
+                    &.order-total {
+                        td {
+                            &:not(.label) {
+                                border-top: 2px solid black;
+                            }
+
+                            &.label {
+                                text-transform: uppercase;
+                            }
+
+                            &.price {
+                                font-weight: bold;
+                            }
+                        }
+                    }
+                }
+
+                td {
+                    padding-right: 0.5rem;
+
+                    &.label {
+                        font-size: 100%;
+                    }
+                }
+
+                td:not(.description) {
+                    white-space: nowrap;
+                }
+                input{
+                    /* fix for smaller screens to prevent breaking to the side */
+                    min-width: unset;
                 }
             }
         }

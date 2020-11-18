@@ -134,11 +134,11 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="5" class="label">@T("Sum of subtotals.")</td>
+                    <td colspan="5" class="label">@T("Sum of subtotals")</td>
                     <td class="price">@currencyInUse.PriceAsString(subSum, cultureInUse)</td>
                 </tr>
                 <tr>
-                    <td colspan="5" class="label">@T("Total of line variations.")</td>
+                    <td colspan="5" class="label">@T("Total of line variations")</td>
                     <td></td>
                     <td class="price">@currencyInUse.PriceAsString(discountsSum, cultureInUse)</td>
                 </tr>
@@ -151,42 +151,42 @@
                 }
                 @if (additionalVariations.Any()) {
                     <tr>
-                        <td colspan="5" class="label">@T("Cart level variations.")</td>
+                        <td colspan="5" class="label">@T("Cart level variations")</td>
                         <td></td>
                         <td class="price">@currencyInUse.PriceAsString(0.0m, cultureInUse)</td>
                     </tr>
                 }
                 <tr>
-                    <td colspan="5" class="label">@T("Total taxable amount for products.")</td>
+                    <td colspan="5" class="label">@T("Total taxable amount for products")</td>
                     <td colspan="2"></td>
                     <td class="price">@currencyInUse.PriceAsString(taxableSum, cultureInUse)</td>
                 </tr>
                 <tr>
-                    <td colspan="5" class="label">@T("Total VAT for products.")</td>
+                    <td colspan="5" class="label">@T("Total VAT for products")</td>
                     <td colspan="3"></td>
                     <td class="price">@currencyInUse.PriceAsString(vatSum, cultureInUse)</td>
                 </tr>
                 @if (Model.Order.Taxes != null && Model.Order.Taxes.Amount > 0.0m) {
                     <tr class="taxes">
-                        <td colspan="5" class="label">@T("Taxes {0}.", string.IsNullOrWhiteSpace(Model.Order.Taxes.Name) ? T("Taxes").Text : Model.Order.Taxes.Name)</td>
+                        <td colspan="5" class="label">@T("Taxes {0}", string.IsNullOrWhiteSpace(Model.Order.Taxes.Name) ? T("Taxes").Text : Model.Order.Taxes.Name)</td>
                         <td colspan="3"></td>
                         <td class="price">@currencyInUse.PriceAsString(Model.Order.Taxes.Amount, cultureInUse)</td>
                     </tr>
                 }
                 @if (Model.Order.ShippingOption != null) {
                     <tr>
-                        <td colspan="5" class="label">@T("{0} {1}.", Model.Order.ShippingOption.ShippingCompany, Model.Order.ShippingOption.Description)</td>
+                        <td colspan="5" class="label">@T("{0} {1}", Model.Order.ShippingOption.ShippingCompany, Model.Order.ShippingOption.Description)</td>
                         <td colspan="4"></td>
                         <td class="price">@currencyInUse.PriceAsString(Model.Order.ShippingOption.Price, cultureInUse)</td>
                     </tr>
                 }
-                <tr>
-                    <td colspan="5" class="label">@T("Total.")</td>
+                <tr class="order-total">
+                    <td colspan="5" class="label">@T("Total")</td>
                     <td colspan="4"></td>
                     <td class="price">@currencyInUse.PriceAsString(Model.Order.Total, cultureInUse)</td>
                 </tr>
                 <tr class="amountPaid">
-                    <td colspan="5" class="label">@T("Amount Paid.")</td>
+                    <td colspan="5" class="label">@T("Amount Paid")</td>
                     <td colspan="4"></td>
                     <td class="price@(Model.Order.AmountPaid < Model.Order.Total ? " red" : "")">
                         @Html.TextBoxFor(m => m.Order.AmountPaid, "{0:F2}", new { @class = "text order-amount-field", style = "text-align: right;", pattern = "[0-9]+([\\.,][0-9]+)?" })
