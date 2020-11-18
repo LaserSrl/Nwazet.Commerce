@@ -54,7 +54,7 @@ namespace Nwazet.Commerce.Services.Couponing {
             if (coupon != null) {
                 // given the coupon, check whether it's usable
                 // then check whether it applies to the current "transaction"
-                if (Applies(coupon)) {
+                if (Applies(coupon, (cac, ctx) => cac.CanBeAdded(ctx))) {
 
                     Apply(coupon);
                     _notifier.Information(T("Coupon {0} was successfully applied", coupon.Code));
@@ -92,7 +92,7 @@ namespace Nwazet.Commerce.Services.Couponing {
             return _loadedCoupons[code];
         }
 
-        private bool Applies(CouponRecord coupon) {
+        private bool Applies(CouponRecord coupon, Action<ICouponApplicabilityCriterion, CouponApplicabilityContext> test) {
             var context = new CouponApplicabilityContext {
                 Coupon = coupon,
                 ShoppingCart = _shoppingCart,
@@ -100,7 +100,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                 IsApplicable = coupon.Published
             };
             foreach (var criterion in _applicabilityCriteria) {
-                criterion.CanBeAdded(context);
+                test(criterion, context);
             }
             var result = context.IsApplicable;
             if (!result) {
@@ -112,13 +112,19 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
             return result;
         }
-
+        
         private string GetRemoveActionUrl() {
             UrlHelper urlHelper = new UrlHelper(HttpContext.Current.Request.RequestContext);
             return urlHelper.Action("Remove", "Coupon", new { area = "Nwazet.Commerce" });
         }
 
         public void RemoveCoupon(string code) {
+            if (RemoveCouponInternal(code)) {
+                _notifier.Information(T("Coupon {0} was removed", code));
+            }
+        }
+          
+        private bool RemoveCouponInternal(string code) {
             if (!string.IsNullOrWhiteSpace(code)) {
                 if (_shoppingCart.PriceAlterations
                     .Any(cap =>
@@ -133,14 +139,21 @@ namespace Nwazet.Commerce.Services.Couponing {
                             // Use the give key to remove a coupon (if it exists)
                             || !code.Equals(cap.Key, StringComparison.InvariantCultureIgnoreCase))
                         .ToList();
-                    _notifier.Information(T("Coupon {0} was removed", code));
+                    return true;
                 }
             }
+            return false;
         }
-        
 
         public void ReevaluateValidity(CouponLifeUpdateContext context) {
-            //TODO
+            if (!Applies(context.Coupon, (cac, ctx) => cac.CanBeProcessed(ctx))) {
+                // if the coupon is not valid anymore for the current cart,
+                // remove it.
+                if (RemoveCouponInternal(context.Coupon.Code)) {
+                    // TODO: should this message be different?
+                    _notifier.Information(T("Coupon {0} was removed", context.Coupon.Code));
+                }
+            }
         }
 
         public void CouponUsed(CouponLifeUpdateContext context) {
