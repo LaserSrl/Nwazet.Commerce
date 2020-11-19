@@ -1,6 +1,6 @@
 ﻿@using Orchard.ContentManagement
 @using Orchard.Utility.Extensions
-
+@using System.Globalization;
 @model Nwazet.Commerce.ViewModels.Couponing.Coupon
 @Html.ValidationSummary()
 
@@ -16,8 +16,14 @@
 </div>
 <div class="form-group">
     @Html.LabelFor(m => m.Value, T("Value/Amount").Text, new { @for = Html.FieldIdFor(m => m.Value) })
-    @Html.TextBoxFor(m => m.Value, new { @type = "number", @class = "form-control text small", step = "0.01", min = "0", id = Html.FieldIdFor(m => m.Value), aria_describedby = "couponValueHelp", placeholder = T("Coupon's value") })
-    <small id="couponValueHelp" class="form-text text-muted hint">@T("The coupon's value/amount.")</small>
+    <input type="number" class="form-control text small"
+           step="0.01" min="0"
+           id="@Html.FieldIdFor(m => m.Value)"
+           name="@Html.FieldNameFor(m => m.Value)"
+           aria_describedby="couponValueHelp"
+           placeholder="@T("Coupon's value")" 
+           value="@Model.Value.ToString("0.##")"/>
+   <small id="couponValueHelp" class="form-text text-muted hint">@T("The coupon's value/amount.")</small>
 </div>
 <div class="form-group">
     @Html.LabelFor(m => m.CouponType, T("Value type").Text, new { @for = Html.FieldIdFor(m => m.CouponType) })
@@ -29,5 +35,5 @@
     @Html.LabelFor(m => m.Published, T("Is published and active").Text, new { @for = Html.FieldIdFor(m => m.Published), @class = "form-check-label forcheckbox" })
     <small id="couponTypeHelp" class="form-text text-muted hint">@T("Check to activate the coupon.")</small>
 </div>
-<button type="submit" name="submit.Save" class="btn btn-primary" value="submit.Save">@T("Save")</button>
+<button type="submit" name="submit.Save" class="primaryAction" value="submit.Save">@T("Save")</button>
 

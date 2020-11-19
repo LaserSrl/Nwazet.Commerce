@@ -83,7 +83,9 @@ namespace Nwazet.Commerce.Models {
                             return new CartPriceAlterationAmount() {
                                 Label = processor.AlterationLabel(cpa, this),
                                 Amount = processor.AlterationAmount(cpa, this),
+                                AlterationType = cpa.AlterationType,
                                 Key = cpa.Key,
+                                Weight = cpa.Weight,
                                 RemovalAction = cpa.RemovalAction
                             };
                         }
@@ -100,6 +102,7 @@ namespace Nwazet.Commerce.Models {
             }
         }
         public abstract void Clear();
+        public abstract void ClearAll();
         public abstract ShoppingCartItem FindCartItem(int productId, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues);
         public virtual IEnumerable<ShoppingCartQuantityProduct> GetProducts() {
             if (_products != null) return _products;

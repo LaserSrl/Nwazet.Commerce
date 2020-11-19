@@ -34,7 +34,6 @@ namespace Nwazet.Commerce.Services.Couponing {
         private Dictionary<string, CouponRecord> _loadedCoupons;
 
         public void Finalized() {
-            // TODO: "burn" the coupons for the user
             // here _shoppingCart should still have all its stuff inside
             var coupons = CouponsFromCart();
             foreach (var coupon in coupons) {
