@@ -2085,6 +2085,10 @@ msgid "Any (show all)"
 msgstr "Qualsiasi (visualizza tutti)"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "any (show all)"
+msgstr "qualsiasi (visualizza tutti)"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Apply"
 msgstr "Applica"
 
@@ -2231,6 +2235,10 @@ msgstr "Sku"
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Status"
 msgstr "Stato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Terms"
+msgstr "Termini"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Title"
