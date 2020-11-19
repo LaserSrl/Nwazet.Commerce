@@ -120,7 +120,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                             // hand, a coupon for a flat amount (e.g. "-10€") would be here.
                             // TODO: do this, paying attention to taxable amounts and VAT
 
-                            // "summary" element
+                            // "summary" element for backend
                             yield return new OrderAdditionalInformation() {
                                 Source = xCoupon,
                                 Details = processors.Select(p =>
@@ -133,6 +133,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                                         ProcessorClass = p.GetType().FullName
                                     })
                             }.ToXML();
+                            // "summary" element for frontend
                             yield return new OrderAdditionalInformation() {
                                 Source = xCoupon,
                                 Details = processors.Select(p =>

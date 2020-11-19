@@ -23,6 +23,7 @@ namespace Nwazet.Commerce.Models {
         #region Coupon definition
         [StringLengthMax]
         public virtual string Name { get; set; } // Public Name of the coupon: e.g. Merry Christmas
+        // TODO: The validation erro message for this should be localized
         [StringLength(255)] // 255 is the length for "default" nvarchar on sql server
         public virtual string Code { get; set; } // Actual code for the coupon: e.g. XMAS2020
         #endregion
