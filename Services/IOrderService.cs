@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Xml.Linq;
 using Nwazet.Commerce.Models;
 using Orchard;
 using Orchard.Localization;
@@ -23,7 +24,8 @@ namespace Nwazet.Commerce.Services {
             int userId = -1,
             decimal amountPaid = 0,
             string purchaseOrder = "",
-            string currencyCode = "");
+            string currencyCode = "",
+            IEnumerable<XElement> additionalElements = null);
 
         OrderPart Get(int orderId);
         string GetDisplayUrl(OrderPart order);

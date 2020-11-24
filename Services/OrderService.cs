@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Web.Mvc;
+using System.Xml.Linq;
 using Nwazet.Commerce.Models;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
@@ -64,14 +65,15 @@ namespace Nwazet.Commerce.Services {
             int userId = -1,
             decimal amountPaid = 0,
             string purchaseOrder = "",
-            string currencyCode = "") {
+            string currencyCode = "",
+            IEnumerable<XElement> additionalElements = null) {
 
             var order = _contentManager.Create("Order", VersionOptions.DraftRequired).As<OrderPart>();
             order.Build(charge, items, subTotal, total, taxes,
                 shippingOption, shippingAddress, billingAddress, customerEmail,
                 customerPhone, specialInstructions,
                 string.IsNullOrWhiteSpace(currencyCode) ? _currencyProvider.CurrencyCode : currencyCode,
-                amountPaid, purchaseOrder);
+                amountPaid, purchaseOrder, additionalElements);
             order.Status = status;
             order.TrackingUrl = trackingUrl;
             order.IsTestOrder = isTestOrder;

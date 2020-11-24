@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Services;
+using Nwazet.Commerce.ViewModels;
 using Orchard.Autoroute.Models;
 using Orchard.ContentManagement;
 using Orchard.Core.Title.Models;
@@ -21,6 +22,7 @@ namespace Nwazet.Commerce.Models {
         protected readonly INotifier _notifier;
         protected readonly ITaxProviderService _taxProviderService;
         protected readonly IProductPriceService _productPriceService;
+        protected readonly IEnumerable<ICartPriceAlterationProcessor> _cartPriceAlterationProcessors;
 
         protected IEnumerable<ShoppingCartQuantityProduct> _products;
 
@@ -34,7 +36,8 @@ namespace Nwazet.Commerce.Models {
             IEnumerable<ITaxProvider> taxProviders,
             INotifier notifier,
             ITaxProviderService taxProviderService,
-            IProductPriceService productPriceService) {
+            IProductPriceService productPriceService,
+            IEnumerable<ICartPriceAlterationProcessor> cartPriceAlterationProcessors) {
 
             _contentManager = contentManager;
             _cartStorage = cartStorage;
@@ -44,6 +47,7 @@ namespace Nwazet.Commerce.Models {
             _notifier = notifier;
             _taxProviderService = taxProviderService;
             _productPriceService = productPriceService;
+            _cartPriceAlterationProcessors = cartPriceAlterationProcessors;
 
             T = NullLocalizer.Instance;
         }
@@ -62,6 +66,35 @@ namespace Nwazet.Commerce.Models {
             set { _cartStorage.ZipCode = value; }
         }
 
+        // These are things that modify the cart's final total,
+        // but not its subtotal. They may increase or decrease
+        // the total. Practical example of these: coupons. Each
+        // one of these has its own provider and rules.
+        public virtual List<CartPriceAlteration> PriceAlterations {
+            get { return _cartStorage.PriceAlterations; }
+            set { _cartStorage.PriceAlterations = value; }
+        }
+        public IEnumerable<CartPriceAlterationAmount> PriceAlterationAmounts {
+            get {
+                return PriceAlterations
+                    .Select(cpa => {
+                        var processor = _cartPriceAlterationProcessors.FirstOrDefault(p => p.CanProcess(cpa, this));
+                        if (processor != null) {
+                            return new CartPriceAlterationAmount() {
+                                Label = processor.AlterationLabel(cpa, this),
+                                Amount = processor.AlterationAmount(cpa, this),
+                                AlterationType = cpa.AlterationType,
+                                Key = cpa.Key,
+                                Weight = cpa.Weight,
+                                RemovalAction = cpa.RemovalAction
+                            };
+                        }
+                        return null;
+                    })
+                    .Where(vm => vm != null);
+            }
+        }
+
         public abstract void Add(int productId, int quantity = 1, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues = null);
         public virtual void AddRange(IEnumerable<ShoppingCartItem> items) {
             foreach (var item in items) {
@@ -69,6 +102,7 @@ namespace Nwazet.Commerce.Models {
             }
         }
         public abstract void Clear();
+        public abstract void ClearAll();
         public abstract ShoppingCartItem FindCartItem(int productId, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues);
         public virtual IEnumerable<ShoppingCartQuantityProduct> GetProducts() {
             if (_products != null) return _products;
@@ -131,12 +165,14 @@ namespace Nwazet.Commerce.Models {
             if (subTotal.Equals(0)) {
                 subTotal = Subtotal();
             }
-            if (taxes == null || taxes.Amount <= 0) {
-                if (ShippingOption == null) return subTotal;
-                return subTotal + ShippingOption.Price;
-            }
-            if (ShippingOption == null) return subTotal + taxes.Amount;
-            return subTotal + taxes.Amount + ShippingOption.Price;
+
+            var taxAmount = taxes?.Amount ?? 0m;
+            taxAmount = taxAmount <= 0m ? 0m : taxAmount;
+
+            return subTotal 
+                + taxAmount
+                + PriceAlterationAmounts.Sum(aa => aa.Amount)
+                + (ShippingOption?.Price ?? 0m);
         }
         public abstract void UpdateItems();
     }

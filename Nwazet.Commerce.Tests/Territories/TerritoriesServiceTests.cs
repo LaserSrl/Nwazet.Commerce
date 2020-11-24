@@ -35,6 +35,7 @@ namespace Nwazet.Commerce.Tests.Territories {
         private ITerritoriesHierarchyService _territoriesHierarchyService;
         private IContentManager _contentManager;
         private ITransactionManager _transactionManager;
+        private ITerritoryPartRecordService _territoryPartRecordService;
 
         public override void Init() {
             base.Init();
@@ -45,6 +46,7 @@ namespace Nwazet.Commerce.Tests.Territories {
             _contentManager = _container.Resolve<IContentManager>();
             _territoriesHierarchyService = _container.Resolve<ITerritoriesHierarchyService>();
             _transactionManager = _container.Resolve<ITransactionManager>();
+            _territoryPartRecordService = _container.Resolve<ITerritoryPartRecordService>();
 
             _currentUser = null;
         }
@@ -354,11 +356,12 @@ namespace Nwazet.Commerce.Tests.Territories {
 
         [Test]
         public void GetAvailableTerritoryInternalsThrowsTheExpectedArgumentNullExceptions() {
-            Assert.Throws<ArgumentNullException>(() => _territoriesService.GetAvailableTerritoryInternals(null));
+            Assert.Throws<ArgumentNullException>(() => _territoriesService.GetAvailableTerritoryInternals(null,null));
 
             var hierarchy = _contentManager.Create<TerritoryHierarchyPart>("HierarchyType0");
             hierarchy.Record = null;
-            Assert.Throws<ArgumentException>(() => _territoriesService.GetAvailableTerritoryInternals(hierarchy));
+            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchy).ToList();
+            Assert.Throws<ArgumentException>(() => _territoriesService.GetAvailableTerritoryInternals(hierarchy, hierarchyTerritories));
         }
 
         #region These tests would require the 1-to-many relationships to work in the test db

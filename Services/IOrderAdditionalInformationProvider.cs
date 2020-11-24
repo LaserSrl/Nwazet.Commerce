@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Nwazet.Commerce.Services {
     public interface IOrderAdditionalInformationProvider : IDependency {
@@ -18,6 +19,18 @@ namespace Nwazet.Commerce.Services {
         /// <param name="orderPart"></param>
         /// <remarks>This method is called when an OrderPart is created.</remarks>
         void StoreAdditionalInformation(OrderPart orderPart);
+
+        /// <summary>
+        /// Before actually creating the order, prepare some additional information
+        /// that will be stored within it.
+        /// </summary>
+        /// <param name="context">An object that describes the order that will
+        /// be created</param>
+        /// <returns>A set of XElement objects that will be added to the document
+        /// store for the order that will be created.</returns>
+        /// <remarks>This method is called before an OrderPart is created. Its results
+        /// are parameters of the OrderPart's creation.</remarks>
+        IEnumerable<XElement> PrepareAdditionalInformation(OrderContext context);
 
         #region Methods called by the OrderPartDriver.Editor GET method
 

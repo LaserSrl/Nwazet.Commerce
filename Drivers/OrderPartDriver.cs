@@ -72,6 +72,7 @@ namespace Nwazet.Commerce.Drivers {
         private const string ShippingName = "Shipping";
         private const string TaxesName = "Taxes";
         private const string UserName = "User";
+        private const string AdditionalInformationName = "AdditionalOrderInformation";
 
         protected override string Prefix
         {
@@ -202,7 +203,7 @@ namespace Nwazet.Commerce.Drivers {
                         Prefix: Prefix)),
                 ContentShape("Parts_Order_Edit", // products and prices
                     () => shapeHelper.EditorTemplate(
-                        TemplateName: "Parts/Order",
+                        TemplateName: part.AdditionalElements.Any() ? "Parts/Order.Advanced" : "Parts/Order",
                         Model: model,
                         Prefix: Prefix)),
                 ContentShape("Parts_Order_Payment_Edit",
@@ -342,6 +343,8 @@ namespace Nwazet.Commerce.Drivers {
                     .FromAttr(c => c.ChargeText);
             }
 
+            var additionalEl = xel.Element(AdditionalInformationName);
+
             var el = xel.With(part);
             part.Build(
                 (ICharge)charge ?? (ICharge)card,
@@ -381,7 +384,10 @@ namespace Nwazet.Commerce.Drivers {
                 el.Attr(p => p.CustomerPhone),
                 el.Attr(p => p.SpecialInstructions),
                 el.Attr(p => p.CurrencyCode),
-                el.Attr(p => p.AmountPaid));
+                el.Attr(p => p.AmountPaid),
+                "", // purchase order is imported just after this
+                additionalEl == null ? null : additionalEl.Elements());
+
             el.With(part)
                 .FromAttr(p => p.IsTestOrder)
                 .FromAttr(p => p.Password)
@@ -479,7 +485,10 @@ namespace Nwazet.Commerce.Drivers {
 
                 .AddEl(new XElement(UserName).With(part.User)
                     .ToAttr(u => u.UserName)
-                );
+                )
+                
+                .AddEl(new XElement(AdditionalInformationName,
+                    part.AdditionalElements));
 
             foreach (var oaip in _orderAdditionalInformationProviders) {
                 oaip.Exporting(part, context);

@@ -32,5 +32,7 @@ namespace Nwazet.Commerce.Services {
         void ClearCart();
         //Remove from the cart all items whose quantity is set to zero.
         void ConsolidateCart();
+
+        List<CartPriceAlteration> PriceAlterations { get; set; }
     }
 }

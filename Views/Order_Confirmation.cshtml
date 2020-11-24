@@ -55,6 +55,23 @@
                     <td colspan="2" class="label">@T("Shipping: {0} {1}", Model.ShippingOption.ShippingCompany, Model.ShippingOption.Description)</td>
                     <td class="price">@currencyInUse.PriceAsString(Model.ShippingOption.Price, cultureInUse)</td>
                 </tr>
+                @{ 
+                    var orderPart = (OrderPart)Model.Order;
+                    var additionalInfo =  orderPart.AdditionalOrderInformation
+                        .SelectMany(oai => oai.Details
+                            .Where(old => old.InformationType == OrderInformationType.FrontEndInfo
+                                && old.ValueType == OrderValueType.Currency));
+                    foreach (var element in additionalInfo) {
+                        <tr class="additional-info">
+                            <td colspan="2" class="label">
+                                @element.Label
+                            </td>
+                            <td class="price">
+                                <span>@_currencyProvider.GetPriceString(element.Value)</span>
+                            </td>
+                        </tr>
+                    }
+                }
                 <tr class="total">
                     <td colspan="2" class="label">@T("Total")</td>
                     <td class="price">@currencyInUse.PriceAsString(Model.Total, cultureInUse)</td>

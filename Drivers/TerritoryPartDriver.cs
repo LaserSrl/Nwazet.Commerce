@@ -21,6 +21,7 @@ namespace Nwazet.Commerce.Drivers {
         private readonly IContentManager _contentManager;
         private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
         private readonly ITerritoriesHierarchyService _territoriesHierarchyService;
+        private readonly ITerritoryPartRecordService _territoryPartRecordService;
 
         public TerritoryPartDriver(
             IWorkContextAccessor workContextAccessor,
@@ -28,7 +29,8 @@ namespace Nwazet.Commerce.Drivers {
             INotifier notifier,
             IContentManager contentManager,
             ITerritoriesRepositoryService territoriesRepositoryService,
-            ITerritoriesHierarchyService territoriesHierarchyService) {
+            ITerritoriesHierarchyService territoriesHierarchyService,
+            ITerritoryPartRecordService territoryPartRecordService){
 
             _workContextAccessor = workContextAccessor;
             _territoriesService = territoriesService;
@@ -36,6 +38,7 @@ namespace Nwazet.Commerce.Drivers {
             _contentManager = contentManager;
             _territoriesRepositoryService = territoriesRepositoryService;
             _territoriesHierarchyService = territoriesHierarchyService;
+            _territoryPartRecordService = territoryPartRecordService;
 
             T = NullLocalizer.Instance;
         }
@@ -70,7 +73,8 @@ namespace Nwazet.Commerce.Drivers {
                 InvalidHierarchyOnCreation();
             } else {
                 // Healthy situation
-                var territoryInternals = _territoriesService.GetAvailableTerritoryInternals(hierarchy).ToList();
+                var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchy).ToList();
+                var territoryInternals = _territoriesService.GetAvailableTerritoryInternals(hierarchy, hierarchyTerritories).ToList();
                 if (territoryInternals.Any()) {
                     // There are TerritoryInternalRecords we can pick from
                     shapes.Add(ContentShape("Parts_TerritoryPart_Creation",
@@ -103,8 +107,9 @@ namespace Nwazet.Commerce.Drivers {
             var shapes = new List<DriverResult>();
 
             // The territory here must exist in a hierarchy and with a selected unique record.
+            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(part.HierarchyPart).ToList();
             var territoryInternals = _territoriesService
-                .GetAvailableTerritoryInternals(part.HierarchyPart)
+                .GetAvailableTerritoryInternals(part.HierarchyPart, hierarchyTerritories)
                 .ToList();
             var model = new TerritoryPartViewModel() {
                 AvailableTerritoryInternalRecords = territoryInternals,
@@ -150,7 +155,8 @@ namespace Nwazet.Commerce.Drivers {
                 if (hierarchy == null) {
                     updater.AddModelError("Hierarchy", InvalidHierarchyErrorMessage());
                 } else {
-                    var avalaibleInternals = _territoriesService.GetAvailableTerritoryInternals(hierarchy);
+                    var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchy).ToList();
+                    var avalaibleInternals = _territoriesService.GetAvailableTerritoryInternals(hierarchy, hierarchyTerritories);
                     int selectedId;
                     if (int.TryParse(viewModel.SelectedRecordId, out selectedId)) {
                         var selectedRecord = _territoriesRepositoryService.GetTerritoryInternal(selectedId);
