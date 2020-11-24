@@ -163,7 +163,7 @@ namespace Nwazet.Commerce.Controllers {
         public ActionResult CreateAndPublishHierarchyPost(string id, string returnUrl) {
             var dummyContent = _contentManager.New(id);
 
-            if (!_authorizer.Authorize(Orchard.Core.Contents.Permissions.PublishContent, dummyContent, TerritoriesUtilities.Creation401HierarchyMessage))
+            if (!_authorizer.Authorize(TerritoriesPermissions.ManageTerritoryHierarchies, dummyContent, TerritoriesUtilities.Creation401HierarchyMessage))
                 return new HttpUnauthorizedResult();
 
             return CreateHierarchyPost(id, returnUrl, contentItem => _contentManager.Publish(contentItem));
@@ -200,7 +200,7 @@ namespace Nwazet.Commerce.Controllers {
             return ExecuteHierarchyPost(new TerritoriesAdminHierarchyExecutionContext {
                 HierarchyItem = _contentManager.New(typeName),
                 Message = TerritoriesUtilities.Creation401HierarchyMessage,
-                AdditionalPermissions = new Permission[] { Orchard.Core.Contents.Permissions.EditContent },
+                AdditionalPermissions = new Permission[] { TerritoriesPermissions.ManageTerritoryHierarchies },
                 ExecutionAction = item => {
                     _contentManager.Create(item, VersionOptions.Draft);
 
@@ -249,7 +249,7 @@ namespace Nwazet.Commerce.Controllers {
                 return new HttpUnauthorizedResult(TerritoriesUtilities.SpecificHierarchy401Message(typeName));
             }
 
-            if (!_authorizer.Authorize(Orchard.Core.Contents.Permissions.EditContent, hierarchyItem, TerritoriesUtilities.Edit401HierarchyMessage))
+            if (!_authorizer.Authorize(TerritoriesPermissions.ManageTerritoryHierarchies, hierarchyItem, TerritoriesUtilities.Edit401HierarchyMessage))
                 return new HttpUnauthorizedResult();
 
             //We should have filtered out the cases where we cannot or should not be editing the item here
@@ -274,7 +274,7 @@ namespace Nwazet.Commerce.Controllers {
             if (content == null)
                 return HttpNotFound();
 
-            if (!_authorizer.Authorize(Orchard.Core.Contents.Permissions.PublishContent, content, TerritoriesUtilities.Edit401HierarchyMessage))
+            if (!_authorizer.Authorize(TerritoriesPermissions.ManageTerritoryHierarchies, content, TerritoriesUtilities.Edit401HierarchyMessage))
                 return new HttpUnauthorizedResult();
 
             return EditHierarchyPost(id, returnUrl, contentItem => _contentManager.Publish(contentItem));
@@ -284,7 +284,7 @@ namespace Nwazet.Commerce.Controllers {
             return ExecuteHierarchyPost(new TerritoriesAdminHierarchyExecutionContext {
                 HierarchyItem = _contentManager.Get(id, VersionOptions.DraftRequired),
                 Message = TerritoriesUtilities.Edit401HierarchyMessage,
-                AdditionalPermissions = new Permission[] { Orchard.Core.Contents.Permissions.EditContent },
+                AdditionalPermissions = new Permission[] { TerritoriesPermissions.ManageTerritoryHierarchies },
                 ExecutionAction = item => {
                     var model = _contentManager.UpdateEditor(item, this);
 
@@ -311,7 +311,7 @@ namespace Nwazet.Commerce.Controllers {
             return ExecuteHierarchyPost(new TerritoriesAdminHierarchyExecutionContext {
                 HierarchyItem = _contentManager.Get(id, VersionOptions.Latest),
                 Message = TerritoriesUtilities.Delete401HierarchyMessage,
-                AdditionalPermissions = new Permission[] { Orchard.Core.Contents.Permissions.DeleteContent },
+                AdditionalPermissions = new Permission[] { TerritoriesPermissions.ManageTerritoryHierarchies },
                 ExecutionAction = item => {
                     if (item != null) {
                         _contentManager.Remove(item);

@@ -60,6 +60,7 @@ namespace Nwazet.Commerce.Permissions {
             //Base permissions
             permissions.Add(ManageTerritories);
             permissions.Add(ManageTerritoryHierarchies);
+            permissions.Add(ManageInternalTerritories);
             //Dynamic permissions are defined per type of hierarchy (not per single hierarchy, as
             //is the case for example in menus)
             permissions.AddRange(ListHierarchyTypePermissions());
