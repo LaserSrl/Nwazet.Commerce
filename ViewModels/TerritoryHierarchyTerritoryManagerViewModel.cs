@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Services;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using System.Linq;
@@ -14,12 +15,12 @@ namespace Nwazet.Commerce.ViewModels {
         public int TopLevelCount { get; set; }
 
         public TerritoryHierarchyTerritoryManagerViewModel(
-            TerritoryHierarchyPart part) {
+            TerritoryHierarchyPart part, ITerritoryPartRecordService _territoryPartRecordService) {
 
             Part = part;
             ContentItem = part.ContentItem;
 
-            TerritoriesCount = part.Record.Territories?.Count() ?? 0;
+            TerritoriesCount = _territoryPartRecordService.GetHierarchyTerritoriesCount(part); //part.Record.Territories?.Count() ?? 0;
         }
     }
 }

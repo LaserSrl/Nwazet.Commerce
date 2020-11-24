@@ -13,15 +13,18 @@ namespace Nwazet.Commerce.Services {
         private readonly IContentManager _contentManager;
         private readonly IWorkContextAccessor _workContextAccessor;
         private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
+        private readonly ITerritoryPartRecordService _territoryPartRecordService;
 
         public VatConfigurationService(
             IContentManager contentManager,
             IWorkContextAccessor workContextAccessor,
-            ITerritoriesRepositoryService territoriesRepositoryService) {
+            ITerritoriesRepositoryService territoriesRepositoryService,
+            ITerritoryPartRecordService territoryPartRecordService) {
 
             _contentManager = contentManager;
             _workContextAccessor = workContextAccessor;
             _territoriesRepositoryService = territoriesRepositoryService;
+            _territoryPartRecordService = territoryPartRecordService;
         }
 
         private VatConfigurationSiteSettingsPart _settings { get; set; }
@@ -276,10 +279,10 @@ namespace Nwazet.Commerce.Services {
                 .Hierarchies // Tuple<Hierarchy, Rate>
                 ?.Where(tup => {
                     var thp = tup.Item1; // hierarchy
-                    return thp
-                        .Record
-                        .Territories // territories in the hierarchy
-                                     // is the destination among those territories?
+                    return _territoryPartRecordService
+                        .GetHierarchyTerritories(thp)
+                        // territories in the hierarchy
+                        // is the destination among those territories?
                         .Any(tpr => tpr.TerritoryInternalRecord != null
                             && tpr.TerritoryInternalRecord.Id == destination.Id);
                 });

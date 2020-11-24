@@ -18,18 +18,21 @@ namespace Nwazet.Commerce.Services {
         private readonly IContentManager _contentManager;
         private readonly IAuthorizer _authorizer;
         private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
+        private readonly ITerritoryPartRecordService _territoryPartRecordService;
 
         public TerritoriesService(
             IContentDefinitionManager contentDefinitionManager,
             IContentManager contentManager,
             IAuthorizer authorizer,
-            ITerritoriesRepositoryService territoriesRepositoryService
+            ITerritoriesRepositoryService territoriesRepositoryService,
+            ITerritoryPartRecordService territoryPartRecordService
             ) {
             
             _contentDefinitionManager = contentDefinitionManager;
             _contentManager = contentManager;
             _authorizer = authorizer;
             _territoriesRepositoryService = territoriesRepositoryService;
+            _territoryPartRecordService = territoryPartRecordService;
         }
 
         public IEnumerable<ContentTypeDefinition> GetTerritoryTypes() {
@@ -106,13 +109,13 @@ namespace Nwazet.Commerce.Services {
             }
         }
 
-        public IEnumerable<TerritoryInternalRecord> GetAvailableTerritoryInternals(TerritoryHierarchyPart hierarchyPart) {
+        public IEnumerable<TerritoryInternalRecord> GetAvailableTerritoryInternals(TerritoryHierarchyPart hierarchyPart, List<TerritoryPartRecord> hierarchyTerritories) {
             TerritoriesUtilities.ValidateArgument(hierarchyPart, nameof(hierarchyPart));
 
             return _territoriesRepositoryService
                     .GetTerritories()
-                    .Where(tir => !hierarchyPart
-                        .Record.Territories //.Territories 
+                    .Where(tir => !hierarchyTerritories
+                        //!hierarchyPart.Record.Territories
                         .Where(tpr => tpr.TerritoryInternalRecord != null)
                         //.Where(ci => ci.As<TerritoryPart>()
                         //    .Record

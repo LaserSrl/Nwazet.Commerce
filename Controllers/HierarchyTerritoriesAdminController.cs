@@ -43,6 +43,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ITransactionManager _transactionManager;
         private readonly INotifier _notifier;
         private readonly IEnumerable<IContentHandler> _handlers;
+        private readonly ITerritoryPartRecordService _territoryPartRecordService;
 
         public HierarchyTerritoriesAdminController(
             IContentManager contentManager,
@@ -54,7 +55,8 @@ namespace Nwazet.Commerce.Controllers {
             ITerritoriesHierarchyService territoriesHierarchyService,
             ITransactionManager transactionManager,
             INotifier notifier,
-            IEnumerable<IContentHandler> handlers) {
+            IEnumerable<IContentHandler> handlers,
+            ITerritoryPartRecordService territoryPartRecordService) {
 
             _contentManager = contentManager;
             _contentDefinitionManager = contentDefinitionManager;
@@ -66,6 +68,7 @@ namespace Nwazet.Commerce.Controllers {
             _transactionManager = transactionManager;
             _notifier = notifier;
             _handlers = handlers;
+            _territoryPartRecordService = territoryPartRecordService;
 
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
@@ -92,8 +95,8 @@ namespace Nwazet.Commerce.Controllers {
             var topLevelOfHierarchy = _territoriesService
                 .GetTerritoriesQuery(hierarchyPart, null, VersionOptions.Latest)
                 .List().ToList();
-                       
 
+            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchyPart).ToList();
             var model = new TerritoryHierarchyTerritoriesViewModel {
                 HierarchyPart = hierarchyPart,
                 HierarchyItem = hierarchyItem,
@@ -102,7 +105,7 @@ namespace Nwazet.Commerce.Controllers {
                     GetTerritoriesQuery(hierarchyPart, VersionOptions.Latest)
                     .List().Select(MakeANode).ToList(),
                 CanAddMoreTerritories = _territoriesService
-                    .GetAvailableTerritoryInternals(hierarchyPart)
+                    .GetAvailableTerritoryInternals(hierarchyPart,hierarchyTerritories)
                     .Any()
             };
 
@@ -195,8 +198,9 @@ namespace Nwazet.Commerce.Controllers {
             }
 
             // There must be "unused" TerritoryInternalRecords for this hierarchy.
+            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchyPart).ToList();
             if (_territoriesService
-                .GetAvailableTerritoryInternals(hierarchyPart)
+                .GetAvailableTerritoryInternals(hierarchyPart,hierarchyTerritories)
                 .Any()) {
 
                 // Creation

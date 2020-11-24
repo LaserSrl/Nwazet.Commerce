@@ -38,6 +38,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ITransactionManager _transactionManager;
         private readonly INotifier _notifier;
         private readonly IContentDefinitionManager _contentDefinitionManager;
+        private readonly ITerritoryPartRecordService _territoryPartRecordService;
 
         public TerritoryHierarchiesAdminController(
             ISiteService siteService,
@@ -47,7 +48,8 @@ namespace Nwazet.Commerce.Controllers {
             IAuthorizer authorizer,
             ITransactionManager transactionManager,
             INotifier notifier,
-            IContentDefinitionManager contentDefinitionManager) {
+            IContentDefinitionManager contentDefinitionManager,
+            ITerritoryPartRecordService territoryPartRecordService) {
 
             _siteService = siteService;
             _territoriesService = territoriesService;
@@ -56,6 +58,7 @@ namespace Nwazet.Commerce.Controllers {
             _transactionManager = transactionManager;
             _notifier = notifier;
             _contentDefinitionManager = contentDefinitionManager;
+            _territoryPartRecordService = territoryPartRecordService;
 
             _shapeFactory = shapeFactory;
 
@@ -372,7 +375,7 @@ namespace Nwazet.Commerce.Controllers {
                 ContentItem = part.ContentItem,
                 TypeDisplayName = typeDisplayName,
                 IsDraft = !part.ContentItem.IsPublished(),
-                TerritoriesCount = part.Record.Territories.Count(),
+                TerritoriesCount = _territoryPartRecordService.GetHierarchyTerritoriesCount(part), //part.Record.Territories.Count(),
                 TerritoryTypeDisplayName = territoryDisplayName
             };
         }

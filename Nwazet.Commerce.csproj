@@ -576,6 +576,7 @@
     <Compile Include="Services\ITerritoriesHierarchyService.cs" />
     <Compile Include="Services\ITerritoriesRepositoryService.cs" />
     <Compile Include="Services\ITerritoriesService.cs" />
+    <Compile Include="Services\ITerritoryPartRecordService.cs" />
     <Compile Include="Services\IUpdateStatusService.cs" />
     <Compile Include="Services\IVatConfigurationProvider.cs" />
     <Compile Include="Services\IVatConfigurationService.cs" />
@@ -624,6 +625,7 @@
     <Compile Include="Services\TaxProviderService.cs" />
     <Compile Include="Services\TerritoriesHierarchyService.cs" />
     <Compile Include="Services\TerritoriesService.cs" />
+    <Compile Include="Services\TerritoryPartRecordService.cs" />
     <Compile Include="Services\TerritoryRepositoryService.cs" />
     <Compile Include="Services\TextProductAttributeExtensionProvider.cs" />
     <Compile Include="Services\UpdateStatusService.cs" />
