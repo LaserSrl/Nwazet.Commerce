@@ -63,7 +63,7 @@ namespace Nwazet.Commerce.Drivers {
             return new ProductVatConfigurationPartEditorViewModel(T("Default").Text) {
                 VatConfigurationId = part.UseDefaultVatCategory
                     ? 0
-                    : part.VatConfigurationPart.Record.Id,
+                    : part.Record.VatConfiguration.Id,
                 AllVatConfigurations = _vatConfigurationProvider
                     .GetVatConfigurations()
                     .ToList()
