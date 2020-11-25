@@ -130,6 +130,9 @@ namespace Nwazet.Commerce.Services.Couponing {
             // each coupon configuration.
             // for example, one service would handle coupons that work on a % of the 
             // whole cart, another those that have a fixed amount and so on.
+            if (coupon == null) {
+                return false;
+            }
 
             var context = new CouponApplicabilityContext {
                 Coupon = coupon,
