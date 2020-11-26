@@ -71,7 +71,10 @@ namespace Nwazet.Commerce.Models {
         // the total. Practical example of these: coupons. Each
         // one of these has its own provider and rules.
         public virtual List<CartPriceAlteration> PriceAlterations {
-            get { return _cartStorage.PriceAlterations; }
+            get { return _cartStorage
+                    .PriceAlterations
+                    .Where(cpa => _cartPriceAlterationProcessors.Any(p => p.CanProcess(cpa, this)))
+                    .ToList(); }
             set { _cartStorage.PriceAlterations = value; }
         }
         public IEnumerable<CartPriceAlterationAmount> PriceAlterationAmounts {
