@@ -73,7 +73,7 @@ namespace Nwazet.Commerce.Filters {
             return;
         }
 
-        private decimal FromStateValue(dynamic sValue) {
+        protected decimal FromStateValue(dynamic sValue) {
             var str = Convert.ToString(sValue);
             decimal value;
             if (decimal.TryParse(str, NumberStyles.Any, CultureInfo.InvariantCulture, out value)) {

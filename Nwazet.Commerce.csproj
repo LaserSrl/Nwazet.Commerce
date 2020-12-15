@@ -334,6 +334,8 @@
     <Compile Include="Filters\ProductInventoryFilterForm.cs" />
     <Compile Include="Filters\ProductPriceFilter.cs" />
     <Compile Include="Filters\ProductPriceFilterForm.cs" />
+    <Compile Include="Filters\ProductPriceWithVatFilter.cs" />
+    <Compile Include="Filters\ProductPriceWithVatFilterForm.cs" />
     <Compile Include="Filters\ProductSizeFilter.cs" />
     <Compile Include="Filters\ProductSizeFilterForm.cs" />
     <Compile Include="Filters\ProductSkuFilter.cs" />
