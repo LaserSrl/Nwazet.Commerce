@@ -32,11 +32,11 @@
         <table>
             <thead>
                 <tr>
+                    <th title="@T("Quantity.")">@T("Qty")</th>
                     <th title="@T("The SKU for the product for a line of the order.")">@T("SKU")</th>
                     <th title="@T("The product for a line of the order.")">@T("Product")</th>
                     <th title="@T("Original taxable price for the product.")">@T("Base product price")</th>
                     <th title="@T("Taxable price for the product in this order. This may differ from the previous value in case the product is subject to specific discounts.")">@T("Taxable product price")</th>
-                    <th title="@T("Quantity.")">@T("Qty")</th>
                     <th title="@T("The price multiplied by the quantity.")">@T("Taxable subtotal")</th>
                     <th title="@T("Changes to a line's taxable amount. E.g.: a coupon reducing price by 10% would contribute to this.")">@T("Taxable line variation")</th>
                     <th title="@T("Total taxable amount for a line.")">@T("Taxable line total")</th>
@@ -54,6 +54,7 @@
                         .Where(old => old.InformationType == OrderInformationType.OriginalLineData));
 
                     <tr id="@string.Format("order_products_table_row-product_{0}", item.ProductId)">
+                        <td class="quantity">@item.Quantity &times;</td>
                         <td class="description">
                             @{ 
                                 var sku = baseLineInfo
@@ -88,11 +89,11 @@
                         }
                         <td class="price">@currencyInUse.PriceAsString(basePrice, cultureInUse)</td>
                         <td class="price">@currencyInUse.PriceAsString(discountPrice, cultureInUse)</td>
-                        <td class="quantity">&times; @item.Quantity</td>
 
                         @{ 
                             var lineSubtotal = discountPrice * item.Quantity;
-                            subSum += lineSubtotal;
+                            //subSum += lineSubtotal;
+                            subSum += Math.Round(lineSubtotal, 2);
                         }
                         <td class="price">@currencyInUse.PriceAsString(lineSubtotal, cultureInUse)</td>
                         
@@ -104,7 +105,8 @@
                                 .Sum(old => old.Value);
                             discountsSum += lineVariations;
 
-                            taxableSum += lineSubtotal + lineVariations;
+                            //taxableSum += lineSubtotal + lineVariations;
+                            taxableSum += Math.Round(lineSubtotal + lineVariations, 2);
                         }
                         <td class="price">@currencyInUse.PriceAsString(lineVariations, cultureInUse)</td>
 
@@ -124,7 +126,12 @@
                         <td>@string.Format("{0} %", (vatRate * 100m).ToString())</td>
                         
                         @{ 
-                            var lineTotal = (lineSubtotal + lineVariations) * (1.0m + vatRate);
+                            // without coupons and such, this line total should be (as shown to buyer)
+                            // Math.Round(discountPrice * (1.0m+vatRate)) * quantity
+                            // add the VAT scaled line variations (coupons) to that
+                            var lineTotal = Math.Round(discountPrice * (1.0m + vatRate), 2) * item.Quantity
+                                + Math.Round(lineVariations * (1.0m + vatRate), 2);
+                            ///var lineTotal = (lineSubtotal + lineVariations) * (1.0m + vatRate);
                             totalSum += lineTotal;
                             vatSum += Math.Round(lineTotal, 2) - Math.Round(lineSubtotal + lineVariations, 2);
                         }
