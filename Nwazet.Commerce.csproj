@@ -507,6 +507,7 @@
     <Compile Include="Permissions\OrderPermissions.cs" />
     <Compile Include="Permissions\TerritoriesPermissions.cs" />
     <Compile Include="Permissions\WishListPermissions.cs" />
+    <Compile Include="Projections\PriceWithVatSortCriterionProvider.cs" />
     <Compile Include="Recipes\Providers\Builders\TerritoriesStep.cs" />
     <Compile Include="Reports\AverageSaleAmountReport.cs" />
     <Compile Include="Reports\BaseSalesReport.cs" />
