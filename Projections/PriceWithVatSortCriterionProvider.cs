@@ -43,6 +43,9 @@ namespace Nwazet.Commerce.Projections {
                 foreach (var vc in allConfigs) {
                     rates.Add(vc.Id, _vatConfigurationService.GetRate(vc, destination));
                 }
+                var defaultRate = _vatConfigurationService
+                    .GetRate(_vatConfigurationService.GetDefaultCategory(), destination);
+                rates.Add(0, defaultRate);
                 _vatRates.Add(destination.Id, rates);
             }
             return _vatRates[destination.Id];
@@ -153,7 +156,7 @@ namespace Nwazet.Commerce.Projections {
                     queryBuilder.Append(" then " + pprAlias + ".EffectiveUnitPrice * " + (1m + rate.Value).ToString(CultureInfo.InvariantCulture));
                     queryBuilder.Append(" else");
                 }
-                queryBuilder.Append(" 0");
+                queryBuilder.Append(" " + pprAlias + ".EffectiveUnitPrice * " + (1m + rates[0]).ToString(CultureInfo.InvariantCulture));
                 foreach (var rate in rates) {
                     // close nested case/when/else
                     queryBuilder.Append(" end");

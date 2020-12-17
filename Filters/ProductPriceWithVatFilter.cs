@@ -56,6 +56,9 @@ namespace Nwazet.Commerce.Filters {
                 foreach (var vc in allConfigs) {
                     rates.Add(vc.Id, _vatConfigurationService.GetRate(vc, destination));
                 }
+                var defaultRate = _vatConfigurationService
+                    .GetRate(_vatConfigurationService.GetDefaultCategory(), destination);
+                rates.Add(0, defaultRate);
                 _vatRates.Add(destination.Id, rates);
             }
             return _vatRates[destination.Id];
@@ -139,38 +142,49 @@ namespace Nwazet.Commerce.Filters {
             queryBuilder.AppendLine("AND pvcpr.Id = cir.Id");
 
             string testFormat = "";
+            string nullFormat = "";
             switch (op) {
                 case NumericOperator.LessThan:
                     testFormat = "(pvcpr.VatConfiguration.Id = {0} and ((ppr.EffectiveUnitPrice * {1}) < {3}))";
+                    nullFormat = "(pvcpr.VatConfiguration IS NULL and ((ppr.EffectiveUnitPrice * {1}) < {3}))";
                     break;
                 case NumericOperator.LessThanEquals:
                     testFormat = "(pvcpr.VatConfiguration.Id = {0} and ((ppr.EffectiveUnitPrice * {1}) <= {3}))";
+                    nullFormat = "(pvcpr.VatConfiguration IS NULL and ((ppr.EffectiveUnitPrice * {1}) <= {3}))";
                     break;
                 case NumericOperator.Equals:
                     if (dmin == dmax) {
                         testFormat = "(pvcpr.VatConfiguration.Id = {0} and ((ppr.EffectiveUnitPrice * {1}) = {3}))";
+                        nullFormat = "(pvcpr.VatConfiguration IS NULL and ((ppr.EffectiveUnitPrice * {1}) = {3}))";
                     } else {
                         testFormat = "(pvcpr.VatConfiguration.Id = {0} and ((ppr.EffectiveUnitPrice * {1}) >= {2} and (ppr.EffectiveUnitPrice * {1}) <= {3}))";
+                        nullFormat = "(pvcpr.VatConfiguration IS NULL and ((ppr.EffectiveUnitPrice * {1}) >= {2} and (ppr.EffectiveUnitPrice * {1}) <= {3}))";
                     }
                     break;
                 case NumericOperator.NotEquals:
                     if (dmin == dmax) {
                         testFormat = "(pvcpr.VatConfiguration.Id = {0} and not((ppr.EffectiveUnitPrice * {1}) = {2}))";
+                        nullFormat = "(pvcpr.VatConfiguration IS NULL and not((ppr.EffectiveUnitPrice * {1}) = {2}))";
                     } else {
                         testFormat = "(pvcpr.VatConfiguration.Id = {0} and ((ppr.EffectiveUnitPrice * {1}) < {2} or (ppr.EffectiveUnitPrice * {1}) > {3}))";
+                        nullFormat = "(pvcpr.VatConfiguration IS NULL and ((ppr.EffectiveUnitPrice * {1}) < {2} or (ppr.EffectiveUnitPrice * {1}) > {3}))";
                     }
                     break;
                 case NumericOperator.GreaterThan:
                     testFormat = "(pvcpr.VatConfiguration.Id = {0} and ((ppr.EffectiveUnitPrice * {1}) > {2}))";
+                    nullFormat = "(pvcpr.VatConfiguration IS NULL and ((ppr.EffectiveUnitPrice * {1}) > {2}))";
                     break;
                 case NumericOperator.GreaterThanEquals:
                     testFormat = "(pvcpr.VatConfiguration.Id = {0} and ((ppr.EffectiveUnitPrice * {1}) >= {2}))";
+                    nullFormat = "(pvcpr.VatConfiguration IS NULL and ((ppr.EffectiveUnitPrice * {1}) >= {2}))";
                     break;
                 case NumericOperator.Between:
                     testFormat = "(pvcpr.VatConfiguration.Id = {0} and ((ppr.EffectiveUnitPrice * {1}) >= {2} and (ppr.EffectiveUnitPrice * {1}) <= {3}))";
+                    nullFormat = "(pvcpr.VatConfiguration IS NULL and ((ppr.EffectiveUnitPrice * {1}) >= {2} and (ppr.EffectiveUnitPrice * {1}) <= {3}))";
                     break;
                 case NumericOperator.NotBetween:
                     testFormat = "(pvcpr.VatConfiguration.Id = {0} and ((ppr.EffectiveUnitPrice * {1}) < {2} or (ppr.EffectiveUnitPrice * {1}) > {3}))";
+                    nullFormat = "(pvcpr.VatConfiguration IS NULL and ((ppr.EffectiveUnitPrice * {1}) < {2} or (ppr.EffectiveUnitPrice * {1}) > {3}))";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -185,6 +199,21 @@ namespace Nwazet.Commerce.Filters {
                         dmin.ToString(CultureInfo.InvariantCulture), 
                         dmax.ToString(CultureInfo.InvariantCulture)));
             }
+            // handle default vat configuration
+            tests.Add(
+                string.Format(
+                    testFormat,
+                    0,
+                    (1m + rates[0]).ToString(CultureInfo.InvariantCulture),
+                    dmin.ToString(CultureInfo.InvariantCulture),
+                    dmax.ToString(CultureInfo.InvariantCulture)));
+            tests.Add(
+                string.Format(
+                    nullFormat,
+                    0,
+                    (1m + rates[0]).ToString(CultureInfo.InvariantCulture),
+                    dmin.ToString(CultureInfo.InvariantCulture),
+                    dmax.ToString(CultureInfo.InvariantCulture)));
             queryBuilder.AppendLine("AND (" + string.Join(" or ", tests) + ")");
 
             return x => x.InSubquery("Id", queryBuilder.ToString(), new Dictionary<string, object>());
