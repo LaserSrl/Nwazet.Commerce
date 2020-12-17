@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -179,7 +180,10 @@ namespace Nwazet.Commerce.Filters {
                 tests.Add(
                     string.Format(
                         testFormat,
-                        rate.Key, 1m + rate.Value, dmin, dmax));
+                        rate.Key, 
+                        (1m + rate.Value).ToString(CultureInfo.InvariantCulture), 
+                        dmin.ToString(CultureInfo.InvariantCulture), 
+                        dmax.ToString(CultureInfo.InvariantCulture)));
             }
             queryBuilder.AppendLine("AND (" + string.Join(" or ", tests) + ")");
 
