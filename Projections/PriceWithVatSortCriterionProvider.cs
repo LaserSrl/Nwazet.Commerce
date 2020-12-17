@@ -70,7 +70,6 @@ namespace Nwazet.Commerce.Projections {
 
             bool ascending = Convert.ToBoolean(context.State.Sort);
             
-
             // TODO: make the destination configurable as a token in the context/form?
             var defaultDestination = _vatConfigurationService.GetDefaultDestination();
             if (defaultDestination == null) {
@@ -85,87 +84,40 @@ namespace Nwazet.Commerce.Projections {
                     : context.Query
                         .OrderBy(alias,
                         sf => sf.Desc("EffectiveUnitPrice"));
-
             } else {
-
                 // for each existing vat configuration, get the rate for the configured default
                 // territory
                 var rates = GetRates(defaultDestination);
-                var computedPropName = "g" + //don't start with a digit. "g" is just a character
-                    Guid.NewGuid()
-                        .ToString()
-                        .Split('-')[0]
-                    + "PriceWithVat";
+                // in the case used for sorting we will need to know what VAT to use for the product,
+                // as well as its before-tax price. Adding those records to the alias will cause the
+                // IHqlQuery to generate the JOIN for both. The order in which the aliases are inserted
+                // matters in case a PropertyName is set for IHqlSortFactory, because DefaultHqlQuery
+                // assumes that property belongs to the last alias.
                 Action<IAliasFactory> alias = af => af
+                    // record that stores the VAT configuration
                     .ContentPartRecord<ProductVatConfigurationPartRecord>()
+                    // record that stores the price.
                     .ContentPartRecord<PricePartRecord>();
-
+                // ORDER BY items must appear in the select list if SELECT DISTINCT is specified.
+                // DefaultHqlQuery uses SELECT DISTINCT, so the methods generating the additional
+                // strings for the query both contain the when/case/else
+                var caseWhen = CaseWhenForPrices(rates);
                 context.Query = ascending
                     ? context.Query
                         .OrderBy(alias,
                         sf => sf.Asc("EffectiveUnitPrice",
-                            SelectOps(rates, computedPropName),
-                            OrderByOps(rates, computedPropName)
+                            caseWhen,
+                            caseWhen
                             ))
                     : context.Query
                         .OrderBy(alias,
                         sf => sf.Desc("EffectiveUnitPrice",
-                            SelectOps(rates, computedPropName),
-                            OrderByOps(rates, computedPropName)
+                            caseWhen,
+                            caseWhen
                             ));
             }
         }
-
-        private string SelectOps(Dictionary<int, decimal> rates,
-            string computedName) {
-            // the default alias for ContentPartRecords is defined by 
-            // DefaultHqlQuery.ParthToAlias(string path)
-            // where path = contentPartRecordType.Name
-            if (rates.Any()) {
-                return MySortFormula(rates);
-                //var pvcprAlias = PathToAlias(typeof(ProductVatConfigurationPartRecord).Name);
-                //var pprAlias = PathToAlias(typeof(PricePartRecord).Name);
-                //var queryBuilder = new StringBuilder();
-                //foreach (var rate in rates) {
-                //    // open nested case/when/else
-                //    queryBuilder.Append(" case " + pvcprAlias + ".VatConfiguration.Id when " + rate.Key);
-                //    queryBuilder.Append(" then " + pprAlias + ".EffectiveUnitPrice * " + (1m + rate.Value));
-                //    queryBuilder.Append(" else");
-                //}
-                //queryBuilder.Append(" 0");
-                //foreach (var rate in rates) {
-                //    // close nested case/when/else
-                //    queryBuilder.Append(" end");
-                //}
-                //queryBuilder.Append(" as " + computedName);
-                //return queryBuilder.ToString();
-            }
-            return null;
-            //return
-            //    @"case vcpr.Id when 534 
-		          //  then ppr.EffectiveUnitPrice * 1.10 
-		          //  else case vcpr.Id when 535
-			         //   then ppr.EffectiveUnitPrice * 1.22
-			         //   else case vcpr.Id when 536
-				        //    then ppr.EffectiveUnitPrice * 1.04
-				        //    else 0
-				        //    end
-			         //   end
-		          //  end as PrezzoIvato";
-        }
-
-        private string OrderByOps(Dictionary<int, decimal> rates,
-            string computedName) {
-            if (rates.Any()) {
-                
-                return MySortFormula(rates);
-                //return computedName;
-            }
-            return null;
-            //return
-            //    @"PrezzoIvato";
-        }
-
+        
         // copied from DefaultHqlQuery
         private string PathToAlias(string path) {
             if (String.IsNullOrWhiteSpace(path)) {
@@ -175,8 +127,23 @@ namespace Nwazet.Commerce.Projections {
             return Char.ToLower(path[0], CultureInfo.InvariantCulture) + path.Substring(1);
         }
 
-        private string MySortFormula(Dictionary<int, decimal> rates) {
+        private string CaseWhenForPrices(Dictionary<int, decimal> rates) {
             if (rates.Any()) {
+                //return
+                //    @"case vcpr.Id when 534 
+                //        then ppr.EffectiveUnitPrice * 1.10 
+                //        else case vcpr.Id when 535
+                //          then ppr.EffectiveUnitPrice * 1.22
+                //          else case vcpr.Id when 536
+                //            then ppr.EffectiveUnitPrice * 1.04
+                //            else 0
+                //            end
+                //          end
+                //        end;
+
+                // the default alias for ContentPartRecords is defined by 
+                //   DefaultHqlQuery.ParthToAlias(string path)
+                // where path = contentPartRecordType.Name
                 var pvcprAlias = PathToAlias(typeof(ProductVatConfigurationPartRecord).Name);
                 var pprAlias = PathToAlias(typeof(PricePartRecord).Name);
                 var queryBuilder = new StringBuilder();
