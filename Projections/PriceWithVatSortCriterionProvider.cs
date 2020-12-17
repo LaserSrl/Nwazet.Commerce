@@ -150,7 +150,7 @@ namespace Nwazet.Commerce.Projections {
                 foreach (var rate in rates) {
                     // open nested case/when/else
                     queryBuilder.Append(" case " + pvcprAlias + ".VatConfiguration.Id when " + rate.Key);
-                    queryBuilder.Append(" then " + pprAlias + ".EffectiveUnitPrice * " + (1m + rate.Value));
+                    queryBuilder.Append(" then " + pprAlias + ".EffectiveUnitPrice * " + (1m + rate.Value).ToString(CultureInfo.InvariantCulture));
                     queryBuilder.Append(" else");
                 }
                 queryBuilder.Append(" 0");
