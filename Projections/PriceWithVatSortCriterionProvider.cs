@@ -30,6 +30,13 @@ namespace Nwazet.Commerce.Projections {
             T = NullLocalizer.Instance;
 
             _vatRates = new Dictionary<int, Dictionary<int, decimal>>();
+
+            // initialize some stuff in memory so we don't pay that processing
+            // cost everytime we sort
+            var destination = _vatConfigurationService.GetDefaultDestination();
+            if (destination != null) {
+                GetRates(destination);
+            }
         }
 
         private Dictionary<int, Dictionary<int, decimal>> _vatRates;
@@ -74,8 +81,8 @@ namespace Nwazet.Commerce.Projections {
             bool ascending = Convert.ToBoolean(context.State.Sort);
             
             // TODO: make the destination configurable as a token in the context/form?
-            var defaultDestination = _vatConfigurationService.GetDefaultDestination();
-            if (defaultDestination == null) {
+            var destination = _vatConfigurationService.GetDefaultDestination();
+            if (destination == null) {
                 // the configuration is telling that the prices on the frontend should be 
                 // "before tax"
                 Action<IAliasFactory> alias = af => af
@@ -90,7 +97,7 @@ namespace Nwazet.Commerce.Projections {
             } else {
                 // for each existing vat configuration, get the rate for the configured default
                 // territory
-                var rates = GetRates(defaultDestination);
+                var rates = GetRates(destination);
                 // in the case used for sorting we will need to know what VAT to use for the product,
                 // as well as its before-tax price. Adding those records to the alias will cause the
                 // IHqlQuery to generate the JOIN for both. The order in which the aliases are inserted
