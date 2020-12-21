@@ -25,6 +25,8 @@ namespace Nwazet.Commerce.Services {
             _workContextAccessor = workContextAccessor;
             _territoriesRepositoryService = territoriesRepositoryService;
             _territoryPartRecordService = territoryPartRecordService;
+
+            _ratesByTerritoryAndConfig = new Dictionary<int, Dictionary<int, decimal>>();
         }
 
         private VatConfigurationSiteSettingsPart _settings { get; set; }
@@ -120,34 +122,44 @@ namespace Nwazet.Commerce.Services {
             return GetRate(vatConfig, defaultTerritory);
         }
 
+        // memorize results of GetRate(VAtConfigurationPart, TerritoryInternalRecord):
+        // in a signle request, we may try to get the VAT rate for a given territory several
+        // times when we are trying to display a bunch of products (e.g. in a projection)
+        private Dictionary<int, Dictionary<int, decimal>> _ratesByTerritoryAndConfig;
         public decimal GetRate(VatConfigurationPart vatConfig, TerritoryInternalRecord destination) {
-            // find the territory in the configured hierarchies
-            var hierarchyConfigs = FindConfiguredHierarchies(vatConfig, destination);
-
-            if (hierarchyConfigs == null || !hierarchyConfigs.Any()) {
-                // territory is not in the hierarchies, so use the default rate
-                return vatConfig.DefaultRate / 100.0m;
+            if (!_ratesByTerritoryAndConfig.ContainsKey(vatConfig.Id)) {
+                _ratesByTerritoryAndConfig.Add(vatConfig.Id, new Dictionary<int, decimal>());
             }
+            if (!_ratesByTerritoryAndConfig[vatConfig.Id].ContainsKey(destination.Id)) {
+                decimal rate;
+                // find the territory in the configured hierarchies
+                var hierarchyConfigs = FindConfiguredHierarchies(vatConfig, destination);
+                if (hierarchyConfigs == null || !hierarchyConfigs.Any()) {
+                    // territory is not in the hierarchies, so use the default rate
+                    rate = vatConfig.DefaultRate / 100.0m;
+                } else {
+                    // get the territory exception if it exists
+                    var territoryConfig = FindTerritoryExceptions(vatConfig, destination);
+                    if (territoryConfig == null || !territoryConfig.Any()) {
+                        // there is no territory-specific configuration
 
-            // get the territory exception if it exists
-            var territoryConfig = FindTerritoryExceptions(vatConfig, destination);
+                        // We handle the error case where we have multiple territories satisfying the query by
+                        // sending the minimum of the rates. If there is only a single configuration for hierarchies
+                        // (the correct case) the following instruction will return the only rate.
+                        rate = hierarchyConfigs.Select(tup => tup.Item2).Min() / 100.0m;
+                    }else {
+                        // We handle the error case where we have multiple territories satisfying the query by
+                        // sending the minimum of the rates. If there is only a single configuration for territories
+                        // (the correct case) the following instruction will return the only rate.
+                        rate = territoryConfig.Select(tup => tup.Item2).Min() / 100.0m;
 
-            if (territoryConfig == null || !territoryConfig.Any()) {
-                // there is no territory-specific configuration
-
-                // We handle the error case where we have multiple territories satisfying the query by
-                // sending the minimum of the rates. If there is only a single configuration for hierarchies
-                // (the correct case) the following instruction will return the only rate.
-                return hierarchyConfigs.Select(tup => tup.Item2).Min() / 100.0m;
+                        // the way this method is written, having a configuration specific for a territory "fixes" the 
+                        // error condition where the territory is in more than one hierarch
+                    }
+                }
+                _ratesByTerritoryAndConfig[vatConfig.Id].Add(destination.Id, rate);
             }
-
-            // We handle the error case where we have multiple territories satisfying the query by
-            // sending the minimum of the rates. If there is only a single configuration for territories
-            // (the correct case) the following instruction will return the only rate.
-            return territoryConfig.Select(tup => tup.Item2).Min() / 100.0m;
-
-            // the way this method is written, having a configuration specific for a territory "fixes" the 
-            // error condition where the territory is in more than one hierarchy
+            return _ratesByTerritoryAndConfig[vatConfig.Id][destination.Id];
         }
 
         public decimal GetRate(ProductPart part, IEnumerable<TerritoryInternalRecord> destination) {

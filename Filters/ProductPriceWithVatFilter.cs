@@ -52,7 +52,10 @@ namespace Nwazet.Commerce.Filters {
         private Dictionary<int, decimal> GetRates(TerritoryInternalRecord destination) {
             if (!_vatRates.ContainsKey(destination.Id)) {
                 var rates = new Dictionary<int, decimal>();
-                var allConfigs = _contentManager.Query<VatConfigurationPart>().List();
+                var allConfigs = _contentManager
+                    .Query<VatConfigurationPart>()
+                    .Join<VatConfigurationPartRecord>() // required for performances
+                    .List();
                 foreach (var vc in allConfigs) {
                     rates.Add(vc.Id, _vatConfigurationService.GetRate(vc, destination));
                 }

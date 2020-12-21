@@ -30,13 +30,6 @@ namespace Nwazet.Commerce.Projections {
             T = NullLocalizer.Instance;
 
             _vatRates = new Dictionary<int, Dictionary<int, decimal>>();
-
-            // initialize some stuff in memory so we don't pay that processing
-            // cost everytime we sort
-            var destination = _vatConfigurationService.GetDefaultDestination();
-            if (destination != null) {
-                GetRates(destination);
-            }
         }
 
         private Dictionary<int, Dictionary<int, decimal>> _vatRates;
@@ -46,7 +39,10 @@ namespace Nwazet.Commerce.Projections {
         private Dictionary<int, decimal> GetRates(TerritoryInternalRecord destination) {
             if (!_vatRates.ContainsKey(destination.Id)) {
                 var rates = new Dictionary<int, decimal>();
-                var allConfigs = _contentManager.Query<VatConfigurationPart>().List();
+                var allConfigs = _contentManager
+                    .Query<VatConfigurationPart>()
+                    .Join<VatConfigurationPartRecord>() // required for performances
+                    .List();
                 foreach (var vc in allConfigs) {
                     rates.Add(vc.Id, _vatConfigurationService.GetRate(vc, destination));
                 }
