@@ -334,6 +334,8 @@
     <Compile Include="Filters\ProductInventoryFilterForm.cs" />
     <Compile Include="Filters\ProductPriceFilter.cs" />
     <Compile Include="Filters\ProductPriceFilterForm.cs" />
+    <Compile Include="Filters\ProductPriceWithVatFilter.cs" />
+    <Compile Include="Filters\ProductPriceWithVatFilterForm.cs" />
     <Compile Include="Filters\ProductSizeFilter.cs" />
     <Compile Include="Filters\ProductSizeFilterForm.cs" />
     <Compile Include="Filters\ProductSkuFilter.cs" />
@@ -505,6 +507,7 @@
     <Compile Include="Permissions\OrderPermissions.cs" />
     <Compile Include="Permissions\TerritoriesPermissions.cs" />
     <Compile Include="Permissions\WishListPermissions.cs" />
+    <Compile Include="Projections\PriceWithVatSortCriterionProvider.cs" />
     <Compile Include="Recipes\Providers\Builders\TerritoriesStep.cs" />
     <Compile Include="Reports\AverageSaleAmountReport.cs" />
     <Compile Include="Reports\BaseSalesReport.cs" />
