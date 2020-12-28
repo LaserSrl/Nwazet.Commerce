@@ -18,17 +18,20 @@ namespace Nwazet.Commerce.Services {
         private readonly IContentDefinitionManager _contentDefinitionManager;
         private readonly IRepository<TerritoryPartRecord> _territoriesPartRepository;
         private readonly IRepository<ContentItemVersionRecord> _civrRepository;
+        private readonly ITerritoryPartRecordService _territoryPartRecordService;
 
         public TerritoriesHierarchyService(
             ITerritoriesRepositoryService territoriesRepositoryService,
             IContentDefinitionManager contentDefinitionManager,
             IRepository<TerritoryPartRecord> territoriesPartRepository,
-            IRepository<ContentItemVersionRecord> civrRepository) {
+            IRepository<ContentItemVersionRecord> civrRepository,
+            ITerritoryPartRecordService territoryPartRecordService) {
 
             _territoriesRepositoryService = territoriesRepositoryService;
             _contentDefinitionManager = contentDefinitionManager;
             _territoriesPartRepository = territoriesPartRepository;
             _civrRepository = civrRepository;
+            _territoryPartRecordService = territoryPartRecordService;
 
             T = NullLocalizer.Instance;
         }
@@ -56,10 +59,12 @@ namespace Nwazet.Commerce.Services {
                 if (territory.Record.TerritoryInternalRecord != null) {
                     internalRecords.Add(territory.Record.TerritoryInternalRecord.Id);
                 }
-                if (territory.Record.Children != null) {
-                    internalRecords.AddRange(territory
-                        .Record
-                        .Children
+                //if (territory.Record.Children != null) {
+                var territoriesChildRecord = _territoryPartRecordService.GetTerritoriesChild(territory);
+                if (territoriesChildRecord.Count() > 0) { 
+                    internalRecords.AddRange(
+                        territoriesChildRecord
+                        //territory.Record.Children
                         .Where(tpr => tpr.TerritoryInternalRecord != null)
                         .Select(tpr => tpr.TerritoryInternalRecord.Id))
                         ;
@@ -93,8 +98,9 @@ namespace Nwazet.Commerce.Services {
 
         private void AssignHierarchyToChildren(TerritoryPartRecord tpr, TerritoryHierarchyPartRecord thpr) {
             tpr.Hierarchy = thpr;
-            if (tpr.Children != null && tpr.Children.Any()) {
-                foreach (var child in tpr.Children) {
+            var children = _territoryPartRecordService.GetTerritoriesChild(tpr);
+            if (children.Count() > 0) {
+                foreach (var child in children) {
                     AssignHierarchyToChildren(child, thpr);
                 }
             }

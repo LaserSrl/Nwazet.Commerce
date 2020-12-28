@@ -1,6 +1,7 @@
 ﻿@using Nwazet.Commerce.Models
 @using Orchard.ContentManagement
 @using System.Collections.Generic
+@using Nwazet.Commerce.ViewModels;
 @{
     Script.Require("jQuery");
     Script.Include("shoppingcart.js", "shoppingcart.min.js");
@@ -134,6 +135,32 @@
                                 <td class="numeric amount">@Model.CurrencyProvider.GetPriceString(Model.Taxes.Amount)</td>
                             </tr>
                         }
+                        @if (Model.PriceAlterations != null) {
+                            foreach (CartPriceAlterationAmount alteration in Model.PriceAlterations) {
+                                <tr class="total">
+                                    <td class="numeric label" colspan="5">
+                                        @if (!string.IsNullOrWhiteSpace(alteration.RemovalAction)) {
+                                            using (Html.BeginFormAntiForgeryPost(
+                                                alteration.RemovalAction)) {
+
+                                                @alteration.Label
+                                                <input type="hidden"
+                                                    name="coupon.Code"
+                                                    value="@alteration.Key">
+                                                <button class="btn"
+                                                    type="submit"
+                                                    formaction="@alteration.RemovalAction"
+                                                    title="@T("Remove")"
+                                                    ><i class="fa fa-times"></i></button>
+                                            }
+                                        } else {
+                                            @alteration.Label
+                                        }
+                                    </td>
+                                    <td class="numeric amount">@Model.CurrencyProvider.GetPriceString(alteration.Amount)</td>
+                                </tr>
+                            }
+                        }
                         @if (!Model.ShopItemsAllDigital && Model.ShippingOption != null) {
                             var shippingOption = (ShippingOption)Model.ShippingOption;
                             <tr class="total">
@@ -147,6 +174,15 @@
                         }
                     </tfoot>
                 </table>
+                @{ 
+                    // Hidden inputs for each cart price alteration so they may be read from the form
+                    var alterationIndex = 0;
+                    foreach (var priceAlteration in Model.PriceAlterations) {
+                        var propertyNamePrefix = string.Format("priceAlterations[{0}]", alterationIndex++);
+                        <input name="@(propertyNamePrefix + ".AlterationType")" type="hidden" value="@priceAlteration.AlterationType" />
+                        <input name="@(propertyNamePrefix + ".Key")" type="hidden" value="@priceAlteration.Key" />
+                    }
+                }
 
                 @if (!Model.ShopItemsAllDigital) {
                     if (Model.ShippingOption != null) { //we selected shipping options

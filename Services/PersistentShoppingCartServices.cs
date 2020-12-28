@@ -1,4 +1,5 @@
-﻿using Nwazet.Commerce.Models;
+﻿using Newtonsoft.Json;
+using Nwazet.Commerce.Models;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Core.Common.Models;
@@ -193,6 +194,7 @@ namespace Nwazet.Commerce.Services {
                 return GetCartForUser().ShippingOption;
             }
         }
+
         private void UpdateShippingOption(ShippingOption shippingOption) {
             UpdateSessionShippingOption(shippingOption);
             UpdatePersistentShippingOption(shippingOption);
@@ -206,6 +208,24 @@ namespace Nwazet.Commerce.Services {
                 cart.ShippingOption = shippingOption;
             }
         }
+
+        // Price alterations always work from session
+        // TODO: should they?
+        public List<CartPriceAlteration> PriceAlterations {
+            get {
+                var context = GetHttpContext();
+                var serialized = context.Session["Nwazet.PriceAlterations"] as string ?? string.Empty;
+
+                return JsonConvert.DeserializeObject<List<CartPriceAlteration>>(serialized)
+                    ?? new List<CartPriceAlteration>();
+            }
+
+            set {
+                var context = GetHttpContext();
+                context.Session["Nwazet.PriceAlterations"] = JsonConvert.SerializeObject(value);
+            }
+        }
+
 
         private HttpContextBase GetHttpContext() {
             var context = _wca.GetContext().HttpContext;

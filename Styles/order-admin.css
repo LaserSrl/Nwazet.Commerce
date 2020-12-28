@@ -57,15 +57,47 @@
 .order-editor .order-items table tbody tr:last-child td {
   border-bottom: 1px solid lightgray;
 }
+.order-editor .order-items table tbody td {
+  padding-right: 0.5rem;
+}
+.order-editor .order-items table tbody td.label {
+  font-size: 100%;
+}
+.order-editor .order-items table tbody td:not(.description) {
+  white-space: nowrap;
+}
 .order-editor .order-items table tfoot .label {
   text-align: right;
   color: black;
+  display: table-cell;
 }
 .order-editor .order-items table tfoot .total td {
   font-weight: bold;
 }
 .order-editor .order-items table tfoot .red input {
   border: 1px solid red;
+}
+.order-editor .order-items table tfoot tr.order-total td:not(.label) {
+  border-top: 2px solid black;
+}
+.order-editor .order-items table tfoot tr.order-total td.label {
+  text-transform: uppercase;
+}
+.order-editor .order-items table tfoot tr.order-total td.price {
+  font-weight: bold;
+}
+.order-editor .order-items table tfoot td {
+  padding-right: 0.5rem;
+}
+.order-editor .order-items table tfoot td.label {
+  font-size: 100%;
+}
+.order-editor .order-items table tfoot td:not(.description) {
+  white-space: nowrap;
+}
+.order-editor .order-items table tfoot input {
+  /* fix for smaller screens to prevent breaking to the side */
+  min-width: unset;
 }
 .order-editor .order-tracking .order-tracking-view {
   display: none;

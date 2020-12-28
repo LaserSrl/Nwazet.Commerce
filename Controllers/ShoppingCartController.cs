@@ -142,12 +142,23 @@ namespace Nwazet.Commerce.Controllers {
                     this,
                     BuildCartShape(true, _shoppingCart.Country, _shoppingCart.ZipCode, null, productMessages));
             }
-            return RedirectToAction("Index", productMessages);
+            // added tempdata because passing the parameter to the redirecttoaction
+            // there were 2 problems:
+            // 1 - severe - the parameter so complex is not read from the index
+            // 2 - the content to decode has been added in the query string, a bit ugly to see
+            TempData["ProductMessages"] = productMessages;
+            return RedirectToAction("Index");
         }
 
         [Themed]
         [OutputCache(Duration = 0)]
         public ActionResult Index(Dictionary<int, List<string>> productMessages = null) {
+            if (productMessages == null || productMessages.Count==0) {
+                if (TempData["ProductMessages"] != null) {
+                    productMessages = (Dictionary<int, List<string>>)TempData["ProductMessages"];
+                }
+            }
+
             _wca.GetContext().Layout.IsCartPage = true;
             try {
                 return new ShapeResult(
@@ -262,6 +273,8 @@ namespace Nwazet.Commerce.Controllers {
             shape.Total = _shoppingCart.Total(subtotal, taxes);
             shape.CurrencyProvider = _currencyProvider;
 
+            shape.PriceAlterations = _shoppingCart.PriceAlterationAmounts;
+
             // Weld additional cart shapes
             shape.CartExtensionShapes = _cartExtensionProviders
                 .SelectMany(cep => cep.CartExtensionShapes());
@@ -334,14 +347,25 @@ namespace Nwazet.Commerce.Controllers {
             UpdateShoppingCartItemViewModel[] items,
             string country = null,
             string zipCode = null,
-            string shippingOption = null) {
+            string shippingOption = null,
+            CartPriceAlterationAmount[] priceAlterations = null) {
 
+            // Updating the shopping cart calls its .Clear() method to ensure the list
+            // of items does not get corrupted. 
             _shoppingCart.Country = country;
             _shoppingCart.ZipCode = zipCode;
-            _shoppingCart.ShippingOption = String.IsNullOrWhiteSpace(shippingOption) ? null : ShippingService.RebuildShippingOption(shippingOption);
+            _shoppingCart.ShippingOption = String.IsNullOrWhiteSpace(shippingOption)
+                ? null : ShippingService.RebuildShippingOption(shippingOption);
+
+            UpdateAlterations(priceAlterations);
 
             if (items != null) {
                 UpdateShoppingCart(items.Reverse());
+            } else {
+                // call handlers if nothing was changed in terms of the items
+                foreach (var handler in _cartLifeCycleEventHandlers) {
+                    handler.Updated();
+                }
             }
             return RedirectToAction("Index");
         }
@@ -350,12 +374,13 @@ namespace Nwazet.Commerce.Controllers {
         public ActionResult AjaxUpdate(
             UpdateShoppingCartItemViewModel[] items,
             string country = null,
-            string zipCode = null) {
+            string zipCode = null,
+            CartPriceAlterationAmount[] priceAlterations = null) {
 
             _shoppingCart.Country = country;
             _shoppingCart.ZipCode = zipCode;
             _shoppingCart.ShippingOption = null;
-
+            UpdateAlterations(priceAlterations);
             UpdateShoppingCart(items == null ? null : items.Reverse());
             try {
                 return new ShapePartialResult(this,
@@ -369,6 +394,35 @@ namespace Nwazet.Commerce.Controllers {
                 _shoppingCart.ShippingOption = null;
                 _notifier.Error(new LocalizedString(ex.Message));
                 return RedirectToAction("Index");
+            }
+        }
+
+        private void UpdateAlterations(CartPriceAlterationAmount[] priceAlterations = null) {
+            if (priceAlterations != null) {
+                var alterations = new List<CartPriceAlteration>();
+                if (_shoppingCart.PriceAlterations != null) {
+                    alterations.AddRange(priceAlterations
+                        .Where(cpaa =>
+                            !_shoppingCart.PriceAlterations.Any(cpa =>
+                                cpa.AlterationType.Equals(cpaa.AlterationType, StringComparison.InvariantCultureIgnoreCase)
+                                && cpa.Key.Equals(cpaa.Key, StringComparison.InvariantCultureIgnoreCase)))
+                        .Select(cpaa => new CartPriceAlteration {
+                            AlterationType = cpaa.AlterationType,
+                            Key = cpaa.Key,
+                            Weight = cpaa.Weight,
+                            RemovalAction = cpaa.RemovalAction
+                        }));
+                    alterations.AddRange(_shoppingCart.PriceAlterations);
+                } else {
+                    alterations.AddRange(priceAlterations
+                        .Select(cpaa => new CartPriceAlteration {
+                            AlterationType = cpaa.AlterationType,
+                            Key = cpaa.Key,
+                            Weight = cpaa.Weight,
+                            RemovalAction = cpaa.RemovalAction
+                        }));
+                }
+                _shoppingCart.PriceAlterations = alterations.OrderByDescending(cpa => cpa.Weight).ToList();
             }
         }
 

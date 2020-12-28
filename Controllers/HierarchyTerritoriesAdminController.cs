@@ -43,6 +43,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ITransactionManager _transactionManager;
         private readonly INotifier _notifier;
         private readonly IEnumerable<IContentHandler> _handlers;
+        private readonly ITerritoryPartRecordService _territoryPartRecordService;
 
         public HierarchyTerritoriesAdminController(
             IContentManager contentManager,
@@ -54,7 +55,8 @@ namespace Nwazet.Commerce.Controllers {
             ITerritoriesHierarchyService territoriesHierarchyService,
             ITransactionManager transactionManager,
             INotifier notifier,
-            IEnumerable<IContentHandler> handlers) {
+            IEnumerable<IContentHandler> handlers,
+            ITerritoryPartRecordService territoryPartRecordService) {
 
             _contentManager = contentManager;
             _contentDefinitionManager = contentDefinitionManager;
@@ -66,6 +68,7 @@ namespace Nwazet.Commerce.Controllers {
             _transactionManager = transactionManager;
             _notifier = notifier;
             _handlers = handlers;
+            _territoryPartRecordService = territoryPartRecordService;
 
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
@@ -92,8 +95,8 @@ namespace Nwazet.Commerce.Controllers {
             var topLevelOfHierarchy = _territoriesService
                 .GetTerritoriesQuery(hierarchyPart, null, VersionOptions.Latest)
                 .List().ToList();
-                       
 
+            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchyPart).ToList();
             var model = new TerritoryHierarchyTerritoriesViewModel {
                 HierarchyPart = hierarchyPart,
                 HierarchyItem = hierarchyItem,
@@ -102,7 +105,7 @@ namespace Nwazet.Commerce.Controllers {
                     GetTerritoriesQuery(hierarchyPart, VersionOptions.Latest)
                     .List().Select(MakeANode).ToList(),
                 CanAddMoreTerritories = _territoriesService
-                    .GetAvailableTerritoryInternals(hierarchyPart)
+                    .GetAvailableTerritoryInternals(hierarchyPart,hierarchyTerritories)
                     .Any()
             };
 
@@ -155,7 +158,7 @@ namespace Nwazet.Commerce.Controllers {
                 HierarchyItem = territoryItem.As<TerritoryPart>().Hierarchy,
                 TerritoryItem = territoryItem,
                 Message = TerritoriesUtilities.Delete401TerritoryMessage,
-                AdditionalPermissions = new Permission[] { Orchard.Core.Contents.Permissions.DeleteContent },
+                AdditionalPermissions = new Permission[] { TerritoriesPermissions.ManageTerritories },
                 ExecutionAction = item => {
                     if (item != null) {
                         _contentManager.Remove(item);
@@ -195,8 +198,9 @@ namespace Nwazet.Commerce.Controllers {
             }
 
             // There must be "unused" TerritoryInternalRecords for this hierarchy.
+            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchyPart).ToList();
             if (_territoriesService
-                .GetAvailableTerritoryInternals(hierarchyPart)
+                .GetAvailableTerritoryInternals(hierarchyPart,hierarchyTerritories)
                 .Any()) {
 
                 // Creation
@@ -233,7 +237,7 @@ namespace Nwazet.Commerce.Controllers {
             var dummyContent = _contentManager.New(id);
 
             if (!_authorizer.Authorize(
-                Orchard.Core.Contents.Permissions.PublishContent, dummyContent, TerritoriesUtilities.Creation401TerritoryMessage))
+                TerritoriesPermissions.ManageTerritories, dummyContent, TerritoriesUtilities.Creation401TerritoryMessage))
                 return new HttpUnauthorizedResult();
 
             return CreateTerritoryPost(id, hierarchyId, returnUrl, contentItem => _contentManager.Publish(contentItem));
@@ -246,7 +250,7 @@ namespace Nwazet.Commerce.Controllers {
                 HierarchyItem = _contentManager.Get(hierarchyId, VersionOptions.Latest),
                 TerritoryItem = _contentManager.New(typeName),
                 Message = TerritoriesUtilities.Creation401TerritoryMessage,
-                AdditionalPermissions = new Permission[] { Orchard.Core.Contents.Permissions.EditContent },
+                AdditionalPermissions = new Permission[] { TerritoriesPermissions.ManageTerritories },
                 ExecutionAction = item => {
                     _contentManager.Create(item, VersionOptions.Draft);
 
@@ -298,7 +302,7 @@ namespace Nwazet.Commerce.Controllers {
             }
             
             if (!_authorizer.Authorize(
-                Orchard.Core.Contents.Permissions.EditContent, territoryItem, TerritoriesUtilities.Edit401TerritoryMessage))
+                TerritoriesPermissions.ManageTerritories, territoryItem, TerritoriesUtilities.Edit401TerritoryMessage))
                 return new HttpUnauthorizedResult();
 
             // We should have filtered out the cases where we cannot or should not be editing the item here
@@ -325,7 +329,7 @@ namespace Nwazet.Commerce.Controllers {
                 return HttpNotFound();
 
             if (!_authorizer.Authorize(
-                Orchard.Core.Contents.Permissions.PublishContent, content, TerritoriesUtilities.Edit401TerritoryMessage))
+                TerritoriesPermissions.ManageTerritories, content, TerritoriesUtilities.Edit401TerritoryMessage))
                 return new HttpUnauthorizedResult();
 
             return EditTerritoryPost(id, returnUrl, contentItem => _contentManager.Publish(contentItem));
@@ -339,7 +343,7 @@ namespace Nwazet.Commerce.Controllers {
                 HierarchyItem = territoryItem.As<TerritoryPart>().Hierarchy,
                 TerritoryItem = territoryItem,
                 Message = TerritoriesUtilities.Edit401TerritoryMessage,
-                AdditionalPermissions = new Permission[] { Orchard.Core.Contents.Permissions.EditContent },
+                AdditionalPermissions = new Permission[] { TerritoriesPermissions.ManageTerritories },
                 ExecutionAction = item => {
                     var model = _contentManager.UpdateEditor(item, this);
 

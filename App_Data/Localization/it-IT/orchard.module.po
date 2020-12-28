@@ -100,6 +100,134 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/Content-Order.SummaryAdmin.cshtml"
 msgid "View order"
 msgstr "Visualizza ordine"
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Check to activate the coupon."
+msgstr "Seleziona per attivare il coupon."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Code"
+msgstr "Codice"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Coupon's name"
+msgstr "Nome del coupon"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Coupon's unique code"
+msgstr "Codice unico del coupon"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Coupon's value"
+msgstr "Valore del coupon"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Is published and active"
+msgstr "È pubblicato ed attivo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Name"
+msgstr "Nome"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Save"
+msgstr "Salva"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Select a type"
+msgstr "Seleziona un tipo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "The coupon's code. You may only use alphanumeric characters (letters and digits)."
+msgstr "Il codice del coupon. Si possono solo usare caratteri alfanumerici (lettere e cifre)."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "The coupon's name."
+msgstr "Il nome del coupon."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "The coupon's value type."
+msgstr "Il tipo del valore del coupon."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "The coupon's value/amount."
+msgstr "Il valore del coupon."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Value type"
+msgstr "Tipo di valore"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Value/Amount"
+msgstr "Valore/Quantità"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Actions"
+msgstr "Azioni"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Code"
+msgstr "Codice"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Delete"
+msgstr "Elimina"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Edit"
+msgstr "Modifica"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Name"
+msgstr "Nome"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Published"
+msgstr "Pubblicato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Status"
+msgstr "Stato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Table of coupons"
+msgstr "Tabella dei coupons"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Territories table"
+msgstr "Tabella dei Territori"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Unpublished"
+msgstr "Non pubblicato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Value"
+msgstr "Valore"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/Create.cshtml"
+msgid "New Coupon"
+msgstr "Nuovo Coupon"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/Edit.cshtml"
+msgid "Edit Coupon {0}"
+msgstr "Modifica il coupon {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/Index.cshtml"
+msgid "Add"
+msgstr "Aggiungi"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/Index.cshtml"
+msgid "Manage coupons"
+msgstr "Gestisci coupons"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCartExtension.cshtml"
+msgid "Apply Coupon"
+msgstr "Applica coupon"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCartExtension.cshtml"
+msgid "Enter Your Coupon Code"
+msgstr "Inserisci il tuo codice coupon"
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/BundleProductLocalizationSettings.cshtml"
 msgid "Check to attempt to replace selected products with their translation in the bundle's culture. This only applies if the bundle has a LocalizationPart."
 msgstr "Spunta per provare a sostituire i prodotti selezionati con la loro traduzione nella cultura del pacchetto. Questo accade solo se il prodotto ha una LocalizationPart."
@@ -555,6 +683,142 @@ msgstr "Istruzioni speciali:"
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
 msgid "You may view this order at a later time by going to this address: <a href=\"{0}\">{0}</a>, using this password: \"{1}\"."
 msgstr "Potrai visualizzare i dettagli del tuo ordine a questo indirizzo: <a href=\"{0}\">{0}</a>, usando questa password: \"{1}\"."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "{0} {1}"
+msgstr "{0} {1}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Additional details"
+msgstr "Dettagli aggiuntivi"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Amount Paid"
+msgstr "Importo Pagato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Base product price"
+msgstr "Prezzo base del prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Cart level variations"
+msgstr "Variazioni a livello di carrello"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Changes to a line's taxable amount. E.g.: a coupon reducing price by 10% would contribute to this."
+msgstr "Modifiche all'imponibile per la riga. E.g.: un coupon che riduca il prezzo del 10% contribuirebbe a questo valore."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Description"
+msgstr "Descrizione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Line total"
+msgstr "Totale di riga"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Original taxable price for the product."
+msgstr "Prezzo imponibile originale per il prodotto."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Product"
+msgstr "Prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Products:"
+msgstr "Prodotti:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Qty"
+msgstr "Qtà"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Quantity."
+msgstr "Quantità."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "SKU"
+msgstr "SKU"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Sum of subtotals"
+msgstr "Somma dei totali parziali"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Taxable line total"
+msgstr "Imponibile totale per la riga"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Taxable line variation"
+msgstr "Variazioni di riga imponibili"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Taxable price for the product in this order. This may differ from the previous value in case the product is subject to specific discounts."
+msgstr "Prezzo imponibile per il prodotto in questo ordine. Potrà essere diverso dal valore precedente in caso di sconti specifici impostati nel prodotto stesso."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Taxable product price"
+msgstr "Imponibile del prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Taxable subtotal"
+msgstr "Totale parziale imponibile"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Taxes"
+msgstr "Tasse"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Taxes {0}"
+msgstr "Tasse {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "The amount the customer should pay for a line. It's the result of applying VAT on the taxable amount."
+msgstr "L'ammontare da pagare per il cliente per una riga dell'ordine. Corrisponde al risultato dell'applicazione dell'IVA sull'imponibile."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "The price multiplied by the quantity."
+msgstr "L'imponibile moltiplicato per la quantità."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "The product for a line of the order."
+msgstr "Il prodotto per la riga dell'ordine."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "The SKU for the product for a line of the order."
+msgstr "Lo SKU del prodotto per la riga dell'ordine."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Total"
+msgstr "Totale"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Total of line variations"
+msgstr "Totale delle variazioni di riga."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Total taxable amount for a line."
+msgstr "Imponibile totale per una riga di prodotto."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Total taxable amount for products"
+msgstr "Imponibile totale per i prodotti"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Total VAT for products"
+msgstr "IVA totale sui prodotti"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "Value"
+msgstr "Valore"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "VAT"
+msgstr "IVA"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Advanced.cshtml"
+msgid "VAT rate."
+msgstr "Aliquota IVA."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "{0} {1}"
@@ -2085,6 +2349,10 @@ msgid "Any (show all)"
 msgstr "Qualsiasi (visualizza tutti)"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "any (show all)"
+msgstr "qualsiasi (visualizza tutti)"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Apply"
 msgstr "Applica"
 
@@ -2231,6 +2499,10 @@ msgstr "Sku"
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Status"
 msgstr "Stato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
+msgid "Terms"
+msgstr "Termini"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Title"
@@ -3059,6 +3331,22 @@ msgstr "Criterio sul peso del Carrello"
 msgctxt "Nwazet.Commerce.Controllers.AttributesAdminController"
 msgid "Not authorized to manage product attributes"
 msgstr "Non autorizzato a gestire gli attributi di prodotto"
+
+msgctxt "Nwazet.Commerce.Controllers.CouponingAdminController"
+msgid "The coupon has been created."
+msgstr "Il coupon è stato creato."
+
+msgctxt "Nwazet.Commerce.Controllers.CouponingAdminController"
+msgid "The coupon has been permanently deleted."
+msgstr "Il coupon è stato eliminato permanentemente."
+
+msgctxt "Nwazet.Commerce.Controllers.CouponingAdminController"
+msgid "The coupon has been updated."
+msgstr "Il coupon è stato aggiornato."
+
+msgctxt "Nwazet.Commerce.Controllers.CouponingAdminController"
+msgid "The coupon is not valid."
+msgstr "Il coupon non è valido."
 
 msgctxt "Nwazet.Commerce.Controllers.ECommerceSettingsAdminController"
 msgid "Not authorized to manage e-commerce settings"
@@ -3956,6 +4244,14 @@ msgctxt "Nwazet.Commerce.Menus.AttributeAdminMenu"
 msgid "Commerce"
 msgstr "E-Commerce"
 
+msgctxt "Nwazet.Commerce.Menus.CouponingAdminMenu"
+msgid "Commerce"
+msgstr "E-Commerce"
+
+msgctxt "Nwazet.Commerce.Menus.CouponingAdminMenu"
+msgid "Coupons"
+msgstr "Coupons"
+
 msgctxt "Nwazet.Commerce.Menus.ECommerceSettingsAdminMenu"
 msgid "E-Commerce"
 msgstr "E-Commerce"
@@ -4163,6 +4459,22 @@ msgstr "(cultura non definita)"
 msgctxt "Nwazet.Commerce.Services.BundleProductLocalizationBundleService"
 msgid "Some of the products are in the wrong culture: {0}"
 msgstr "Alcuni dei prodotti hanno la cultura sbagliata: {0}"
+
+msgctxt "Nwazet.Commerce.Services.Couponing.BasicCouponApplicabilityCriterion"
+msgid "Coupon code {0} is already in use."
+msgstr "Il codice coupon {0} è già in uso"
+
+msgctxt "Nwazet.Commerce.Services.Couponing.CouponApplicationService"
+msgid "Coupon {0} was removed"
+msgstr "Coupon {0} rimosso"
+
+msgctxt "Nwazet.Commerce.Services.Couponing.CouponApplicationService"
+msgid "Coupon {0} was successfully applied"
+msgstr "Coupon {0} applicato con successo"
+
+msgctxt "Nwazet.Commerce.Services.Couponing.CouponApplicationService"
+msgid "Coupon code {0} is not valid"
+msgstr "Il codice coupon {0} non è valido"
 
 msgctxt "Nwazet.Commerce.Services.DefaultOrderStatusProvider"
 msgid "Accepted"

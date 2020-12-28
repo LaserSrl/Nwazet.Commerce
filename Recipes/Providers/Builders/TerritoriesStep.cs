@@ -19,17 +19,20 @@ namespace Nwazet.Commerce.Recipes.Providers.Builders {
         private readonly IContentManager _contentManager;
         private readonly IContentDefinitionWriter _contentDefinitionWriter;
         private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
+        private readonly ITerritoryPartRecordService _territoryPartRecordService;
 
         public TerritoriesStep(
             IContentDefinitionManager contentDefinitionManager,
             IContentManager contentManager,
             IContentDefinitionWriter contentDefinitionWriter,
-            ITerritoriesRepositoryService territoriesRepositoryService) {
+            ITerritoriesRepositoryService territoriesRepositoryService,
+            ITerritoryPartRecordService territoryPartRecordService) {
 
             _contentDefinitionManager = contentDefinitionManager;
             _contentManager = contentManager;
             _contentDefinitionWriter = contentDefinitionWriter;
             _territoriesRepositoryService = territoriesRepositoryService;
+            _territoryPartRecordService = territoryPartRecordService;
         }
 
         public override LocalizedString Description {
@@ -91,7 +94,8 @@ namespace Nwazet.Commerce.Recipes.Providers.Builders {
                     .Add(ExportData(hierarchyTypes, hierarchyItems));
             // 2. Export Territories
             foreach (var hierarchy in hierarchyItems.Select(ci => ci.As<TerritoryHierarchyPart>())) {
-                if (hierarchy.Record.Territories.Any()) {
+                //if (hierarchy.Record.Territories.Any()) {
+                if(_territoryPartRecordService.GetHierarchyTerritoriesCount(hierarchy)>0) { 
                     context.RecipeDocument.Element("Orchard")
                     .Add(ExportTerritories(hierarchy));
                 }

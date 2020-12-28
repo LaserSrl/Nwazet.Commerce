@@ -17,7 +17,8 @@ namespace Nwazet.Commerce.Models {
             IEnumerable<ITaxProvider> taxProviders,
             INotifier notifier,
             ITaxProviderService taxProviderService,
-            IProductPriceService productPriceService)
+            IProductPriceService productPriceService,
+            IEnumerable<ICartPriceAlterationProcessor> cartPriceAlterationProcessors)
             : base (contentManager,
                   cartStorage,
                   priceService,
@@ -25,7 +26,8 @@ namespace Nwazet.Commerce.Models {
                   taxProviders,
                   notifier,
                   taxProviderService,
-                  productPriceService) {
+                  productPriceService,
+                  cartPriceAlterationProcessors) {
         }
         
         public override IEnumerable<ShoppingCartItem> Items {
@@ -91,6 +93,16 @@ namespace Nwazet.Commerce.Models {
         public override void Clear() {
             _products = null;
             ItemsInternal.Clear();
+        }
+        public override void ClearAll() {
+            _products = null;
+            ItemsInternal.Clear();
+            // clear selected shipping option, zipcode, country...
+            ShippingOption = null;
+            Country = null;
+            ZipCode = null;
+            // clear price alterations
+            PriceAlterations = new List<CartPriceAlteration>();
             UpdateItems();
         }
     }
