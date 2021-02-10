@@ -28,11 +28,11 @@ namespace Nwazet.Commerce.Tests.Stubs {
             throw new NotImplementedException();
         }
 
-        public IContentQuery<TPart, TRecord> WithQueryHints(QueryHints hints) {
+        public new IContentQuery<TPart, TRecord> WithQueryHints(QueryHints hints) {
             return this;
         }
 
-        public IContentQuery<TPart, TRecord> WithQueryHintsFor(string contentType) {
+        public new IContentQuery<TPart, TRecord> WithQueryHintsFor(string contentType) {
             throw new NotImplementedException();
         }
     }
