@@ -180,6 +180,9 @@ namespace Nwazet.Commerce.Tests {
                 Is.EqualTo(date.AddYears(-1)));
         }
 
+        // CS1718: Comparison made to same variable; did you mean to compare something else?
+        // We suppress that warning here because this method is testing the equality operator
+#pragma warning disable CS1718
         [Test]
         public void TimePeriodEquality() {
             Assert.IsTrue(TimePeriod.Hour == TimePeriod.Hour);
@@ -211,6 +214,7 @@ namespace Nwazet.Commerce.Tests {
             Assert.IsFalse(TimePeriod.Hour.Equals(3));
             Assert.IsFalse(TimePeriod.Hour.Equals(TimePeriod.Year));
         }
+#pragma warning restore CS1718
 
         [Test]
         public void ToStringGivesRightString() {
