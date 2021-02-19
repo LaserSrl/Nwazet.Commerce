@@ -30,7 +30,6 @@ namespace Nwazet.Commerce.Models {
                 return "(" + string.Join(", ",
                     AttributeIdsToValues.ToList().Select(kvp => kvp.Key + " " + kvp.Value.ToString())) 
                     + ")";
-                return "(" + string.Join(", ", AttributeIdsToValues.Values) + ")";
             }
         }
 
