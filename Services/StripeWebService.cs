@@ -9,12 +9,9 @@ using Orchard.Environment.Extensions;
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Stripe")]
     public class StripeWebService : IStripeWebService {
-            // Adding TLS 1.2 Support
-            public StripeWebService()
-            {
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            }
-            private const string UrlFormat = "https://api.stripe.com/v1/";
+        public StripeWebService() {
+        }
+        private const string UrlFormat = "https://api.stripe.com/v1/";
 
         public JObject Query(string secretKey, string serviceName, NameValueCollection parameters) {
             var serviceUrl = UrlFormat + serviceName;
@@ -27,8 +24,8 @@ namespace Nwazet.Commerce.Services {
             }
             catch (WebException ex) {
                 var exceptionResponse = ex.Response;
-                var exceptionObject = exceptionResponse == null 
-                    ? null 
+                var exceptionObject = exceptionResponse == null
+                    ? null
                     : JObject.Parse(new StreamReader(exceptionResponse.GetResponseStream()).ReadToEnd());
                 throw new StripeException(ex.Message, ex.InnerException) {
                     Status = ex.Status,
