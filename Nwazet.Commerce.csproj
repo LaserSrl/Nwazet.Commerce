@@ -93,6 +93,9 @@
     <Content Include="LICENSE.txt" />
     <Content Include="Recipes\World.recipe.xml" />
     <Content Include="Scripts\attribute-admin.js" />
+    <Content Include="Scripts\attribute-extensions.min.js">
+      <DependentUpon>attribute-extensions.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\chartjs.js" />
     <Content Include="Scripts\chartjs.min.js">
       <DependentUpon>chartjs.js</DependentUpon>
