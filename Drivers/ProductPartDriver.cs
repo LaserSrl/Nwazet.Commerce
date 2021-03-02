@@ -156,21 +156,21 @@ namespace Nwazet.Commerce.Drivers {
             var model = new ProductEditorViewModel {
                 Product = part
             };
-            if (updater.TryUpdateModel(model, Prefix, null, null)) {
-                if (model.PriceTiers != null) {
-                    part.PriceTiers = model.PriceTiers.Select(t => new PriceTier() {
-                        Quantity = t.Quantity,
-                        Price = (!t.Price.EndsWith("%") ? t.Price.ToDecimal() : null),
-                        PricePercent =
-                            (t.Price.EndsWith("%") ? t.Price.Substring(0, t.Price.Length - 1).ToDecimal() : null)
-                    }).ToList();
-                }
-                else {
-                    part.PriceTiers = new List<PriceTier>();
-                }
-                part.DiscountPrice = model.DiscountPrice == null
-                    ? -1 : (decimal)model.DiscountPrice;
+            updater.TryUpdateModel(model, Prefix, null, null);
+            if (model.PriceTiers != null) {
+                part.PriceTiers = model.PriceTiers.Select(t => new PriceTier() {
+                    Quantity = t.Quantity,
+                    Price = (!t.Price.EndsWith("%") ? t.Price.ToDecimal() : null),
+                    PricePercent =
+                        (t.Price.EndsWith("%") ? t.Price.Substring(0, t.Price.Length - 1).ToDecimal() : null)
+                }).ToList();
             }
+            else {
+                part.PriceTiers = new List<PriceTier>();
+            }
+            part.DiscountPrice = model.DiscountPrice == null
+                ? -1 : (decimal)model.DiscountPrice;
+            
             return Editor(part, shapeHelper);
         }
 
