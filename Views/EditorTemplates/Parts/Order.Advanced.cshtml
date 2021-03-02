@@ -66,6 +66,27 @@
                         <td class="description">
                             @{ 
                                 var itemTitle = item.Title;
+                                var productAttributes = (IDictionary<int, ProductAttributeValueExtended>)item.Attributes;
+                                if (productAttributes != null && productAttributes.Any()) {
+                                    var additionalText = "";
+                                    foreach (var key in productAttributes.Keys) {
+                                        var attributeValue = productAttributes[key];
+                                        if (attributeValue != null) {
+                                            // contribute to displayText
+                                            //attributeValue.Value // "Data della visita"
+                                            //attributeValue.ExtendedValue // "06/03/2021"
+                                            additionalText = string.Join(" ",
+                                                additionalText.Trim(),
+                                                attributeValue.Value.Trim(),
+                                                attributeValue.ExtendedValue.Trim());
+                                        }
+                                    }
+                                    if (!string.IsNullOrWhiteSpace(additionalText)) {
+                                        itemTitle += " (" +
+                                            additionalText.Trim()
+                                            + ")";
+                                    }
+                                }
                             }
                             @* check is a product *@
                             @if (_contentManager.Get(item.ProductId)?.As<ProductPart>() != null) {

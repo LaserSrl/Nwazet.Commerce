@@ -47,12 +47,36 @@
                     <tr id="@string.Format("order_products_table_row-product_{0}", item.ProductId)">
                         <td class="quantity">@item.Quantity &times;</td>
                         <td class="description">
+                            @{ 
+                                var itemTitle = item.Title;
+                                var productAttributes = (IDictionary<int, ProductAttributeValueExtended>)item.Attributes;
+                                if (productAttributes != null && productAttributes.Any()) {
+                                    var additionalText = "";
+                                    foreach (var key in productAttributes.Keys) {
+                                        var attributeValue = productAttributes[key];
+                                        if (attributeValue != null) {
+                                            // contribute to displayText
+                                            //attributeValue.Value // "Data della visita"
+                                            //attributeValue.ExtendedValue // "06/03/2021"
+                                            additionalText = string.Join(" ",
+                                                additionalText.Trim(),
+                                                attributeValue.Value.Trim(),
+                                                attributeValue.ExtendedValue.Trim());
+                                        }
+                                    }
+                                    if (!string.IsNullOrWhiteSpace(additionalText)) {
+                                        itemTitle += " (" +
+                                            additionalText.Trim()
+                                            + ")";
+                                    }
+                                }
+                            }
                             @* check is a product *@
                             @if (_contentManager.Get(item.ProductId)?.As<ProductPart>() != null) {
-                                <a href="@Url.ItemDisplayUrl(Model.Products[item.ProductId])" target="_blank">@item.Title</a>
+                                <a href="@Url.ItemDisplayUrl(Model.Products[item.ProductId])" target="_blank">@itemTitle</a>
                             }
                             else {
-                                <span>@item.Title</span>
+                                <span>@itemTitle</span>
                             }
                         </td>
                         <td class="price">@Html.Raw(originalPrice)</td>
