@@ -619,6 +619,7 @@
     <Compile Include="Services\TerritoriesService.cs" />
     <Compile Include="Services\TerritoryPartRecordService.cs" />
     <Compile Include="Services\TerritoryRepositoryService.cs" />
+    <Compile Include="Services\DateTimeProductAttributeExtensionProvider.cs" />
     <Compile Include="Services\TextProductAttributeExtensionProvider.cs" />
     <Compile Include="Services\UpdateStatusService.cs" />
     <Compile Include="Services\UseCurrencyFromSiteCultureProvider.cs" />
@@ -834,6 +835,8 @@
     <None Include="Views\TerritoryHierarchiesAdmin\HierarchiesListPartial.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesIndex.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesListPartial.cshtml" />
+    <Content Include="Views\DateTimeProductAttributeExtensionAdmin.cshtml" />
+    <Content Include="Views\DateTimeProductAttributeExtensionInput.cshtml" />
     <None Include="Views\VatAdditionalOrderAddressesShapes.cshtml" />
     <None Include="Views\VatAdditionalOrderProductsShape.cshtml" />
     <None Include="Views\WishListEditor.cshtml" />
