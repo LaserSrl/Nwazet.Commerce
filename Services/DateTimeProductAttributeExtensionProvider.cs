@@ -14,6 +14,11 @@ namespace Nwazet.Commerce.Services {
     public class DateTimeProductAttributeExtensionProvider 
         : IProductAttributeExtensionProvider, IProductAttributesDriver {
 
+        // this is a provider to use DateTime attributes, but as it is right now it's only
+        // actually parsing out dates (see the return value in the Serialize method).
+        // The ability to have a more fine grained configuration of this requires a rework
+        // and improvement of the way ProductAttributes are implemented.
+
         private readonly dynamic _shapeFactory;
         private readonly IWorkContextAccessor _workContextAccessor;
 
@@ -55,7 +60,14 @@ namespace Nwazet.Commerce.Services {
             if (DateTime.TryParse(value, cultureInfo, DateTimeStyles.None, out date)) {
                 return date.ToShortDateString();
             }
+            // This value we are returning here is worng, meaning we were not able to parse it
+            // to a Date as we hoped. However, later when the attribute is being processed as
+            // the product is added to the cart the ValidateAttributes method will get this 
+            // same string and fail to validate it. (The same validation is ran when the product
+            // is being added to the wishlists)
             return value;
+            // TODO: find a way to prevent "wrong" values to be ever returned from here, in case
+            // this is ever used somewhere without further validation.
         }
 
         public dynamic BuildInputShape(ProductAttributePart part) {
