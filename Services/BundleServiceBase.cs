@@ -42,7 +42,13 @@ namespace Nwazet.Commerce.Services {
         }
 
         public virtual BundleViewModel BuildEditorViewModel(BundlePart part) {
-            var bundleProductQuantities = part.ProductQuantities.ToDictionary(pq => pq.ProductId, pq => pq.Quantity);
+            //var bundleProductQuantities = part.ProductQuantities.ToDictionary(pq => pq.ProductId, pq => pq.Quantity);
+
+            // read the properties in the record because in case of a validation failure 
+            // the only place to store temporary values is inside the record and not in the part
+            var bundleProductQuantities = _bundleProductsRepository
+                .Fetch(r => r.BundlePartRecord.Id == part.Id)
+                .ToDictionary(pq => pq.ContentItemRecord.Id, pq => pq.Quantity);
             return new BundleViewModel {
                 Products = GetProducts()
                     .Where(p => ConsiderProductValid(p, part))
