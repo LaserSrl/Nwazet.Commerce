@@ -8,6 +8,8 @@
     var items = (Model.CheckoutItems as IEnumerable<CheckoutItem> ?? new CheckoutItem[] { }).ToList();
     Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
     CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
+
+    var _attributeExtensionProviders = WorkContext.Resolve<IEnumerable<IProductAttributeExtensionProvider>>();
 }
 <h1>@title</h1>
 <p class="order-status">@T("Status: {0}", Model.Status)</p>
@@ -32,6 +34,35 @@
             </thead>
             <tbody>
                 @foreach (var item in items) {
+                    var displayText = item.Title;
+                    var productAttributes = (IDictionary<int, ProductAttributeValueExtended>)item.Attributes;
+                    if (productAttributes != null && productAttributes.Any()) {
+                        var additionalText = "";
+                        foreach (var key in productAttributes.Keys) {
+                            var attributeValue = productAttributes[key];
+                            if (attributeValue != null) {
+                                // contribute to displayText
+                                //attributeValue.Value // "Data della visita"
+                                //attributeValue.ExtendedValue // "06/03/2021"
+                                //attributeValue.ExtensionProvider // "DateTimeProductAttributeExtension"
+                                var provider = _attributeExtensionProviders
+                                    .FirstOrDefault(p => p.Name.Equals(attributeValue.ExtensionProvider));
+                                var extendedValue = attributeValue.ExtendedValue;
+                                if (provider != null) {
+                                    extendedValue = provider.DisplayString(extendedValue);
+                                }
+                                additionalText = string.Join(" ",
+                                    additionalText.Trim(),
+                                    attributeValue.Value.Trim(),
+                                    extendedValue.Trim());
+                            }
+                        }
+                        if (!string.IsNullOrWhiteSpace(additionalText)) {
+                            displayText += " (" +
+                                additionalText.Trim()
+                                + ")";
+                        }
+                    }
                     <tr>
                         <td class="quantity">@item.Quantity &times;</td>
                         <td class="description"><a href="@Url.ItemDisplayUrl((IContent) Model.Products[item.ProductId])" data-product-id="@item.ProductId">@item.Title</a></td>
