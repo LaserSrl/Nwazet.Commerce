@@ -12,6 +12,7 @@
     Script.Include("order-admin.js", "order-admin.min.js");
 
     var _contentManager = WorkContext.Resolve<IContentManager>();
+    var _attributeExtensionProviders = WorkContext.Resolve<IEnumerable<IProductAttributeExtensionProvider>>();
 
     Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
     CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
@@ -22,6 +23,7 @@
     var taxableSum = 0.0m;
     var totalSum = 0.0m; // sum of order total including VAT
     var vatSum = 0.0m; // sum of VAT applied to products
+
 }
 
 <div class="order-editor">
@@ -75,10 +77,17 @@
                                             // contribute to displayText
                                             //attributeValue.Value // "Data della visita"
                                             //attributeValue.ExtendedValue // "06/03/2021"
+                                            //attributeValue.ExtensionProvider // "DateTimeProductAttributeExtension"
+                                            var provider = _attributeExtensionProviders
+                                                .FirstOrDefault(p => p.Name.Equals(attributeValue.ExtensionProvider));
+                                            var extendedValue = attributeValue.ExtendedValue;
+                                            if (provider != null) {
+                                                extendedValue = provider.DisplayString(extendedValue);
+                                            }
                                             additionalText = string.Join(" ",
                                                 additionalText.Trim(),
                                                 attributeValue.Value.Trim(),
-                                                attributeValue.ExtendedValue.Trim());
+                                                extendedValue.Trim());
                                         }
                                     }
                                     if (!string.IsNullOrWhiteSpace(additionalText)) {

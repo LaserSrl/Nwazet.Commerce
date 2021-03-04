@@ -78,7 +78,13 @@ namespace Nwazet.Commerce.Services {
         }
 
         public string DisplayString(string value) {
-            return string.Format("[{0}]", value);
+            DateTime date;
+            if (DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out date)) {
+                var culture = _workContextAccessor?.GetContext()?.CurrentCulture;
+                var cultureInfo = CultureInfo.GetCultureInfo(culture);
+                return date.ToString(cultureInfo.DateTimeFormat.ShortDatePattern);
+            }
+            return value;
         }
 
         public dynamic BuildAdminShape(string value) {

@@ -12,7 +12,7 @@
     Style.Require("jQueryDateTimeEditor").AtFoot();
 
     var namePrefix = Model.Prefix;
-    var guid = "date" + Guid.NewGuid().ToString();
+    var guid = "date" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
 }
 <span class="date">
     <input id="@guid" type="text" name="@namePrefix" required placeholder="@T("Insert a date")" />
