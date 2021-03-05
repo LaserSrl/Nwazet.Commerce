@@ -5,11 +5,15 @@ using Nwazet.Commerce.ViewModels;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
+using Orchard.ContentManagement.Handlers;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Security;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.AdvancedVAT")]
@@ -119,6 +123,61 @@ namespace Nwazet.Commerce.Drivers {
             }
 
             return Editor(part, shapeHelper);
+        }
+
+        protected override void Exporting(TerritoryVatConfigurationPart part, ExportContentContext context) {
+            var element = context.Element(part.PartDefinition.Name);
+            if(part.Record.VatConfigurationIntersections != null) {
+                foreach (var item in part.Record.VatConfigurationIntersections) {
+                    var territoryVatConfigEl = new XElement("TerritoryVatConfiguration");
+                    territoryVatConfigEl.SetAttributeValue("Rate", item.Rate.ToString());
+                    //territoryVatConfigEl.SetAttributeValue("TerritoryVatConfigurationPartIdentity", GetIdentity(item.Territory.Id));
+                    territoryVatConfigEl.SetAttributeValue("VatConfigurationPartIdentity", GetIdentity(item.VatConfiguration.Id));
+                    element.Add(territoryVatConfigEl);
+                }
+            }
+        }
+
+        protected override void Importing(TerritoryVatConfigurationPart part, ImportContentContext context) {
+            if (context.Data.Element(part.PartDefinition.Name) == null) {
+                return;
+            }
+            TerritoryVatConfigurationPartViewModel model = new TerritoryVatConfigurationPartViewModel();
+            var xElement = context.Data.Element(part.PartDefinition.Name);
+            if (xElement != null) { 
+                var territoryVatConfig = xElement.Elements("TerritoryVatConfiguration");
+                List<VatConfigurationDetailViewModel> listVatConfig = new List<VatConfigurationDetailViewModel>();
+                foreach (var item in territoryVatConfig) {
+                    VatConfigurationDetailViewModel vm = new VatConfigurationDetailViewModel();
+                    // If an item is present, it has been selected.
+                    vm.IsSelected = true;
+
+                    var rate = item.Attribute("Rate");
+                    if (rate != null) {
+                        vm.Rate = Convert.ToDecimal(rate.Value);
+                        vm.RateString = rate.Value.ToString(SiteCulture);
+                    }
+                    var vatConfigurationPart = item.Attribute("VatConfigurationPartIdentity");
+                    if (vatConfigurationPart != null) {
+                        var vatCi = context.GetItemFromSession(vatConfigurationPart.Value);
+                        if (vatCi != null && vatCi.As<VatConfigurationPart>() != null) {
+                            vm.VatConfigurationPartId = vatCi.As<VatConfigurationPart>().Record.Id;
+                            vm.VatConfigurationPartText = vatCi.As<VatConfigurationPart>().TaxProductCategory;
+                        }
+                    }
+                    listVatConfig.Add(vm);
+                }
+
+                if (listVatConfig.Count() > 0) {
+                    model.AllVatConfigurations = listVatConfig.ToArray();
+                    _vatConfigurationProvider.UpdateConfiguration(part, model);
+                }
+            }
+        }
+
+        private string GetIdentity(int id) {
+            var ci = _contentManager.Get(id, VersionOptions.Latest);
+            return _contentManager.GetItemMetadata(ci).Identity.ToString();
         }
     }
 }
