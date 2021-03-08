@@ -99,8 +99,8 @@ namespace Nwazet.Commerce.Services {
 
         public bool ValidateAttributes(IContent product, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues) {
             DateTime date;
-            foreach (var attribute in attributeIdsToValues.Values.Where(pave => pave.ExtensionProvider.Equals(Name))) {
-                // validate that the value can be parssed as a date
+            foreach (var attribute in attributeIdsToValues.Values.Where(pave => Name.Equals(pave?.ExtensionProvider))) {
+                // validate that the value can be parsed as a date
                 if (!DateTime.TryParse(attribute.ExtendedValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out date)) {
                     return false;
                 }

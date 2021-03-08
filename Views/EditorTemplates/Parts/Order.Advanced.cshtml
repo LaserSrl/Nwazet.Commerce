@@ -80,7 +80,7 @@
                                             //attributeValue.ExtensionProvider // "DateTimeProductAttributeExtension"
                                             var provider = _attributeExtensionProviders
                                                 .FirstOrDefault(p => p.Name.Equals(attributeValue.ExtensionProvider));
-                                            var extendedValue = attributeValue.ExtendedValue;
+                                            var extendedValue = attributeValue.ExtendedValue ?? "";
                                             if (provider != null) {
                                                 extendedValue = provider.DisplayString(extendedValue);
                                             }

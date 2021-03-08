@@ -116,7 +116,9 @@ namespace Nwazet.Commerce.Services {
                     var rate = _vatConfigurationService.GetRate(productPart, destination);
                     // productPart.Price is what has been input in the editor for the ContentItem. It may
                     // not be the taxable amount in case there are discounts of any form.
-                    // We can recover the taxable amount by using checkoutItem.Price and the computed rate
+                    // We can recover the taxable amount by using checkoutItem.Price and the computed rate.
+                    // CheckoutItem.Price has already been "altered" by attributes that may change the price
+                    // of each single item.
                     var priceBeforeTax = checkoutItem.Price;
                     if (rate != 0m) {
                         // If the rate is 0, we don't really care about the taxable amount, and it's fine to
@@ -137,7 +139,15 @@ namespace Nwazet.Commerce.Services {
                             Rate = rate,
                             PriceBeforeTax = priceBeforeTax
                         });
-                }).ToDictionary(tup => tup.Item1, tup => tup.Item2);
+                })
+                // We should be accounting for product attributes:
+                //  - having different attributes means we may have multiple lines in the order for a product with
+                //    the same Id.
+                //  - It means that the way this data is stored has to be adapted to accomodate for it.
+                //  - While they would have the same VAT Rate (at least for now), those multiple lines could in
+                //    principle have different prices
+                //  - That means that the product's Id is not enough of a key
+                .ToDictionary(tup => tup.Item1, tup => tup.Item2);
 
             // add Vat info related to shipping, if it's even there
             if (orderPart.ShippingOption != null) {
