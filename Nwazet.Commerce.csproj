@@ -91,6 +91,7 @@
     <Content Include="Content\menu.nwazet-commerce.png" />
     <Content Include="Content\move.gif" />
     <Content Include="LICENSE.txt" />
+    <Content Include="Recipes\SetupHierarchyTerritoryVatConfiguration.recipe.xml" />
     <Content Include="Recipes\World.recipe.xml" />
     <Content Include="Scripts\attribute-admin.js" />
     <Content Include="Scripts\chartjs.js" />
