@@ -101,25 +101,28 @@ namespace Nwazet.Commerce.Services {
             var destination = FindDestination(orderPart)
                 .Where(d => d != null);
 
-            var products = _contentManager
-                .GetMany<ProductPart>(orderPart.Items.Select(ci => ci.ProductId),
+            // The VAT data we'll store as a Dictionary. The keys will uniquely relate to each CheckoutItem
+            var vatData = new Dictionary<string, RateAndPrice>();
+            // The Items in the OrderPart are af class CheckoutItem. They have the Id of the corresponding
+            // ProductPart, but not the part itself or its ContentItem. We need the ContentItem to get
+            // the VAT information for it.
+            var productParts = _contentManager
+                .GetMany<ProductPart>(
+                    // more than one CheckoutItems may be for the same ProductPart, with different attributes
+                    orderPart.Items.Select(ci => ci.ProductId).Distinct(),
                     VersionOptions.Published, QueryHints.Empty);
-
-            var data = products
-                .Select(pp => Tuple.Create<ProductPart, CheckoutItem>(
-                    pp,
-                    orderPart.Items.FirstOrDefault(ci => ci.ProductId == pp.ContentItem.Id)))
-                .Select(tup => {
-                    var productPart = tup.Item1;
-                    var checkoutItem = tup.Item2;
+            foreach (var lineItem in orderPart.Items) {
+                // ProductPart for this CheckoutItem
+                var productPart = productParts.FirstOrDefault(pp => pp.Id == lineItem.ProductId);
+                if (productPart != null) { // sanity check
                     // destination is ordered from most to least specific territory
                     var rate = _vatConfigurationService.GetRate(productPart, destination);
                     // productPart.Price is what has been input in the editor for the ContentItem. It may
                     // not be the taxable amount in case there are discounts of any form.
                     // We can recover the taxable amount by using checkoutItem.Price and the computed rate.
-                    // CheckoutItem.Price has already been "altered" by attributes that may change the price
-                    // of each single item.
-                    var priceBeforeTax = checkoutItem.Price;
+                    // CheckoutItem.Price should have already been "altered" by attributes that may change 
+                    // the price of each single item.
+                    var priceBeforeTax = lineItem.Price;
                     if (rate != 0m) {
                         // If the rate is 0, we don't really care about the taxable amount, and it's fine to
                         // consider it the same as the final price.
@@ -128,26 +131,20 @@ namespace Nwazet.Commerce.Services {
                         if (_vatConfigurationService.GetDefaultDestination() != null) {
                             // in this configuration, the price on the checkoutItem is already inclusive
                             // of VAT. We may then find the taxable amount by subtracting the VAT.
-                            priceBeforeTax = checkoutItem.Price / (1m + rate);
+                            priceBeforeTax = lineItem.Price / (1m + rate);
                         }
                         // If the default destination was null, then the checkoutItem.Price does not include
                         // VAT: it is already the taxable amount as it is.
                     }
-                    return Tuple.Create<int, RateAndPrice>(
-                        productPart.ContentItem.Id,
-                        new RateAndPrice {
-                            Rate = rate,
-                            PriceBeforeTax = priceBeforeTax
-                        });
-                })
-                // We should be accounting for product attributes:
-                //  - having different attributes means we may have multiple lines in the order for a product with
-                //    the same Id.
-                //  - It means that the way this data is stored has to be adapted to accomodate for it.
-                //  - While they would have the same VAT Rate (at least for now), those multiple lines could in
-                //    principle have different prices
-                //  - That means that the product's Id is not enough of a key
-                .ToDictionary(tup => tup.Item1, tup => tup.Item2);
+                    // create a key to uniquely identify this CheckoutItem in the order
+                    var itemKey = lineItem.AsUniqueKey();
+                    var itemVAT = new RateAndPrice {
+                        Rate = rate,
+                        PriceBeforeTax = priceBeforeTax
+                    };
+                    vatData.Add(itemKey, itemVAT);
+                }
+            }
 
             // add Vat info related to shipping, if it's even there
             if (orderPart.ShippingOption != null) {
@@ -156,12 +153,13 @@ namespace Nwazet.Commerce.Services {
                     // shipping has a VAT configured
                     var vatConfig = shippingVatPart.VatConfigurationPart
                             ?? _vatConfigurationService.GetDefaultCategory();
-                    data.Add(
-                        orderPart.ShippingOption.ShippingMethodId, // we reserve this Id for shipping
-                        new RateAndPrice {
-                            Rate = _vatConfigurationService.GetRate(vatConfig),
-                            PriceBeforeTax = orderPart.ShippingOption.DefaultPrice
-                        });
+                    var shippingKey = orderPart.ShippingOption.ShippingMethodId.ToString();
+                    var shippingVat = new RateAndPrice {
+                        Rate = _vatConfigurationService.GetRate(vatConfig),
+                        PriceBeforeTax = orderPart.ShippingOption.DefaultPrice
+                    };
+
+                    vatData.Add(shippingKey, shippingVat);
                 }
             }
 
@@ -175,11 +173,14 @@ namespace Nwazet.Commerce.Services {
                 // key, we identify entries in the dictionary that represent territories.
                 // We use the value object to store an information that will allow us to sort
                 // the territories back in the correct specificity order (from most to least specific)
-                data.Add(-tir.Id, new RateAndPrice { Rate = specificityCounter++ });
+                var territoryKey = (-tir.Id).ToString();
+                var territoryInfo = new RateAndPrice { Rate = specificityCounter++ };
+
+                vatData.Add(territoryKey, territoryInfo);
             }
 
             // Now store
-            StoreInfo(orderPart, SerializeInformationDictionary(data));
+            StoreInfo(orderPart, SerializeInformationDictionary(vatData));
         }
 
         public override void Exporting(OrderPart part, ExportContentContext context) {
@@ -225,6 +226,9 @@ namespace Nwazet.Commerce.Services {
             }
 
             var data = DeserializeInformation(info.Information);
+            // In an order, there may be more than one item for the same Product ContentItem when
+            // attributes are involved. That means the key for the Information Dictionary has to be
+            // more complex.
             yield return new OrderEditorAdditionalProductInfoViewModel {
                 Title = T("VAT Rate").Text,
                 HeaderClass = "vat",
@@ -259,22 +263,22 @@ namespace Nwazet.Commerce.Services {
             var data = DeserializeInformation(info.Information);
             var vatDue = orderPart.Items
                 .Sum(checkoutItem => 
-                    data.ContainsKey(checkoutItem.ProductId)
-                        ? TaxDue(data[checkoutItem.ProductId]) * checkoutItem.Quantity
+                    data.ContainsKey(checkoutItem.AsUniqueKey())
+                        ? TaxDue(data[checkoutItem.AsUniqueKey()]) * checkoutItem.Quantity
                         : 0m
                 );
             var taxable = orderPart.Items
                 .Sum(checkoutItem =>
-                    data.ContainsKey(checkoutItem.ProductId)
-                    ? data[checkoutItem.ProductId].PriceBeforeTax * checkoutItem.Quantity
+                    data.ContainsKey(checkoutItem.AsUniqueKey())
+                    ? data[checkoutItem.AsUniqueKey()].PriceBeforeTax * checkoutItem.Quantity
                     : 0m);
 
             //add shipping
             var shippingTax = 0.0m;
             var shippingTaxable = 0.0m;
             if (orderPart.ShippingOption != null) {
-                if (data.ContainsKey(orderPart.ShippingOption.ShippingMethodId)) {
-                    var rateAndPrice = data[orderPart.ShippingOption.ShippingMethodId];
+                if (data.ContainsKey(orderPart.ShippingOption.ShippingMethodId.ToString())) {
+                    var rateAndPrice = data[orderPart.ShippingOption.ShippingMethodId.ToString()];
                     shippingTax += TaxDue(rateAndPrice);
                     shippingTaxable += rateAndPrice.PriceBeforeTax;
                 }
@@ -309,6 +313,7 @@ namespace Nwazet.Commerce.Services {
                 );
         }
 
+        #region Compute destination territory
         private IEnumerable<TerritoryInternalRecord> FindDestination(OrderPart order) {
             // See whether we stored the destination in the additional records for the 
             // order
@@ -338,14 +343,22 @@ namespace Nwazet.Commerce.Services {
                 .FirstOrDefault();
             if (info != null) {
                 var data = DeserializeInformation(info.Information);
-                if (data.Keys.Any(k => k < 0)) {
+                // only get the subset of data where the key can be parsed to an int
+                int tmp;
+                var destinationData = new Dictionary<int, RateAndPrice>();
+                foreach (var kvp in data) {
+                    var key = kvp.Key;
+                    var value = kvp.Value;
                     // we use negative keys to store the ids of territories, so we don't
                     // mistake them for products.
+                    if (int.TryParse(key, out tmp) && tmp < 0) {
+                        destinationData.Add(tmp, value);
+                    }
+                }
+                if (destinationData.Any()) {
                     // We use the Rate we stored for those keys to sort them. 
                     // Lower Rate means higher specificity.
-                    return data
-                        // "records" representing territories
-                        .Where(kvp => kvp.Key < 0)
+                    return destinationData
                         // sort ascending by rate
                         .OrderBy(kvp => kvp.Value.Rate)
                         .Select(kvp => _territoriesRepositoryService
@@ -421,13 +434,14 @@ namespace Nwazet.Commerce.Services {
             }
             return destination;
         }
+        #endregion
 
-        private static string SerializeInformationDictionary(IDictionary<int, RateAndPrice> infoDictionary) {
+        private static string SerializeInformationDictionary(IDictionary<string, RateAndPrice> infoDictionary) {
             return JsonConvert.SerializeObject(infoDictionary, Formatting.None);
         }
-
-        private static Dictionary<int, RateAndPrice> DeserializeInformation(string info) {
-            return JsonConvert.DeserializeObject<Dictionary<int, RateAndPrice>>(info);
+        
+        private static Dictionary<string, RateAndPrice> DeserializeInformation(string info) {
+            return JsonConvert.DeserializeObject<Dictionary<string, RateAndPrice>>(info);
         }
 
         private void StoreInfo(OrderPart orderPart, string info) {

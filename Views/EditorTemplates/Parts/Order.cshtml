@@ -40,6 +40,7 @@
             </thead>
             <tbody id="order_products_table_body">
                 @foreach (var item in Model.OrderItems) {
+                    var lineItemKey = item.AsUniqueKey();
                     string originalPrice = "";
                     if (item.Price != item.OriginalPrice && item.OriginalPrice != (decimal)0.0) {
                         originalPrice = String.Format("<strike>{0}</strike>", currencyInUse.PriceAsString(item.OriginalPrice, cultureInUse));
@@ -94,8 +95,8 @@
                         }
                         @foreach (var additionalInfo in Model.AdditionalProductInformation) {
                             <td @(string.IsNullOrEmpty(additionalInfo.InformationClass) ? "" : "class=\"" + additionalInfo.InformationClass + "\"")>
-                                @if (additionalInfo.Information.ContainsKey(item.ProductId)) {
-                                    @additionalInfo.Information[item.ProductId]
+                                @if (additionalInfo.Information.ContainsKey(lineItemKey)) {
+                                    @additionalInfo.Information[lineItemKey]
                                 }
                             </td>
                         }
