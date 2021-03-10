@@ -4,6 +4,7 @@
 @using Nwazet.Commerce.Models;
 @using System.Linq;
 @using Orchard.ContentManagement;
+@using Nwazet.Commerce.Extensions;
 
 @model Nwazet.Commerce.ViewModels.OrderEditorViewModel
 @{
@@ -48,7 +49,8 @@
             </thead>
             <tbody id="order_products_table_body">
                 @foreach (var item in Model.OrderItems) {
-                    
+
+                    var product = _contentManager.Get(item.ProductId)?.As<ProductPart>();
                     var lineInformation = Model.Order
                         .LineInformation
                         .Where(ola => ola.ProductId == item.ProductId);
@@ -70,26 +72,8 @@
                                 var itemTitle = item.Title;
                                 var productAttributes = (IDictionary<int, ProductAttributeValueExtended>)item.Attributes;
                                 if (productAttributes != null && productAttributes.Any()) {
-                                    var additionalText = "";
-                                    foreach (var key in productAttributes.Keys) {
-                                        var attributeValue = productAttributes[key];
-                                        if (attributeValue != null) {
-                                            // contribute to displayText
-                                            //attributeValue.Value // "Data della visita"
-                                            //attributeValue.ExtendedValue // "06/03/2021"
-                                            //attributeValue.ExtensionProvider // "DateTimeProductAttributeExtension"
-                                            var provider = _attributeExtensionProviders
-                                                .FirstOrDefault(p => p.Name.Equals(attributeValue.ExtensionProvider));
-                                            var extendedValue = attributeValue.ExtendedValue ?? "";
-                                            if (provider != null) {
-                                                extendedValue = provider.DisplayString(extendedValue);
-                                            }
-                                            additionalText = string.Join(" ",
-                                                additionalText.Trim(),
-                                                attributeValue.Value.Trim(),
-                                                extendedValue.Trim());
-                                        }
-                                    }
+                                    var additionalText = 
+                                        AttributeNameUtilities.AttributesDisplayText(productAttributes, (IContent)product, _attributeExtensionProviders);
                                     if (!string.IsNullOrWhiteSpace(additionalText)) {
                                         itemTitle += " (" +
                                             additionalText.Trim()
@@ -98,7 +82,7 @@
                                 }
                             }
                             @* check is a product *@
-                            @if (_contentManager.Get(item.ProductId)?.As<ProductPart>() != null) {
+                            @if (product != null) {
                                 <a href="@Url.ItemDisplayUrl(Model.Products[item.ProductId])" target="_blank">@itemTitle</a>
                             }
                             else {

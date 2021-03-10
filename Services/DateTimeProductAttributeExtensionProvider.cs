@@ -76,15 +76,13 @@ namespace Nwazet.Commerce.Services {
                 Part: part,
                 Prefix: "ext.productattributes.a" + part.Id);
         }
-
-        public string DisplayString(string value) {
+        
+        public string DisplayString(ProductAttributeValueExtendedContext context) {
             DateTime date;
-            if (DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out date)) {
-                var culture = _workContextAccessor?.GetContext()?.CurrentCulture;
-                var cultureInfo = CultureInfo.GetCultureInfo(culture);
-                return date.ToString(cultureInfo.DateTimeFormat.ShortDatePattern);
+            if (DateTime.TryParse(context.Value, CultureInfo.InvariantCulture, DateTimeStyles.None, out date)) {
+                return date.ToString(context.Culture.DateTimeFormat.ShortDatePattern);
             }
-            return value;
+            return context.Value;
         }
 
         public dynamic BuildAdminShape(string value) {

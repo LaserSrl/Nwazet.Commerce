@@ -589,6 +589,7 @@
     <Compile Include="Services\ProductAttributeNameService.cs" />
     <Compile Include="Services\Currency.cs" />
     <Compile Include="Services\ICurrencyProvider.cs" />
+    <Compile Include="Services\ProductAttributeValueExtendedContext.cs" />
     <Compile Include="Services\ProductInventoryService.cs" />
     <Compile Include="Services\ProductInventoryServiceBase.cs" />
     <Compile Include="Services\ProductPriceService.cs" />

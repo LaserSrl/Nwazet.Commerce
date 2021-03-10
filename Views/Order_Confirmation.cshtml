@@ -3,6 +3,7 @@
 @using Orchard.ContentManagement
 @using Orchard.Mvc.Html
 @using System.Globalization
+@using Nwazet.Commerce.Extensions;
 @{
     var title = Layout.Title = T("Order #{0}", Model.OrderId);
     var items = (Model.CheckoutItems as IEnumerable<CheckoutItem> ?? new CheckoutItem[] { }).ToList();
@@ -37,26 +38,10 @@
                     var displayText = item.Title;
                     var productAttributes = (IDictionary<int, ProductAttributeValueExtended>)item.Attributes;
                     if (productAttributes != null && productAttributes.Any()) {
-                        var additionalText = "";
-                        foreach (var key in productAttributes.Keys) {
-                            var attributeValue = productAttributes[key];
-                            if (attributeValue != null) {
-                                // contribute to displayText
-                                //attributeValue.Value // "Data della visita"
-                                //attributeValue.ExtendedValue // "06/03/2021"
-                                //attributeValue.ExtensionProvider // "DateTimeProductAttributeExtension"
-                                var provider = _attributeExtensionProviders
-                                    .FirstOrDefault(p => p.Name.Equals(attributeValue.ExtensionProvider));
-                                var extendedValue = attributeValue.ExtendedValue ?? "";
-                                if (provider != null) {
-                                    extendedValue = provider.DisplayString(extendedValue);
-                                }
-                                additionalText = string.Join(" ",
-                                    additionalText.Trim(),
-                                    attributeValue.Value.Trim(),
-                                    extendedValue.Trim());
-                            }
-                        }
+                        var productCi = (IContent)Model.Products[item.ProductId];
+                        var additionalText = 
+                            AttributeNameUtilities.AttributesDisplayText(productAttributes, productCi, _attributeExtensionProviders);
+                    
                         if (!string.IsNullOrWhiteSpace(additionalText)) {
                             displayText += " (" +
                                 additionalText.Trim()
