@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Controllers;
+using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels;
@@ -61,6 +62,8 @@ namespace Nwazet.Commerce.Drivers {
                 DefaultTerritoryForVatId = part.DefaultTerritoryForVatId,
                 AvailableTerritoryInternalRecords = _territoriesRepositoryService
                     .GetTerritories()
+                    .ToList()
+                    .CreateSafeDuplicate()
                     .ToList()
             };
         }

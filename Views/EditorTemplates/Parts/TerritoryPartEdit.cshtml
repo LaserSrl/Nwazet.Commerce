@@ -27,7 +27,7 @@
             }
             @if (Model.Part.Children != null) {
                 <div>
-                    @T("This territory has {0} children. ({1} on first level)", Model.Part.AllChildrenCount.ToString(), Model.Part.Children.Count().ToString())
+                    @T("This territory has {0} children at first level", Model.Part.Children.Count().ToString())
                 </div>
             }
         </fieldset>
