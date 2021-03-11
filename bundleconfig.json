@@ -70,5 +70,11 @@
     "inputFiles": [
       "Scripts/territory-hierarchies-admin.js"
     ]
+  },
+  {
+    "outputFileName": "Scripts/attribute-extensions.min.js",
+    "inputFiles": [
+      "Scripts/attribute-extensions.js"
+    ]
   }
 ]

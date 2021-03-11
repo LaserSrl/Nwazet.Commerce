@@ -125,7 +125,7 @@ namespace Nwazet.Commerce.Controllers {
             }
 
             var currentUser = _wca.GetContext().CurrentUser;
-            bool isOwnOrder = currentUser == order.User;
+            bool isOwnOrder = currentUser != null && currentUser == order.User;
 
             if (isOwnOrder) {
                 if (!_orchardServices.Authorizer.Authorize(OrderPermissions.ViewOwnOrders, order,

@@ -4,6 +4,7 @@
 @using Nwazet.Commerce.Models;
 @using System.Linq;
 @using Orchard.ContentManagement;
+@using Orchard.Localization.Models;
 
 @model Nwazet.Commerce.ViewModels.OrderEditorViewModel
 @{
@@ -12,6 +13,7 @@
     Script.Include("order-admin.js", "order-admin.min.js");
 
     var _contentManager = WorkContext.Resolve<IContentManager>();
+    var _attributeExtensionProviders = WorkContext.Resolve<IEnumerable<IProductAttributeExtensionProvider>>();
 
     Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
     CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
@@ -39,6 +41,8 @@
             </thead>
             <tbody id="order_products_table_body">
                 @foreach (var item in Model.OrderItems) {
+                    var product = _contentManager.Get(item.ProductId)?.As<ProductPart>();
+                    var lineItemKey = item.AsUniqueKey();
                     string originalPrice = "";
                     if (item.Price != item.OriginalPrice && item.OriginalPrice != (decimal)0.0) {
                         originalPrice = String.Format("<strike>{0}</strike>", currencyInUse.PriceAsString(item.OriginalPrice, cultureInUse));
@@ -47,12 +51,25 @@
                     <tr id="@string.Format("order_products_table_row-product_{0}", item.ProductId)">
                         <td class="quantity">@item.Quantity &times;</td>
                         <td class="description">
+                            @{ 
+                                var itemTitle = item.Title;
+                                var productAttributes = (IDictionary<int, ProductAttributeValueExtended>)item.Attributes;
+                                if (productAttributes != null && productAttributes.Any()) {
+                                    var additionalText = 
+                                        AttributeNameUtilities.AttributesDisplayText(productAttributes, (IContent)product, _attributeExtensionProviders);
+                                    if (!string.IsNullOrWhiteSpace(additionalText)) {
+                                        itemTitle += " (" +
+                                            additionalText.Trim()
+                                            + ")";
+                                    }
+                                }
+                            }
                             @* check is a product *@
-                            @if (_contentManager.Get(item.ProductId)?.As<ProductPart>() != null) {
-                                <a href="@Url.ItemDisplayUrl(Model.Products[item.ProductId])" target="_blank">@item.Title</a>
+                            @if (product != null) {
+                                <a href="@Url.ItemDisplayUrl(Model.Products[item.ProductId])" target="_blank">@itemTitle</a>
                             }
                             else {
-                                <span>@item.Title</span>
+                                <span>@itemTitle</span>
                             }
                         </td>
                         <td class="price">@Html.Raw(originalPrice)</td>
@@ -62,8 +79,8 @@
                         }
                         @foreach (var additionalInfo in Model.AdditionalProductInformation) {
                             <td @(string.IsNullOrEmpty(additionalInfo.InformationClass) ? "" : "class=\"" + additionalInfo.InformationClass + "\"")>
-                                @if (additionalInfo.Information.ContainsKey(item.ProductId)) {
-                                    @additionalInfo.Information[item.ProductId]
+                                @if (additionalInfo.Information.ContainsKey(lineItemKey)) {
+                                    @additionalInfo.Information[lineItemKey]
                                 }
                             </td>
                         }

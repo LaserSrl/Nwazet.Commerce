@@ -93,6 +93,9 @@
     <Content Include="LICENSE.txt" />
     <Content Include="Recipes\World.recipe.xml" />
     <Content Include="Scripts\attribute-admin.js" />
+    <Content Include="Scripts\attribute-extensions.min.js">
+      <DependentUpon>attribute-extensions.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\chartjs.js" />
     <Content Include="Scripts\chartjs.min.js">
       <DependentUpon>chartjs.js</DependentUpon>
@@ -586,6 +589,7 @@
     <Compile Include="Services\ProductAttributeNameService.cs" />
     <Compile Include="Services\Currency.cs" />
     <Compile Include="Services\ICurrencyProvider.cs" />
+    <Compile Include="Services\ProductAttributeValueExtendedContext.cs" />
     <Compile Include="Services\ProductInventoryService.cs" />
     <Compile Include="Services\ProductInventoryServiceBase.cs" />
     <Compile Include="Services\ProductPriceService.cs" />
@@ -616,6 +620,7 @@
     <Compile Include="Services\TerritoriesService.cs" />
     <Compile Include="Services\TerritoryPartRecordService.cs" />
     <Compile Include="Services\TerritoryRepositoryService.cs" />
+    <Compile Include="Services\DateTimeProductAttributeExtensionProvider.cs" />
     <Compile Include="Services\TextProductAttributeExtensionProvider.cs" />
     <Compile Include="Services\UpdateStatusService.cs" />
     <Compile Include="Services\UseCurrencyFromSiteCultureProvider.cs" />
@@ -831,6 +836,8 @@
     <None Include="Views\TerritoryHierarchiesAdmin\HierarchiesListPartial.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesIndex.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesListPartial.cshtml" />
+    <Content Include="Views\DateTimeProductAttributeExtensionAdmin.cshtml" />
+    <Content Include="Views\DateTimeProductAttributeExtensionInput.cshtml" />
     <None Include="Views\VatAdditionalOrderAddressesShapes.cshtml" />
     <None Include="Views\VatAdditionalOrderProductsShape.cshtml" />
     <None Include="Views\WishListEditor.cshtml" />

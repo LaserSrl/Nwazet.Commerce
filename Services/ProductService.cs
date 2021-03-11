@@ -34,7 +34,7 @@ namespace Nwazet.Commerce.Services {
             if (product == null) {
                 return false;
             }
-            return product.Inventory > quantity || product.AllowBackOrder
+            return (product.Inventory > 0 && product.Inventory >= quantity) || product.AllowBackOrder
                 || (product.IsDigital && !product.ConsiderInventory);
         }
 

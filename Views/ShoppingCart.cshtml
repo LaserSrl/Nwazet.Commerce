@@ -2,6 +2,8 @@
 @using Orchard.ContentManagement
 @using System.Collections.Generic
 @using Nwazet.Commerce.ViewModels;
+@using Nwazet.Commerce.Services;
+@using Nwazet.Commerce.Extensions;
 @{
     Script.Require("jQuery");
     Script.Include("shoppingcart.js", "shoppingcart.min.js");
@@ -51,10 +53,16 @@
                             var propertyNamePrefix = string.Format("items[{0}]", i);
                             var product = (IProduct)item.Product;
                             var contentItem = (IContent)item.Product;
-                            var title = item.Title
-                                        + (item.ProductAttributes == null || item.ProductAttributes.Count == 0
-                                               ? "" : " (" + string.Join(", ", ((Dictionary<int, ProductAttributeValueExtended>)item.ProductAttributes).Values
-                                                    .Select(v => v.Value + (v.ExtensionProviderInstance != null ? v.ExtensionProviderInstance.DisplayString(v.ExtendedValue) : ""))) + ")");
+                            var title = item.Title;
+                            var productAttributes = (IDictionary<int, ProductAttributeValueExtended>)item.ProductAttributes;
+                            if (productAttributes != null && productAttributes.Any()) {
+                                var additionalText = 
+                                    AttributeNameUtilities.AttributesDisplayText(productAttributes: productAttributes, product: contentItem, separator: ", ");
+                        
+                                if (!string.IsNullOrWhiteSpace(additionalText)) {
+                                    title += "(" + additionalText + ")";
+                                }
+                            }
                             string imageUrl = (item.ProductImage != null && item.ProductImage.MediaParts.Count > 0) ? item.ProductImage.MediaParts[0].MediaUrl : null;
                             var quantity = (int)item.Quantity;
                             var unitPrice = (double)item.DiscountedPrice;

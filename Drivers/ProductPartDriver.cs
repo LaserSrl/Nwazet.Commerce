@@ -56,6 +56,12 @@ namespace Nwazet.Commerce.Drivers {
             var discountedPriceTiers = _priceService.GetDiscountedPriceTiers(part);
             var shapes = new List<DriverResult>();
 
+            // Get attributes to add them to the other shapes
+            var attributeShapes = _attributeProviders
+                .Select(p => p.GetAttributeDisplayShape(part.ContentItem, shapeHelper))
+                .Where(s => s != null) // makes no sense to try and display null shapes
+                .ToList();
+
             shapes.Add(ContentShape(
                 "Parts_Product",
                 () => shapeHelper.Parts_Product(
@@ -73,18 +79,14 @@ namespace Nwazet.Commerce.Drivers {
                     ConsiderInventory: part.ConsiderInventory,
                     MinimumOrderQuantity: part.MinimumOrderQuantity,
                     ContentPart: part,
-                    CurrencyProvider: _currencyProvider
+                    CurrencyProvider: _currencyProvider,
+                    ProductAttributes: attributeShapes
                     )
                 ));
             if (_productService.MayAddToCart(part)) {
                 shapes.Add(ContentShape(
                         "Parts_Product_AddButton",
                         () => {
-                            // Get attributes and add them to the add to cart shape
-                            var attributeShapes = _attributeProviders
-                                .Select(p => p.GetAttributeDisplayShape(part.ContentItem, shapeHelper))
-                                .Where(s => s != null) // makes no sense to try and display null shapes
-                                .ToList();
                             return shapeHelper.Parts_Product_AddButton(
                                 ProductId: part.Id,
                                 MinimumOrderQuantity: part.MinimumOrderQuantity,

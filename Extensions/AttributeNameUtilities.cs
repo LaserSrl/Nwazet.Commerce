@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Services;
+using Orchard.ContentManagement;
+using Orchard.Localization.Models;
 using Orchard.Utility.Extensions;
 
 namespace Nwazet.Commerce.Extensions {
@@ -40,6 +44,53 @@ namespace Nwazet.Commerce.Extensions {
                 tName = AttributeNameUtilities.VersionName(tName);
             }
             return tName;
+        }
+
+        public static string AttributesDisplayText(
+            IDictionary<int, ProductAttributeValueExtended> productAttributes,
+            IContent product,
+            IEnumerable<IProductAttributeExtensionProvider> attributeExtensionProviders = null,
+            string separator = " ") {
+            var additionalText = "";
+            if (productAttributes != null && productAttributes.Any()) {
+                var cultureInfo = CultureInfo.InvariantCulture;
+                // try to get the culture for the product content item
+                if (product != null) {
+                    var productLocPart = product.As<LocalizationPart>();
+                    if (productLocPart != null) {
+                        var culture = productLocPart.Culture != null
+                            ? productLocPart.Culture.Culture : "";
+                        try {
+                            cultureInfo = CultureInfo.GetCultureInfo(culture);
+                        } catch (Exception) {
+                            cultureInfo = CultureInfo.InvariantCulture;
+                        }
+                    }
+                }
+                
+                foreach (var key in productAttributes.Keys) {
+                    var attributeValue = productAttributes[key];
+                    if (attributeValue != null) {
+                        // contribute to displayText
+                        //attributeValue.Value // "Data della visita"
+                        //attributeValue.ExtendedValue // "06/03/2021"
+                        //attributeValue.ExtensionProvider // "DateTimeProductAttributeExtension"
+                        var provider = attributeExtensionProviders != null
+                            ? attributeExtensionProviders
+                                .FirstOrDefault(p => p.Name.Equals(attributeValue.ExtensionProvider))
+                            : attributeValue.ExtensionProviderInstance;
+                        var extendedValue = attributeValue.ExtendedValue ?? "";
+                        if (provider != null) {
+                            extendedValue = provider.DisplayString(
+                                new ProductAttributeValueExtendedContext(extendedValue, cultureInfo));
+                        }
+                        additionalText = string.Join(separator,
+                            additionalText.Trim(),
+                            attributeValue.Value.Trim() + " " + extendedValue.Trim());
+                    }
+                }
+            }
+            return additionalText;
         }
     }
 }

@@ -33,8 +33,8 @@ namespace Nwazet.Commerce.Services {
                 Part: part);
         }
 
-        public string DisplayString(string value) {
-            return string.Format("[{0}]", value);
+        public string DisplayString(ProductAttributeValueExtendedContext context) {
+            return string.Format("[{0}]", context.Value);
         }
 
         public dynamic BuildAdminShape(string value) {
