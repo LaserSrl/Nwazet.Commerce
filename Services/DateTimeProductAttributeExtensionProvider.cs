@@ -58,9 +58,9 @@ namespace Nwazet.Commerce.Services {
             }
             DateTime date = DateTime.Now;
             if (DateTime.TryParse(value, cultureInfo, DateTimeStyles.None, out date)) {
-                return date.ToShortDateString();
+                return date.ToString(CultureInfo.InvariantCulture.DateTimeFormat.ShortDatePattern);
             }
-            // This value we are returning here is worng, meaning we were not able to parse it
+            // This value we are returning here is wrong, meaning we were not able to parse it
             // to a Date as we hoped. However, later when the attribute is being processed as
             // the product is added to the cart the ValidateAttributes method will get this 
             // same string and fail to validate it. (The same validation is ran when the product
