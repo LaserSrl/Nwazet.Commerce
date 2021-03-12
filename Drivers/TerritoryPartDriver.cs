@@ -111,6 +111,7 @@ namespace Nwazet.Commerce.Drivers {
             var territoryInternals = _territoriesService
                 .GetAvailableTerritoryInternals(part.HierarchyPart, hierarchyTerritories)
                 .ToList();
+
             var model = new TerritoryPartViewModel() {
                 AvailableTerritoryInternalRecords = territoryInternals,
                 Hierarchy = part.HierarchyPart,

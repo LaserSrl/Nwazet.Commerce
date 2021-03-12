@@ -1,4 +1,5 @@
-﻿using Nwazet.Commerce.Models;
+﻿using Nwazet.Commerce.Extensions;
+using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services;
 using Orchard.ContentManagement;
@@ -70,7 +71,7 @@ namespace Nwazet.Commerce.Controllers {
             var pagerShape = _shapeFactory.Pager(pager)
                 .TotalItemCount(_territoryRepositoryService.GetTerritoriesCount());
 
-            var items = _territoryRepositoryService.GetTerritories(pager.GetStartIndex(), pager.PageSize);
+            var items = _territoryRepositoryService.GetTerritories(pager.GetStartIndex(), pager.PageSize).ToList().CreateSafeDuplicate();
 
             dynamic viewModel = _shapeFactory.ViewModel()
                 .Territories(items)
