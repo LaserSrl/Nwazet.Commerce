@@ -40,12 +40,12 @@ namespace Nwazet.Commerce.Drivers {
         protected override DriverResult Editor(InventoryPart part, IUpdateModel updater, dynamic shapeHelper) {
             if (updater != null) {
                 var viewModel = new InventoryEditViewModel();
-                if (updater.TryUpdateModel(viewModel, Prefix, null, null)) {
-                    part.Inventory = viewModel.Inventory;
-                    part.OutOfStockMessage = viewModel.OutOfStockMessage;
-                    part.AllowBackOrder = viewModel.AllowBackOrder;
-                    part.MinimumOrderQuantity = viewModel.MinimumOrderQuantity;
-                }
+                updater.TryUpdateModel(viewModel, Prefix, null, null);
+
+                part.Inventory = viewModel.Inventory;
+                part.OutOfStockMessage = viewModel.OutOfStockMessage;
+                part.AllowBackOrder = viewModel.AllowBackOrder;
+                part.MinimumOrderQuantity = viewModel.MinimumOrderQuantity;
             }
             return Editor(part, shapeHelper);
         }

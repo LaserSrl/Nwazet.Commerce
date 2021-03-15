@@ -44,17 +44,17 @@ namespace Nwazet.Commerce.Drivers {
 
         protected override DriverResult Editor(ProductVatConfigurationPart part, IUpdateModel updater, dynamic shapeHelper) {
             var model = new ProductVatConfigurationPartEditorViewModel();
-            if (updater.TryUpdateModel(model, Prefix, null, null)) {
-                // set the vat category
-                if (model.VatConfigurationId == 0) {
-                    part.Record.VatConfiguration = null;
-                } else if (model.VatConfigurationId > 0) {
-                    part.Record.VatConfiguration = _contentManager
-                        .Get(model.VatConfigurationId) // will be null if that ContentItem is not Published
-                        ?.As<VatConfigurationPart>() // will be null if that ContentItem is not VatConfigurationPart
-                        ?.Record;
-                }
+            updater.TryUpdateModel(model, Prefix, null, null);
+            // set the vat category
+            if (model.VatConfigurationId == 0) {
+                part.Record.VatConfiguration = null;
+            } else if (model.VatConfigurationId > 0) {
+                part.Record.VatConfiguration = _contentManager
+                    .Get(model.VatConfigurationId) // will be null if that ContentItem is not Published
+                    ?.As<VatConfigurationPart>() // will be null if that ContentItem is not VatConfigurationPart
+                    ?.Record;
             }
+            
             return Editor(part, shapeHelper);
         }
 
