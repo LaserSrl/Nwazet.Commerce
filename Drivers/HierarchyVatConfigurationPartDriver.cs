@@ -122,7 +122,7 @@ namespace Nwazet.Commerce.Drivers {
             if (part.Record.VatConfigurationIntersections != null) {
                 foreach (var item in part.Record.VatConfigurationIntersections) {
                     var territoryVatConfigEl = new XElement("HierarchyVatConfiguration");
-                    territoryVatConfigEl.SetAttributeValue("Rate", item.Rate.ToString());
+                    territoryVatConfigEl.SetAttributeValue("Rate", item.Rate.ToString(CultureInfo.InvariantCulture));
                     //territoryVatConfigEl.SetAttributeValue("HierarchyVatConfigurationPartIdentity", GetIdentity(item.Hierarchy.Id));
                     territoryVatConfigEl.SetAttributeValue("VatConfigurationPartIdentity", GetIdentity(item.VatConfiguration.Id));
                     element.Add(territoryVatConfigEl);
@@ -146,8 +146,8 @@ namespace Nwazet.Commerce.Drivers {
 
                     var rate = item.Attribute("Rate");
                     if (rate != null) {
-                        vm.Rate = Convert.ToDecimal(rate.Value);
-                        vm.RateString = rate.Value.ToString(SiteCulture);
+                        vm.Rate = decimal.Parse(rate.Value.ToString(), CultureInfo.InvariantCulture);
+                        vm.RateString = vm.Rate.ToString();
                     }
                     var vatConfigurationPart = item.Attribute("VatConfigurationPartIdentity");
                     if (vatConfigurationPart != null) {
