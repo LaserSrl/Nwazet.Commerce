@@ -2,6 +2,8 @@
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Models.Couponing;
 using Orchard;
+using Orchard.ContentManagement;
+using Orchard.Core.Common.Models;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.UI.Notify;
@@ -170,11 +172,29 @@ namespace Nwazet.Commerce.Services.Couponing {
             // Maybe it would make sense to fire off coupon-related events?
 
             // based on the information in the context, create a new CouponUsedRecord.
-            var couponUsedRecord = new CouponUsedRecord();
-            couponUsedRecord.CouponRecord_Id = context?.Coupon?.Id ?? 0;
-            couponUsedRecord.UserPartRecord_Id = context?.WorkContext?.CurrentUser?.Id ?? 0;
+            if (context != null) {
+                var couponUsedRecord = new CouponUsedRecord();
+                couponUsedRecord.CouponRecord_Id = context.Coupon?.Id ?? 0;
+                couponUsedRecord.UserPartRecord_Id = context.WorkContext?.CurrentUser?.Id ?? 0;
+                if (context.Order != null) {
+                    couponUsedRecord.OrderPartRecord_Id = context.Order.Record?.Id ?? 0;
+                    var commonPart = context.Order.As<CommonPart>();
+                    if (commonPart != null && commonPart.CreatedUtc.HasValue) {
+                        couponUsedRecord.DateTimeUTC = commonPart.CreatedUtc.Value;
+                    } else {
+                        couponUsedRecord.DateTimeUTC = DateTime.UtcNow;
+                    }
+                } else {
+                    couponUsedRecord.OrderPartRecord_Id = 0;
+                    couponUsedRecord.DateTimeUTC = DateTime.UtcNow;
+                }
+                // TODO: providers to set the values of
+                // couponUsedRecord.AdditionalUserIdentifier
+                // and
+                // couponUsedRecord.IdentifierType
 
-            couponUsedRecord.DateTimeUTC = DateTime.UtcNow;
+                //TODO: that CouponUsedRecord should actually be saved in the db
+            }
         }
     }
 }
