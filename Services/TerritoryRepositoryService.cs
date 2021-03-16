@@ -10,6 +10,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
+//TODO: Create a service for having detached record as a "SafeDuplicate" see CreateSafeDuplicate;
+//      RepositoryService should have record attached to the Session
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Territories")]
     public class TerritoryRepositoryService : ITerritoriesRepositoryService {
@@ -50,16 +52,15 @@ namespace Nwazet.Commerce.Services {
                 .Skip(startIndex >= 0 ? startIndex : 0);
 
             if (pageSize > 0) {
-                return result.Take(pageSize).CreateSafeDuplicate();
+                return result.Take(pageSize);
             }
-            return result.ToList().CreateSafeDuplicate();
+            return result;
         }
 
         public IEnumerable<TerritoryInternalRecord> GetTerritories(int[] itemIds) {
             if (itemIds.Any()) {
                 return _territoryInternalRecord
-                    .Fetch(x => itemIds.Contains(x.Id))
-                    .CreateSafeDuplicate();
+                    .Fetch(x => itemIds.Contains(x.Id));
             }
             return Enumerable.Empty<TerritoryInternalRecord>();
         }
@@ -69,8 +70,7 @@ namespace Nwazet.Commerce.Services {
                 var hashes = itemIds.Select(n => GetHash(n)).ToArray();
                 return _territoryInternalRecord
                     .Fetch(x => hashes.Contains(x.NameHash))
-                    .Where(x => itemIds.Contains(x.Name))
-                    .CreateSafeDuplicate();
+                    .Where(x => itemIds.Contains(x.Name));
             }
             return Enumerable.Empty<TerritoryInternalRecord>();
         }

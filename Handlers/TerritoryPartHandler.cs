@@ -134,6 +134,7 @@ namespace Nwazet.Commerce.Handlers {
         }
 
         private int CountChildren(TerritoryPartRecord tpr) {
+            return 0;
             //if (tpr.Children == null || !tpr.Children.Any()) {
             //    return 0;
             //}
