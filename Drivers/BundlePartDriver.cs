@@ -75,15 +75,14 @@ namespace Nwazet.Commerce.Drivers {
 
         protected override DriverResult Editor(BundlePart part, IUpdateModel updater, dynamic shapeHelper) {
             var model = new BundleViewModel();
-            if (updater.TryUpdateModel(model, Prefix, null, null)) {
-                if (part.ContentItem.Id != 0) {
-                    var updateResults = _bundleService.UpdateBundleProducts(part.ContentItem, model.Products);
-                    foreach (var error in updateResults.Errors) {
-                        updater.AddModelError("", error);
-                    }
-                    foreach (var warning in updateResults.Warnings) {
-                        _orchardServices.Notifier.Warning(warning);
-                    }
+            updater.TryUpdateModel(model, Prefix, null, null);
+            if (part.ContentItem.Id != 0) {
+                var updateResults = _bundleService.UpdateBundleProducts(part.ContentItem, model.Products);
+                foreach (var error in updateResults.Errors) {
+                    updater.AddModelError("", error);
+                }
+                foreach (var warning in updateResults.Warnings) {
+                    _orchardServices.Notifier.Warning(warning);
                 }
             }
 
