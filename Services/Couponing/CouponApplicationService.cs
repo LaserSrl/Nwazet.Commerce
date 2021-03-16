@@ -165,9 +165,16 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
         }
 
-        public void CouponUsed(CouponLifeUpdateContext context) {
+        public void CouponUsed(CouponUsedContext context) {
             //TODO
             // Maybe it would make sense to fire off coupon-related events?
+
+            // based on the information in the context, create a new CouponUsedRecord.
+            var couponUsedRecord = new CouponUsedRecord();
+            couponUsedRecord.CouponRecord_Id = context?.Coupon?.Id ?? 0;
+            couponUsedRecord.UserPartRecord_Id = context?.WorkContext?.CurrentUser?.Id ?? 0;
+
+            couponUsedRecord.DateTimeUTC = DateTime.UtcNow;
         }
     }
 }

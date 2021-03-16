@@ -405,6 +405,7 @@
     <Compile Include="Models\Charge.cs" />
     <Compile Include="Models\Couponing\CouponRecord.cs" />
     <Compile Include="Models\Couponing\CouponType.cs" />
+    <Compile Include="Models\Couponing\CouponUsedRecord.cs" />
     <Compile Include="Models\ECommerceCurrencySiteSettingsPart.cs" />
     <Compile Include="Models\FlexibleShippingMethodPart.cs" />
     <Compile Include="Models\FlexibleShippingMethodRecord.cs" />
@@ -521,6 +522,7 @@
     <Compile Include="Services\BundleProductLocalizationBundleService.cs" />
     <Compile Include="Services\BundleProductLocalizationServices.cs" />
     <Compile Include="Services\BundleServiceBase.cs" />
+    <Compile Include="Services\CartFinalizedContext.cs" />
     <Compile Include="Services\CartLifeCycleEventHandler.cs" />
     <Compile Include="Services\Couponing\BasicCouponApplicabilityCriterion.cs" />
     <Compile Include="Services\Couponing\CouponApplicabilityContext.cs" />

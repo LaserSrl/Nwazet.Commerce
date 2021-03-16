@@ -11,7 +11,7 @@ namespace Nwazet.Commerce.Services {
         void Updated();
         void ItemAdded(ShoppingCartItem item);
         void ItemRemoved(ShoppingCartItem item);
-        void Finalized();
+        void Finalized(CartFinalizedContext context);
         void Updated(IEnumerable<ShoppingCartItem> addedItems, IEnumerable<ShoppingCartItem> removedItems);
     }
 }

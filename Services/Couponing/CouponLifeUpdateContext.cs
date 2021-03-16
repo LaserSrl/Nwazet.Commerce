@@ -14,4 +14,9 @@ namespace Nwazet.Commerce.Services.Couponing {
         public IShoppingCart ShoppingCart { get; set; }
         public WorkContext WorkContext { get; set; }
     }
+
+    [OrchardFeature("Nwazet.Couponing")]
+    public class CouponUsedContext : CouponLifeUpdateContext {
+        public OrderPart Order { get; set; }
+    }
 }
