@@ -2,6 +2,8 @@
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Models.Couponing;
 using Orchard;
+using Orchard.ContentManagement;
+using Orchard.Core.Common.Models;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.UI.Notify;
@@ -23,19 +25,22 @@ namespace Nwazet.Commerce.Services.Couponing {
         private readonly IWorkContextAccessor _workContextAccessor;
         private readonly INotifier _notifier;
         private readonly IEnumerable<ICouponApplicabilityCriterion> _applicabilityCriteria;
+        private readonly IUsedCouponsRepositoryService _usedCouponsRepositoryService;
 
         public CouponApplicationService(
             ICouponRepositoryService couponRepositoryService,
             IShoppingCart shoppingCart,
             IWorkContextAccessor workContextAccessor,
             INotifier notifier,
-            IEnumerable<ICouponApplicabilityCriterion> applicabilityCriteria) {
+            IEnumerable<ICouponApplicabilityCriterion> applicabilityCriteria,
+            IUsedCouponsRepositoryService usedCouponsRepositoryService) {
 
             _couponRepositoryService = couponRepositoryService;
             _shoppingCart = shoppingCart;
             _workContextAccessor = workContextAccessor;
             _notifier = notifier;
             _applicabilityCriteria = applicabilityCriteria;
+            _usedCouponsRepositoryService = usedCouponsRepositoryService;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
 
@@ -165,9 +170,37 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
         }
 
-        public void CouponUsed(CouponLifeUpdateContext context) {
+        public void CouponUsed(CouponUsedContext context) {
             //TODO
             // Maybe it would make sense to fire off coupon-related events?
+
+            // based on the information in the context, create a new CouponUsedRecord.
+            if (context != null) {
+                var couponUsedRecord = new CouponUsedRecord();
+                couponUsedRecord.CouponRecord_Id = context.Coupon?.Id ?? 0;
+                couponUsedRecord.UserPartRecord_Id = context.WorkContext?.CurrentUser?.Id ?? 0;
+                if (context.Order != null) {
+                    couponUsedRecord.OrderPartRecord_Id = context.Order.Record?.Id ?? 0;
+                    var commonPart = context.Order.As<CommonPart>();
+                    if (commonPart != null && commonPart.CreatedUtc.HasValue) {
+                        couponUsedRecord.DateTimeUTC = commonPart.CreatedUtc.Value;
+                    } else {
+                        couponUsedRecord.DateTimeUTC = DateTime.UtcNow;
+                    }
+                } else {
+                    couponUsedRecord.OrderPartRecord_Id = 0;
+                    couponUsedRecord.DateTimeUTC = DateTime.UtcNow;
+                }
+                // TODO: providers to set the values of
+                // couponUsedRecord.AdditionalUserIdentifier
+                // and
+                // couponUsedRecord.IdentifierType
+                // The providers should be put in a property of context so they can be passed
+                // around to whatever code needs them.
+
+                // that CouponUsedRecord should actually be saved in the db
+                _usedCouponsRepositoryService.CreateRecord(couponUsedRecord);
+            }
         }
     }
 }

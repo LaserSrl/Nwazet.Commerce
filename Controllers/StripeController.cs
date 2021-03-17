@@ -178,8 +178,9 @@ namespace Nwazet.Commerce.Controllers {
                     {"Order", order}
                 });
             // call handlers to manage the cart
+            var cartContext = new CartFinalizedContext { Order = order };
             foreach (var handler in _cartLifeCycleEventHandlers) {
-                handler.Finalized();
+                handler.Finalized(cartContext);
             }
             _shoppingCart.ClearAll();
             order.LogActivity(OrderPart.Event, T("Order created.").Text);

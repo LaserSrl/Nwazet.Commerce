@@ -1,4 +1,5 @@
-﻿using Nwazet.Commerce.Models;
+﻿using Nwazet.Commerce.Extensions;
+using Nwazet.Commerce.Models;
 using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace Nwazet.Commerce.Services {
 
                     yield return new OrderLineInformation() {
                         ProductId = productLine.Product.Id,
+                        LineKey = productLine.GenerateUniqueKey(),
                         Details = new OrderInformationDetail[] {
                             new OrderInformationDetail {
                                 Label = "OriginalPrice",

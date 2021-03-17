@@ -33,16 +33,18 @@ namespace Nwazet.Commerce.Services.Couponing {
         // prevent loading the same coupon several times per request
         private Dictionary<string, CouponRecord> _loadedCoupons;
 
-        public void Finalized() {
+        public void Finalized(CartFinalizedContext context) {
             // here _shoppingCart should still have all its stuff inside
             var coupons = CouponsFromCart();
             foreach (var coupon in coupons) {
-                var context = new CouponLifeUpdateContext {
+                var couponContext = new CouponUsedContext {
                     Coupon = coupon,
                     ShoppingCart = _shoppingCart,
-                    WorkContext = _workContextAccessor.GetContext()
+                    WorkContext = _workContextAccessor.GetContext(),
+                    Order = context.Order
                 };
-                _couponApplicationService.CouponUsed(context);
+                // this event carries no reference to the Order or an possible related Payment
+                _couponApplicationService.CouponUsed(couponContext);
             }
         }
 
