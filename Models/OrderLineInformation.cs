@@ -18,6 +18,19 @@ namespace Nwazet.Commerce.Models {
         }
 
         public int ProductId { get; set; }
+        // Same as what's done for CheckoutItems, we want to have a unique identifier
+        // for a product with its given attributes
+        public string LineKey { get; set; }
+
+        // actual key used for comparisons for retrocompatibility
+        public string ComputedKey {
+            get {
+                if (string.IsNullOrWhiteSpace(LineKey)) {
+                    return ProductId.ToString();
+                }
+                return LineKey;
+            }
+        }
 
         public IEnumerable<OrderInformationDetail> Details { get; set; }
 

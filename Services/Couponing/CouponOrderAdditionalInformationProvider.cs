@@ -108,6 +108,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                                 if (values.Any()) {
                                     var orderLinealteration = new OrderLineInformation() {
                                         ProductId = productLine.Product.Id,
+                                        LineKey = productLine.GenerateUniqueKey(),
                                         Details = values,
                                         Source = xCoupon
                                     };

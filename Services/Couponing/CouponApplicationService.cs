@@ -25,19 +25,22 @@ namespace Nwazet.Commerce.Services.Couponing {
         private readonly IWorkContextAccessor _workContextAccessor;
         private readonly INotifier _notifier;
         private readonly IEnumerable<ICouponApplicabilityCriterion> _applicabilityCriteria;
+        private readonly IUsedCouponsRepositoryService _usedCouponsRepositoryService;
 
         public CouponApplicationService(
             ICouponRepositoryService couponRepositoryService,
             IShoppingCart shoppingCart,
             IWorkContextAccessor workContextAccessor,
             INotifier notifier,
-            IEnumerable<ICouponApplicabilityCriterion> applicabilityCriteria) {
+            IEnumerable<ICouponApplicabilityCriterion> applicabilityCriteria,
+            IUsedCouponsRepositoryService usedCouponsRepositoryService) {
 
             _couponRepositoryService = couponRepositoryService;
             _shoppingCart = shoppingCart;
             _workContextAccessor = workContextAccessor;
             _notifier = notifier;
             _applicabilityCriteria = applicabilityCriteria;
+            _usedCouponsRepositoryService = usedCouponsRepositoryService;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
 
@@ -192,8 +195,11 @@ namespace Nwazet.Commerce.Services.Couponing {
                 // couponUsedRecord.AdditionalUserIdentifier
                 // and
                 // couponUsedRecord.IdentifierType
+                // The providers should be put in a property of context so they can be passed
+                // around to whatever code needs them.
 
-                //TODO: that CouponUsedRecord should actually be saved in the db
+                // that CouponUsedRecord should actually be saved in the db
+                _usedCouponsRepositoryService.CreateRecord(couponUsedRecord);
             }
         }
     }

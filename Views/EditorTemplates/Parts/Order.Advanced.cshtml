@@ -53,7 +53,8 @@
                     var product = _contentManager.Get(item.ProductId)?.As<ProductPart>();
                     var lineInformation = Model.Order
                         .LineInformation
-                        .Where(ola => ola.ProductId == item.ProductId);
+                        .Where(ola => (ola.ComputedKey == item.AsUniqueKey())
+                            || (ola.ComputedKey == item.ProductId.ToString()));
                     var baseLineInfo = lineInformation.SelectMany(ola => ola.Details
                         .Where(old => old.InformationType == OrderInformationType.OriginalLineData));
 

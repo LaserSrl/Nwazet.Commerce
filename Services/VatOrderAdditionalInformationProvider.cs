@@ -16,6 +16,7 @@ using Orchard;
 using Orchard.DisplayManagement;
 using System.Xml.Linq;
 using Nwazet.Commerce.Aspects;
+using Nwazet.Commerce.Extensions;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Nwazet.AdvancedVAT")]
@@ -79,6 +80,7 @@ namespace Nwazet.Commerce.Services {
 
                 yield return new OrderLineInformation() {
                     ProductId = productLine.Product.Id,
+                    LineKey = productLine.GenerateUniqueKey(),
                     Source = source,
                     Details = new OrderInformationDetail[] {
                         new OrderInformationDetail {
