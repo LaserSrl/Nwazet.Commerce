@@ -1,4 +1,5 @@
-﻿using Nwazet.Commerce.Extensions;
+﻿using Nwazet.Commerce.Descriptors.CouponApplicability;
+using Nwazet.Commerce.Extensions;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Services.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
     public class BasicCouponApplicabilityCriterion : ICouponApplicabilityCriterion {
-        // This implementation provides general etsts that are ok for any and every coupon.
+        // This implementation provides general tests that are ok for any and every coupon.
         // More specialized criteria should have their own implementations that only check
         // their single condition. For example, this is not the place to check that the cart
         // isn't empty, as on principle there may be coupons that can be added to empty carts.
@@ -38,6 +39,12 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         public void CanBeProcessed(CouponApplicabilityContext context) {
             
+        }
+
+        public void Describe(DescribeCouponApplicabilityContext describe) {
+            //TODO: since this is a default implementation whose test should always be done
+            // how can we handle it?
+            throw new NotImplementedException();
         }
     }
 }

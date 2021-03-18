@@ -1,0 +1,38 @@
+﻿using Orchard.Localization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Nwazet.Commerce.Descriptors.CouponApplicability {
+    public class DescribeCouponApplicabilityContext {
+
+        private readonly Dictionary<string, DescribeCouponApplicabilityFor> _describes =
+            new Dictionary<string, DescribeCouponApplicabilityFor>();
+
+        public IEnumerable<TypeDescriptor<CouponApplicabilityCriterionDescriptor>> Describe() {
+            return _describes.Select(kp => new TypeDescriptor<CouponApplicabilityCriterionDescriptor> {
+                Category = kp.Key,
+                Name = kp.Value.Name,
+                Description = kp.Value.Description,
+                Descriptors = kp.Value.Types
+            });
+        }
+
+
+        public DescribeCouponApplicabilityFor For(string category) {
+            return For(category, null, null);
+        }
+
+        public DescribeCouponApplicabilityFor For(
+            string category, LocalizedString name, LocalizedString description) {
+            DescribeCouponApplicabilityFor describeFor;
+            if (!_describes.TryGetValue(category, out describeFor)) {
+                describeFor = new DescribeCouponApplicabilityFor(category, name, description);
+                _describes[category] = describeFor;
+            }
+            return describeFor;
+        }
+    }
+}

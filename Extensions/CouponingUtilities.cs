@@ -36,6 +36,9 @@ namespace Nwazet.Commerce.Extensions {
         }
 
         public static Coupon ToCoupon(this CouponRecord record) {
+            if (record == null) {
+                return null;
+            }
             return new Coupon {
                 Id = record.Id,
                 Name = record.Name,

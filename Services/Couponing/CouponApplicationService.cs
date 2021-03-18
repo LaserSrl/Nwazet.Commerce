@@ -1,4 +1,6 @@
-﻿using Nwazet.Commerce.Extensions;
+﻿using Nwazet.Commerce.Descriptors;
+using Nwazet.Commerce.Descriptors.CouponApplicability;
+using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Models.Couponing;
 using Orchard;
@@ -201,6 +203,18 @@ namespace Nwazet.Commerce.Services.Couponing {
                 // that CouponUsedRecord should actually be saved in the db
                 _usedCouponsRepositoryService.CreateRecord(couponUsedRecord);
             }
+        }
+
+        public IEnumerable<TypeDescriptor<CouponApplicabilityCriterionDescriptor>>
+            DescribeApplicabilityCriteria() {
+
+            var context = new DescribeCouponApplicabilityContext();
+
+            foreach (var provider in _applicabilityCriteria) {
+                provider.Describe(context);
+            }
+
+            return context.Describe();
         }
     }
 }

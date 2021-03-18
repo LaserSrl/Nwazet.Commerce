@@ -178,11 +178,15 @@
     </None>
     <None Include="packages.config" />
     <None Include="Styles\product-admin.less" />
+    <None Include="Views\CouponingAdmin\_ApplicabilityCriteriaPartial.cshtml" />
+    <None Include="Views\CouponingAdmin\_ApplicabilityCriteriaNewCouponPartial.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponPartial.cshtml" />
     <None Include="Views\CouponingAdmin\Create.cshtml" />
     <None Include="Views\CouponingAdmin\Edit.cshtml" />
     <None Include="Views\CouponingAdmin\Index.cshtml" />
     <Content Include="Views\CouponingCartExtension.cshtml" />
+    <None Include="Views\CouponingCriterion\Add.cshtml" />
+    <None Include="Views\CouponingCriterion\Edit.cshtml" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Advanced.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />
@@ -242,6 +246,7 @@
     <Compile Include="Commands\TerritoriesCommands.cs" />
     <Compile Include="Controllers\CouponController.cs" />
     <Compile Include="Controllers\CouponingAdminController.cs" />
+    <Compile Include="Controllers\CouponingCriterionController.cs" />
     <Compile Include="Controllers\ECommerceSettingsAdminController.cs" />
     <Compile Include="Controllers\FlexibleShippingCriterionController.cs" />
     <Compile Include="Controllers\HierarchyTerritoriesAdminController.cs" />
@@ -269,6 +274,7 @@
     <Compile Include="Descriptors\ApplicabilityCriterion\CriterionContext.cs" />
     <Compile Include="Descriptors\ApplicabilityCriterion\DescribeCriterionContext.cs" />
     <Compile Include="Descriptors\ApplicabilityCriterion\DescribeCriterionFor.cs" />
+    <Compile Include="Descriptors\CouponApplicability\CouponCriterionContext.cs" />
     <Compile Include="Descriptors\TypeDescriptor.cs" />
     <Compile Include="Drivers\AdvancedSKUProductPartDriver.cs" />
     <Compile Include="Drivers\AdvancedSKUsSiteSettingPartDriver.cs" />
@@ -526,6 +532,7 @@
     <Compile Include="Services\CartLifeCycleEventHandler.cs" />
     <Compile Include="Services\Couponing\BasicCouponApplicabilityCriterion.cs" />
     <Compile Include="Services\Couponing\CouponApplicabilityContext.cs" />
+    <Compile Include="Descriptors\CouponApplicability\CouponApplicabilityCriterionDescriptor.cs" />
     <Compile Include="Services\Couponing\CouponCartLifeCycleEventHandler.cs" />
     <Compile Include="Services\Couponing\CouponCartPriceAlterationProcessor.cs" />
     <Compile Include="Services\CommerceLocalStorageSettings.cs" />
@@ -534,6 +541,8 @@
     <Compile Include="Services\Couponing\CouponingRepositoryService.cs" />
     <Compile Include="Services\Couponing\CouponLifeUpdateContext.cs" />
     <Compile Include="Services\Couponing\CouponOrderAdditionalInformationProvider.cs" />
+    <Compile Include="Descriptors\CouponApplicability\DescribeCouponApplicabilityContext.cs" />
+    <Compile Include="Descriptors\CouponApplicability\DescribeCouponApplicabilityFor.cs" />
     <Compile Include="Services\Couponing\ICouponApplicabilityCriterion.cs" />
     <Compile Include="Services\Couponing\ICouponApplicationService.cs" />
     <Compile Include="Services\Couponing\ICouponRepositoryService.cs" />

@@ -1,4 +1,5 @@
-﻿using Orchard;
+﻿using Nwazet.Commerce.Descriptors.CouponApplicability;
+using Orchard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,5 +23,7 @@ namespace Nwazet.Commerce.Services.Couponing {
         /// </summary>
         /// <param name="context"></param>
         void CanBeProcessed(CouponApplicabilityContext context);
+
+        void Describe(DescribeCouponApplicabilityContext describe);
     }
 }
