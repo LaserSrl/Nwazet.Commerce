@@ -15,6 +15,7 @@ namespace Nwazet.Commerce.Handlers {
 
         private readonly IContentManager _contentManager;
         private readonly ITerritoryPartRecordService _territoryPartRecordService;
+        private string _oldTerritoriesPath;
 
         public TerritoryPartHandler(
             IRepository<TerritoryPartRecord> repository,
@@ -35,6 +36,35 @@ namespace Nwazet.Commerce.Handlers {
             OnRemoving<TerritoryPart>(RemoveChildren);
             // Clean the record up, to avoid issues with the 1-to-many relationships
             OnRemoving<TerritoryPart>(CleanupRecord);
+
+            OnUpdating<TerritoryPart>((context, part) => {
+                _oldTerritoriesPath = string.IsNullOrWhiteSpace(part.TerritoriesFullPath) ? "\\" : part.TerritoriesFullPath;
+            });
+
+            OnUpdated<TerritoryPart>((context, part) => {
+                var node = part.Record;
+                var hierarchy = part.Hierarchy.Id;
+                var newPath = node.Id + "\\";
+                while (node != null) {
+                    if (node.ParentTerritory != null) {
+                        newPath = node.ParentTerritory.Id.ToString() + "\\" + newPath;;
+                        node = repository.Get(node.ParentTerritory.Id);
+                    }
+                    else {
+                        newPath = "\\" + newPath;
+                        break;
+                    }
+                }
+                if (_oldTerritoriesPath != newPath) {
+                    part.TerritoriesFullPath = newPath;
+                    //TODO: change childs path
+                    var childs = repository.Table.Where(x => (x.TerritoriesFullPath.StartsWith(_oldTerritoriesPath) && x.Hierarchy.Id == hierarchy && x.Id!= part.Record.Id) || x.ParentTerritory.Id == part.Record.Id); //find children
+                    foreach (var item in childs) {
+                        item.TerritoriesFullPath = (string.IsNullOrWhiteSpace(item.TerritoriesFullPath))? newPath + item.Id + "\\" : item.TerritoriesFullPath.Replace(_oldTerritoriesPath, newPath);
+                        repository.Update(item);
+                    }
+                }
+            });
         }
 
         protected override void GetItemMetadata(GetContentItemMetadataContext context) {
@@ -114,36 +144,6 @@ namespace Nwazet.Commerce.Handlers {
 
             });
 
-            part.ParentField.Loader(() => {
-                if (part.Record.ParentTerritory != null) {
-                    return _contentManager
-                        .Get<ContentItem>(part.Record.ParentTerritory.Id,
-                            VersionOptions.Latest, QueryHints.Empty);
-                } else {
-                    return null;
-                }
-
-            });
-
-            part.AllChildrenCountField.Loader(() => {
-                if (part.Record != null) {
-                    return CountChildren(part.Record);
-                }
-                return 0;
-            });
-        }
-
-        private int CountChildren(TerritoryPartRecord tpr) {
-            return 0;
-            //if (tpr.Children == null || !tpr.Children.Any()) {
-            //    return 0;
-            //}
-            //return tpr.Children.Count + tpr.Children.Sum(CountChildren);
-            var territoriesChild = _territoryPartRecordService.GetTerritoriesChild(tpr);
-            if (territoriesChild.Count() == 0) {
-                return 0;
-            }
-            return territoriesChild.Count() + territoriesChild.Sum(CountChildren);
         }
 
         void RemoveChildren(RemoveContentContext context, TerritoryPart part) {

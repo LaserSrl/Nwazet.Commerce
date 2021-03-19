@@ -79,5 +79,12 @@ namespace Nwazet.Commerce.Migrations {
             }
             return 3;
         }
+        public int UpdateFrom3() {
+            SchemaBuilder.AlterTable("TerritoryPartRecord", table => table
+                .AddColumn<string>("TerritoriesFullPath"));
+            SchemaBuilder.AlterTable("TerritoryPartRecord", table => table
+                .CreateIndex("IX_TerritoriesFullPath", "TerritoriesFullPath"));
+            return 4;
+        }
     }
 }

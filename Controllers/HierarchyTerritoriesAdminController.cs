@@ -44,6 +44,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly INotifier _notifier;
         private readonly IEnumerable<IContentHandler> _handlers;
         private readonly ITerritoryPartRecordService _territoryPartRecordService;
+        private RequestContext requestContext;
 
         public HierarchyTerritoriesAdminController(
             IContentManager contentManager,
@@ -69,7 +70,7 @@ namespace Nwazet.Commerce.Controllers {
             _notifier = notifier;
             _handlers = handlers;
             _territoryPartRecordService = territoryPartRecordService;
-
+            requestContext = _workContextAccessor.GetContext().HttpContext.Request.RequestContext;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
 
@@ -478,14 +479,13 @@ namespace Nwazet.Commerce.Controllers {
 
         private TerritoryHierarchyTreeNode MakeANode(TerritoryPart territoryPart) {
             var metadata = _contentManager.GetItemMetadata(territoryPart.ContentItem);
-            var requestContext = _workContextAccessor.GetContext().HttpContext.Request.RequestContext;
             return new TerritoryHierarchyTreeNode {
                 Id = territoryPart.ContentItem.Id,
-                TerritoryItem = territoryPart.ContentItem,
+                TerritoryItem = territoryPart,
                 ParentId = territoryPart.Record.ParentTerritory == null ? 0 : territoryPart.Record.ParentTerritory.Id,
                 EditUrl = _routeCollection.GetVirtualPath(requestContext, metadata.EditorRouteValues).VirtualPath,
                 DisplayText = metadata.DisplayText + 
-                    (!territoryPart.ContentItem.IsPublished() ? T(" (draft)").Text : string.Empty) +
+                    (!territoryPart.IsPublished() ? T(" (draft)").Text : string.Empty) +
                     ((territoryPart.Record.TerritoryInternalRecord == null) ? T(" (requires identity)").Text : string.Empty)
             };
         }
