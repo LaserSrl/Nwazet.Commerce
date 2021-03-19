@@ -1,5 +1,5 @@
-﻿
-@model Nwazet.Commerce.ViewModels.Couponing.Coupon
+﻿@using Nwazet.Commerce.ViewModels.Couponing;
+@model Coupon
 
 <fieldset>
     <legend>@T("Applicability criteria")</legend>
@@ -20,14 +20,14 @@
                 </th>
             </tr>
         </thead>
-        @*@foreach (var criterion in criterias) {
+        @foreach (var criterion in Model.ApplicabilityCriteria) {
             <tr>
                 <td>@criterion.DisplayText</td>
                 <td>
                     @Html.ActionLink(T("Edit").Text,
                         "Edit",
                         new {
-                            controller = "FlexibleShippingCriterion",
+                            controller = "CouponingCriterion",
                             area = "Nwazet.Commerce",
                             id = Model.Id,
                             category = criterion.Category,
@@ -35,13 +35,13 @@
                             criterionId = criterion.CriterionRecordId }) |
                     @Html.ActionLink(T("Delete").Text,
                         "Delete",
-                        new { controller = "FlexibleShippingCriterion",
+                        new { controller = "CouponingCriterion",
                             area = "Nwazet.Commerce",
                             id = Model.Id,
                             criterionId = criterion.CriterionRecordId },
                         new { itemprop = "RemoveUrl UnsafeUrl" })
                 </td>
             </tr>
-        }*@
+        }
     </table>
 </fieldset>

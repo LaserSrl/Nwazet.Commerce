@@ -45,7 +45,8 @@ namespace Nwazet.Commerce.Extensions {
                 Code = record.Code,
                 Value = record.Value,
                 CouponType = record.CouponType,
-                Published = record.Published
+                Published = record.Published,
+                Record = record
             };
 
         }
@@ -63,17 +64,32 @@ namespace Nwazet.Commerce.Extensions {
             // resulting XElement. This will result in an XML element that looks
             // like this:
             // <Coupon Name="name" Code="code" {...more attributes} />
-            return new XElement(CouponAlterationType)
+            var couponEl = new XElement(CouponAlterationType)
                 .With(record)
                 // definition
                 .ToAttr(c => c.Name)
                 .ToAttr(c => c.Code)
                 // conditions
                 .ToAttr(c => c.Published)
+                // should also serialize
                 // actions
                 .ToAttr(c => c.Value)
                 .ToAttr(c => c.CouponType)
                 ;
+            couponEl.Element
+                .AddEl(record.ApplicabilityCriteria
+                    .Select(ac => {
+                        var criterionEl = new XElement("CouponApplicabilityCriterion")
+                            .Attr("Id", ac.Id)
+                            .Attr("Category", ac.Category)
+                            .Attr("Description", ac.Description)
+                            .Attr("Type", ac.Type);
+                        // State is already serialized as XML
+                        criterionEl.SetElementValue("State", ac.State);
+                        return criterionEl;
+                    })
+                    .ToArray());
+            return couponEl;
         }
 
         #region [IQueryable]

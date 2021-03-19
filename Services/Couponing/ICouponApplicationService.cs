@@ -1,4 +1,7 @@
-﻿using Orchard;
+﻿using Nwazet.Commerce.ApplicabilityCriteria.Couponing;
+using Nwazet.Commerce.Descriptors;
+using Nwazet.Commerce.Descriptors.CouponApplicability;
+using Orchard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +23,11 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         void ReevaluateValidity(CouponLifeUpdateContext context);
         void CouponUsed(CouponUsedContext context);
+
+        bool CanProcess(CouponApplicabilityContext context);
+
+        IEnumerable<TypeDescriptor<CouponApplicabilityCriterionDescriptor>> DescribeApplicabilityCriteria();
+        CouponApplicabilityCriterionDescriptor GetCriterion(string category, string type);
+        void DeleteCriterion(int criterionId);
     }
 }

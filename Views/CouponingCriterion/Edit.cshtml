@@ -1,6 +1,5 @@
-﻿@*@model CriterionEditViewModel
-@using Nwazet.Commerce.Models;
-@using Nwazet.Commerce.ViewModels;
+﻿@model CouponCriterionEditViewModel
+@using Nwazet.Commerce.ViewModels.Couponing;
 
 @{
     Layout.Title = T("Edit Criterion - {0}", Model.Criterion.Name);
@@ -30,4 +29,4 @@
     <fieldset>
         <button class="primaryAction" type="submit">@T("Save")</button>
     </fieldset>
-}*@
+}

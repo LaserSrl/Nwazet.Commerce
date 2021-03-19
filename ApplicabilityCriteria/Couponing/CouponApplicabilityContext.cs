@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nwazet.Commerce.Services {
+namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
     public class CouponApplicabilityContext {
 

@@ -25,7 +25,8 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
             string type,
             LocalizedString name,
             LocalizedString description,
-            Action<CouponCriterionContext> criterion,
+            Action<CouponCriterionContext> additionCriterion,
+            Action<CouponCriterionContext> processingCriterion,
             Func<CouponCriterionContext, LocalizedString> display,
             string form = null) {
 
@@ -34,7 +35,8 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
                 Name = name,
                 Description = description,
                 Category = _category,
-                TestCriterion = criterion,
+                AdditionCriterion = additionCriterion,
+                ProcessingCriterion = processingCriterion,
                 Display = display,
                 Form = form
             });

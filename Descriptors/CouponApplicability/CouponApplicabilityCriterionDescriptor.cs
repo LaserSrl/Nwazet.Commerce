@@ -12,7 +12,8 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
         public string Type { get; set; }
         public LocalizedString Name { get; set; }
         public LocalizedString Description { get; set; }
-        public Action<CouponCriterionContext> TestCriterion { get; set; }
+        public Action<CouponCriterionContext> AdditionCriterion { get; set; }
+        public Action<CouponCriterionContext> ProcessingCriterion { get; set; }
         public string Form { get; set; }
         public Func<CouponCriterionContext, LocalizedString> Display { get; set; }
     }
