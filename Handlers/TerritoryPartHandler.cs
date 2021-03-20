@@ -47,7 +47,7 @@ namespace Nwazet.Commerce.Handlers {
                 var newPath = node.Id + "\\";
                 while (node != null) {
                     if (node.ParentTerritory != null) {
-                        newPath = node.ParentTerritory.Id.ToString() + "\\" + newPath;;
+                        newPath = node.ParentTerritory.Id.ToString() + "\\" + newPath; ;
                         node = repository.Get(node.ParentTerritory.Id);
                     }
                     else {
@@ -57,10 +57,19 @@ namespace Nwazet.Commerce.Handlers {
                 }
                 if (_oldTerritoriesPath != newPath) {
                     part.TerritoriesFullPath = newPath;
-                    //TODO: change childs path
-                    var childs = repository.Table.Where(x => (x.TerritoriesFullPath.StartsWith(_oldTerritoriesPath) && x.Hierarchy.Id == hierarchy && x.Id!= part.Record.Id) || x.ParentTerritory.Id == part.Record.Id); //find children
-                    foreach (var item in childs) {
-                        item.TerritoriesFullPath = (string.IsNullOrWhiteSpace(item.TerritoriesFullPath))? newPath + item.Id + "\\" : item.TerritoriesFullPath.Replace(_oldTerritoriesPath, newPath);
+                }
+                IQueryable<TerritoryPartRecord> childs;
+                if (_oldTerritoriesPath != "\\") {
+                    childs = repository.Table.Where(x => (x.TerritoriesFullPath.StartsWith(_oldTerritoriesPath) && x.Hierarchy.Id == hierarchy && x.Id != part.Record.Id)); //find children
+                }
+                else {
+                    childs = repository.Table.Where(x => (x.ParentTerritory.Id == part.Record.Id));
+                }
+                foreach (var item in childs) {
+                    var territoryFullPath = item.TerritoriesFullPath;
+                    var territoryFullPathNew = (string.IsNullOrWhiteSpace(item.TerritoriesFullPath)) ? newPath + item.Id + "\\" : item.TerritoriesFullPath.Replace(_oldTerritoriesPath, newPath);
+                    if (territoryFullPath != territoryFullPathNew) {
+                        item.TerritoriesFullPath = (string.IsNullOrWhiteSpace(item.TerritoriesFullPath)) ? newPath + item.Id + "\\" : item.TerritoriesFullPath.Replace(_oldTerritoriesPath, newPath);
                         repository.Update(item);
                     }
                 }
@@ -120,7 +129,7 @@ namespace Nwazet.Commerce.Handlers {
 
             part.ChildrenField.Loader(() => {
                 //if (part.Record.Children != null && part.Record.Children.Any()) {
-                if (_territoryPartRecordService.GetTerritoriesChildCount(part)>0) { 
+                if (_territoryPartRecordService.GetTerritoriesChildCount(part) > 0) {
                     return _contentManager
                         .Query(VersionOptions.Latest)
                         .Join<TerritoryPartRecord>()
@@ -128,7 +137,8 @@ namespace Nwazet.Commerce.Handlers {
                             && tpr.ParentTerritory != null
                             && tpr.ParentTerritory.Id == part.Record.Id)
                         .List();
-                } else {
+                }
+                else {
                     return Enumerable.Empty<ContentItem>();
                 }
             });
@@ -138,7 +148,8 @@ namespace Nwazet.Commerce.Handlers {
                     return _contentManager
                         .Get<ContentItem>(part.Record.Hierarchy.Id,
                             VersionOptions.Latest, QueryHints.Empty);
-                } else {
+                }
+                else {
                     return null;
                 }
 

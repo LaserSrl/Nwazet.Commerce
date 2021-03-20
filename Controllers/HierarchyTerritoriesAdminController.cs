@@ -100,8 +100,9 @@ namespace Nwazet.Commerce.Controllers {
             var model = new TerritoryHierarchyTerritoriesViewModel {
                 HierarchyPart = hierarchyPart,
                 HierarchyItem = hierarchyItem,
-                TopLevelNodes = topLevelOfHierarchy,
                 Nodes = topLevelOfHierarchy,
+                TerritoryNodeId = 0, //the root
+                ProgressiveIndex = 0, //starts from 0 based index
                 CanAddMoreTerritories = true //prevently test if we can add territories, is it useful?
             };
 
@@ -109,35 +110,45 @@ namespace Nwazet.Commerce.Controllers {
         }
 
         [HttpPost, ActionName("Index")]
-        public ActionResult IndexPost(IList<TerritoryHierarchyTreeNode> nodes, int? hierarchyId) {
+        public ActionResult IndexPost(TerritoryHierarchyTerritoriesViewModel firstNode, int? hierarchyId) {
             ActionResult redirectTo = HttpNotFound();
             if (!hierarchyId.HasValue || ShouldRedirectForPermissions(hierarchyId.Value, out redirectTo)) {
                 return redirectTo;
             }
             var hierarchy = _contentManager.Get(hierarchyId.Value, VersionOptions.Latest);
             var hierarchyPart = hierarchy.As<TerritoryHierarchyPart>();
-
+            var nodes = firstNode.Nodes;
+            var updatedNodes = firstNode.UpdatedNodesIds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => {
+                int defaultInt = 0;
+                int.TryParse(x, out defaultInt);
+                return defaultInt;
+            });
             if (nodes != null) {
                 foreach (var node in nodes) {
                     // The only fields we receive as populated for the nodes are:
                     //  - node.Id: the Id of the ContentItem for the TerritoryPart
                     //  - node.ParentId: the Id of the Parent assigned to that node
+                    
+                    if (updatedNodes.Contains(node.Id)) {
                     var territoryPart = _contentManager.Get<TerritoryPart>(node.Id, VersionOptions.Latest);
-                    try {
-                        if (node.ParentId == 0) {
-                            if (territoryPart.Parent != null) { // do not update if there was no change
-                                // moved from a parent up to the root
-                                UpdateTerritoryPosition(territoryPart, hierarchyPart);
+                        try {
+                            if (node.ParentId == 0) {
+                                if (territoryPart.Parent != null) { // do not update if there was no change
+                                                                    // moved from a parent up to the root
+                                    UpdateTerritoryPosition(territoryPart, hierarchyPart);
+                                }
                             }
-                        } else {
-                            if (territoryPart.Parent == null || // the territory was at root
-                                territoryPart.Parent.Record.Id != node.ParentId) { // the territory had a different parent
-                                var parentPart = _contentManager.Get<TerritoryPart>(node.ParentId, VersionOptions.Latest);
-                                UpdateTerritoryPosition(territoryPart, hierarchyPart, parentPart);
+                            else {
+                                if (territoryPart.Parent == null || // the territory was at root
+                                    territoryPart.Parent.Record.Id != node.ParentId) { // the territory had a different parent
+                                    var parentPart = _contentManager.Get<TerritoryPart>(node.ParentId, VersionOptions.Latest);
+                                    UpdateTerritoryPosition(territoryPart, hierarchyPart, parentPart);
+                                }
                             }
                         }
-                    } catch (Exception ex) {
-                        AddModelError("Hierarchy", ex.Message);
+                        catch (Exception ex) {
+                            AddModelError("Hierarchy", ex.Message);
+                        }
                     }
                 }
             }
@@ -331,7 +342,7 @@ namespace Nwazet.Commerce.Controllers {
             return EditTerritoryPost(id, returnUrl, contentItem => _contentManager.Publish(contentItem));
         }
 
-        public PartialViewResult GetChildNodes(int id) {
+        public PartialViewResult GetChildNodes(int id, int index) {
             ActionResult redirectTo;
             var territoryPart = _contentManager.Get(id, VersionOptions.Latest).As<TerritoryPart>();
             if (territoryPart == null) {
@@ -349,8 +360,9 @@ namespace Nwazet.Commerce.Controllers {
             var model = new TerritoryHierarchyTerritoriesViewModel {
                 HierarchyPart = hierarchyPart,
                 HierarchyItem = hierarchyPart.ContentItem,
-                TopLevelNodes = children,
                 Nodes = children,
+                TerritoryNodeId = id,
+                ProgressiveIndex = index,
                 CanAddMoreTerritories = true //prevently test if we can add territories, is it useful?
             };
 

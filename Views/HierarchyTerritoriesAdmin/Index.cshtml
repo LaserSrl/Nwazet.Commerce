@@ -50,7 +50,9 @@
             </div>
         </div>
     </div>
-
+    //this fields have to be after PartialView GetChildNodes render
+    @Html.HiddenFor(m => m.ProgressiveIndex)
+    @Html.HiddenFor(m => m.UpdatedNodesIds)
     <fieldset class="actions">
         <button id="saveButton" type="submit" class="button">@T("Save All")</button>
     </fieldset>
@@ -59,31 +61,10 @@
 @using (Script.Foot()) {
     <script type="text/javascript">
     //<![CDATA[
-    var leaveConfirmation = '@HttpUtility.JavaScriptStringEncode(T("Some items where not saved.").Text)';
-    //]]>
-        $(document).ready(function () {
-            $("#territories-list").on("click", ".ajax-expand-node", TerritoryAjaxCall);
-        });
+        var leaveConfirmation = '@HttpUtility.JavaScriptStringEncode(T("Some items where not saved.").Text)';
+        var progressiveTerritoryIndexElement = '#@Html.FieldIdFor(m=>m.ProgressiveIndex)';
+        var updatedTerritoryIdsElement = '#@Html.FieldIdFor(m=>m.UpdatedNodesIds)';
 
-        function TerritoryAjaxCall(e) {
-                e.preventDefault();
-            var currentElement = $(this);
-            var nodeid = '#' + currentElement.data("node");
-            if ($(nodeid).children("ol").find(".ajax-expand-node").length==0) {
-                $.ajax({
-                    type: "GET",
-                    url: $(this).attr('href'),
-                    success: function (response) {
-                        if (!$.trim(response)) {//empty response
-                            return;
-                        }
-                        $(nodeid).append(response);
-                    },
-                    error: function (error) {
-                        alert();
-                    }
-                });
-            }
-        }
+    //]]>
     </script>
 }
