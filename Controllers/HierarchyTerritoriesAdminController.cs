@@ -10,6 +10,7 @@ using Orchard.ContentManagement.Handlers;
 using Orchard.ContentManagement.MetaData;
 using Orchard.ContentManagement.MetaData.Models;
 using Orchard.Core.Contents.Settings;
+using Orchard.Core.Title.Models;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
@@ -92,22 +93,16 @@ namespace Nwazet.Commerce.Controllers {
             // The null checks for these objects are done in ShouldRedirectForPermissions
             var hierarchyItem = _contentManager.Get(id, VersionOptions.Latest);
             var hierarchyPart = hierarchyItem.As<TerritoryHierarchyPart>();
-            
-            var topLevelOfHierarchy = _territoriesService
-                .GetTerritoriesQuery(hierarchyPart, null, VersionOptions.Latest)
-                .List().ToList();
 
-            var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchyPart).ToList();
+
+            var topLevelOfHierarchy = _territoriesService.GetTerritoriesQuery(hierarchyPart, null,VersionOptions.Latest).List().Select(MakeANode).ToList(); ;
+
             var model = new TerritoryHierarchyTerritoriesViewModel {
                 HierarchyPart = hierarchyPart,
                 HierarchyItem = hierarchyItem,
-                TopLevelNodes = topLevelOfHierarchy.Select(MakeANode).ToList(),
-                Nodes = _territoriesService.
-                    GetTerritoriesQuery(hierarchyPart, VersionOptions.Latest)
-                    .List().Select(MakeANode).ToList(),
-                CanAddMoreTerritories = _territoriesService
-                    .GetAvailableTerritoryInternals(hierarchyPart,hierarchyTerritories)
-                    .Any()
+                TopLevelNodes = topLevelOfHierarchy,
+                Nodes = topLevelOfHierarchy,
+                CanAddMoreTerritories = true //prevently test if we can add territories, is it useful?
             };
 
             return View(model);
@@ -336,6 +331,33 @@ namespace Nwazet.Commerce.Controllers {
             return EditTerritoryPost(id, returnUrl, contentItem => _contentManager.Publish(contentItem));
         }
 
+        public PartialViewResult GetChildNodes(int id) {
+            ActionResult redirectTo;
+            var territoryPart = _contentManager.Get(id, VersionOptions.Latest).As<TerritoryPart>();
+            if (territoryPart == null) {
+                return null;
+            }
+            if (ShouldRedirectForPermissions(territoryPart.Record.Hierarchy.Id, out redirectTo)) {
+                return null;
+            }
+
+            var hierarchyPart = territoryPart.HierarchyPart;;
+
+
+            var children = _territoriesService.GetTerritoriesQuery(hierarchyPart, territoryPart, VersionOptions.Latest).List().Select(MakeANode).ToList(); ;
+
+            var model = new TerritoryHierarchyTerritoriesViewModel {
+                HierarchyPart = hierarchyPart,
+                HierarchyItem = hierarchyPart.ContentItem,
+                TopLevelNodes = children,
+                Nodes = children,
+                CanAddMoreTerritories = true //prevently test if we can add territories, is it useful?
+            };
+
+            return PartialView(model);
+
+        }
+
         private ActionResult EditTerritoryPost(
             int id, string returnUrl, Action<ContentItem> conditionallyPublish) {
 
@@ -478,13 +500,12 @@ namespace Nwazet.Commerce.Controllers {
         }
 
         private TerritoryHierarchyTreeNode MakeANode(TerritoryPart territoryPart) {
-            var metadata = _contentManager.GetItemMetadata(territoryPart.ContentItem);
             return new TerritoryHierarchyTreeNode {
                 Id = territoryPart.ContentItem.Id,
                 TerritoryItem = territoryPart,
                 ParentId = territoryPart.Record.ParentTerritory == null ? 0 : territoryPart.Record.ParentTerritory.Id,
-                EditUrl = _routeCollection.GetVirtualPath(requestContext, metadata.EditorRouteValues).VirtualPath,
-                DisplayText = metadata.DisplayText + 
+                EditUrl = this.Url.Action("EditTerritory", new { id = territoryPart.Id }), //adds and edit url here
+                DisplayText =  territoryPart.As<TitlePart>().Title +
                     (!territoryPart.IsPublished() ? T(" (draft)").Text : string.Empty) +
                     ((territoryPart.Record.TerritoryInternalRecord == null) ? T(" (requires identity)").Text : string.Empty)
             };

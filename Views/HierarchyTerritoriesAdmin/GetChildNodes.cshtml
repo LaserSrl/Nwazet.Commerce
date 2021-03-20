@@ -1,0 +1,47 @@
+﻿@using Nwazet.Commerce.ViewModels
+
+@model TerritoryHierarchyTerritoriesViewModel
+
+@{
+    var hierarchyItem = Model.HierarchyItem;
+    var nodesList = Model.Nodes.ToList(); // need this for FindIndex
+}
+
+@if (Model.Nodes.Any()) {
+    @RenderTerritories(Model.TopLevelNodes, 0, 0, nodesList)
+}
+
+@helper RenderTerritories(IList<TerritoryHierarchyTreeNode> nodes, int parent, int level, List<TerritoryHierarchyTreeNode> nodesList) {
+    @:<ol>
+        bool first = true;
+        foreach (var node in nodes) {
+
+            var index = nodesList.FindIndex(tht => tht.Id == node.Id);
+            var jsNodeId = "territory-node-" + node.Id;
+            // render the node, then its children
+            @:<li class="territories-list-item" data-index="@node.Id" id="@jsNodeId">
+                <div>
+                    <h2>@node.DisplayText</h2>
+                    <span class="territory-type">(@node.TerritoryItem.ContentItem.ContentType)</span>
+                    <span class="territory-parent"><input type="text" class="text" name="@Html.NameOf(m => m.Nodes[index].ParentId)" value="@node.ParentId" /></span>
+                    <span class="territory-actions">
+                        <input type="hidden" name="@Html.NameOf(m => m.Nodes[index].Id)" value="@node.Id" />
+                        @Html.Link(T("Edit").Text, node.EditUrl, new { ReturnUrl = Request.RawUrl })@T(" | ")
+                        @Html.ActionLink(T("Delete").Text, "DeleteTerritory", new { id = node.Id }, new { @class = "remove", itemprop = "RemoveUrl UnsafeUrl" }) |
+                        @Html.ActionLink(T("Expand").Text, "GetChildNodes", new { id = node.Id }, new { @class = "ajax-expand-node", data_node = jsNodeId })
+
+                    </span>
+                </div>
+
+                // children
+                if (Model.Nodes.Any(tht => tht.ParentId == node.Id)) {
+                    @RenderTerritories(Model.Nodes.Where(tht => tht.ParentId == node.Id).ToList(), node.Id, level + 1, nodesList)
+                }
+            @:</li>
+
+
+
+
+        }
+    @:</ol>
+}

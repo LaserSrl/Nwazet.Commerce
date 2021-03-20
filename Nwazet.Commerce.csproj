@@ -211,6 +211,7 @@
     <None Include="Views\FlexibleShippingCriterion\Edit.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\CreateTerritory.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\EditTerritory.cshtml" />
+    <None Include="Views\HierarchyTerritoriesAdmin\GetChildNodes.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\Index.cshtml" />
     <None Include="Views\OrderSsl\OrderHistory.cshtml" />
     <None Include="Views\Parts\Inventory.cshtml" />

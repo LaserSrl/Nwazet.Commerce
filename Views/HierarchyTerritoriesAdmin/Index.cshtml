@@ -37,64 +37,53 @@
                 },
                 new { @class = "button primaryAction" })
     }
-    
+
 </div>
 @using (Html.BeginFormAntiForgeryPost()) {
     @Html.Hidden("hierarchyId", Model.HierarchyPart.Record.Id)
     <div class="sections">
         <div class="primary">
             <div class="container">
-                <div class="territories-list">
-                    @if (Model.Nodes.Any()) {
-                        @RenderTerritories(Model.TopLevelNodes, 0, 0, nodesList)
-                    }
+                <div class="territories-list" id="territories-list">
+                    @Html.Partial("GetChildNodes", Model)
                 </div>
             </div>
         </div>
     </div>
 
-        <fieldset class="actions">
-            <button id="saveButton" type="submit" class="button">@T("Save All")</button>
-        </fieldset>
-}
-
-@helper RenderTerritories(IList<TerritoryHierarchyTreeNode> nodes, int parent, int level, List<TerritoryHierarchyTreeNode> nodesList) { 
-
-    @:<ol>
-
-    bool first = true;
-    foreach (var node in nodes
-        .Where(tht => tht.ParentId == parent)) {
-
-        var index = nodesList.FindIndex(tht => tht.Id == node.Id);
-        // render the node, then its children
-        @:<li class="territories-list-item" data-index="@node.Id">
-            <div>
-                <h2>@Html.Encode(node.DisplayText)</h2>
-                <span class="territory-type">(@Html.Encode(node.TerritoryItem.TypeDefinition.DisplayName))</span>
-                <span class="territory-parent"><input type="text" class="text" name="@Html.NameOf(m => m.Nodes[index].ParentId)" value="@node.ParentId" /></span>
-                <span class="territory-actions">
-                    <input type="hidden" name="@Html.NameOf(m => m.Nodes[index].Id)" value="@node.Id" />
-                    @Html.ItemEditLink(T("Edit").Text, node.TerritoryItem, new { ReturnUrl = Request.RawUrl })@T(" | ")
-                    @Html.ActionLink(T("Delete").Text, "DeleteTerritory", new { id = node.Id }, new { @class = "remove", itemprop = "RemoveUrl UnsafeUrl" })
-                </span>
-            </div>
-
-            // children
-            if (Model.Nodes.Any(tht => tht.ParentId == node.Id)) {
-                    @RenderTerritories(Model.Nodes.Where(tht => tht.ParentId == node.Id).ToList(), node.Id, level + 1, nodesList)
-            }
-        @:</li>
-
-    }
-    @:</ol>
+    <fieldset class="actions">
+        <button id="saveButton" type="submit" class="button">@T("Save All")</button>
+    </fieldset>
 }
 
 @using (Script.Foot()) {
     <script type="text/javascript">
     //<![CDATA[
     var leaveConfirmation = '@HttpUtility.JavaScriptStringEncode(T("Some items where not saved.").Text)';
-
     //]]>
+        $(document).ready(function () {
+            $("#territories-list").on("click", ".ajax-expand-node", TerritoryAjaxCall);
+        });
+
+        function TerritoryAjaxCall(e) {
+                e.preventDefault();
+            var currentElement = $(this);
+            var nodeid = '#' + currentElement.data("node");
+            if ($(nodeid).children("ol").find(".ajax-expand-node").length==0) {
+                $.ajax({
+                    type: "GET",
+                    url: $(this).attr('href'),
+                    success: function (response) {
+                        if (!$.trim(response)) {//empty response
+                            return;
+                        }
+                        $(nodeid).append(response);
+                    },
+                    error: function (error) {
+                        alert();
+                    }
+                });
+            }
+        }
     </script>
 }
