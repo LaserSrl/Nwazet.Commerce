@@ -63,9 +63,6 @@ namespace Nwazet.Commerce.Services.Couponing {
                     // the order is fetched anew.
                     var coupon = GetCouponFromCode(alteration.Key);
                     if (coupon != null) { // sanity check
-                        var xCoupon = coupon.ToXMLElement();
-                        // the coupon itself will also be in the AdditionalElements property of the order
-                        yield return xCoupon; 
                         // The coupon should potentially add several XElements:
                         // - 1 element containing "summary" information, telling a coupon was there
                         // - 0+ LineAlteration elements, that apply to a single CheckoutItem
@@ -79,6 +76,9 @@ namespace Nwazet.Commerce.Services.Couponing {
                         var processors = _cartPriceAlterationProcessors
                             .Where(cpap => cpap.CanProcess(alteration, cart));
                         if (processors.Any()) {
+                            var xCoupon = coupon.ToXMLElement();
+                            // the coupon itself will also be in the AdditionalElements property of the order
+                            yield return xCoupon;
                             // avoid potentially recomputing lines for each processor
                             var productLines = cart.GetProducts();
                             //  - What products of the cart, if any, does the coupon affect?
@@ -147,6 +147,15 @@ namespace Nwazet.Commerce.Services.Couponing {
                                         ProcessorClass = p.GetType().FullName
                                     })
                             }.ToXML();
+                        } else {
+                            // This coupon had no effect on the cart/order. Perhaps the user
+                            // added it and then changed something in the context such that the
+                            // coupon was not valid anymore. For example, the coupon was only 
+                            // for anonymous users, then the user logged in.
+                            // We still want to store this information.
+                            var xCoupon = coupon.ToXMLElement(true);
+                            // the coupon itself will also be in the AdditionalElements property of the order
+                            yield return xCoupon;
                         }
                         // we need to also return the XElement that will be used in frontend to
                         // report to the customer that they have used the coupon

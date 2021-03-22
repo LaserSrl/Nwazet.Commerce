@@ -73,26 +73,43 @@ namespace Nwazet.Commerce.Models {
         public virtual List<CartPriceAlteration> PriceAlterations {
             get { return _cartStorage
                     .PriceAlterations
-                    .Where(cpa => _cartPriceAlterationProcessors.Any(p => p.CanProcess(cpa, this)))
+                    .Where(cpa => _cartPriceAlterationProcessors.Any(p => p.CanProcess(cpa)))
                     .ToList(); }
-            set { _cartStorage.PriceAlterations = value; }
+            set { _cartStorage.PriceAlterations = value
+                    // only keep the alterations that can be processed
+                    .Where(cpa => _cartPriceAlterationProcessors.Any(p => p.CanProcess(cpa)))
+                    .ToList(); }
         }
         public IEnumerable<CartPriceAlterationAmount> PriceAlterationAmounts {
             get {
                 return PriceAlterations
-                    .Select(cpa => {
-                        var processor = _cartPriceAlterationProcessors.FirstOrDefault(p => p.CanProcess(cpa, this));
-                        if (processor != null) {
-                            return new CartPriceAlterationAmount() {
-                                Label = processor.AlterationLabel(cpa, this),
-                                Amount = processor.AlterationAmount(cpa, this),
-                                AlterationType = cpa.AlterationType,
-                                Key = cpa.Key,
-                                Weight = cpa.Weight,
-                                RemovalAction = cpa.RemovalAction
-                            };
+                    .SelectMany(cpa => {
+                        // get processors that are able to process the alteration
+                        var processors = _cartPriceAlterationProcessors
+                            .Where(p => p.CanProcess(cpa));
+                        if (processors != null && processors.Any()) {
+                            return processors.Select(cpac => 
+                                new CartPriceAlterationAmount() {
+                                    Label = cpac.AlterationLabel(cpa, this),
+                                    Amount = cpac.AlterationAmount(cpa, this),
+                                    AlterationType = cpa.AlterationType,
+                                    Key = cpa.Key,
+                                    Weight = cpa.Weight,
+                                    RemovalAction = cpa.RemovalAction
+                                });
                         }
-                        return null;
+                        //var processor = _cartPriceAlterationProcessors.FirstOrDefault(p => p.CanProcess(cpa, this));
+                        //if (processor != null) {
+                        //    return new CartPriceAlterationAmount() {
+                        //        Label = processor.AlterationLabel(cpa, this),
+                        //        Amount = processor.AlterationAmount(cpa, this),
+                        //        AlterationType = cpa.AlterationType,
+                        //        Key = cpa.Key,
+                        //        Weight = cpa.Weight,
+                        //        RemovalAction = cpa.RemovalAction
+                        //    };
+                        //}
+                        return Enumerable.Empty<CartPriceAlterationAmount>();
                     })
                     .Where(vm => vm != null);
             }

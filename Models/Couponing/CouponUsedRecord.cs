@@ -42,5 +42,11 @@ namespace Nwazet.Commerce.Models {
         /// will allow to find the same provider in the future. For example "CallerUUID"
         /// </summary>
         public virtual string IdentifierType { get; set; }
+
+        /// <summary>
+        /// Flag used to identify the fact that the coupon could not be used in the order.
+        /// Basically, the coupon was attached to the order, but had no effect on it.
+        /// </summary>
+        public virtual bool WasInvalid { get; set; }
     }
 }

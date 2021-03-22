@@ -6,6 +6,7 @@ using Nwazet.Commerce.Models.Couponing;
 using Nwazet.Commerce.Services.Couponing;
 using Orchard;
 using Orchard.Environment.Extensions;
+using Orchard.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,13 +31,24 @@ namespace Nwazet.Commerce.Services.Couponing {
             _couponApplicationService = couponApplicationService;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
+
+            T = NullLocalizer.Instance;
         }
+        public Localizer T { get; set; }
 
         // prevent loading the same coupon several times per request
         private Dictionary<string, CouponRecord> _loadedCoupons;
 
 
         public string AlterationType => CouponingUtilities.CouponAlterationType;
+
+        public bool CanProcess(CartPriceAlteration alteration) {
+            if (alteration.AlterationType == AlterationType) {
+                var coupon = GetCouponFromCode(alteration.Key);
+                return coupon != null;
+            }
+            return false;
+        }
 
         public bool CanProcess(
             CartPriceAlteration alteration, IShoppingCart shoppingCart) {
@@ -102,7 +114,8 @@ namespace Nwazet.Commerce.Services.Couponing {
                 // TODO: do the computation
                 return coupon.Code;
             }
-            return null;
+
+            return T("{0} not valid", alteration.Key).Text;
         }
 
         public string AlterationLabel(
@@ -144,8 +157,10 @@ namespace Nwazet.Commerce.Services.Couponing {
                 IsApplicable = coupon.Published
             };
             result = _couponApplicationService.CanProcess(context);
+            // if the service is telling us that the coupon is not valid for
+            // the current context+cart, we don't remove it, because that would
+            // mess things up in the cart storage.
 
-            //
             return result;
         }
 

@@ -55,6 +55,7 @@ namespace Nwazet.Commerce.Services.Couponing {
             _tokenizer = tokenizer;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
+            _notificationsSent = new HashSet<string>();
 
             T = NullLocalizer.Instance;
         }
@@ -63,6 +64,14 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         // prevent loading the same coupon several times per request
         private Dictionary<string, CouponRecord> _loadedCoupons;
+        private HashSet<string> _notificationsSent;
+
+        private void Warning(LocalizedString text) {
+            if (!_notificationsSent.Contains(text.Text)) {
+                _notifier.Warning(text);
+                _notificationsSent.Add(text.Text);
+            }
+        }
         
         public void ApplyCoupon(CouponApplicabilityContext context) {
             // given the code, find the coupon
@@ -73,13 +82,13 @@ namespace Nwazet.Commerce.Services.Couponing {
                 context.Coupon = coupon;
                 context.IsApplicable = coupon.Published;
 
-                if (_CanApply(context)) {
+                if (CanApply(context)) {
 
                     Apply(context);
                     _notifier.Information(T("Coupon {0} was successfully applied", context.Coupon.Code));
                 }
             } else {
-                _notifier.Warning(T("Coupon code {0} is not valid", context.CouponCode));
+                Warning(T("Coupon code {0} is not valid", context.CouponCode));
             }
         }
         
@@ -156,15 +165,15 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
             if (!context.IsApplicable) {
                 if (context.Message != null && !string.IsNullOrWhiteSpace(context.Message.Text)) {
-                    _notifier.Warning(context.Message);
+                    Warning(context.Message);
                 } else {
-                    _notifier.Warning(T("Coupon code {0} is not valid", context.Coupon.Code));
+                    Warning(T("Coupon code {0} is not valid", context.Coupon.Code));
                 }
             }
             return context.IsApplicable;
         }
 
-        private bool _CanApply(CouponApplicabilityContext context) {
+        private bool CanApply(CouponApplicabilityContext context) {
             return TestCriteria(context,
                 (cacd, ccc) => cacd.AdditionCriterion(ccc),
                 (cac, ctx) => cac.CanBeAdded(ctx));
@@ -221,6 +230,8 @@ namespace Nwazet.Commerce.Services.Couponing {
         }
 
         public void ReevaluateValidity(CouponLifeUpdateContext context) {
+            // TODO add to context a flag telling us whether we should remove
+            // coupons that can't be processed anymore
 
             var applicabilityContext = new CouponApplicabilityContext {
                 Coupon = context.Coupon,
@@ -230,11 +241,12 @@ namespace Nwazet.Commerce.Services.Couponing {
             };
             if (!CanProcess(applicabilityContext)) {
                 // if the coupon is not valid anymore for the current cart,
-                // remove it.
-                if (RemoveCouponInternal(applicabilityContext)) {
-                    // TODO: should this message be different?
-                    _notifier.Information(T("Coupon {0} was removed", context.Coupon.Code));
-                }
+                // should we remove it?
+                // TODO: for now we choose to not remove it.
+                //if (RemoveCouponInternal(applicabilityContext)) {
+                //    // TODO: should this message be different?
+                //    _notifier.Information(T("Coupon {0} was removed", context.Coupon.Code));
+                //}
             }
         }
 
@@ -243,7 +255,7 @@ namespace Nwazet.Commerce.Services.Couponing {
             // Maybe it would make sense to fire off coupon-related events?
 
             // based on the information in the context, create a new CouponUsedRecord.
-            if (context != null) {
+            if (context != null && context.Coupon != null) {
                 var couponUsedRecord = new CouponUsedRecord();
                 couponUsedRecord.CouponRecord_Id = context.Coupon?.Id ?? 0;
                 couponUsedRecord.UserPartRecord_Id = context.WorkContext?.CurrentUser?.Id ?? 0;
@@ -259,6 +271,15 @@ namespace Nwazet.Commerce.Services.Couponing {
                     couponUsedRecord.OrderPartRecord_Id = 0;
                     couponUsedRecord.DateTimeUTC = DateTime.UtcNow;
                 }
+                // Test whether the coupon could be used:
+                var applicabilityContext = new CouponApplicabilityContext {
+                    Coupon = context.Coupon,
+                    ShoppingCart = context.ShoppingCart,
+                    WorkContext = context.WorkContext,
+                    IsApplicable = context.Coupon.Published
+                };
+                couponUsedRecord.WasInvalid = !CanProcess(applicabilityContext);
+
                 // TODO: providers to set the values of
                 // couponUsedRecord.AdditionalUserIdentifier
                 // and

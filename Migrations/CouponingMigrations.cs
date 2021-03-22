@@ -66,5 +66,13 @@ namespace Nwazet.Commerce.Migrations {
 
             return 3;
         }
+
+        public int UpdateFrom3() {
+
+            SchemaBuilder.AlterTable("CouponUsedRecord", table =>
+                table.AddColumn<bool>("WasInvalid", c => c.NotNull().WithDefault(false)));
+
+            return 4;
+        }
     }
 }

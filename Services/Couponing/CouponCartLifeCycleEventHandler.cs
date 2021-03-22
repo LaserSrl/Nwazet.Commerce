@@ -43,7 +43,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                     WorkContext = _workContextAccessor.GetContext(),
                     Order = context.Order
                 };
-                // this event carries no reference to the Order or an possible related Payment
+                
                 _couponApplicationService.CouponUsed(couponContext);
             }
         }
@@ -77,10 +77,17 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         private IEnumerable<CouponRecord> CouponsFromCart() {
             var couponCodes = _shoppingCart.PriceAlterations
-                .Where(cpa => CouponingUtilities.CouponAlterationType.Equals(cpa.AlterationType, StringComparison.InvariantCultureIgnoreCase))
+                .Where(cpa => 
+                    // only alterations for coupons
+                    CouponingUtilities.CouponAlterationType
+                        .Equals(cpa.AlterationType, StringComparison.InvariantCultureIgnoreCase))
                 .Select(cpa => cpa.Key);
 
-            return couponCodes.Select(cc => GetCouponFromCode(cc));
+            return couponCodes
+                .Select(cc => GetCouponFromCode(cc))
+                // Should we consider only those coupons that can actually be processed,
+                // meaning they would actually affect the operation/cart in any way?
+                ;
         }
 
         private CouponRecord GetCouponFromCode(string code) {
