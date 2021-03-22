@@ -1,4 +1,5 @@
-﻿using Orchard.Localization;
+﻿using Orchard.Environment.Extensions;
+using Orchard.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Descriptors.CouponApplicability {
+    [OrchardFeature("Nwazet.Couponing")]
     public class DescribeCouponApplicabilityFor {
         private readonly string _category;
 
@@ -25,7 +27,8 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
             string type,
             LocalizedString name,
             LocalizedString description,
-            Action<CouponCriterionContext> criterion,
+            Action<CouponCriterionContext> additionCriterion,
+            Action<CouponCriterionContext> processingCriterion,
             Func<CouponCriterionContext, LocalizedString> display,
             string form = null) {
 
@@ -34,7 +37,8 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
                 Name = name,
                 Description = description,
                 Category = _category,
-                TestCriterion = criterion,
+                AdditionCriterion = additionCriterion,
+                ProcessingCriterion = processingCriterion,
                 Display = display,
                 Form = form
             });

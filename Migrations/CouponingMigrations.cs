@@ -51,5 +51,20 @@ namespace Nwazet.Commerce.Migrations {
                 ;
             return 2;
         }
+
+        public int UpdateFrom2() {
+
+            SchemaBuilder.CreateTable("CouponApplicabilityCriterionRecord",
+                table => table
+                    .Column<int>("Id", c => c.PrimaryKey().Identity())
+                    .Column<string>("Type")
+                    .Column<string>("Description")
+                    .Column<string>("State", c => c.Unlimited())
+                    .Column<string>("Category")
+                    .Column<int>("CouponRecord_id")
+                );
+
+            return 3;
+        }
     }
 }

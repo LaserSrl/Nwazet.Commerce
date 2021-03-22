@@ -16,7 +16,8 @@ using Orchard.UI.Notify;
 using System;
 using System.Linq;
 using System.Web.Mvc;
-
+using Orchard.Forms.Services;
+using Nwazet.Commerce.Descriptors.CouponApplicability;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Couponing")]
@@ -29,6 +30,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ICouponRepositoryService _couponRepositoryService;
         private readonly ITransactionManager _transactionManager;
         private readonly INotifier _notifier;
+        private readonly ICouponApplicationService _couponApplicationService;
 
         public CouponingAdminController(
             IShapeFactory shapeFactory,
@@ -36,13 +38,15 @@ namespace Nwazet.Commerce.Controllers {
             ISiteService siteService,
             ICouponRepositoryService couponRepositoryService,
             ITransactionManager transactionManager,
-            INotifier notifier) {
+            INotifier notifier,
+            ICouponApplicationService couponApplicationService) {
 
             _authorizer = authorizer;
             _siteService = siteService;
             _couponRepositoryService = couponRepositoryService;
             _transactionManager = transactionManager;
             _notifier = notifier;
+            _couponApplicationService = couponApplicationService;
 
             _shapeFactory = shapeFactory;
 
@@ -123,25 +127,29 @@ namespace Nwazet.Commerce.Controllers {
 
         [HttpGet]
         public ActionResult Edit(int id) {
-            //TODO: read the record from the DB
             if (!_authorizer.Authorize(CouponingPermissions.ManageCoupons)) {
                 return new HttpUnauthorizedResult();
             }
-            var model = _couponRepositoryService.Get(id);
-            return View(model);
+            var coupon = _couponRepositoryService.Get(id);
+            if (coupon == null || coupon.Record == null) {
+                return HttpNotFound();
+            }
+            return EditView(coupon);
         }
 
         [HttpPost, ActionName("Edit")]
         [Orchard.Mvc.FormValueRequired("submit.Save")]
         public ActionResult EditPost(int id) {
-            //TODO: read the record from the DB and update it with the Model
             if (!_authorizer.Authorize(CouponingPermissions.ManageCoupons)) {
                 return new HttpUnauthorizedResult();
             }
             var model = _couponRepositoryService.Get(id);
+            if (model == null || model.Record == null) {
+                return HttpNotFound();
+            }
             if (!TryUpdateModel(model, null, null, new[] { "Id" })) {
                 _transactionManager.Cancel();
-                return View(model);
+                return EditView(model);
             }
             try {
                 _couponRepositoryService.UpdateRecord(model);
@@ -149,17 +157,42 @@ namespace Nwazet.Commerce.Controllers {
             catch (Exception ex) {
                 _transactionManager.Cancel();
                 AddModelError("CouponingRepositoryError", ex.Message);
-                return View(model);
+                return EditView(model);
             }
 
             if (!_couponRepositoryService.Validate(model)) {
                 _transactionManager.Cancel();
                 AddModelError("CouponingRepositoryError", T("The coupon is not valid."));
-                return View(model);
+                return EditView(model);
             }
 
             _notifier.Add(NotifyType.Information, T("The coupon has been updated."));
-            return View(model);
+            return EditView(model);
+        }
+
+        private ActionResult EditView(Coupon coupon) {
+            if (coupon == null || coupon.Record == null) {
+                return HttpNotFound();
+            }
+            // populate the vm "summaries" for the criteria
+            foreach (var crit in coupon.Record.ApplicabilityCriteria) {
+                var descriptor = _couponApplicationService
+                    .GetCriterion(crit.Category, crit.Type);
+                if (descriptor != null) {
+                    coupon.ApplicabilityCriteria.Add(
+                        new CouponApplicabilityCriterionEntry {
+                            Category = descriptor.Category,
+                            Type = descriptor.Type,
+                            CriterionRecordId = crit.Id,
+                            DisplayText = string.IsNullOrWhiteSpace(crit.Description)
+                                ? descriptor.Display(new CouponCriterionContext {
+                                    State = FormParametersHelper.ToDynamic(crit.State)
+                                }).Text
+                                : crit.Description
+                        });
+                }
+            }
+            return View(coupon);
         }
 
         [HttpPost]

@@ -1,4 +1,5 @@
-﻿using Nwazet.Commerce.Descriptors;
+﻿using Nwazet.Commerce.ApplicabilityCriteria.Couponing;
+using Nwazet.Commerce.Descriptors;
 using Nwazet.Commerce.Descriptors.CouponApplicability;
 using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
@@ -6,8 +7,11 @@ using Nwazet.Commerce.Models.Couponing;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Core.Common.Models;
+using Orchard.Data;
 using Orchard.Environment.Extensions;
+using Orchard.Forms.Services;
 using Orchard.Localization;
+using Orchard.Tokens;
 using Orchard.UI.Notify;
 using System;
 using System.Collections.Generic;
@@ -23,26 +27,32 @@ namespace Nwazet.Commerce.Services.Couponing {
         ICouponApplicationService {
 
         private readonly ICouponRepositoryService _couponRepositoryService;
-        private readonly IShoppingCart _shoppingCart;
         private readonly IWorkContextAccessor _workContextAccessor;
         private readonly INotifier _notifier;
         private readonly IEnumerable<ICouponApplicabilityCriterion> _applicabilityCriteria;
+        private readonly IEnumerable<ICouponApplicabilityCriterionProvider> _applicabilityCriteriaProviders;
         private readonly IUsedCouponsRepositoryService _usedCouponsRepositoryService;
+        private readonly IRepository<CouponApplicabilityCriterionRecord> _criteriaRepository;
+        private readonly ITokenizer _tokenizer;
 
         public CouponApplicationService(
             ICouponRepositoryService couponRepositoryService,
-            IShoppingCart shoppingCart,
             IWorkContextAccessor workContextAccessor,
             INotifier notifier,
             IEnumerable<ICouponApplicabilityCriterion> applicabilityCriteria,
-            IUsedCouponsRepositoryService usedCouponsRepositoryService) {
+            IEnumerable<ICouponApplicabilityCriterionProvider> applicabilityCriteriaProviders,
+            IUsedCouponsRepositoryService usedCouponsRepositoryService,
+            IRepository<CouponApplicabilityCriterionRecord> criteriaRepository,
+            ITokenizer tokenizer) {
 
             _couponRepositoryService = couponRepositoryService;
-            _shoppingCart = shoppingCart;
             _workContextAccessor = workContextAccessor;
             _notifier = notifier;
             _applicabilityCriteria = applicabilityCriteria;
+            _applicabilityCriteriaProviders = applicabilityCriteriaProviders;
             _usedCouponsRepositoryService = usedCouponsRepositoryService;
+            _criteriaRepository = criteriaRepository;
+            _tokenizer = tokenizer;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
 
@@ -53,25 +63,27 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         // prevent loading the same coupon several times per request
         private Dictionary<string, CouponRecord> _loadedCoupons;
-
-
-        public void ApplyCoupon(string code) {
+        
+        public void ApplyCoupon(CouponApplicabilityContext context) {
             // given the code, find the coupon
-            var coupon = GetCouponFromCode(code);
+            var coupon = GetCouponFromCode(context.CouponCode);
             if (coupon != null) {
                 // given the coupon, check whether it's usable
                 // then check whether it applies to the current "transaction"
-                if (Applies(coupon, (cac, ctx) => cac.CanBeAdded(ctx))) {
+                context.Coupon = coupon;
+                context.IsApplicable = coupon.Published;
 
-                    Apply(coupon);
-                    _notifier.Information(T("Coupon {0} was successfully applied", coupon.Code));
+                if (_CanApply(context)) {
+
+                    Apply(context);
+                    _notifier.Information(T("Coupon {0} was successfully applied", context.Coupon.Code));
                 }
             } else {
-                _notifier.Warning(T("Coupon code {0} is not valid", code));
+                _notifier.Warning(T("Coupon code {0} is not valid", context.CouponCode));
             }
         }
         
-        private void Apply(CouponRecord coupon) {
+        private void Apply(CouponApplicabilityContext context) {
             //TODO
             // based on the coupon, we add a CartPriceAlteration to the shoppingCart
             // this object will be used in computing the total cart price by the 
@@ -81,14 +93,15 @@ namespace Nwazet.Commerce.Services.Couponing {
             var allAlterations = new List<CartPriceAlteration> {
                 new CartPriceAlteration {
                     AlterationType = CouponingUtilities.CouponAlterationType,
-                    Key = coupon.Code,
+                    Key = context.Coupon.Code,
                     Weight = 1,
-                    RemovalAction = GetRemoveActionUrl(coupon.Code)
-                } };
-            if (_shoppingCart.PriceAlterations != null) {
-                allAlterations.AddRange(_shoppingCart.PriceAlterations);
+                    RemovalAction = GetRemoveActionUrl(context.Coupon.Code)
+                }
+            };
+            if (context.ShoppingCart.PriceAlterations != null) {
+                allAlterations.AddRange(context.ShoppingCart.PriceAlterations);
             }
-            _shoppingCart.PriceAlterations = allAlterations.OrderByDescending(cpa => cpa.Weight).ToList();
+            context.ShoppingCart.PriceAlterations = allAlterations.OrderByDescending(cpa => cpa.Weight).ToList();
         }
 
         private CouponRecord GetCouponFromCode(string code) {
@@ -98,26 +111,69 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
             return _loadedCoupons[code];
         }
+        
+        private void InnerTestCriteria(
+            CouponApplicabilityContext context,
+            Action<CouponApplicabilityCriterionDescriptor, CouponCriterionContext> descriptorsTest,
+            Action<ICouponApplicabilityCriterion, CouponApplicabilityContext> defaultTest) {
 
-        private bool Applies(CouponRecord coupon, Action<ICouponApplicabilityCriterion, CouponApplicabilityContext> test) {
-            var context = new CouponApplicabilityContext {
-                Coupon = coupon,
-                ShoppingCart = _shoppingCart,
-                WorkContext = _workContextAccessor.GetContext(),
-                IsApplicable = coupon.Published
-            };
+            // TODO: prepare tokens
+            Dictionary<string, object> tokens = new Dictionary<string, object>();
+
+            // Some ICouponApplicabilityCriterion will not have a description because
+            // they are there by default for all coupons.
             foreach (var criterion in _applicabilityCriteria) {
-                test(criterion, context);
+                defaultTest(criterion, context);
             }
-            var result = context.IsApplicable;
-            if (!result) {
+            // After those, we check for the criteria that are configured explicitly
+            // for the coupon.
+            if (context.IsApplicable) {
+                foreach (var criterion in context.Coupon.ApplicabilityCriteria) {
+                    var tokenizedState = _tokenizer.Replace(criterion.State, tokens);
+                    var criterionContext = new CouponCriterionContext {
+                        IsApplicable = context.IsApplicable,
+                        ApplicabilityContext = context,
+                        State = FormParametersHelper.ToDynamic(tokenizedState),
+                        CouponRecord = context.Coupon
+                    };
+                    var descriptor = GetCriterion(criterion.Category, criterion.Type);
+                    // descriptor should exist
+                    if (descriptor == null) {
+                        continue;
+                    }
+                    descriptorsTest(descriptor, criterionContext);
+                }
+            }
+        }
+
+        private bool TestCriteria(
+            CouponApplicabilityContext context,
+            Action<CouponApplicabilityCriterionDescriptor, CouponCriterionContext> descriptorsTest,
+            Action<ICouponApplicabilityCriterion, CouponApplicabilityContext> defaultTest) {
+
+            if (context.IsApplicable) {
+                InnerTestCriteria(context, descriptorsTest, defaultTest);
+            }
+            if (!context.IsApplicable) {
                 if (context.Message != null && !string.IsNullOrWhiteSpace(context.Message.Text)) {
                     _notifier.Warning(context.Message);
                 } else {
-                    _notifier.Warning(T("Coupon code {0} is not valid", coupon.Code));
+                    _notifier.Warning(T("Coupon code {0} is not valid", context.Coupon.Code));
                 }
             }
-            return result;
+            return context.IsApplicable;
+        }
+
+        private bool _CanApply(CouponApplicabilityContext context) {
+            return TestCriteria(context,
+                (cacd, ccc) => cacd.AdditionCriterion(ccc),
+                (cac, ctx) => cac.CanBeAdded(ctx));
+        }
+        
+        public bool CanProcess(CouponApplicabilityContext context) {
+            return TestCriteria(context,
+                (cacd, ccc) => cacd.ProcessingCriterion(ccc),
+                (cac, ctx) => cac.CanBeProcessed(ctx));
         }
         
         private string GetRemoveActionUrl() {
@@ -134,26 +190,29 @@ namespace Nwazet.Commerce.Services.Couponing {
                 + "?coupon.Code=" + code;
         }
 
-        public void RemoveCoupon(string code) {
-            if (RemoveCouponInternal(code)) {
-                _notifier.Information(T("Coupon {0} was removed", code));
+        public void RemoveCoupon(CouponApplicabilityContext context) {
+            if (context.Coupon == null) {
+                context.Coupon = GetCouponFromCode(context.CouponCode);
+            }
+            if (RemoveCouponInternal(context)) {
+                _notifier.Information(T("Coupon {0} was removed", context.CouponCode));
             }
         }
           
-        private bool RemoveCouponInternal(string code) {
-            if (!string.IsNullOrWhiteSpace(code)) {
-                if (_shoppingCart.PriceAlterations
+        private bool RemoveCouponInternal(CouponApplicabilityContext context) {
+            if (context.Coupon != null && context.ShoppingCart != null) {
+                if (context.ShoppingCart.PriceAlterations
                     .Any(cap =>
                         CouponingUtilities.CouponAlterationType.Equals(cap.AlterationType, StringComparison.InvariantCultureIgnoreCase)
-                        && code.Equals(cap.Key, StringComparison.InvariantCultureIgnoreCase))) {
+                        && context.Coupon.Code.Equals(cap.Key, StringComparison.InvariantCultureIgnoreCase))) {
                     // we do that if before actually attempting to remove just so we can give a notification
                     // otherwise we may end up giving it even when we are not removing anything
-                    _shoppingCart.PriceAlterations = _shoppingCart.PriceAlterations
+                    context.ShoppingCart.PriceAlterations = context.ShoppingCart.PriceAlterations
                         .Where(cap =>
                             // Do not remove alterations that are not coupons
                             !CouponingUtilities.CouponAlterationType.Equals(cap.AlterationType, StringComparison.InvariantCultureIgnoreCase)
                             // Use the give key to remove a coupon (if it exists)
-                            || !code.Equals(cap.Key, StringComparison.InvariantCultureIgnoreCase))
+                            || !context.Coupon.Code.Equals(cap.Key, StringComparison.InvariantCultureIgnoreCase))
                         .ToList();
                     return true;
                 }
@@ -162,10 +221,17 @@ namespace Nwazet.Commerce.Services.Couponing {
         }
 
         public void ReevaluateValidity(CouponLifeUpdateContext context) {
-            if (!Applies(context.Coupon, (cac, ctx) => cac.CanBeProcessed(ctx))) {
+
+            var applicabilityContext = new CouponApplicabilityContext {
+                Coupon = context.Coupon,
+                ShoppingCart = context.ShoppingCart,
+                WorkContext = context.WorkContext,
+                IsApplicable = context.Coupon.Published
+            };
+            if (!CanProcess(applicabilityContext)) {
                 // if the coupon is not valid anymore for the current cart,
                 // remove it.
-                if (RemoveCouponInternal(context.Coupon.Code)) {
+                if (RemoveCouponInternal(applicabilityContext)) {
                     // TODO: should this message be different?
                     _notifier.Information(T("Coupon {0} was removed", context.Coupon.Code));
                 }
@@ -210,11 +276,34 @@ namespace Nwazet.Commerce.Services.Couponing {
 
             var context = new DescribeCouponApplicabilityContext();
 
-            foreach (var provider in _applicabilityCriteria) {
+            foreach (var provider in _applicabilityCriteriaProviders) {
                 provider.Describe(context);
             }
 
             return context.Describe();
+        }
+
+        public CouponApplicabilityCriterionDescriptor
+            GetCriterion(string category, string type) {
+
+            return DescribeApplicabilityCriteria()
+                .SelectMany(x => x.Descriptors)
+                .FirstOrDefault(c =>
+                    c.Category == category
+                    && c.Type == type
+                );
+        }
+
+        public void DeleteCriterion(int criterionId) {
+            var record = _criteriaRepository.Get(criterionId);
+            if (record != null) {
+                DeleteCriterion(record);
+            }
+        }
+
+        private void DeleteCriterion(CouponApplicabilityCriterionRecord record) {
+            record.CouponRecord.ApplicabilityCriteria.Remove(record);
+            _criteriaRepository.Delete(record);
         }
     }
 }

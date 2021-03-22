@@ -1,4 +1,5 @@
-﻿using Nwazet.Commerce.Descriptors.CouponApplicability;
+﻿using Nwazet.Commerce.ApplicabilityCriteria.Couponing;
+using Nwazet.Commerce.Descriptors.CouponApplicability;
 using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Models.Couponing;
@@ -16,17 +17,17 @@ namespace Nwazet.Commerce.Services.Couponing {
     public class CouponCartPriceAlterationProcessor : ICartPriceAlterationProcessor {
 
         private readonly ICouponRepositoryService _couponRepositoryService;
-        private readonly IEnumerable<ICouponApplicabilityCriterion> _applicabilityCriteria;
         private readonly IWorkContextAccessor _workContextAccessor;
+        private readonly ICouponApplicationService _couponApplicationService;
 
         public CouponCartPriceAlterationProcessor(
             ICouponRepositoryService couponRepositoryService,
-            IEnumerable<ICouponApplicabilityCriterion> applicabilityCriteria,
-            IWorkContextAccessor workContextAccessor) {
+            IWorkContextAccessor workContextAccessor,
+            ICouponApplicationService couponApplicationService) {
 
             _couponRepositoryService = couponRepositoryService;
-            _applicabilityCriteria = applicabilityCriteria;
             _workContextAccessor = workContextAccessor;
+            _couponApplicationService = couponApplicationService;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
         }
@@ -135,18 +136,15 @@ namespace Nwazet.Commerce.Services.Couponing {
                 return false;
             }
 
+            var result = coupon.Published;
             var context = new CouponApplicabilityContext {
                 Coupon = coupon,
                 ShoppingCart = shoppingCart,
                 WorkContext = _workContextAccessor.GetContext(),
                 IsApplicable = coupon.Published
             };
-            //TODO: before calling the criteria, check whether this processor
-            // can even handle the coupon we are looking at
-            foreach (var criterion in _applicabilityCriteria) {
-                criterion.CanBeProcessed(context);
-            }
-            var result = context.IsApplicable;
+            result = _couponApplicationService.CanProcess(context);
+
             //
             return result;
         }

@@ -8,11 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nwazet.Commerce.Services {
+namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
     public class CouponApplicabilityContext {
 
         public CouponRecord Coupon { get; set; }
+        public string CouponCode { get; set; }
         public IShoppingCart ShoppingCart { get; set; }
         public WorkContext WorkContext { get; set; }
         public bool IsApplicable { get; set; }

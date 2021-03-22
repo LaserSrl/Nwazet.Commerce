@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.ViewModels.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
-    public class CouponFrontendViewModel {
-        public string Name { get; set; }
-        public string Code { get; set; }
+    public class CouponApplicabilityCriterionEntry {
+        public int CriterionRecordId { get; set; }
+        public string Category { get; set; }
+        public string Type { get; set; }
+        public string DisplayText { get; set; }
     }
 }

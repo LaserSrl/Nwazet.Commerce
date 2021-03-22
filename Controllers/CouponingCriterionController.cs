@@ -1,12 +1,16 @@
-﻿using Nwazet.Commerce.Permissions;
+﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services.Couponing;
+using Nwazet.Commerce.ViewModels.Couponing;
 using Orchard.Environment.Extensions;
+using Orchard.Forms.Services;
 using Orchard.Localization;
 using Orchard.Security;
 using Orchard.UI.Admin;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,15 +24,18 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IAuthorizer _authorizer;
         private readonly ICouponApplicationService _couponApplicationService;
         private readonly ICouponRepositoryService _couponRepositoryService;
+        private readonly IFormManager _formManager;
 
         public CouponingCriterionController(
             IAuthorizer authorizer,
             ICouponApplicationService couponApplicationService,
-            ICouponRepositoryService couponRepositoryService) {
+            ICouponRepositoryService couponRepositoryService,
+            IFormManager formManager) {
 
             _authorizer = authorizer;
             _couponApplicationService = couponApplicationService;
             _couponRepositoryService = couponRepositoryService;
+            _formManager = formManager;
 
             T = NullLocalizer.Instance;
         }
@@ -48,11 +55,16 @@ namespace Nwazet.Commerce.Controllers {
             }
 
             var coupon = _couponRepositoryService.Get(id);
-            if (coupon == null) {
-                return new HttpNotFoundResult();
+            if (coupon == null || coupon.Record == null) {
+                return HttpNotFound();
             }
 
-            return View();
+            var viewModel = new CouponCriteriaAddViewModel {
+                Id = id,
+                Criteria = _couponApplicationService.DescribeApplicabilityCriteria()
+            };
+
+            return View(viewModel);
         }
 
         public ActionResult Edit(int id, string category, string type, int criterionId = -1) {
@@ -62,7 +74,40 @@ namespace Nwazet.Commerce.Controllers {
                 return new HttpUnauthorizedResult();
             }
 
-            return View();
+            var coupon = _couponRepositoryService.Get(id);
+            if (coupon == null || coupon.Record == null) {
+                return HttpNotFound();
+            }
+
+            var criterion = _couponApplicationService
+                .GetCriterion(category, type);
+            if (criterion == null) {
+                return HttpNotFound();
+            }
+            // build the form, and let external components alter it
+            var form = criterion.Form == null
+                ? null
+                : _formManager.Build(criterion.Form);
+            string description = "";
+            // bind form with existing values.
+            if (criterionId != -1) {
+                var critRecord = coupon.Record
+                    .ApplicabilityCriteria
+                    .FirstOrDefault(ac => ac.Id == criterionId);
+                if (critRecord != null) {
+                    description = critRecord.Description;
+                    var parameters = FormParametersHelper.FromString(critRecord.State);
+                    _formManager.Bind(form,
+                        new DictionaryValueProvider<string>(parameters, CultureInfo.InvariantCulture));
+                }
+            }
+            var viewModel = new CouponCriterionEditViewModel {
+                Id = id,
+                Description = description,
+                Criterion = criterion,
+                Form = form
+            };
+            return View(viewModel);
         }
 
         [HttpPost, ActionName("Edit")]
@@ -77,8 +122,61 @@ namespace Nwazet.Commerce.Controllers {
                 T("Not authorized to manage coupons"))) {
                 return new HttpUnauthorizedResult();
             }
+            // Get the coupon
+            var coupon = _couponRepositoryService.Get(id);
+            if (coupon == null || coupon.Record == null) {
+                return HttpNotFound();
+            }
+            // get the definition for the criterion
+            var criterion = _couponApplicationService
+                .GetCriterion(category, type);
+            if (criterion == null) {
+                return HttpNotFound();
+            }
+            var viewModel = new CouponCriterionEditViewModel();
+            TryUpdateModel(viewModel);
+            // validating form values
+            _formManager.Validate(new ValidatingContext {
+                FormName = criterion.Form,
+                ModelState = ModelState,
+                ValueProvider = ValueProvider
+            });
 
-            return View();
+            if (ModelState.IsValid) {
+                var criterionRecord = coupon.Record
+                    .ApplicabilityCriteria
+                    .FirstOrDefault(f => f.Id == criterionId);
+
+                // add new criterion record if it's a newly created criterion
+                if (criterionRecord == null) {
+                    criterionRecord = new CouponApplicabilityCriterionRecord {
+                        Category = category,
+                        Type = type
+                    };
+                    coupon.Record.ApplicabilityCriteria.Add(criterionRecord);
+                }
+
+                var dictionary = formCollection.AllKeys
+                    .ToDictionary(key => key, formCollection.Get);
+                // save form parameters
+                criterionRecord.State = FormParametersHelper.ToString(dictionary);
+                criterionRecord.Description = viewModel.Description;
+
+                // redirect to editor for the coupon
+                return RedirectToAction("Edit", "CouponingAdmin", new { id = id });
+            }
+            // model is invalid, display it again
+            var form = _formManager.Build(criterion.Form);
+
+            _formManager.Bind(form, formCollection);
+            var vm = new CouponCriterionEditViewModel {
+                Id = id,
+                Description = viewModel.Description,
+                Criterion = criterion,
+                Form = form
+            };
+
+            return View(vm);
         }
 
         [HttpPost]
@@ -89,6 +187,21 @@ namespace Nwazet.Commerce.Controllers {
                 return new HttpUnauthorizedResult();
             }
 
+            var coupon = _couponRepositoryService.Get(id);
+            if (coupon == null || coupon.Record == null) {
+                return HttpNotFound();
+            }
+            if (criterionId >= 0) {
+                var critRecord = coupon.Record
+                    .ApplicabilityCriteria
+                    .FirstOrDefault(ac => ac.Id == criterionId);
+                if (critRecord == null) {
+                    // weird error condition
+                    return HttpNotFound();
+                }
+                // actually delete
+                _couponApplicationService.DeleteCriterion(criterionId);
+            }
             // redirect to editor for the coupon
             return RedirectToAction("Edit", "CouponingAdmin", new { id = id });
         }

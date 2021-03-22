@@ -1,5 +1,6 @@
 ﻿using Nwazet.Commerce.Descriptors.CouponApplicability;
 using Nwazet.Commerce.Extensions;
+using Nwazet.Commerce.Services.Couponing;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using System;
@@ -8,14 +9,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nwazet.Commerce.Services.Couponing {
+namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
-    public class BasicCouponApplicabilityCriterion : ICouponApplicabilityCriterion {
+    public class NoDuplicatesCouponApplicabilityCriterion : ICouponApplicabilityCriterion {
         // This implementation provides general tests that are ok for any and every coupon.
         // More specialized criteria should have their own implementations that only check
         // their single condition. For example, this is not the place to check that the cart
         // isn't empty, as on principle there may be coupons that can be added to empty carts.
-        public BasicCouponApplicabilityCriterion() {
+        public NoDuplicatesCouponApplicabilityCriterion() {
 
             T = NullLocalizer.Instance;
         }
@@ -26,9 +27,9 @@ namespace Nwazet.Commerce.Services.Couponing {
             
             if (context.IsApplicable) {
                 if (context.ShoppingCart?.PriceAlterations != null
-                        && context.ShoppingCart.PriceAlterations.Any(cpa =>
-                            CouponingUtilities.CouponAlterationType.Equals(cpa.AlterationType)
-                            && context.Coupon.Code.Equals(cpa.Key, StringComparison.InvariantCultureIgnoreCase))) {
+                    && context.ShoppingCart.PriceAlterations.Any(cpa =>
+                        CouponingUtilities.CouponAlterationType.Equals(cpa.AlterationType)
+                        && context.Coupon.Code.Equals(cpa.Key, StringComparison.InvariantCultureIgnoreCase))) {
                     // is this coupon already applied?
                     // can't apply the same coupon twice
                     context.IsApplicable = false;
@@ -40,11 +41,6 @@ namespace Nwazet.Commerce.Services.Couponing {
         public void CanBeProcessed(CouponApplicabilityContext context) {
             
         }
-
-        public void Describe(DescribeCouponApplicabilityContext describe) {
-            //TODO: since this is a default implementation whose test should always be done
-            // how can we handle it?
-            throw new NotImplementedException();
-        }
+        
     }
 }

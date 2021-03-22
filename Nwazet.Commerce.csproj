@@ -241,6 +241,7 @@
     <Compile Include="ApplicabilityCriteria\ApplicabilityContext.cs" />
     <Compile Include="ApplicabilityCriteria\CartSubTotalCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\CartWeightCriteria.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\AuthenticationStateCouponApplicabilityCriterion.cs" />
     <Compile Include="ApplicabilityCriteria\NumericCriterionBase.cs" />
     <Compile Include="Aspects\ITerritoryAddressAspect.cs" />
     <Compile Include="Commands\TerritoriesCommands.cs" />
@@ -409,6 +410,7 @@
     <Compile Include="Models\CheckoutItem.cs" />
     <Compile Include="Models\ConversionUtilities.cs" />
     <Compile Include="Models\Charge.cs" />
+    <Compile Include="Models\Couponing\CouponApplicabilityCriterionRecord.cs" />
     <Compile Include="Models\Couponing\CouponRecord.cs" />
     <Compile Include="Models\Couponing\CouponType.cs" />
     <Compile Include="Models\Couponing\CouponUsedRecord.cs" />
@@ -530,8 +532,8 @@
     <Compile Include="Services\BundleServiceBase.cs" />
     <Compile Include="Services\CartFinalizedContext.cs" />
     <Compile Include="Services\CartLifeCycleEventHandler.cs" />
-    <Compile Include="Services\Couponing\BasicCouponApplicabilityCriterion.cs" />
-    <Compile Include="Services\Couponing\CouponApplicabilityContext.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\NoDuplicatesCouponApplicabilityCriterion.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\CouponApplicabilityContext.cs" />
     <Compile Include="Descriptors\CouponApplicability\CouponApplicabilityCriterionDescriptor.cs" />
     <Compile Include="Services\Couponing\CouponCartLifeCycleEventHandler.cs" />
     <Compile Include="Services\Couponing\CouponCartPriceAlterationProcessor.cs" />
@@ -544,6 +546,7 @@
     <Compile Include="Descriptors\CouponApplicability\DescribeCouponApplicabilityContext.cs" />
     <Compile Include="Descriptors\CouponApplicability\DescribeCouponApplicabilityFor.cs" />
     <Compile Include="Services\Couponing\ICouponApplicabilityCriterion.cs" />
+    <Compile Include="Services\Couponing\ICouponApplicabilityCriterionProvider.cs" />
     <Compile Include="Services\Couponing\ICouponApplicationService.cs" />
     <Compile Include="Services\Couponing\ICouponRepositoryService.cs" />
     <Compile Include="Services\Couponing\IUsedCouponsRepositoryService.cs" />
@@ -694,6 +697,9 @@
     <Compile Include="ViewModels\ApplicabilityCriterionEntry.cs" />
     <Compile Include="ViewModels\CartPriceAlterationAmount.cs" />
     <Compile Include="ViewModels\Couponing\Coupon.cs" />
+    <Compile Include="ViewModels\Couponing\CouponApplicabilityCriterionEntry.cs" />
+    <Compile Include="ViewModels\Couponing\CouponCriteriaAddViewModel.cs" />
+    <Compile Include="ViewModels\Couponing\CouponCriterionEditViewModel.cs" />
     <Compile Include="ViewModels\Couponing\FilterOptions.cs" />
     <Compile Include="ViewModels\Couponing\CouponFrontendViewModel.cs" />
     <Compile Include="ViewModels\CriteriaAddViewModel.cs" />
