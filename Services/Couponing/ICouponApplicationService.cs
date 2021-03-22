@@ -14,12 +14,12 @@ namespace Nwazet.Commerce.Services.Couponing {
         /// Attemtps to add a coupon with a given code to the shopping cart
         /// </summary>
         /// <param name="code"></param>
-        void ApplyCoupon(string code);
+        void ApplyCoupon(CouponApplicabilityContext context);
         /// <summary>
         /// Attempts to remove a coupon with the given code from the shopping cart
         /// </summary>
         /// <param name="code"></param>
-        void RemoveCoupon(string code);
+        void RemoveCoupon(CouponApplicabilityContext context);
 
         void ReevaluateValidity(CouponLifeUpdateContext context);
         void CouponUsed(CouponUsedContext context);
