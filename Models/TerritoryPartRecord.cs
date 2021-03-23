@@ -9,10 +9,11 @@ namespace Nwazet.Commerce.Models {
         [Aggregate]
         public virtual TerritoryInternalRecord TerritoryInternalRecord { get; set; }
 
+        public virtual string TerritoriesFullPath { get; set; }
 
         [Aggregate]
         public virtual TerritoryPartRecord ParentTerritory { get; set; }
-        
+
         [Aggregate]
         public virtual TerritoryHierarchyPartRecord Hierarchy { get; set; }
 
