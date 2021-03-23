@@ -29,5 +29,9 @@ namespace Nwazet.Commerce.Services.Couponing {
         IEnumerable<TypeDescriptor<CouponApplicabilityCriterionDescriptor>> DescribeApplicabilityCriteria();
         CouponApplicabilityCriterionDescriptor GetCriterion(string category, string type);
         void DeleteCriterion(int criterionId);
+
+        IEnumerable<TypeDescriptor<CouponLineApplicabilityCriterionDescriptor>> DescribeLineCriteria();
+        CouponLineApplicabilityCriterionDescriptor GetLineCriterion(string category, string type);
+        void DeleteLineCriterion(int criterionId);
     }
 }

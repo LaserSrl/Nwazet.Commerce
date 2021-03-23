@@ -19,4 +19,12 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
         public bool IsApplicable { get; set; }
         public LocalizedString Message { get; set; }
     }
+
+
+    [OrchardFeature("Nwazet.Couponing")]
+    public class CouponLineApplicabilityContext
+        : CouponApplicabilityContext {
+
+        public ShoppingCartQuantityProduct CartLine { get; set; }
+    }
 }

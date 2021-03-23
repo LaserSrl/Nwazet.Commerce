@@ -225,8 +225,8 @@ namespace Nwazet.Commerce.Controllers {
                 return View(model.Hierarchy(hierarchyItem));
             }
 
-            AddModelError("", T("There are no territories that may be added to hierarchy \"{1}\".", hierarchyTitle));
-            return RedirectToAction("Index");
+            _notifier.Error(T("There are no territories that may be added to hierarchy \"{0}\".", hierarchyTitle));           
+            return RedirectToAction("Index", new { id = hierarchyId });
         }
 
         [HttpPost, ActionName("CreateTerritory")]
@@ -345,7 +345,7 @@ namespace Nwazet.Commerce.Controllers {
             return EditTerritoryPost(id, returnUrl, contentItem => _contentManager.Publish(contentItem));
         }
 
-        public PartialViewResult GetChildNodes(int id, int index) {
+        public PartialViewResult GetChildNodes(int id, int index=0) {
             ActionResult redirectTo;
             var territoryPart = _contentManager.Get(id, VersionOptions.Latest).As<TerritoryPart>();
             if (territoryPart == null) {
@@ -355,13 +355,13 @@ namespace Nwazet.Commerce.Controllers {
                 return null;
             }
 
-            var hierarchyPart = territoryPart.HierarchyPart; ;
+            var hierarchyPart = territoryPart.HierarchyPart;
 
 
             var children = _territoriesService.GetTerritoriesQuery(hierarchyPart, territoryPart, VersionOptions.Latest)
                 .Join<TitlePartRecord>()
                 .OrderBy(x => x.Title)
-                .List().Select(MakeANode).ToList(); ;
+                .List().Select(MakeANode).ToList();
 
             var model = new TerritoryHierarchyTerritoriesViewModel {
                 HierarchyPart = hierarchyPart,

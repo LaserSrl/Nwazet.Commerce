@@ -13,6 +13,7 @@ namespace Nwazet.Commerce.Services.Couponing {
         public CouponRecord Coupon { get; set; }
         public IShoppingCart ShoppingCart { get; set; }
         public WorkContext WorkContext { get; set; }
+
     }
 
     [OrchardFeature("Nwazet.Couponing")]

@@ -38,7 +38,12 @@ namespace Nwazet.Commerce.Services {
         /// <param name="alteration"></param>
         /// <returns></returns>
         string AlterationLabel(CartPriceAlteration alteration, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine);
-
+        /// <summary>
+        /// Tells whether an implementation is able to handle the given alteration.
+        /// </summary>
+        /// <param name="alteration"></param>
+        /// <returns></returns>
+        bool CanProcess(CartPriceAlteration alteration);
         bool CanProcess(CartPriceAlteration alteration, IShoppingCart shoppingCart);
     }
 }

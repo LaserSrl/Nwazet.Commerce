@@ -39,6 +39,7 @@ namespace Nwazet.Commerce.Models {
         public XElement ToXML() {
             return new XElement(ElementName)
                 .Attr("ProductId", ProductId)
+                .Attr("LineKey", LineKey)
                 .AddEl(new XElement("Source", Source))
                 .AddEl(Details
                     .Select(d => d.ToXML())
@@ -49,6 +50,7 @@ namespace Nwazet.Commerce.Models {
             var ola = el
                 .With(new OrderLineInformation())
                 .FromAttr(e => e.ProductId)
+                .FromAttr(e => e.LineKey)
                 .Context;
             ola.Source = el.Element("Source");
             ola.Details = el.Elements(OrderInformationDetail.ElementName)

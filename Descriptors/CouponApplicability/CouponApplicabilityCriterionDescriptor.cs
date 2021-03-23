@@ -8,15 +8,35 @@ using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Descriptors.CouponApplicability {
     [OrchardFeature("Nwazet.Couponing")]
-    public class CouponApplicabilityCriterionDescriptor {
+    public class CouponCriterionDescriptor{
 
         public string Category { get; set; }
         public string Type { get; set; }
         public LocalizedString Name { get; set; }
         public LocalizedString Description { get; set; }
-        public Action<CouponCriterionContext> AdditionCriterion { get; set; }
-        public Action<CouponCriterionContext> ProcessingCriterion { get; set; }
         public string Form { get; set; }
-        public Func<CouponCriterionContext, LocalizedString> Display { get; set; }
+    }
+
+    [OrchardFeature("Nwazet.Couponing")]
+    public class CouponCriterionDescriptor<TContext> 
+        : CouponCriterionDescriptor
+        where TContext : CouponContext {
+        
+        public Func<TContext, LocalizedString> Display { get; set; }
+    }
+
+    [OrchardFeature("Nwazet.Couponing")]
+    public class CouponApplicabilityCriterionDescriptor
+        : CouponCriterionDescriptor<CouponApplicabilityCriterionContext> {
+
+        public Action<CouponApplicabilityCriterionContext> AdditionCriterion { get; set; }
+        public Action<CouponApplicabilityCriterionContext> ProcessingCriterion { get; set; }
+    }
+
+    [OrchardFeature("Nwazet.Couponing")]
+    public class CouponLineApplicabilityCriterionDescriptor
+        : CouponCriterionDescriptor<CouponLineCriterionContext> {
+
+        public Action<CouponLineCriterionContext> Criterion { get; set; }
     }
 }

@@ -40,6 +40,10 @@ namespace Nwazet.Commerce.Models {
         #region Actions: what does the coupon do?
         public virtual decimal Value { get; set; }
         public virtual CouponType CouponType { get; set; }
+
+        [CascadeAllDeleteOrphan, Aggregate]
+        [XmlArray("LineCriteria")]
+        public virtual IList<CouponLineCriterionRecord> LineCriteria { get; set; }
         #endregion
 
 

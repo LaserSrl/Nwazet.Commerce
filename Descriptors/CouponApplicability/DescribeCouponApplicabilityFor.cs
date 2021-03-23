@@ -7,30 +7,47 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Descriptors.CouponApplicability {
-    [OrchardFeature("Nwazet.Couponing")]
-    public class DescribeCouponApplicabilityFor {
-        private readonly string _category;
 
-        public DescribeCouponApplicabilityFor(
+    [OrchardFeature("Nwazet.Couponing")]
+    public class DescribeApplicabilityFor<TDescriptor>
+        where TDescriptor : CouponCriterionDescriptor {
+
+        protected readonly string _category;
+
+        public DescribeApplicabilityFor(
             string category, LocalizedString name, LocalizedString description) {
-            Types = new List<CouponApplicabilityCriterionDescriptor>();
+            Types = new List<TDescriptor>();
             _category = category;
             Name = name;
             Description = description;
         }
 
-        public LocalizedString Name { get; private set; }
-        public LocalizedString Description { get; private set; }
-        public List<CouponApplicabilityCriterionDescriptor> Types { get; private set; }
+        public LocalizedString Name { get; protected set; }
+        public LocalizedString Description { get; protected set; }
+        public List<TDescriptor> Types { get; protected set; }
+    }
+
+    [OrchardFeature("Nwazet.Couponing")]
+    public class DescribeCouponApplicabilityFor 
+        : DescribeApplicabilityFor<CouponApplicabilityCriterionDescriptor> {
+
+        public DescribeCouponApplicabilityFor(
+            string category, LocalizedString name, LocalizedString description)
+            : base(category, name, description) {
+        }
 
         public DescribeCouponApplicabilityFor Element(
             string type,
             LocalizedString name,
             LocalizedString description,
-            Action<CouponCriterionContext> additionCriterion,
-            Action<CouponCriterionContext> processingCriterion,
-            Func<CouponCriterionContext, LocalizedString> display,
+            Action<CouponApplicabilityCriterionContext> additionCriterion,
+            Action<CouponApplicabilityCriterionContext> processingCriterion,
+            Func<CouponApplicabilityCriterionContext, LocalizedString> display,
             string form = null) {
+
+            if (Types == null) {
+                Types = new List<CouponApplicabilityCriterionDescriptor>();
+            }
 
             Types.Add(new CouponApplicabilityCriterionDescriptor {
                 Type = type,
@@ -39,6 +56,40 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
                 Category = _category,
                 AdditionCriterion = additionCriterion,
                 ProcessingCriterion = processingCriterion,
+                Display = display,
+                Form = form
+            });
+            return this;
+        }
+    }
+
+    [OrchardFeature("Nwazet.Couponing")]
+    public class DescribeCouponLineApplicabilityFor
+        : DescribeApplicabilityFor<CouponLineApplicabilityCriterionDescriptor> {
+
+        public DescribeCouponLineApplicabilityFor(
+            string category, LocalizedString name, LocalizedString description)
+            : base(category, name, description) {
+        }
+
+        public DescribeCouponLineApplicabilityFor Element(
+            string type,
+            LocalizedString name,
+            LocalizedString description,
+            Action<CouponLineCriterionContext> criterion,
+            Func<CouponLineCriterionContext, LocalizedString> display,
+            string form = null) {
+
+            if (Types == null) {
+                Types = new List<CouponLineApplicabilityCriterionDescriptor>();
+            }
+
+            Types.Add(new CouponLineApplicabilityCriterionDescriptor {
+                Type = type,
+                Name = name,
+                Description = description,
+                Category = _category,
+                Criterion = criterion,
                 Display = display,
                 Form = form
             });

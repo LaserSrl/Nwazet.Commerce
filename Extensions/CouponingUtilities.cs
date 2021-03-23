@@ -58,8 +58,18 @@ namespace Nwazet.Commerce.Extensions {
             record.CouponType = coupon.CouponType;
             record.Published = coupon.Published;
         }
-
-        public static XElement ToXMLElement(this CouponRecord record) {
+        /// <summary>
+        /// Create an XElement for the CouponRecord. The optional parameter
+        /// tells whether the coupon was processable and thus used in the
+        /// context where this metohd is called.
+        /// </summary>
+        /// <param name="record"></param>
+        /// <param name="wasInvalid"></param>
+        /// <returns></returns>
+        /// <remarks>When serializing coupons for an order, set wasInvalid = true
+        /// to indicate those coupons that were in the cart/order, but had no
+        /// effect.</remarks>
+        public static XElement ToXMLElement(this CouponRecord record, bool wasInvalid = false) {
             // The record's properties are serialized as attributes of the
             // resulting XElement. This will result in an XML element that looks
             // like this:
@@ -76,6 +86,9 @@ namespace Nwazet.Commerce.Extensions {
                 .ToAttr(c => c.Value)
                 .ToAttr(c => c.CouponType)
                 ;
+            if (wasInvalid) {
+                couponEl.Element.SetAttributeValue("WasInvalid", wasInvalid);
+            }
             couponEl.Element
                 .AddEl(record.ApplicabilityCriteria
                     .Select(ac => {

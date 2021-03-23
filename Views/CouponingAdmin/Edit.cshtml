@@ -11,7 +11,8 @@
                                             @class = "no-multisubmit"
                                         })) {
     @Html.Partial("_CouponPartial", Model)
-    @Html.Partial("_ApplicabilityCriteriaPartial", Model)
+    @Html.Partial("_CouponConditionsPartial", Model)
+    @Html.Partial("_CouponActionsPartial", Model)
 
     <button type="submit" name="submit.Save" class="primaryAction" value="submit.Save">@T("Save")</button>
 }

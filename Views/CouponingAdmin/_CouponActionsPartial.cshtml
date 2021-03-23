@@ -1,0 +1,66 @@
+﻿@using Nwazet.Commerce.ViewModels.Couponing;
+@model Coupon
+
+<fieldset>
+    <legend>@T("Actions")</legend>
+    <div class="form-group">
+        @Html.LabelFor(m => m.CouponType, T("Value type").Text, new { @for = Html.FieldIdFor(m => m.CouponType) })
+        @Html.DropDownListFor(m => m.CouponType, new SelectList(Enum.GetValues(typeof(Nwazet.Commerce.Models.Couponing.CouponType))), T("Select a type").Text, new { @class = "form-control text medium", id = Html.FieldIdFor(m => m.CouponType), aria_describedby = "couponTypeHelp" })
+        <small id="couponTypeHelp" class="form-text text-muted hint">@T("The coupon's value type.")</small>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Value, T("Value/Amount").Text, new { @for = Html.FieldIdFor(m => m.Value) })
+        <input type="number" class="form-control text small"
+               step="0.01" min="0"
+               id="@Html.FieldIdFor(m => m.Value)"
+               name="@Html.FieldNameFor(m => m.Value)"
+               aria_describedby="couponValueHelp"
+               placeholder="@T("Coupon's value")" 
+               value="@Model.Value.ToString("0.##")"/>
+       <small id="couponValueHelp" class="form-text text-muted hint">@T("The coupon's value/amount.")</small>
+    </div>
+    <fieldset>
+        <legend>@T("Apply the rule only to cart items matching the following conditions (leave blank for all items).")</legend>
+        <span class="hint">
+            @T("All configured criteria must apply for a line to be affected by the coupon. Make sure to save your changes to the rest of the coupon before editing the criteria.")
+        </span>
+        <table class="items">
+            <thead>
+                <tr>
+                    <th scope="col">@T("Description")</th>
+                    <th scope="col" class="actions">
+                        @Html.ActionLink(T("+ Add a new Line Criterion").Text,
+                            "Add",
+                            new {
+                                controller = "CouponingLineCriterion",
+                                area = "Nwazet.Commerce",
+                                id = Model.Id })
+                    </th>
+                </tr>
+            </thead>
+            @foreach (var criterion in Model.LineCriteria) {
+                <tr>
+                    <td>@criterion.DisplayText</td>
+                    <td>
+                        @Html.ActionLink(T("Edit").Text,
+                            "Edit",
+                            new {
+                                controller = "CouponingLineCriterion",
+                                area = "Nwazet.Commerce",
+                                id = Model.Id,
+                                category = criterion.Category,
+                                type = criterion.Type,
+                                criterionId = criterion.CriterionRecordId }) |
+                        @Html.ActionLink(T("Delete").Text,
+                            "Delete",
+                            new { controller = "CouponingLineCriterion",
+                                area = "Nwazet.Commerce",
+                                id = Model.Id,
+                                criterionId = criterion.CriterionRecordId },
+                            new { itemprop = "RemoveUrl UnsafeUrl" })
+                    </td>
+                </tr>
+            }
+        </table>
+    </fieldset>
+</fieldset>
