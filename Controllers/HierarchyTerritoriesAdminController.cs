@@ -225,8 +225,8 @@ namespace Nwazet.Commerce.Controllers {
                 return View(model.Hierarchy(hierarchyItem));
             }
 
-            AddModelError("", T("There are no territories that may be added to hierarchy \"{1}\".", hierarchyTitle));
-            return RedirectToAction("Index");
+            _notifier.Error(T("There are no territories that may be added to hierarchy \"{0}\".", hierarchyTitle));           
+            return RedirectToAction("Index", new { id = hierarchyId });
         }
 
         [HttpPost, ActionName("CreateTerritory")]
