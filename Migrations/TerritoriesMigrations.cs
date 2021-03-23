@@ -120,7 +120,7 @@ namespace Nwazet.Commerce.Migrations {
             var territoryItems = _territoryPartRecord.Table.ToList();
             var firstLevel = territoryItems.Where(x => x.ParentTerritory == null || x.ParentTerritory.Id == 0);
             foreach (var item in firstLevel) {
-                UpdatePath(0, item.Hierarchy.Id, "\\", territoryItems);
+                UpdatePath(0, item.Hierarchy != null ? item.Hierarchy.Id : 0, "\\", territoryItems);
             }
             return 5;
         }
@@ -143,10 +143,10 @@ namespace Nwazet.Commerce.Migrations {
             var current = _transactionManager.GetSession();
             string sqlUpdate;
             if (parentId > 0) {
-                sqlUpdate = "UPDATE Nwazet.Commerce.Models.TerritoryPartRecord t SET t.TerritoriesFullPath=concat('" + parentPath.Replace("'", "''") + "', trim(str(t.id)), '\\') WHERE isnull(t.ParentTerritory.Id,0)=" + parentId;
+                sqlUpdate = "UPDATE Nwazet.Commerce.Models.TerritoryPartRecord t SET t.TerritoriesFullPath=concat('" + parentPath.Replace("'", "''") + "', trim(str(t.id)), '\\') WHERE isnull(t.Hierarchy.Id,0)=" + hierarchyId + " and isnull(t.ParentTerritory.Id,0)=" + parentId;
             }
             else {
-                sqlUpdate = "UPDATE Nwazet.Commerce.Models.TerritoryPartRecord t SET t.TerritoriesFullPath=concat('" + parentPath.Replace("'", "''") + "', trim(str(t.id)), '\\') WHERE isnull(t.ParentTerritory.Id,0)=0";
+                sqlUpdate = "UPDATE Nwazet.Commerce.Models.TerritoryPartRecord t SET t.TerritoriesFullPath=concat('" + parentPath.Replace("'", "''") + "', trim(str(t.id)), '\\') WHERE isnull(t.Hierarchy.Id,0)=" + hierarchyId + " and isnull(t.ParentTerritory.Id,0)=0";
             }
             var bulkUpdate = current.CreateQuery(sqlUpdate);
             bulkUpdate.ExecuteUpdate();
