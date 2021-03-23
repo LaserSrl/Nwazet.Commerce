@@ -1,0 +1,38 @@
+﻿@using Nwazet.Commerce.ViewModels
+
+@model TerritoryHierarchyTerritoriesViewModel
+
+@{
+    var hierarchyItem = Model.HierarchyItem;
+    var nodesList = Model.Nodes.ToList(); // need this for FindIndex
+}
+
+@if (Model.Nodes.Any()) {
+    @RenderTerritories(Model.Nodes, Model.TerritoryNodeId, Model.ProgressiveIndex, nodesList)
+}
+
+@helper RenderTerritories(IList<TerritoryHierarchyTreeNode> nodes, int parent, int index, List<TerritoryHierarchyTreeNode> nodesList) {
+    @:<ol>
+        bool first = true;
+        foreach (var node in nodes) {
+
+            var jsNodeId = "territory-node-" + node.Id;
+            // render the node, then its children
+            @:<li class="territories-list-item" data-index="@node.Id" id="@jsNodeId">
+                  <div>
+                      <a href="@Url.Action("GetChildNodes", new { id = node.Id })" data-node="@jsNodeId" class="ajax-expand-node glyphicon glyphicon-plus"></a>
+                      <h2>@node.DisplayText</h2>
+                      <input type="hidden" class="text" name="@Html.NameOf(m => m.Nodes[index].Id)" value="@node.Id" />
+                      <span class="territory-type">(@node.TerritoryItem.ContentItem.ContentType)</span>
+                      <span class="territory-parent"><input type="text" class="text" name="@Html.NameOf(m => m.Nodes[index].ParentId)" value="@node.ParentId" /></span>
+                      <span class="territory-actions">
+                          @Html.Link(T("Edit").Text, node.EditUrl, new { ReturnUrl = Request.RawUrl })@T(" | ")
+                          @Html.ActionLink(T("Delete").Text, "DeleteTerritory", new { id = node.Id }, new { @class = "remove", itemprop = "RemoveUrl UnsafeUrl" })
+                      </span>
+                  </div>
+            @:</li>
+        index++;
+    }
+    @:</ol>
+    Model.ProgressiveIndex = index;
+}
