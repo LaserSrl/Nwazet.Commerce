@@ -31,6 +31,7 @@ namespace Nwazet.Commerce.Services.Couponing {
         private readonly INotifier _notifier;
         private readonly IEnumerable<ICouponApplicabilityCriterion> _applicabilityCriteria;
         private readonly IEnumerable<ICouponApplicabilityCriterionProvider> _applicabilityCriteriaProviders;
+        private readonly IEnumerable<ICouponLineApplicabilityCriterionProvider> _applicabilityLineCriteriaProviders;
         private readonly IUsedCouponsRepositoryService _usedCouponsRepositoryService;
         private readonly IRepository<CouponApplicabilityCriterionRecord> _criteriaRepository;
         private readonly IRepository<CouponLineCriterionRecord> _lineCriteriaRepository;
@@ -42,6 +43,7 @@ namespace Nwazet.Commerce.Services.Couponing {
             INotifier notifier,
             IEnumerable<ICouponApplicabilityCriterion> applicabilityCriteria,
             IEnumerable<ICouponApplicabilityCriterionProvider> applicabilityCriteriaProviders,
+            IEnumerable<ICouponLineApplicabilityCriterionProvider> applicabilityLineCriteriaProviders,
             IUsedCouponsRepositoryService usedCouponsRepositoryService,
             IRepository<CouponApplicabilityCriterionRecord> criteriaRepository,
             IRepository<CouponLineCriterionRecord> lineCriteriaRepository,
@@ -52,6 +54,7 @@ namespace Nwazet.Commerce.Services.Couponing {
             _notifier = notifier;
             _applicabilityCriteria = applicabilityCriteria;
             _applicabilityCriteriaProviders = applicabilityCriteriaProviders;
+            _applicabilityLineCriteriaProviders = applicabilityLineCriteriaProviders;
             _usedCouponsRepositoryService = usedCouponsRepositoryService;
             _criteriaRepository = criteriaRepository;
             _lineCriteriaRepository = lineCriteriaRepository;
@@ -325,6 +328,10 @@ namespace Nwazet.Commerce.Services.Couponing {
             DescribeLineCriteria() {
 
             var context = new DescribeCouponLineApplicabilityContext();
+
+            foreach (var provider in _applicabilityLineCriteriaProviders) {
+                provider.Describe(context);
+            }
 
             return context.Describe();
         }
