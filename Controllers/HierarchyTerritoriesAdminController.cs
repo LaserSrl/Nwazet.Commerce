@@ -95,7 +95,10 @@ namespace Nwazet.Commerce.Controllers {
             var hierarchyPart = hierarchyItem.As<TerritoryHierarchyPart>();
 
 
-            var topLevelOfHierarchy = _territoriesService.GetTerritoriesQuery(hierarchyPart, null,VersionOptions.Latest).List().Select(MakeANode).ToList(); ;
+            var topLevelOfHierarchy = _territoriesService.GetTerritoriesQuery(hierarchyPart, null, VersionOptions.Latest)
+                .Join<TitlePartRecord>()
+                .OrderBy(x => x.Title)
+                .List().Select(MakeANode).ToList(); ;
 
             var model = new TerritoryHierarchyTerritoriesViewModel {
                 HierarchyPart = hierarchyPart,
@@ -128,9 +131,9 @@ namespace Nwazet.Commerce.Controllers {
                     // The only fields we receive as populated for the nodes are:
                     //  - node.Id: the Id of the ContentItem for the TerritoryPart
                     //  - node.ParentId: the Id of the Parent assigned to that node
-                    
+
                     if (updatedNodes.Contains(node.Id)) {
-                    var territoryPart = _contentManager.Get<TerritoryPart>(node.Id, VersionOptions.Latest);
+                        var territoryPart = _contentManager.Get<TerritoryPart>(node.Id, VersionOptions.Latest);
                         try {
                             if (node.ParentId == 0) {
                                 if (territoryPart.Parent != null) { // do not update if there was no change
@@ -207,7 +210,7 @@ namespace Nwazet.Commerce.Controllers {
             // There must be "unused" TerritoryInternalRecords for this hierarchy.
             var hierarchyTerritories = _territoryPartRecordService.GetHierarchyTerritories(hierarchyPart).ToList();
             if (_territoriesService
-                .GetAvailableTerritoryInternals(hierarchyPart,hierarchyTerritories)
+                .GetAvailableTerritoryInternals(hierarchyPart, hierarchyTerritories)
                 .Any()) {
 
                 // Creation
@@ -283,8 +286,8 @@ namespace Nwazet.Commerce.Controllers {
                         ? T("Your content has been created.")
                         : T("Your {0} has been created.", item.TypeDefinition.DisplayName));
 
-                    return this.RedirectLocal(returnUrl, () => 
-                        RedirectToAction("EditTerritory", 
+                    return this.RedirectLocal(returnUrl, () =>
+                        RedirectToAction("EditTerritory",
                             new RouteValueDictionary { { "Id", item.Id } }));
                 }
             });
@@ -307,7 +310,7 @@ namespace Nwazet.Commerce.Controllers {
             if (ShouldRedirectForPermissions(territoryPart.Record.Hierarchy.Id, out redirectTo)) {
                 return redirectTo;
             }
-            
+
             if (!_authorizer.Authorize(
                 TerritoriesPermissions.ManageTerritories, territoryItem, TerritoriesUtilities.Edit401TerritoryMessage))
                 return new HttpUnauthorizedResult();
@@ -321,7 +324,7 @@ namespace Nwazet.Commerce.Controllers {
         [Orchard.Mvc.FormValueRequired("submit.Save")]
         public ActionResult EditTerritoryPost(int id, string returnUrl) {
             return EditTerritoryPost(id, returnUrl, contentItem => {
-                if (!contentItem.Has<IPublishingControlAspect>() && 
+                if (!contentItem.Has<IPublishingControlAspect>() &&
                     !contentItem.TypeDefinition.Settings.GetModel<ContentTypeSettings>().Draftable)
                     _contentManager.Publish(contentItem);
             });
@@ -352,10 +355,13 @@ namespace Nwazet.Commerce.Controllers {
                 return null;
             }
 
-            var hierarchyPart = territoryPart.HierarchyPart;;
+            var hierarchyPart = territoryPart.HierarchyPart; ;
 
 
-            var children = _territoriesService.GetTerritoriesQuery(hierarchyPart, territoryPart, VersionOptions.Latest).List().Select(MakeANode).ToList(); ;
+            var children = _territoriesService.GetTerritoriesQuery(hierarchyPart, territoryPart, VersionOptions.Latest)
+                .Join<TitlePartRecord>()
+                .OrderBy(x => x.Title)
+                .List().Select(MakeANode).ToList(); ;
 
             var model = new TerritoryHierarchyTerritoriesViewModel {
                 HierarchyPart = hierarchyPart,
@@ -386,9 +392,9 @@ namespace Nwazet.Commerce.Controllers {
                         _transactionManager.Cancel();
                         return View(model);
                     }
-                    
+
                     conditionallyPublish(item);
-                    
+
                     _notifier.Information(string.IsNullOrWhiteSpace(item.TypeDefinition.DisplayName)
                         ? T("Your content has been updated.")
                         : T("Your {0} has been updated.", item.TypeDefinition.DisplayName));
@@ -517,7 +523,7 @@ namespace Nwazet.Commerce.Controllers {
                 TerritoryItem = territoryPart,
                 ParentId = territoryPart.Record.ParentTerritory == null ? 0 : territoryPart.Record.ParentTerritory.Id,
                 EditUrl = this.Url.Action("EditTerritory", new { id = territoryPart.Id }), //adds and edit url here
-                DisplayText =  territoryPart.As<TitlePart>().Title +
+                DisplayText = territoryPart.As<TitlePart>().Title +
                     (!territoryPart.IsPublished() ? T(" (draft)").Text : string.Empty) +
                     ((territoryPart.Record.TerritoryInternalRecord == null) ? T(" (requires identity)").Text : string.Empty)
             };
@@ -530,7 +536,8 @@ namespace Nwazet.Commerce.Controllers {
             _handlers.Invoke(handler => handler.Updating(context), Logger);
             if (parentPart == null) {
                 _territoriesHierarchyService.AddTerritory(territoryPart, hierarchyPart); // move to root
-            } else {
+            }
+            else {
                 _territoriesHierarchyService.AssignParent(territoryPart, parentPart);
             }
             _handlers.Invoke(handler => handler.Updated(context), Logger);
