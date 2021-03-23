@@ -17,6 +17,9 @@ function TerritoryAjaxCall(e) {
                 if (!$.trim(response)) {//empty response
                     return;
                 }
+                $(nodeid).find(".ajax-expand-node").removeClass("glyphicon-plus");
+                $(nodeid).find(".ajax-expand-node").addClass("glyphicon-minus");
+
                 $(nodeid).append(response);
                 $(progressiveTerritoryIndexElement).val(parseInt($(progressiveTerritoryIndexElement).val()) + $(nodeid).children("ol").find(".ajax-expand-node").length);
             },
@@ -26,6 +29,15 @@ function TerritoryAjaxCall(e) {
         });
     } else {
         $(nodeid).children("ol").toggle();
+        var expandPanel = $('[data-node="'+currentElement.data("node")+'"]');
+        if (expandPanel.hasClass("glyphicon-plus")) {
+            expandPanel.removeClass("glyphicon-plus");
+            expandPanel.addClass("glyphicon-minus");
+        }
+        else if (expandPanel.hasClass("glyphicon-minus")) {
+            expandPanel.removeClass("glyphicon-minus");
+            expandPanel.addClass("glyphicon-plus");
+        }
     }
 }
 
@@ -62,19 +74,32 @@ function TerritoryAjaxCall(e) {
         tolerance: 'pointer',
         toleranceElement: '> div',
 
+        start: function (event, ui) {
+            // to check whether the parent has changed, save the parent during its selection
+            idNode = ui.item.data("index");
+            var parent = $('[data-index="' + idNode + '"]').find('.territory-parent > input');
+            ui.item.data('start_parent', parent.val());
+        },
+
         stop: function (event, ui) {
             // update all positions whenever a menu item was moved
             populate(this, "0");
             idNode = ui.item.data("index");
+
             if (("," + $(updatedTerritoryIdsElement).val() + ",").indexOf("," + idNode + ",") == -1) {
                 $(updatedTerritoryIdsElement).val($(updatedTerritoryIdsElement).val() + "," + idNode);
             }
-            $('#save-message').show();
 
-            // display a message on leave if changes have been made
-            window.onbeforeunload = function (e) {
-                return $("<div/>").html(leaveConfirmation).text();
-            };
+            // after repositioning I check if the father has changed
+            var parent = $('[data-index="' + idNode + '"]').find('.territory-parent > input');
+            if (ui.item.data("start_parent") !== parent.val()) {
+                $('#save-message').show();
+
+                // display a message on leave if changes have been made
+                window.onbeforeunload = function (e) {
+                    return $("<div/>").html(leaveConfirmation).text();
+                };
+            }
 
             // cancel leaving message on save
             $('#saveButton').click(function (e) {
