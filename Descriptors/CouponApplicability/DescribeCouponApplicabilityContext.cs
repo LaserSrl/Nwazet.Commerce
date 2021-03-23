@@ -37,4 +37,35 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
             return describeFor;
         }
     }
+    
+    [OrchardFeature("Nwazet.Couponing")]
+    public class DescribeCouponLineApplicabilityContext {
+
+        private readonly Dictionary<string, DescribeCouponLineApplicabilityFor> _describes =
+            new Dictionary<string, DescribeCouponLineApplicabilityFor>();
+
+        public IEnumerable<TypeDescriptor<CouponLineApplicabilityCriterionDescriptor>> Describe() {
+            return _describes.Select(kp => new TypeDescriptor<CouponLineApplicabilityCriterionDescriptor> {
+                Category = kp.Key,
+                Name = kp.Value.Name,
+                Description = kp.Value.Description,
+                Descriptors = kp.Value.Types
+            });
+        }
+
+
+        public DescribeCouponLineApplicabilityFor For(string category) {
+            return For(category, null, null);
+        }
+
+        public DescribeCouponLineApplicabilityFor For(
+            string category, LocalizedString name, LocalizedString description) {
+            DescribeCouponLineApplicabilityFor describeFor;
+            if (!_describes.TryGetValue(category, out describeFor)) {
+                describeFor = new DescribeCouponLineApplicabilityFor(category, name, description);
+                _describes[category] = describeFor;
+            }
+            return describeFor;
+        }
+    }
 }

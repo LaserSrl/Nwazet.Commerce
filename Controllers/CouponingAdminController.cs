@@ -185,12 +185,16 @@ namespace Nwazet.Commerce.Controllers {
                             Type = descriptor.Type,
                             CriterionRecordId = crit.Id,
                             DisplayText = string.IsNullOrWhiteSpace(crit.Description)
-                                ? descriptor.Display(new CouponCriterionContext {
+                                ? descriptor.Display(new CouponApplicabilityCriterionContext {
                                     State = FormParametersHelper.ToDynamic(crit.State)
                                 }).Text
                                 : crit.Description
                         });
                 }
+            }
+            // populate the vm "summaries" for the line conditions
+            foreach (var crit in coupon.Record.LineCriteria) {
+
             }
             return View(coupon);
         }

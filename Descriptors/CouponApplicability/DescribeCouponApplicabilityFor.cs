@@ -27,9 +27,9 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
             string type,
             LocalizedString name,
             LocalizedString description,
-            Action<CouponCriterionContext> additionCriterion,
-            Action<CouponCriterionContext> processingCriterion,
-            Func<CouponCriterionContext, LocalizedString> display,
+            Action<CouponApplicabilityCriterionContext> additionCriterion,
+            Action<CouponApplicabilityCriterionContext> processingCriterion,
+            Func<CouponApplicabilityCriterionContext, LocalizedString> display,
             string form = null) {
 
             Types.Add(new CouponApplicabilityCriterionDescriptor {
@@ -39,6 +39,43 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
                 Category = _category,
                 AdditionCriterion = additionCriterion,
                 ProcessingCriterion = processingCriterion,
+                Display = display,
+                Form = form
+            });
+            return this;
+        }
+    }
+
+    [OrchardFeature("Nwazet.Couponing")]
+    public class DescribeCouponLineApplicabilityFor {
+        private readonly string _category;
+
+        public DescribeCouponLineApplicabilityFor(
+            string category, LocalizedString name, LocalizedString description) {
+            Types = new List<CouponLineApplicabilityCriterionDescriptor>();
+            _category = category;
+            Name = name;
+            Description = description;
+        }
+
+        public LocalizedString Name { get; private set; }
+        public LocalizedString Description { get; private set; }
+        public List<CouponLineApplicabilityCriterionDescriptor> Types { get; private set; }
+
+        public DescribeCouponLineApplicabilityFor Element(
+            string type,
+            LocalizedString name,
+            LocalizedString description,
+            Action<CouponLineCriterionContext> criterion,
+            Func<CouponLineCriterionContext, LocalizedString> display,
+            string form = null) {
+
+            Types.Add(new CouponLineApplicabilityCriterionDescriptor {
+                Type = type,
+                Name = name,
+                Description = description,
+                Category = _category,
+                Criterion = criterion,
                 Display = display,
                 Form = form
             });

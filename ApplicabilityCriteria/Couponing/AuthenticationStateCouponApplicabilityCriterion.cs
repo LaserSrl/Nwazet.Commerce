@@ -39,7 +39,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     null);
         }
         
-        public void ApplyCriteria(CouponCriterionContext context,
+        public void ApplyCriteria(CouponApplicabilityCriterionContext context,
             // Use outerCriterion to negate the test, so we can easily do
             // true/false
             Func<bool, bool> outerCriterion,

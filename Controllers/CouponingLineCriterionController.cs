@@ -19,14 +19,14 @@ using System.Web.Mvc;
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Couponing")]
     [ValidateInput(false), Admin]
-    public class CouponingCriterionController : Controller {
+    public class CouponingLineCriterionController : Controller {
 
         private readonly IAuthorizer _authorizer;
         private readonly ICouponApplicationService _couponApplicationService;
         private readonly ICouponRepositoryService _couponRepositoryService;
         private readonly IFormManager _formManager;
 
-        public CouponingCriterionController(
+        public CouponingLineCriterionController(
             IAuthorizer authorizer,
             ICouponApplicationService couponApplicationService,
             ICouponRepositoryService couponRepositoryService,

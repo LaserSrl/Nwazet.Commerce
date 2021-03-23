@@ -31,14 +31,15 @@ namespace Nwazet.Commerce.ViewModels.Couponing {
         [RegularExpression(@"[a-zA-Z0-9]{1,255}")]
         public string Code { get; set; } // Actual code for the coupon: e.g. XMAS2020
         #endregion
-        #region Applicability
+        #region Conditions
         public bool Published { get; set; }
         public List<CouponApplicabilityCriterionEntry> ApplicabilityCriteria { get; set; }
         #endregion
         #region Actions
+        public CouponType CouponType { get; set; }
         public decimal Value { get; set; }
 
-        public CouponType CouponType { get; set; }
+        public List<CouponApplicabilityCriterionEntry> LineCriteria { get; set; }
         #endregion
     }
 }

@@ -178,8 +178,10 @@
     </None>
     <None Include="packages.config" />
     <None Include="Styles\product-admin.less" />
-    <None Include="Views\CouponingAdmin\_ApplicabilityCriteriaPartial.cshtml" />
-    <None Include="Views\CouponingAdmin\_ApplicabilityCriteriaNewCouponPartial.cshtml" />
+    <None Include="Views\CouponingAdmin\_CouponActionsPartial.cshtml" />
+    <None Include="Views\CouponingAdmin\_CouponActionsNewPartial.cshtml" />
+    <None Include="Views\CouponingAdmin\_CouponConditionsPartial.cshtml" />
+    <None Include="Views\CouponingAdmin\_CouponConditionsNewPartial.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponPartial.cshtml" />
     <None Include="Views\CouponingAdmin\Create.cshtml" />
     <None Include="Views\CouponingAdmin\Edit.cshtml" />
@@ -247,6 +249,7 @@
     <Compile Include="Commands\TerritoriesCommands.cs" />
     <Compile Include="Controllers\CouponController.cs" />
     <Compile Include="Controllers\CouponingAdminController.cs" />
+    <Compile Include="Controllers\CouponingLineCriterionController.cs" />
     <Compile Include="Controllers\CouponingCriterionController.cs" />
     <Compile Include="Controllers\ECommerceSettingsAdminController.cs" />
     <Compile Include="Controllers\FlexibleShippingCriterionController.cs" />
@@ -410,6 +413,7 @@
     <Compile Include="Models\CheckoutItem.cs" />
     <Compile Include="Models\ConversionUtilities.cs" />
     <Compile Include="Models\Charge.cs" />
+    <Compile Include="Models\Couponing\CouponLineCriterionRecord.cs" />
     <Compile Include="Models\Couponing\CouponApplicabilityCriterionRecord.cs" />
     <Compile Include="Models\Couponing\CouponRecord.cs" />
     <Compile Include="Models\Couponing\CouponType.cs" />

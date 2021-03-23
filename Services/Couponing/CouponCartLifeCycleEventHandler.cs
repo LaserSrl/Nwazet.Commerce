@@ -37,14 +37,14 @@ namespace Nwazet.Commerce.Services.Couponing {
             // here _shoppingCart should still have all its stuff inside
             var coupons = CouponsFromCart();
             foreach (var coupon in coupons) {
-                var couponContext = new CouponUsedContext {
+                var couponUsedContext = new CouponUsedContext {
                     Coupon = coupon,
                     ShoppingCart = _shoppingCart,
                     WorkContext = _workContextAccessor.GetContext(),
                     Order = context.Order
                 };
                 
-                _couponApplicationService.CouponUsed(couponContext);
+                _couponApplicationService.CouponUsed(couponUsedContext);
             }
         }
 
