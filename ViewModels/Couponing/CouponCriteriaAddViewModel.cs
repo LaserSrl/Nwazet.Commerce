@@ -13,4 +13,9 @@ namespace Nwazet.Commerce.ViewModels.Couponing {
         public int Id { get; set; }
         public IEnumerable<TypeDescriptor<CouponApplicabilityCriterionDescriptor>> Criteria { get; set; }
     }
+    [OrchardFeature("Nwazet.Couponing")]
+    public class CouponLineCriteriaAddViewModel {
+        public int Id { get; set; }
+        public IEnumerable<TypeDescriptor<CouponLineApplicabilityCriterionDescriptor>> Criteria { get; set; }
+    }
 }

@@ -1,4 +1,6 @@
-﻿using Nwazet.Commerce.Models;
+﻿using Nwazet.Commerce.Descriptors;
+using Nwazet.Commerce.Descriptors.CouponApplicability;
+using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services.Couponing;
 using Nwazet.Commerce.ViewModels.Couponing;
@@ -59,9 +61,9 @@ namespace Nwazet.Commerce.Controllers {
                 return HttpNotFound();
             }
 
-            var viewModel = new CouponCriteriaAddViewModel {
+            var viewModel = new CouponLineCriteriaAddViewModel {
                 Id = id,
-                Criteria = _couponApplicationService.DescribeApplicabilityCriteria()
+                Criteria = _couponApplicationService.DescribeLineCriteria()
             };
 
             return View(viewModel);
@@ -80,7 +82,7 @@ namespace Nwazet.Commerce.Controllers {
             }
 
             var criterion = _couponApplicationService
-                .GetCriterion(category, type);
+                .GetLineCriterion(category, type);
             if (criterion == null) {
                 return HttpNotFound();
             }
@@ -101,7 +103,7 @@ namespace Nwazet.Commerce.Controllers {
                         new DictionaryValueProvider<string>(parameters, CultureInfo.InvariantCulture));
                 }
             }
-            var viewModel = new CouponCriterionEditViewModel {
+            var viewModel = new CouponLineCriterionEditViewModel {
                 Id = id,
                 Description = description,
                 Criterion = criterion,
@@ -129,11 +131,11 @@ namespace Nwazet.Commerce.Controllers {
             }
             // get the definition for the criterion
             var criterion = _couponApplicationService
-                .GetCriterion(category, type);
+                .GetLineCriterion(category, type);
             if (criterion == null) {
                 return HttpNotFound();
             }
-            var viewModel = new CouponCriterionEditViewModel();
+            var viewModel = new CouponLineCriterionEditViewModel();
             TryUpdateModel(viewModel);
             // validating form values
             _formManager.Validate(new ValidatingContext {
@@ -144,16 +146,16 @@ namespace Nwazet.Commerce.Controllers {
 
             if (ModelState.IsValid) {
                 var criterionRecord = coupon.Record
-                    .ApplicabilityCriteria
+                    .LineCriteria
                     .FirstOrDefault(f => f.Id == criterionId);
 
                 // add new criterion record if it's a newly created criterion
                 if (criterionRecord == null) {
-                    criterionRecord = new CouponApplicabilityCriterionRecord {
+                    criterionRecord = new CouponLineCriterionRecord {
                         Category = category,
                         Type = type
                     };
-                    coupon.Record.ApplicabilityCriteria.Add(criterionRecord);
+                    coupon.Record.LineCriteria.Add(criterionRecord);
                 }
 
                 var dictionary = formCollection.AllKeys
@@ -169,7 +171,7 @@ namespace Nwazet.Commerce.Controllers {
             var form = _formManager.Build(criterion.Form);
 
             _formManager.Bind(form, formCollection);
-            var vm = new CouponCriterionEditViewModel {
+            var vm = new CouponLineCriterionEditViewModel {
                 Id = id,
                 Description = viewModel.Description,
                 Criterion = criterion,
@@ -193,14 +195,14 @@ namespace Nwazet.Commerce.Controllers {
             }
             if (criterionId >= 0) {
                 var critRecord = coupon.Record
-                    .ApplicabilityCriteria
+                    .LineCriteria
                     .FirstOrDefault(ac => ac.Id == criterionId);
                 if (critRecord == null) {
                     // weird error condition
                     return HttpNotFound();
                 }
                 // actually delete
-                _couponApplicationService.DeleteCriterion(criterionId);
+                _couponApplicationService.DeleteLineCriterion(criterionId);
             }
             // redirect to editor for the coupon
             return RedirectToAction("Edit", "CouponingAdmin", new { id = id });

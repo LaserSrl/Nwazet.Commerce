@@ -194,7 +194,21 @@ namespace Nwazet.Commerce.Controllers {
             }
             // populate the vm "summaries" for the line conditions
             foreach (var crit in coupon.Record.LineCriteria) {
-
+                var descriptor = _couponApplicationService
+                    .GetLineCriterion(crit.Category, crit.Type);
+                if (descriptor != null) {
+                    coupon.LineCriteria.Add(
+                        new CouponApplicabilityCriterionEntry {
+                            Category = descriptor.Category,
+                            Type = descriptor.Type,
+                            CriterionRecordId = crit.Id,
+                            DisplayText = string.IsNullOrWhiteSpace(crit.Description)
+                                ? descriptor.Display(new CouponLineCriterionContext {
+                                    State = FormParametersHelper.ToDynamic(crit.State)
+                                }).Text
+                                : crit.Description
+                        });
+                }
             }
             return View(coupon);
         }

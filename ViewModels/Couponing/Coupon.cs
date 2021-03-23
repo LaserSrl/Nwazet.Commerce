@@ -17,6 +17,7 @@ namespace Nwazet.Commerce.ViewModels.Couponing {
             Value = 0;
             CouponType = CouponType.Percent;
             ApplicabilityCriteria = new List<CouponApplicabilityCriterionEntry>();
+            LineCriteria = new List<CouponApplicabilityCriterionEntry>();
         }
 
         public CouponRecord Record { get; set; }

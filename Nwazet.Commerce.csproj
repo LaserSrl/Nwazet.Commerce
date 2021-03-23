@@ -189,6 +189,8 @@
     <Content Include="Views\CouponingCartExtension.cshtml" />
     <None Include="Views\CouponingCriterion\Add.cshtml" />
     <None Include="Views\CouponingCriterion\Edit.cshtml" />
+    <None Include="Views\CouponingLineCriterion\Add.cshtml" />
+    <None Include="Views\CouponingLineCriterion\Edit.cshtml" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Advanced.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />

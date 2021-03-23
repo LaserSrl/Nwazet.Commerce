@@ -14,4 +14,11 @@ namespace Nwazet.Commerce.ViewModels.Couponing {
         public CouponApplicabilityCriterionDescriptor Criterion { get; set; }
         public dynamic Form { get; set; }
     }
+    [OrchardFeature("Nwazet.Couponing")]
+    public class CouponLineCriterionEditViewModel {
+        public int Id { get; set; }
+        public string Description { get; set; }
+        public CouponLineApplicabilityCriterionDescriptor Criterion { get; set; }
+        public dynamic Form { get; set; }
+    }
 }

@@ -1,4 +1,6 @@
-﻿using Nwazet.Commerce.Models;
+﻿using Nwazet.Commerce.Descriptors;
+using Nwazet.Commerce.Descriptors.CouponApplicability;
+using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services.Couponing;
 using Nwazet.Commerce.ViewModels.Couponing;
