@@ -9,7 +9,7 @@ namespace Nwazet.Commerce.ViewModels {
         // id of corresponding Territory ContentItem
         public int Id { get; set; }
 
-        public ContentItem TerritoryItem { get; set; }
+        public IContent TerritoryItem { get; set; }
 
         public int ParentId { get; set; }
 
