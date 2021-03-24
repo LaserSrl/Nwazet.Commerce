@@ -100,6 +100,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                     descriptorsTest(descriptor, criterionContext);
                 }
             }
+            
         }
 
         private bool TestCriteria(
@@ -110,7 +111,39 @@ namespace Nwazet.Commerce.Services.Couponing {
             if (context.IsApplicable) {
                 InnerTestCriteria(context, descriptorsTest, defaultTest);
             }
-            if (!context.IsApplicable) {
+            // Then we need to evaluate all LineCriteria that are configured for the 
+            // coupon. Each criterion has to succeed for at least 1 line of the cart
+            if (context.IsApplicable) {
+                // TODO: prepare tokens
+                Dictionary<string, object> tokens = new Dictionary<string, object>();
+                foreach (var criterion in context.Coupon.LineCriteria) {
+                    var descriptor = GetLineCriterion(criterion.Category, criterion.Type);
+                    // descriptor should exist
+                    if (descriptor == null) {
+                        continue;
+                    }
+                    // we need to test for each line. Note that this method, if the context
+                    // is defined for a specific line already, returns itself rather than 
+                    // a list of contexts for every cart line.
+                    var lineContexts = context.ContextsForLines();
+                    foreach (var lineApplicabilityContext in lineContexts) {
+                        var tokenizedState = _tokenizer.Replace(criterion.State, tokens);
+                        var lineCriterionContext = new CouponLineCriterionContext {
+                            IsApplicable = lineApplicabilityContext.IsApplicable,
+                            ApplicabilityContext = lineApplicabilityContext,
+                            State = FormParametersHelper.ToDynamic(tokenizedState),
+                            CouponRecord = lineApplicabilityContext.Coupon
+                        };
+                        descriptor.Criterion(lineCriterionContext);
+                    }
+                    // If the criterion fails for all lines, break out
+                    if (!lineContexts.Any(lctx => lctx.IsApplicable)) {
+                        context.IsApplicable = false;
+                        context.Message = descriptor.FailureMessage(context);
+                    }
+                }
+            }
+            if (!context.IsApplicable && context.ShouldNotify) {
                 if (context.Message != null && !string.IsNullOrWhiteSpace(context.Message.Text)) {
                     Warning(context.Message);
                 } else {
@@ -119,6 +152,7 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
             return context.IsApplicable;
         }
+        
 
         private bool CanApply(CouponApplicabilityContext context) {
             return TestCriteria(context,

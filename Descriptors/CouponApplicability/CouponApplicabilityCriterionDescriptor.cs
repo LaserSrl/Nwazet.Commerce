@@ -1,4 +1,5 @@
-﻿using Orchard.Environment.Extensions;
+﻿using Nwazet.Commerce.ApplicabilityCriteria.Couponing;
+using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using System;
 using System.Collections.Generic;
@@ -38,5 +39,10 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
         : CouponCriterionDescriptor<CouponLineCriterionContext> {
 
         public Action<CouponLineCriterionContext> Criterion { get; set; }
+        /// <summary>
+        /// Message for the case where the criterion fails for all
+        /// cart lines.
+        /// </summary>
+        public Func<CouponApplicabilityContext, LocalizedString> FailureMessage { get; set; }
     }
 }

@@ -20,15 +20,18 @@ namespace Nwazet.Commerce.Services.Couponing {
         private readonly ICouponRepositoryService _couponRepositoryService;
         private readonly IWorkContextAccessor _workContextAccessor;
         private readonly ICouponApplicationService _couponApplicationService;
+        private readonly IProductPriceService _productPriceService;
 
         public CouponCartPriceAlterationProcessor(
             ICouponRepositoryService couponRepositoryService,
             IWorkContextAccessor workContextAccessor,
-            ICouponApplicationService couponApplicationService) {
+            ICouponApplicationService couponApplicationService,
+            IProductPriceService productPriceService) {
 
             _couponRepositoryService = couponRepositoryService;
             _workContextAccessor = workContextAccessor;
             _couponApplicationService = couponApplicationService;
+            _productPriceService = productPriceService;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
 
@@ -52,9 +55,18 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         public bool CanProcess(
             CartPriceAlteration alteration, IShoppingCart shoppingCart) {
-            if (alteration.AlterationType == AlterationType) {
+            if (CanProcess(alteration)) {
                 var coupon = GetCouponFromCode(alteration.Key);
                 return Applies(coupon, shoppingCart);
+            }
+            return false;
+        }
+
+        public bool CanProcess(
+            CartPriceAlteration alteration, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine) {
+            if (CanProcess(alteration, shoppingCart)) {
+                var coupon = GetCouponFromCode(alteration.Key);
+                return Applies(coupon, shoppingCart, cartLine);
             }
             return false;
         }
@@ -66,13 +78,34 @@ namespace Nwazet.Commerce.Services.Couponing {
                 // get the coupon corresponding to the alteration
                 var coupon = GetCouponFromCode(alteration.Key);
                 // TODO: do the computation
-                switch (coupon.CouponType) {
-                    case CouponType.Percent:
-                        return -shoppingCart.Subtotal() * (coupon.Value / 100m);
-                    //case CouponType.Amount:
-                    //    return -coupon.Value;
-                    default:
-                        return 0.0m;
+                // If there is any criteria for the lines, the computation is different.
+                // The total amoun for the cart is the result of adding up the amounts 
+                // for each line.
+                if (coupon.LineCriteria.Any()) {
+                    switch (coupon.CouponType) {
+                        case CouponType.Percent:
+                        //case CouponType.Amount:
+                            return shoppingCart.GetProducts()
+                                .Sum(cartLine => {
+                                    var discount = AlterationAmount(alteration, shoppingCart, cartLine);
+                                    // apply VAT and such
+
+                                    return _productPriceService
+                                        .GetPrice(cartLine.Product, discount, shoppingCart.Country, shoppingCart.ZipCode);
+                                });
+                        default:
+                            break;
+                    }
+                } else {
+                    switch (coupon.CouponType) {
+                        case CouponType.Percent:
+                            return -shoppingCart.Subtotal() * (coupon.Value / 100m);
+                        //case CouponType.Amount:
+                        //    return shoppingCart.GetProducts()
+                        //        .Sum(cartLine => AlterationAmount(alteration, shoppingCart, cartLine));
+                        default:
+                            return 0.0m;
+                    }
                 }
             }
             return 0.0m;
@@ -81,20 +114,25 @@ namespace Nwazet.Commerce.Services.Couponing {
         public decimal AlterationAmount(
             CartPriceAlteration alteration, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine) {
             // TODO
-            if (CanProcess(alteration, shoppingCart)) {
+            if (CanProcess(alteration, shoppingCart, cartLine)) {
                 // TODO: coupons on single product lines
                 // get the coupon corresponding to the alteration
                 var coupon = GetCouponFromCode(alteration.Key);
+                var quantity = cartLine.Quantity; // TODO: max quantity to consider for discount
                 switch (coupon.CouponType) {
                     case CouponType.Percent:
                         // Consider price as input, before VAT and such
                         var itemPrice = cartLine.Product.DiscountPrice >= 0 && cartLine.Product.DiscountPrice < cartLine.Product.Price
                             ? cartLine.Product.DiscountPrice //_productPriceService.GetDiscountPrice(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode)
                             : cartLine.Product.Price; // _productPriceService.GetPrice(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode);
-                        var linePrice = Math.Round(itemPrice * cartLine.Quantity, 2)
+                        
+                        var linePrice = Math.Round(itemPrice * quantity, 2)
                             + cartLine.LinePriceAdjustment;
                         return -linePrice * (coupon.Value / 100m);
                     //case CouponType.Amount:
+                    //    // Fixed amount discount for each single item.
+                    //    return -quantity * coupon.Value;
+
                     //    // flat coupon on the cart? That does nothing clear
                     //    // to a single product line
                     default:
@@ -121,7 +159,7 @@ namespace Nwazet.Commerce.Services.Couponing {
         public string AlterationLabel(
             CartPriceAlteration alteration, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine) {
             // TODO
-            if (CanProcess(alteration, shoppingCart)) {
+            if (CanProcess(alteration, shoppingCart, cartLine)) {
                 // get the coupon corresponding to the alteration
                 var coupon = GetCouponFromCode(alteration.Key);
                 // TODO: do the computation
@@ -150,13 +188,15 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
 
             var result = coupon.Published;
-            var context = new CouponApplicabilityContext {
-                Coupon = coupon,
-                ShoppingCart = shoppingCart,
-                WorkContext = _workContextAccessor.GetContext(),
-                IsApplicable = coupon.Published
-            };
-            result = _couponApplicationService.CanProcess(context);
+            if (result) {
+                var context = new CouponApplicabilityContext {
+                    Coupon = coupon,
+                    ShoppingCart = shoppingCart,
+                    WorkContext = _workContextAccessor.GetContext(),
+                    IsApplicable = coupon.Published
+                };
+                result = _couponApplicationService.CanProcess(context);
+            }
             // if the service is telling us that the coupon is not valid for
             // the current context+cart, we don't remove it, because that would
             // mess things up in the cart storage.
@@ -164,6 +204,26 @@ namespace Nwazet.Commerce.Services.Couponing {
             return result;
         }
 
+        protected bool Applies(
+            CouponRecord coupon, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine) {
 
+            if (coupon == null) {
+                return false;
+            }
+
+            var result = coupon.Published;
+            if (result) {
+                var context = new CouponLineApplicabilityContext {
+                    Coupon = coupon,
+                    ShoppingCart = shoppingCart,
+                    WorkContext = _workContextAccessor.GetContext(),
+                    IsApplicable = coupon.Published,
+                    CartLine = cartLine
+                };
+                result = _couponApplicationService.CanProcess(context);
+            }
+
+            return result;
+        }
     }
 }
