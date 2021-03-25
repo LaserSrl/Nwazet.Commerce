@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Descriptors.CouponApplicability {
     [OrchardFeature("Nwazet.Couponing")]
-    public class CouponCriterionDescriptor{
+    public class CouponCriterionDescriptor {
 
         public string Category { get; set; }
         public string Type { get; set; }

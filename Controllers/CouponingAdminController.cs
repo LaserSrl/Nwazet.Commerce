@@ -174,6 +174,8 @@ namespace Nwazet.Commerce.Controllers {
             if (coupon == null || coupon.Record == null) {
                 return HttpNotFound();
             }
+            // The following information is in the CouponRecord. Here we are 
+            // "translating" it to the vms.
             // populate the vm "summaries" for the criteria
             foreach (var crit in coupon.Record.ApplicabilityCriteria) {
                 var descriptor = _couponApplicationService
