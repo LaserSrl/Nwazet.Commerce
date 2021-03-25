@@ -423,6 +423,7 @@
     <Compile Include="Models\CheckoutItem.cs" />
     <Compile Include="Models\ConversionUtilities.cs" />
     <Compile Include="Models\Charge.cs" />
+    <Compile Include="Models\Couponing\CouponCriterionBaseRecord.cs" />
     <Compile Include="Models\Couponing\CouponLineCriterionRecord.cs" />
     <Compile Include="Models\Couponing\CouponApplicabilityCriterionRecord.cs" />
     <Compile Include="Models\Couponing\CouponRecord.cs" />
@@ -611,6 +612,7 @@
     <Compile Include="Services\LocalizationSKUUniquenessHelper.cs" />
     <Compile Include="Services\IProductAttributeNameService.cs" />
     <Compile Include="Services\BaseTaxProviderService.cs" />
+    <Compile Include="Services\NullVatConfigurationService.cs" />
     <Compile Include="Services\OrderAdditionalInformationProvider.cs" />
     <Compile Include="Services\OrderContext.cs" />
     <Compile Include="Services\PersistentCartLocalStorageSettings.cs" />

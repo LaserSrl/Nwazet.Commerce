@@ -18,6 +18,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Orchard.Forms.Services;
 using Nwazet.Commerce.Descriptors.CouponApplicability;
+using Nwazet.Commerce.Models;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Couponing")]
@@ -182,16 +183,7 @@ namespace Nwazet.Commerce.Controllers {
                     .GetCriterion(crit.Category, crit.Type);
                 if (descriptor != null) {
                     coupon.ApplicabilityCriteria.Add(
-                        new CouponApplicabilityCriterionEntry {
-                            Category = descriptor.Category,
-                            Type = descriptor.Type,
-                            CriterionRecordId = crit.Id,
-                            DisplayText = string.IsNullOrWhiteSpace(crit.Description)
-                                ? descriptor.Display(new CouponApplicabilityCriterionContext {
-                                    State = FormParametersHelper.ToDynamic(crit.State)
-                                }).Text
-                                : crit.Description
-                        });
+                        CriterionToEntry(crit, descriptor));
                 }
             }
             // populate the vm "summaries" for the line conditions
@@ -200,19 +192,24 @@ namespace Nwazet.Commerce.Controllers {
                     .GetLineCriterion(crit.Category, crit.Type);
                 if (descriptor != null) {
                     coupon.LineCriteria.Add(
-                        new CouponApplicabilityCriterionEntry {
-                            Category = descriptor.Category,
-                            Type = descriptor.Type,
-                            CriterionRecordId = crit.Id,
-                            DisplayText = string.IsNullOrWhiteSpace(crit.Description)
-                                ? descriptor.Display(new CouponLineCriterionContext {
-                                    State = FormParametersHelper.ToDynamic(crit.State)
-                                }).Text
-                                : crit.Description
-                        });
+                        CriterionToEntry(crit, descriptor));
                 }
             }
             return View(coupon);
+        }
+
+        private CouponApplicabilityCriterionEntry CriterionToEntry(
+            CouponCriterionBaseRecord criterion, CouponCriterionDescriptor descriptor) {
+            return new CouponApplicabilityCriterionEntry {
+                Category = descriptor.Category,
+                Type = descriptor.Type,
+                CriterionRecordId = criterion.Id,
+                DisplayText = string.IsNullOrWhiteSpace(criterion.Description)
+                    ? descriptor.Display(new CouponContext {
+                        State = FormParametersHelper.ToDynamic(criterion.State)
+                    }).Text
+                    : criterion.Description
+            };
         }
 
         [HttpPost]

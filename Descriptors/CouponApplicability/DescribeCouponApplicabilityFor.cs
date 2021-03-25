@@ -43,7 +43,7 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
             LocalizedString description,
             Action<CouponApplicabilityCriterionContext> additionCriterion,
             Action<CouponApplicabilityCriterionContext> processingCriterion,
-            Func<CouponApplicabilityCriterionContext, LocalizedString> display,
+            Func<CouponContext, LocalizedString> display,
             string form = null) {
 
             if (Types == null) {
@@ -78,7 +78,7 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
             LocalizedString name,
             LocalizedString description,
             Action<CouponLineCriterionContext> criterion,
-            Func<CouponLineCriterionContext, LocalizedString> display,
+            Func<CouponContext, LocalizedString> display,
             Func<CouponApplicabilityContext, LocalizedString> failureMessage,
             string form = null) {
 
