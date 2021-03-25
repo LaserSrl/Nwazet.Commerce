@@ -48,6 +48,19 @@ namespace Nwazet.Commerce.Services {
         /// the default destination in the settings for the site.</remarks>
         decimal GetRate(ProductPart part, TerritoryInternalRecord destination);
         /// <summary>
+        /// Given a product's configuration and a destination described with country 
+        /// and zipcode, find the VAT rate to apply.
+        /// </summary>
+        /// <param name="part">The ProductPart for the product</param>
+        /// <param name="country">A string for the country.</param>
+        /// <param name="zipcode">A string for the zipCode.</param>
+        /// <returns>The rate computed for the product and the destination.</returns>
+        /// <remarks>The case destination == null should be handled by computing the rate for 
+        /// the default destination in the settings for the site.</remarks>
+        /// <remarks>This method signature is to support cases where we don't have a dependency
+        /// on the Territories feature.</remarks>
+        decimal GetRate(ProductPart part, string country, string zipcode);
+        /// <summary>
         /// Given a product's configuration and a destination, find the VAT rate to apply.
         /// The destination is described as a collection of territories, each more specific
         /// than the next. E.g. { city, province, country }

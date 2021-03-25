@@ -1,4 +1,5 @@
-﻿using Orchard.Environment.Extensions;
+﻿using Nwazet.Commerce.ApplicabilityCriteria.Couponing;
+using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,7 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
             LocalizedString description,
             Action<CouponApplicabilityCriterionContext> additionCriterion,
             Action<CouponApplicabilityCriterionContext> processingCriterion,
-            Func<CouponApplicabilityCriterionContext, LocalizedString> display,
+            Func<CouponContext, LocalizedString> display,
             string form = null) {
 
             if (Types == null) {
@@ -77,7 +78,8 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
             LocalizedString name,
             LocalizedString description,
             Action<CouponLineCriterionContext> criterion,
-            Func<CouponLineCriterionContext, LocalizedString> display,
+            Func<CouponContext, LocalizedString> display,
+            Func<CouponApplicabilityContext, LocalizedString> failureMessage,
             string form = null) {
 
             if (Types == null) {
@@ -91,6 +93,7 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
                 Category = _category,
                 Criterion = criterion,
                 Display = display,
+                FailureMessage = failureMessage,
                 Form = form
             });
             return this;

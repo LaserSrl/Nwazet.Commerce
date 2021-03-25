@@ -11,12 +11,13 @@ namespace Nwazet.Commerce.Services {
         string AlterationType { get; }
         /// <summary>
         /// Compute the cart's total price change due to a CartPriceAlteration object.
-        /// This may be the sum of the alterations to sinlg eproducts, or something
+        /// This may be the sum of the alterations to single products, or something
         /// unrelated to it.
         /// </summary>
         /// <param name="alteration"></param>
         /// <returns>Returns the amount by which the price should change 
-        /// (i.e. not a percentage).</returns>
+        /// (i.e. not a percentage). This amount is already affected by VAT
+        /// (meaning it includes VAT).</returns>
         decimal AlterationAmount(CartPriceAlteration alteration, IShoppingCart shoppingCart);
         /// <summary>
         /// 
@@ -30,7 +31,7 @@ namespace Nwazet.Commerce.Services {
         /// </summary>
         /// <param name="alteration"></param>
         /// <returns>Returns the amount by which the price should change 
-        /// (i.e. not a percentage).</returns>
+        /// (i.e. not a percentage). This amount is before VAT is applied.</returns>
         decimal AlterationAmount(CartPriceAlteration alteration, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine);
         /// <summary>
         /// 
