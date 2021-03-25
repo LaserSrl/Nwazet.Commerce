@@ -11,13 +11,17 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
     public class AuthenticationStateCouponApplicabilityCriterion 
-        : ICouponApplicabilityCriterionProvider {
+        : BaseCouponCriterionProvider, ICouponApplicabilityCriterionProvider {
 
         public AuthenticationStateCouponApplicabilityCriterion() {
             T = NullLocalizer.Instance;
         }
 
         public Localizer T { get; set; }
+
+        public override string ProviderName => "AuthenticationStateCouponApplicabilityCriterion";
+
+        public override LocalizedString ProviderDisplayName => T("Criteria on the authentication state");
 
         public void Describe(DescribeCouponApplicabilityContext describe) {
 
