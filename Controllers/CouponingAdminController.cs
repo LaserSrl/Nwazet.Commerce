@@ -208,7 +208,9 @@ namespace Nwazet.Commerce.Controllers {
                     ? descriptor.Display(new CouponContext {
                         State = FormParametersHelper.ToDynamic(criterion.State)
                     }).Text
-                    : criterion.Description
+                    : criterion.Description,
+                IsAvailableForConfiguration = descriptor.IsAvailableForConfiguration,
+                IsAvailableForProcessing = descriptor.IsAvailableForProcessing
             };
         }
 
