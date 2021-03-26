@@ -8,6 +8,7 @@ using System.Collections.Generic;
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.Couponing")]
     public class CouponingSiteSettingPart : ContentPart {
+        public const string CacheKey = "CouponingSiteSettingPart";
 
         public virtual string CouponProvidersConfiguration {
             get { return this.Retrieve(p => p.CouponProvidersConfiguration); }

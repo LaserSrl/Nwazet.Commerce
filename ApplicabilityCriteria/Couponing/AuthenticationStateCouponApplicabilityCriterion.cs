@@ -1,5 +1,7 @@
 ﻿using Nwazet.Commerce.Descriptors.CouponApplicability;
 using Nwazet.Commerce.Services.Couponing;
+using Orchard;
+using Orchard.Caching;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using System;
@@ -13,7 +15,11 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
     public class AuthenticationStateCouponApplicabilityCriterion 
         : BaseCouponCriterionProvider, ICouponApplicabilityCriterionProvider {
 
-        public AuthenticationStateCouponApplicabilityCriterion() {
+        public AuthenticationStateCouponApplicabilityCriterion(
+            IWorkContextAccessor workContextAccessor,
+            ICacheManager cacheManager,
+            ISignals signals)
+            : base(workContextAccessor, cacheManager, signals) {
             T = NullLocalizer.Instance;
         }
 
