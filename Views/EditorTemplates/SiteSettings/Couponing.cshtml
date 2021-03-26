@@ -1,0 +1,108 @@
+﻿@using Nwazet.Commerce.ViewModels.Couponing;
+@model CouponingSiteSettingViewModel
+
+<fieldset>
+    <legend>@T("Enabled providers for couponing criteria.")</legend>
+
+    <fieldset>
+        <legend>@T("Applicability providers")</legend>
+        <span class="hint">
+            @T("Criteria from these providers determine whether a coupon can be added to the cart.")
+        </span>
+        @if (Model.ApplicabilityProviders.Any()) {
+            var providerIndex = 0;
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>@T("Provider name")</th>
+                        <th>@T("Allow configuration")</th>
+                        <th>@T("Allow processing")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var provider in Model.ApplicabilityProviders) {
+                        <tr>
+                            <td>
+                                @provider.ProviderLabel
+                                @Html.HiddenFor(m => m.ApplicabilityProviders[providerIndex].ProviderLabel)
+                                @Html.HiddenFor(m => m.ApplicabilityProviders[providerIndex].ProviderName)
+                            </td>
+                            <td class="form-check">
+                                @Html.CheckBoxFor(m => m.ApplicabilityProviders[providerIndex].AvailableForConfiguration,
+                                    new {
+                                        id = Html.FieldIdFor(m => m.ApplicabilityProviders[providerIndex].AvailableForConfiguration),
+                                        @class = "form-check-input"
+                                    })
+                            </td>
+                            <td class="form-check">
+                                @Html.CheckBoxFor(m => m.ApplicabilityProviders[providerIndex].AvailableForProcessing,
+                                    new {
+                                        id = Html.FieldIdFor(m => m.ApplicabilityProviders[providerIndex].AvailableForProcessing),
+                                        @class = "form-check-input"
+                                    })
+                            </td>
+                        </tr>
+                        providerIndex++;
+                    }
+                
+                </tbody>
+            </table>
+        } else {
+            <span>
+                @T("No provider available for configuration.")
+            </span>
+        }
+        
+    </fieldset>
+
+    <fieldset>
+        <legend>@T("Providers for cart-line criteria.")</legend>
+        <span class="hint">
+            @T("These providers enable conditions to select specific cart-lines that will be affected by a coupon.")
+        </span>
+        @if (Model.LineProviders.Any()) {
+            var providerIndex = 0;
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>@T("Provider name")</th>
+                        <th>@T("Allow configuration")</th>
+                        <th>@T("Allow processing")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var provider in Model.LineProviders) {
+                        <tr>
+                            <td>
+                                @provider.ProviderLabel
+                                @Html.HiddenFor(m => m.LineProviders[providerIndex].ProviderLabel)
+                                @Html.HiddenFor(m => m.LineProviders[providerIndex].ProviderName)
+                            </td>
+                            <td class="form-check">
+                                @Html.CheckBoxFor(m => m.LineProviders[providerIndex].AvailableForConfiguration,
+                                    new {
+                                        id = Html.FieldIdFor(m => m.LineProviders[providerIndex].AvailableForConfiguration),
+                                        @class = "form-check-input"
+                                    })
+                            </td>
+                            <td class="form-check">
+                                @Html.CheckBoxFor(m => m.LineProviders[providerIndex].AvailableForProcessing,
+                                    new {
+                                        id = Html.FieldIdFor(m => m.LineProviders[providerIndex].AvailableForProcessing),
+                                        @class = "form-check-input"
+                                    })
+                            </td>
+                        </tr>
+                        providerIndex++;
+                    }
+                
+                </tbody>
+            </table>
+
+        } else {
+            <span>
+                @T("No provider available for configuration.")
+            </span>
+        }
+    </fieldset>
+</fieldset>

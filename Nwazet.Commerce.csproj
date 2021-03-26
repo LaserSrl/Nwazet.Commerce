@@ -221,6 +221,7 @@
     <None Include="Views\EditorTemplates\Parts\TerritoryPartEdit.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryVatConfigurationPartNotAllowed.cshtml" />
     <None Include="Views\EditorTemplates\Parts\VatConfiguration.cshtml" />
+    <None Include="Views\EditorTemplates\SiteSettings\Couponing.cshtml" />
     <None Include="Views\EditorTemplates\SiteSettings\VatConfiguration.cshtml" />
     <None Include="Views\FlexibleShippingCriterion\Add.cshtml" />
     <None Include="Views\FlexibleShippingCriterion\Edit.cshtml" />
@@ -295,6 +296,7 @@
     <Compile Include="Drivers\AttributeLocalizationProductAttributesPartDriver.cs" />
     <Compile Include="Drivers\BundleLocalizationPartDriver.cs" />
     <Compile Include="Drivers\BundlePartDriver.cs" />
+    <Compile Include="Drivers\CouponingSiteSettingPartDriver.cs" />
     <Compile Include="Drivers\ECommerceCurrencySiteSettingsPartDriver.cs" />
     <Compile Include="Drivers\FlexibleShippingMethodPartDriver.cs" />
     <Compile Include="Drivers\HierarchyVatConfigurationPartDriver.cs" />
@@ -357,6 +359,7 @@
     <Compile Include="Handlers\BundlePartHandler.cs" />
     <Compile Include="Handlers\AttributePartHandler.cs" />
     <Compile Include="Handlers\AttributesPartHandler.cs" />
+    <Compile Include="Handlers\CouponingSiteSettingPartHandler.cs" />
     <Compile Include="Handlers\ECommerceCurrencySiteSettingsPartHandler.cs" />
     <Compile Include="Handlers\FlexibleShippingMethodPartAuthorizationEventHandler.cs" />
     <Compile Include="Handlers\FlexibleShippingMethodPartHandler.cs" />
@@ -424,6 +427,7 @@
     <Compile Include="Models\ConversionUtilities.cs" />
     <Compile Include="Models\Charge.cs" />
     <Compile Include="Models\Couponing\CouponCriterionBaseRecord.cs" />
+    <Compile Include="Models\Couponing\CouponingSiteSettingPart.cs" />
     <Compile Include="Models\Couponing\CouponLineCriterionRecord.cs" />
     <Compile Include="Models\Couponing\CouponApplicabilityCriterionRecord.cs" />
     <Compile Include="Models\Couponing\CouponRecord.cs" />
@@ -550,6 +554,7 @@
     <Compile Include="ApplicabilityCriteria\Couponing\NoDuplicatesCouponApplicabilityCriterion.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\CouponApplicabilityContext.cs" />
     <Compile Include="Descriptors\CouponApplicability\CouponApplicabilityCriterionDescriptor.cs" />
+    <Compile Include="Services\Couponing\BaseCouponCriterionProvider.cs" />
     <Compile Include="Services\Couponing\CouponCartLifeCycleEventHandler.cs" />
     <Compile Include="Services\Couponing\CouponCartPriceAlterationProcessor.cs" />
     <Compile Include="Services\CommerceLocalStorageSettings.cs" />
@@ -561,7 +566,6 @@
     <Compile Include="Descriptors\CouponApplicability\DescribeCouponApplicabilityContext.cs" />
     <Compile Include="Descriptors\CouponApplicability\DescribeCouponApplicabilityFor.cs" />
     <Compile Include="Services\Couponing\ICouponApplicabilityCriterion.cs" />
-    <Compile Include="Services\Couponing\ICouponLineApplicabilityCriterionProvider.cs" />
     <Compile Include="Services\Couponing\ICouponApplicabilityCriterionProvider.cs" />
     <Compile Include="Services\Couponing\ICouponApplicationService.cs" />
     <Compile Include="Services\Couponing\ICouponRepositoryService.cs" />
@@ -717,6 +721,7 @@
     <Compile Include="ViewModels\Couponing\CouponApplicabilityCriterionEntry.cs" />
     <Compile Include="ViewModels\Couponing\CouponCriteriaAddViewModel.cs" />
     <Compile Include="ViewModels\Couponing\CouponCriterionEditViewModel.cs" />
+    <Compile Include="ViewModels\Couponing\CouponingSiteSettingViewModel.cs" />
     <Compile Include="ViewModels\Couponing\FilterOptions.cs" />
     <Compile Include="ViewModels\Couponing\CouponFrontendViewModel.cs" />
     <Compile Include="ViewModels\CriteriaAddViewModel.cs" />

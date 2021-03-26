@@ -17,6 +17,10 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
         public LocalizedString Description { get; set; }
         public string Form { get; set; }
 
+
+        public bool IsAvailableForConfiguration { get; set; }
+        public bool IsAvailableForProcessing { get; set; }
+
         public Func<CouponContext, LocalizedString> Display { get; set; }
     }
     

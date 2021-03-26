@@ -93,8 +93,8 @@ namespace Nwazet.Commerce.Services.Couponing {
                         CouponRecord = context.Coupon
                     };
                     var descriptor = GetCriterion(criterion.Category, criterion.Type);
-                    // descriptor should exist
-                    if (descriptor == null) {
+                    // descriptor should exist and be enabled
+                    if (descriptor == null || !descriptor.IsAvailableForProcessing) {
                         continue;
                     }
                     descriptorsTest(descriptor, criterionContext);
@@ -118,14 +118,19 @@ namespace Nwazet.Commerce.Services.Couponing {
                 Dictionary<string, object> tokens = new Dictionary<string, object>();
                 foreach (var criterion in context.Coupon.LineCriteria) {
                     var descriptor = GetLineCriterion(criterion.Category, criterion.Type);
-                    // descriptor should exist
-                    if (descriptor == null) {
+                    // descriptor should exist and be enabled
+                    if (descriptor == null || !descriptor.IsAvailableForProcessing) {
                         continue;
                     }
-                    // we need to test for each line. Note that this method, if the context
+                    // We need to test for each line. Note that this method, if the context
                     // is defined for a specific line already, returns itself rather than 
-                    // a list of contexts for every cart line.
-                    var lineContexts = context.ContextsForLines();
+                    // a list of contexts for every cart line. We force a ToList() there to
+                    // force enumerating, so we have the actual objects rather than a reference
+                    // to how to get them, because otherwise the wrong references may be passed
+                    // around at later steps (basically, the providers would change the 
+                    // IsApplicable for an object, thena  fresh one would be checked of the
+                    // flag's value).
+                    var lineContexts = context.ContextsForLines().ToList();
                     foreach (var lineApplicabilityContext in lineContexts) {
                         var tokenizedState = _tokenizer.Replace(criterion.State, tokens);
                         var lineCriterionContext = new CouponLineCriterionContext {
@@ -315,13 +320,12 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
             context.ShoppingCart.PriceAlterations = allAlterations.OrderByDescending(cpa => cpa.Weight).ToList();
         }
-        
+
         #endregion
 
         #region Manage Applicability
-
-        public IEnumerable<TypeDescriptor<CouponApplicabilityCriterionDescriptor>>
-            DescribeApplicabilityCriteria() {
+        private IEnumerable<TypeDescriptor<CouponApplicabilityCriterionDescriptor>>
+            InnerDescribeApplicabilityCriteria() {
 
             var context = new DescribeCouponApplicabilityContext();
 
@@ -332,10 +336,25 @@ namespace Nwazet.Commerce.Services.Couponing {
             return context.Describe();
         }
 
+        public IEnumerable<TypeDescriptor<CouponApplicabilityCriterionDescriptor>>
+            DescribeApplicabilityCriteria() {
+
+            var fullSet = InnerDescribeApplicabilityCriteria();
+            var filteredSet = fullSet
+                .Select(td => new TypeDescriptor<CouponApplicabilityCriterionDescriptor>() {
+                    Category = td.Category,
+                    Name = td.Name,
+                    Description = td.Description,
+                    Descriptors = td.Descriptors.Where(cacd => cacd.IsAvailableForConfiguration)
+                })
+                .Where(td => td.Descriptors.Any());
+            return filteredSet;
+        }
+
         public CouponApplicabilityCriterionDescriptor
             GetCriterion(string category, string type) {
 
-            return DescribeApplicabilityCriteria()
+            return InnerDescribeApplicabilityCriteria()
                 .SelectMany(x => x.Descriptors)
                 .FirstOrDefault(c =>
                     c.Category == category
@@ -358,8 +377,8 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         #region Manage Line Conditions
 
-        public IEnumerable<TypeDescriptor<CouponLineApplicabilityCriterionDescriptor>>
-            DescribeLineCriteria() {
+        private IEnumerable<TypeDescriptor<CouponLineApplicabilityCriterionDescriptor>>
+            InnerDescribeLineCriteria() {
 
             var context = new DescribeCouponLineApplicabilityContext();
 
@@ -370,10 +389,25 @@ namespace Nwazet.Commerce.Services.Couponing {
             return context.Describe();
         }
 
+        public IEnumerable<TypeDescriptor<CouponLineApplicabilityCriterionDescriptor>>
+            DescribeLineCriteria() {
+
+            var fullSet = InnerDescribeLineCriteria();
+            var filteredSet = fullSet
+                .Select(td => new TypeDescriptor<CouponLineApplicabilityCriterionDescriptor>() {
+                    Category = td.Category,
+                    Name = td.Name,
+                    Description = td.Description,
+                    Descriptors = td.Descriptors.Where(cacd => cacd.IsAvailableForConfiguration)
+                })
+                .Where(td => td.Descriptors.Any());
+            return filteredSet;
+        }
+
         public CouponLineApplicabilityCriterionDescriptor
             GetLineCriterion(string category, string type) {
 
-            return DescribeLineCriteria()
+            return InnerDescribeLineCriteria()
                 .SelectMany(x => x.Descriptors)
                 .FirstOrDefault(c =>
                     c.Category == category

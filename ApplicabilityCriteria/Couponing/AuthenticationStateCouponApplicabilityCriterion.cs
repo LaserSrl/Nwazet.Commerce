@@ -1,5 +1,7 @@
 ﻿using Nwazet.Commerce.Descriptors.CouponApplicability;
 using Nwazet.Commerce.Services.Couponing;
+using Orchard;
+using Orchard.Caching;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using System;
@@ -11,16 +13,25 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
     public class AuthenticationStateCouponApplicabilityCriterion 
-        : ICouponApplicabilityCriterionProvider {
+        : BaseCouponCriterionProvider, ICouponApplicabilityCriterionProvider {
 
-        public AuthenticationStateCouponApplicabilityCriterion() {
+        public AuthenticationStateCouponApplicabilityCriterion(
+            IWorkContextAccessor workContextAccessor,
+            ICacheManager cacheManager,
+            ISignals signals)
+            : base(workContextAccessor, cacheManager, signals) {
             T = NullLocalizer.Instance;
         }
 
         public Localizer T { get; set; }
 
-        public void Describe(DescribeCouponApplicabilityContext describe) {
+        public override string ProviderName => "AuthenticationStateCouponApplicabilityCriterion";
 
+        public override LocalizedString ProviderDisplayName => T("Criteria on the authentication state");
+
+        public void Describe(DescribeCouponApplicabilityContext describe) {
+            var isAvailableForConfiguration = IsAvailableForConfiguration();
+            var isAvailableForProcessing = IsAvailableForProcessing();
             describe
                 .For("User", T("Authentication State"), T("Authentication State"))
                 .Element("User is authenticated",
@@ -29,6 +40,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     (ctx) => ApplyCriteria(ctx, (b) => b, T("Coupon {0} is only available to authenticated users.", ctx.CouponRecord.Code)),
                     (ctx) => ApplyCriteria(ctx, (b) => b, T("Coupon {0} is only available to authenticated users.", ctx.CouponRecord.Code)),
                     (ctx) => T("User is authenticated"),
+                    isAvailableForConfiguration, isAvailableForProcessing,
                     null) // null form because there's nothing special to configure
                 .Element("User is not authenticated",
                     T("User is not authenticated"),
@@ -36,6 +48,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     (ctx) => ApplyCriteria(ctx, (b) => !b, T("Coupon {0} is not available to authenticated users.", ctx.CouponRecord.Code)),
                     (ctx) => ApplyCriteria(ctx, (b) => !b, T("Coupon {0} is not available to authenticated users.", ctx.CouponRecord.Code)),
                     (ctx) => T("User is not authenticated"),
+                    isAvailableForConfiguration, isAvailableForProcessing,
                     null);
         }
         

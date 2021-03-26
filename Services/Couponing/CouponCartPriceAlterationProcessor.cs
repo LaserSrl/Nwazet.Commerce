@@ -161,7 +161,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                 // TODO: do the computation
                 return coupon.Code;
             }
-            return null;
+            return T("{0} not valid", alteration.Key).Text;
         }
 
         private CouponRecord GetCouponFromCode(string code) {

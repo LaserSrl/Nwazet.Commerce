@@ -39,9 +39,9 @@
                     var productAttributes = (IDictionary<int, ProductAttributeValueExtended>)item.Attributes;
                     if (productAttributes != null && productAttributes.Any()) {
                         var productCi = (IContent)Model.Products[item.ProductId];
-                        var additionalText = 
+                        var additionalText =
                             AttributeNameUtilities.AttributesDisplayText(productAttributes, productCi, _attributeExtensionProviders);
-                    
+
                         if (!string.IsNullOrWhiteSpace(additionalText)) {
                             displayText += " (" +
                                 additionalText.Trim()
@@ -71,9 +71,9 @@
                     <td colspan="2" class="label">@T("Shipping: {0} {1}", Model.ShippingOption.ShippingCompany, Model.ShippingOption.Description)</td>
                     <td class="price">@currencyInUse.PriceAsString(Model.ShippingOption.Price, cultureInUse)</td>
                 </tr>
-                @{ 
+                @{
                     var orderPart = (OrderPart)Model.Order;
-                    var additionalInfo =  orderPart.AdditionalOrderInformation
+                    var additionalInfo = orderPart.AdditionalOrderInformation
                         .SelectMany(oai => oai.Details
                             .Where(old => old.InformationType == OrderInformationType.FrontEndInfo
                                 && old.ValueType == OrderValueType.Currency));
@@ -118,7 +118,8 @@
             });
         </script>
     }
-} else {
+}
+else {
     <p class="total">@T("Total: {0}", currencyInUse.PriceAsString(Model.Total, cultureInUse)) </p>
     Script.Require("jQuery");
     using (Script.Foot()) {
@@ -150,16 +151,18 @@
     <p>@Html.Raw(Html.Encode(Model.BillingAddress).Replace(Environment.NewLine, "<br/>"))</p>
     <p>@Model.ChargeText</p>
 </fieldset>
-
 <fieldset class="shipping-address">
     <legend>@T("Shipping to:")</legend>
-    @Html.Raw(Html.Encode(Model.ShippingAddress).Replace(Environment.NewLine, "<br/>"))
-
-    @if (!String.IsNullOrWhiteSpace(Model.TrackingUrl)) {
-        <p>@T("Tracking URL: <a href=\"{0}\">{0}</a>", Model.TrackingUrl)</p>
+    @if (!string.IsNullOrWhiteSpace(Model.ShippingAddress.Replace(",", "").Trim())) {
+        @Html.Raw(Html.Encode(Model.ShippingAddress).Replace(Environment.NewLine, "<br/>"))
+        if (!String.IsNullOrWhiteSpace(Model.TrackingUrl)) {
+            <p>@T("Tracking URL: <a href=\"{0}\">{0}</a>", Model.TrackingUrl)</p>
+        }
+    }
+    else {
+        @T("There is no shipment for this order.")
     }
 </fieldset>
-
 <p>@T("E-mail:") <a href="@("mailto:" + Model.CustomerEmail)">@Model.CustomerEmail</a></p>
 <p>@T("Phone:") <a href="@("tel:" + Model.CustomerPhone)">@Model.CustomerPhone</a></p>
 

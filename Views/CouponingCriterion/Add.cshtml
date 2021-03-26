@@ -21,9 +21,13 @@
             </tr>
         </thead>
         @foreach (var descriptor in criterion.Descriptors) {
+            var displayText = descriptor.Name.Text;
+            if (!descriptor.IsAvailableForProcessing) {
+                displayText += T(" (this provider is disabled for processing. It will be ignored when using the coupon.)");
+            }
             <tr>
                 <td>
-                    @Html.ActionLink(descriptor.Name.Text,
+                    @Html.ActionLink(displayText,
                         "Edit",
                         new {
                             id = Model.Id,
