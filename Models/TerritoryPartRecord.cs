@@ -1,18 +1,21 @@
 ﻿using Orchard.ContentManagement.Records;
 using Orchard.Environment.Extensions;
 using System.Collections.Generic;
+using Orchard.Data.Conventions;
 
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Territories")]
     public class TerritoryPartRecord : ContentPartRecord {
+        [Aggregate]
         public virtual TerritoryInternalRecord TerritoryInternalRecord { get; set; }
 
+        public virtual string TerritoriesFullPath { get; set; }
+
+        [Aggregate]
         public virtual TerritoryPartRecord ParentTerritory { get; set; }
 
+        [Aggregate]
         public virtual TerritoryHierarchyPartRecord Hierarchy { get; set; }
-
-        //public virtual IList<TerritoryPartRecord> Children { get; set; }
-
 
         /// <summary>
         /// Compares the Id of internal records

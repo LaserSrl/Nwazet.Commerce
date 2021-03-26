@@ -42,9 +42,10 @@ namespace Nwazet.Commerce.Drivers {
 
         public dynamic GetAttributeDisplayShape(IContent product, dynamic shapeHelper) {
             var attributesPart = product.As<ProductAttributesPart>();
-            var attributes = attributesPart == null
-                ? null
-                : _attributeService.GetAttributes(attributesPart.AttributeIds);
+            if (attributesPart == null) {
+                return null;
+            }
+            var attributes = _attributeService.GetAttributes(attributesPart.AttributeIds);
             return shapeHelper.Parts_ProductAttributes(
                 ContentItem: product,
                 ProductAttributes: attributes?.OrderBy(a => a.SortOrder)

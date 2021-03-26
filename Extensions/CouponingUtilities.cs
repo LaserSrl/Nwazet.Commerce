@@ -36,13 +36,17 @@ namespace Nwazet.Commerce.Extensions {
         }
 
         public static Coupon ToCoupon(this CouponRecord record) {
+            if (record == null) {
+                return null;
+            }
             return new Coupon {
                 Id = record.Id,
                 Name = record.Name,
                 Code = record.Code,
                 Value = record.Value,
                 CouponType = record.CouponType,
-                Published = record.Published
+                Published = record.Published,
+                Record = record
             };
 
         }
@@ -54,23 +58,51 @@ namespace Nwazet.Commerce.Extensions {
             record.CouponType = coupon.CouponType;
             record.Published = coupon.Published;
         }
-
-        public static XElement ToXMLElement(this CouponRecord record) {
+        /// <summary>
+        /// Create an XElement for the CouponRecord. The optional parameter
+        /// tells whether the coupon was processable and thus used in the
+        /// context where this metohd is called.
+        /// </summary>
+        /// <param name="record"></param>
+        /// <param name="wasInvalid"></param>
+        /// <returns></returns>
+        /// <remarks>When serializing coupons for an order, set wasInvalid = true
+        /// to indicate those coupons that were in the cart/order, but had no
+        /// effect.</remarks>
+        public static XElement ToXMLElement(this CouponRecord record, bool wasInvalid = false) {
             // The record's properties are serialized as attributes of the
             // resulting XElement. This will result in an XML element that looks
             // like this:
             // <Coupon Name="name" Code="code" {...more attributes} />
-            return new XElement(CouponAlterationType)
+            var couponEl = new XElement(CouponAlterationType)
                 .With(record)
                 // definition
                 .ToAttr(c => c.Name)
                 .ToAttr(c => c.Code)
                 // conditions
                 .ToAttr(c => c.Published)
+                // should also serialize
                 // actions
                 .ToAttr(c => c.Value)
                 .ToAttr(c => c.CouponType)
                 ;
+            if (wasInvalid) {
+                couponEl.Element.SetAttributeValue("WasInvalid", wasInvalid);
+            }
+            couponEl.Element
+                .AddEl(record.ApplicabilityCriteria
+                    .Select(ac => {
+                        var criterionEl = new XElement("CouponApplicabilityCriterion")
+                            .Attr("Id", ac.Id)
+                            .Attr("Category", ac.Category)
+                            .Attr("Description", ac.Description)
+                            .Attr("Type", ac.Type);
+                        // State is already serialized as XML
+                        criterionEl.SetElementValue("State", ac.State);
+                        return criterionEl;
+                    })
+                    .ToArray());
+            return couponEl;
         }
 
         #region [IQueryable]

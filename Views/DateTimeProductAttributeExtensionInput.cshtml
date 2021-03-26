@@ -1,0 +1,41 @@
+﻿@*
+    Name fields on the input form starting with the namePrefix variable below.
+    There are two special field names:
+     - [@namePrefix] will be passed as the value parameter into the Serialize method on your extension provider
+     - [@namePrefix].provider is used to route values to the correct extension provider and should match the name property of your provider
+     - All other form fields that start with @namePrefix will be passed to your extension provider as a form collection
+*@
+@{
+    
+    Style.Require("jQueryCalendars_Picker").AtFoot();
+    Style.Require("jQueryTimeEntry").AtFoot();
+    Style.Require("jQueryDateTimeEditor").AtFoot();
+
+    var namePrefix = Model.Prefix;
+    var guid = "date" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
+}
+<span class="date">
+    <input id="@guid" type="text" name="@namePrefix" required placeholder="@T("Insert a date")" />
+</span>
+@* this field contains the current FE culture that will be used to
+    make sure we are consistently saving the date in the same way. *@
+<input type="hidden" name="@(namePrefix).culture" value="@WorkContext.CurrentCulture"/>
+<input type="hidden" name="@(namePrefix).provider" value="@Model.ExtensionName" />
+
+@using(Script.Foot()) {
+    @* generates the localization script *@
+    @Display.CalendarsPickerLocalization()
+    @Display.TimeEntryLocalization()
+
+    <script type="text/javascript">
+        $(function () {
+            $("#@guid").calendarsPicker({
+                showAnim: "",
+                renderer: $.extend({}, $.calendarsPicker.themeRollerRenderer, {
+                    picker: "<div {popup:start} id='ui-datepicker-div'{popup:end} class='ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all{inline:start} ui-datepicker-inline{inline:end}'><div class='ui-datepicker-header ui-widget-header ui-helper-clearfix ui-corner-all'>{link:prev}{link:today}{link:next}</div>{months}{popup:start}{popup:end}<div class='ui-helper-clearfix'></div></div>",
+                    month: "<div class='ui-datepicker-group'><div class='ui-datepicker-month ui-helper-clearfix'>{monthHeader:MM yyyy}</div><table class='ui-datepicker-calendar'><thead>{weekHeader}</thead><tbody>{weeks}</tbody></table></div>"
+                })
+        });
+    });
+    </script>
+}

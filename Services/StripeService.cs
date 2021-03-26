@@ -14,6 +14,10 @@ using Orchard.DisplayManagement;
 using Orchard.Environment.Extensions;
 using Orchard;
 using Orchard.Localization;
+using System.Globalization;
+using Orchard.Localization.Models;
+using Orchard.ContentManagement;
+using Nwazet.Commerce.Extensions;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Stripe")]
@@ -75,7 +79,7 @@ namespace Nwazet.Commerce.Services {
             var shipping = shippingOptions.ToList();
             var shippingOption = shipping[0];
             var productShapeList = productShapes.ToList();
-
+            
             var data = new Tuple<CheckoutItem[], decimal, string, string, TaxAmount, string, string>(
                 productShapeList.Select(p => new CheckoutItem {
                     ProductId = p.Product.Id,
@@ -85,11 +89,9 @@ namespace Nwazet.Commerce.Services {
                     LinePriceAdjustment = p.LinePriceAdjustment,
                     PromotionId = p.Promotion == null ? 0 : p.Promotion.Id,
                     Title = p.Title
-                            + (p.ProductAttributes == null
-                                ? ""
-                                : " (" + string.Join(", ", ((Dictionary<int, ProductAttributeValueExtended>)p.ProductAttributes)
-                                    .Select(v => v.Value.Value + (v.Value.ExtensionProviderInstance != null 
-                                        ? v.Value.ExtensionProviderInstance.DisplayString(v.Value.ExtendedValue) : ""))) + ")"),
+                        + AttributeNameUtilities.AttributesDisplayText(
+                            productAttributes: (Dictionary<int, ProductAttributeValueExtended>)p.ProductAttributes, 
+                            product: (IContent)p.Product, separator: ", "),
                     Attributes = p.ProductAttributes
                 }).ToArray(),
                 shippingOption == null ? 0 : shippingOption.Price,

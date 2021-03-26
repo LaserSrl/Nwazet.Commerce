@@ -13,7 +13,12 @@ namespace Nwazet.Commerce.Models {
         private readonly LazyField<IEnumerable<ContentItem>> _children =
             new LazyField<IEnumerable<ContentItem>>();
 
-        public LazyField<IEnumerable<ContentItem>> ChildrenField {
+        public string TerritoriesFullPath {
+            get { return Retrieve(r => r.TerritoriesFullPath); }
+            set { Store(r => r.TerritoriesFullPath, value); }
+        }
+
+    public LazyField<IEnumerable<ContentItem>> ChildrenField {
             get { return _children; }
         }
 
@@ -53,16 +58,6 @@ namespace Nwazet.Commerce.Models {
             get { return Parent?.As<TerritoryPart>(); }
         }
 
-        private readonly LazyField<int> _allChildrenCount =
-            new LazyField<int>();
-
-        public LazyField<int> AllChildrenCountField {
-            get { return _allChildrenCount; }
-        }
-
-        public int AllChildrenCount {
-            get { return _allChildrenCount.Value; }
-        }
 
         /// <summary>
         /// Verifies whether the current TerritoryPart matches the one passsed as a parameter by comparing the respective

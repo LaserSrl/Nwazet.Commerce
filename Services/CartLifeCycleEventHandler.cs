@@ -24,11 +24,12 @@ namespace Nwazet.Commerce.Services {
             _wca = wca;
             _workflowManager = workflowManager;
         }
-        public void Finalized() {
+        public void Finalized(CartFinalizedContext context) {
             _workflowManager.TriggerEvent("CartFinalized",
                 _wca.GetContext().CurrentSite,
                 () => new Dictionary<string, object> {
-                    {"Cart", _shoppingCart}
+                    {"Cart", _shoppingCart },
+                    {"OrderPart", context.Order }
                 });
         }
         

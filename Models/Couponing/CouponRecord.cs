@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.Couponing")]
@@ -30,11 +31,19 @@ namespace Nwazet.Commerce.Models {
 
         #region Conditions: should the coupon apply? Is it "valid"?
         public virtual bool Published { get; set; }
+
+        [CascadeAllDeleteOrphan, Aggregate]
+        [XmlArray("ApplicabilityCriteria")]
+        public virtual IList<CouponApplicabilityCriterionRecord> ApplicabilityCriteria { get; set; }
         #endregion
 
         #region Actions: what does the coupon do?
         public virtual decimal Value { get; set; }
         public virtual CouponType CouponType { get; set; }
+
+        [CascadeAllDeleteOrphan, Aggregate]
+        [XmlArray("LineCriteria")]
+        public virtual IList<CouponLineCriterionRecord> LineCriteria { get; set; }
         #endregion
 
 

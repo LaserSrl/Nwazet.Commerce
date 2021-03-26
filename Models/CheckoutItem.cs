@@ -1,5 +1,8 @@
+using Newtonsoft.Json;
+using Nwazet.Commerce.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Nwazet.Commerce.Models {
     [Serializable]
@@ -29,5 +32,21 @@ namespace Nwazet.Commerce.Models {
         public override string ToString() {
             return Quantity + " x " + Title + " " + Price.ToString("C");
         }
+
+        private string _uniqueKey; //lazy
+        /// <summary>
+        /// Returns a string representation for the CheckoutItem that will uniquely
+        /// represent it within an Order. This representation will not be unique across
+        /// all possible Orders, but it whould be such that within a given order, no two
+        /// ChecktouItems have the same.
+        /// </summary>
+        /// <returns></returns>
+        public string AsUniqueKey() {
+            if (string.IsNullOrWhiteSpace(_uniqueKey)) {
+                _uniqueKey = this.GenerateUniqueKey();
+            }
+            return _uniqueKey;
+        }
+        
     }
 }

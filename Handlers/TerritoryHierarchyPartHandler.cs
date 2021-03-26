@@ -28,11 +28,11 @@ namespace Nwazet.Commerce.Handlers {
             Filters.Add(StorageFilter.For(repository));
 
             // TerritoryHierarchyPart.TerritoryType must be populated
-            OnInitializing<TerritoryHierarchyPart>((ctx, part) => 
+            OnInitializing<TerritoryHierarchyPart>((ctx, part) =>
                 part.TerritoryType = part.Settings.GetModel<TerritoryHierarchyPartSettings>().TerritoryType);
             OnLoaded<TerritoryHierarchyPart>((ctx, part) =>
-                part.TerritoryType = string.IsNullOrWhiteSpace(part.TerritoryType) ? 
-                    part.Settings.GetModel<TerritoryHierarchyPartSettings>().TerritoryType : 
+                part.TerritoryType = string.IsNullOrWhiteSpace(part.TerritoryType) ?
+                    part.Settings.GetModel<TerritoryHierarchyPartSettings>().TerritoryType :
                     part.TerritoryType);
 
             //Lazyfield setters
@@ -62,7 +62,7 @@ namespace Nwazet.Commerce.Handlers {
 
         static void PropertySetHandlers(
             InitializingContentContext context, TerritoryHierarchyPart part) {
-            
+
             part.TopLevelField.Setter(value => {
                 var actualItems = value.Where(ci => ci.As<TerritoryPart>() != null);
                 //// commented because now the territories are extracted on the spot from the database
@@ -79,16 +79,17 @@ namespace Nwazet.Commerce.Handlers {
         }
 
         void LazyLoadHandlers(TerritoryHierarchyPart part) {
-            
+
             part.TopLevelField.Loader(() => {
                 //if (part.Record.Territories != null && part.Record.Territories.Any()) {
-                if (_territoryPartRecordService.GetHierarchyTerritoriesCount(part)>0) { 
+                if (_territoryPartRecordService.GetHierarchyTerritoriesCount(part) > 0) {
                     return _contentManager
                         .Query(VersionOptions.Latest)
                         .Join<TerritoryPartRecord>()
                         .Where(tpr => tpr.Hierarchy.Id == part.Record.Id && tpr.ParentTerritory == null)
                         .List();
-                } else {
+                }
+                else {
                     return Enumerable.Empty<ContentItem>();
                 }
 

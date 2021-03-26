@@ -47,12 +47,18 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\Orchard\src\packages\Iesi.Collections.4.0.0.4000\lib\net40\Iesi.Collections.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\Orchard\src\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\Orchard\src\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\Orchard\src\packages\NHibernate.4.0.1.4000\lib\net40\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -93,6 +99,9 @@
     <Content Include="LICENSE.txt" />
     <Content Include="Recipes\World.recipe.xml" />
     <Content Include="Scripts\attribute-admin.js" />
+    <Content Include="Scripts\attribute-extensions.min.js">
+      <DependentUpon>attribute-extensions.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\chartjs.js" />
     <Content Include="Scripts\chartjs.min.js">
       <DependentUpon>chartjs.js</DependentUpon>
@@ -175,11 +184,20 @@
     </None>
     <None Include="packages.config" />
     <None Include="Styles\product-admin.less" />
+    <None Include="Views\CouponingAdmin\_CouponActionsBasicPartial.cshtml" />
+    <None Include="Views\CouponingAdmin\_CouponActionsPartial.cshtml" />
+    <None Include="Views\CouponingAdmin\_CouponActionsNewPartial.cshtml" />
+    <None Include="Views\CouponingAdmin\_CouponConditionsPartial.cshtml" />
+    <None Include="Views\CouponingAdmin\_CouponConditionsNewPartial.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponPartial.cshtml" />
     <None Include="Views\CouponingAdmin\Create.cshtml" />
     <None Include="Views\CouponingAdmin\Edit.cshtml" />
     <None Include="Views\CouponingAdmin\Index.cshtml" />
     <Content Include="Views\CouponingCartExtension.cshtml" />
+    <None Include="Views\CouponingCriterion\Add.cshtml" />
+    <None Include="Views\CouponingCriterion\Edit.cshtml" />
+    <None Include="Views\CouponingLineCriterion\Add.cshtml" />
+    <None Include="Views\CouponingLineCriterion\Edit.cshtml" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Advanced.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />
@@ -203,11 +221,13 @@
     <None Include="Views\EditorTemplates\Parts\TerritoryPartEdit.cshtml" />
     <None Include="Views\EditorTemplates\Parts\TerritoryVatConfigurationPartNotAllowed.cshtml" />
     <None Include="Views\EditorTemplates\Parts\VatConfiguration.cshtml" />
+    <None Include="Views\EditorTemplates\SiteSettings\Couponing.cshtml" />
     <None Include="Views\EditorTemplates\SiteSettings\VatConfiguration.cshtml" />
     <None Include="Views\FlexibleShippingCriterion\Add.cshtml" />
     <None Include="Views\FlexibleShippingCriterion\Edit.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\CreateTerritory.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\EditTerritory.cshtml" />
+    <None Include="Views\HierarchyTerritoriesAdmin\GetChildNodes.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\Index.cshtml" />
     <None Include="Views\OrderSsl\OrderHistory.cshtml" />
     <None Include="Views\Parts\Inventory.cshtml" />
@@ -234,11 +254,14 @@
     <Compile Include="ApplicabilityCriteria\ApplicabilityContext.cs" />
     <Compile Include="ApplicabilityCriteria\CartSubTotalCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\CartWeightCriteria.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\AuthenticationStateCouponApplicabilityCriterion.cs" />
     <Compile Include="ApplicabilityCriteria\NumericCriterionBase.cs" />
     <Compile Include="Aspects\ITerritoryAddressAspect.cs" />
     <Compile Include="Commands\TerritoriesCommands.cs" />
     <Compile Include="Controllers\CouponController.cs" />
     <Compile Include="Controllers\CouponingAdminController.cs" />
+    <Compile Include="Controllers\CouponingLineCriterionController.cs" />
+    <Compile Include="Controllers\CouponingCriterionController.cs" />
     <Compile Include="Controllers\ECommerceSettingsAdminController.cs" />
     <Compile Include="Controllers\FlexibleShippingCriterionController.cs" />
     <Compile Include="Controllers\HierarchyTerritoriesAdminController.cs" />
@@ -266,12 +289,14 @@
     <Compile Include="Descriptors\ApplicabilityCriterion\CriterionContext.cs" />
     <Compile Include="Descriptors\ApplicabilityCriterion\DescribeCriterionContext.cs" />
     <Compile Include="Descriptors\ApplicabilityCriterion\DescribeCriterionFor.cs" />
+    <Compile Include="Descriptors\CouponApplicability\CouponCriterionContext.cs" />
     <Compile Include="Descriptors\TypeDescriptor.cs" />
     <Compile Include="Drivers\AdvancedSKUProductPartDriver.cs" />
     <Compile Include="Drivers\AdvancedSKUsSiteSettingPartDriver.cs" />
     <Compile Include="Drivers\AttributeLocalizationProductAttributesPartDriver.cs" />
     <Compile Include="Drivers\BundleLocalizationPartDriver.cs" />
     <Compile Include="Drivers\BundlePartDriver.cs" />
+    <Compile Include="Drivers\CouponingSiteSettingPartDriver.cs" />
     <Compile Include="Drivers\ECommerceCurrencySiteSettingsPartDriver.cs" />
     <Compile Include="Drivers\FlexibleShippingMethodPartDriver.cs" />
     <Compile Include="Drivers\HierarchyVatConfigurationPartDriver.cs" />
@@ -334,6 +359,7 @@
     <Compile Include="Handlers\BundlePartHandler.cs" />
     <Compile Include="Handlers\AttributePartHandler.cs" />
     <Compile Include="Handlers\AttributesPartHandler.cs" />
+    <Compile Include="Handlers\CouponingSiteSettingPartHandler.cs" />
     <Compile Include="Handlers\ECommerceCurrencySiteSettingsPartHandler.cs" />
     <Compile Include="Handlers\FlexibleShippingMethodPartAuthorizationEventHandler.cs" />
     <Compile Include="Handlers\FlexibleShippingMethodPartHandler.cs" />
@@ -400,8 +426,13 @@
     <Compile Include="Models\CheckoutItem.cs" />
     <Compile Include="Models\ConversionUtilities.cs" />
     <Compile Include="Models\Charge.cs" />
+    <Compile Include="Models\Couponing\CouponCriterionBaseRecord.cs" />
+    <Compile Include="Models\Couponing\CouponingSiteSettingPart.cs" />
+    <Compile Include="Models\Couponing\CouponLineCriterionRecord.cs" />
+    <Compile Include="Models\Couponing\CouponApplicabilityCriterionRecord.cs" />
     <Compile Include="Models\Couponing\CouponRecord.cs" />
     <Compile Include="Models\Couponing\CouponType.cs" />
+    <Compile Include="Models\Couponing\CouponUsedRecord.cs" />
     <Compile Include="Models\ECommerceCurrencySiteSettingsPart.cs" />
     <Compile Include="Models\FlexibleShippingMethodPart.cs" />
     <Compile Include="Models\FlexibleShippingMethodRecord.cs" />
@@ -518,9 +549,12 @@
     <Compile Include="Services\BundleProductLocalizationBundleService.cs" />
     <Compile Include="Services\BundleProductLocalizationServices.cs" />
     <Compile Include="Services\BundleServiceBase.cs" />
+    <Compile Include="Services\CartFinalizedContext.cs" />
     <Compile Include="Services\CartLifeCycleEventHandler.cs" />
-    <Compile Include="Services\Couponing\BasicCouponApplicabilityCriterion.cs" />
-    <Compile Include="Services\Couponing\CouponApplicabilityContext.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\NoDuplicatesCouponApplicabilityCriterion.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\CouponApplicabilityContext.cs" />
+    <Compile Include="Descriptors\CouponApplicability\CouponApplicabilityCriterionDescriptor.cs" />
+    <Compile Include="Services\Couponing\BaseCouponCriterionProvider.cs" />
     <Compile Include="Services\Couponing\CouponCartLifeCycleEventHandler.cs" />
     <Compile Include="Services\Couponing\CouponCartPriceAlterationProcessor.cs" />
     <Compile Include="Services\CommerceLocalStorageSettings.cs" />
@@ -529,9 +563,14 @@
     <Compile Include="Services\Couponing\CouponingRepositoryService.cs" />
     <Compile Include="Services\Couponing\CouponLifeUpdateContext.cs" />
     <Compile Include="Services\Couponing\CouponOrderAdditionalInformationProvider.cs" />
+    <Compile Include="Descriptors\CouponApplicability\DescribeCouponApplicabilityContext.cs" />
+    <Compile Include="Descriptors\CouponApplicability\DescribeCouponApplicabilityFor.cs" />
     <Compile Include="Services\Couponing\ICouponApplicabilityCriterion.cs" />
+    <Compile Include="Services\Couponing\ICouponApplicabilityCriterionProvider.cs" />
     <Compile Include="Services\Couponing\ICouponApplicationService.cs" />
     <Compile Include="Services\Couponing\ICouponRepositoryService.cs" />
+    <Compile Include="Services\Couponing\IUsedCouponsRepositoryService.cs" />
+    <Compile Include="Services\Couponing\UsedCouponsRepositoryService.cs" />
     <Compile Include="Services\CurrencyProviderBase.cs" />
     <Compile Include="Services\DefaultOrderStatusProvider.cs" />
     <Compile Include="Services\DefaultVatConfigurationPartDoesNotExist.cs" />
@@ -577,6 +616,7 @@
     <Compile Include="Services\LocalizationSKUUniquenessHelper.cs" />
     <Compile Include="Services\IProductAttributeNameService.cs" />
     <Compile Include="Services\BaseTaxProviderService.cs" />
+    <Compile Include="Services\NullVatConfigurationService.cs" />
     <Compile Include="Services\OrderAdditionalInformationProvider.cs" />
     <Compile Include="Services\OrderContext.cs" />
     <Compile Include="Services\PersistentCartLocalStorageSettings.cs" />
@@ -586,6 +626,7 @@
     <Compile Include="Services\ProductAttributeNameService.cs" />
     <Compile Include="Services\Currency.cs" />
     <Compile Include="Services\ICurrencyProvider.cs" />
+    <Compile Include="Services\ProductAttributeValueExtendedContext.cs" />
     <Compile Include="Services\ProductInventoryService.cs" />
     <Compile Include="Services\ProductInventoryServiceBase.cs" />
     <Compile Include="Services\ProductPriceService.cs" />
@@ -616,6 +657,7 @@
     <Compile Include="Services\TerritoriesService.cs" />
     <Compile Include="Services\TerritoryPartRecordService.cs" />
     <Compile Include="Services\TerritoryRepositoryService.cs" />
+    <Compile Include="Services\DateTimeProductAttributeExtensionProvider.cs" />
     <Compile Include="Services\TextProductAttributeExtensionProvider.cs" />
     <Compile Include="Services\UpdateStatusService.cs" />
     <Compile Include="Services\UseCurrencyFromSiteCultureProvider.cs" />
@@ -676,6 +718,10 @@
     <Compile Include="ViewModels\ApplicabilityCriterionEntry.cs" />
     <Compile Include="ViewModels\CartPriceAlterationAmount.cs" />
     <Compile Include="ViewModels\Couponing\Coupon.cs" />
+    <Compile Include="ViewModels\Couponing\CouponApplicabilityCriterionEntry.cs" />
+    <Compile Include="ViewModels\Couponing\CouponCriteriaAddViewModel.cs" />
+    <Compile Include="ViewModels\Couponing\CouponCriterionEditViewModel.cs" />
+    <Compile Include="ViewModels\Couponing\CouponingSiteSettingViewModel.cs" />
     <Compile Include="ViewModels\Couponing\FilterOptions.cs" />
     <Compile Include="ViewModels\Couponing\CouponFrontendViewModel.cs" />
     <Compile Include="ViewModels\CriteriaAddViewModel.cs" />
@@ -831,6 +877,8 @@
     <None Include="Views\TerritoryHierarchiesAdmin\HierarchiesListPartial.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesIndex.cshtml" />
     <None Include="Views\TerritoriesAdmin\TerritoriesListPartial.cshtml" />
+    <Content Include="Views\DateTimeProductAttributeExtensionAdmin.cshtml" />
+    <Content Include="Views\DateTimeProductAttributeExtensionInput.cshtml" />
     <None Include="Views\VatAdditionalOrderAddressesShapes.cshtml" />
     <None Include="Views\VatAdditionalOrderProductsShape.cshtml" />
     <None Include="Views\WishListEditor.cshtml" />

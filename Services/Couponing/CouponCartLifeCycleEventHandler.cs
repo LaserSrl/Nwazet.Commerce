@@ -33,16 +33,18 @@ namespace Nwazet.Commerce.Services.Couponing {
         // prevent loading the same coupon several times per request
         private Dictionary<string, CouponRecord> _loadedCoupons;
 
-        public void Finalized() {
+        public void Finalized(CartFinalizedContext context) {
             // here _shoppingCart should still have all its stuff inside
             var coupons = CouponsFromCart();
             foreach (var coupon in coupons) {
-                var context = new CouponLifeUpdateContext {
+                var couponUsedContext = new CouponUsedContext {
                     Coupon = coupon,
                     ShoppingCart = _shoppingCart,
-                    WorkContext = _workContextAccessor.GetContext()
+                    WorkContext = _workContextAccessor.GetContext(),
+                    Order = context.Order
                 };
-                _couponApplicationService.CouponUsed(context);
+                
+                _couponApplicationService.CouponUsed(couponUsedContext);
             }
         }
 
@@ -75,10 +77,17 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         private IEnumerable<CouponRecord> CouponsFromCart() {
             var couponCodes = _shoppingCart.PriceAlterations
-                .Where(cpa => CouponingUtilities.CouponAlterationType.Equals(cpa.AlterationType, StringComparison.InvariantCultureIgnoreCase))
+                .Where(cpa => 
+                    // only alterations for coupons
+                    CouponingUtilities.CouponAlterationType
+                        .Equals(cpa.AlterationType, StringComparison.InvariantCultureIgnoreCase))
                 .Select(cpa => cpa.Key);
 
-            return couponCodes.Select(cc => GetCouponFromCode(cc));
+            return couponCodes
+                .Select(cc => GetCouponFromCode(cc))
+                // Should we consider only those coupons that can actually be processed,
+                // meaning they would actually affect the operation/cart in any way?
+                ;
         }
 
         private CouponRecord GetCouponFromCode(string code) {
