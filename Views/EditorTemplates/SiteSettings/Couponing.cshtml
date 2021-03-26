@@ -24,12 +24,8 @@
                         <tr>
                             <td>
                                 @provider.ProviderLabel
-                                <input type="hidden"
-                                       name="@Html.FieldNameFor(m => m.ApplicabilityProviders[providerIndex].ProviderLabel)"
-                                       value="provider.ProviderLabel"/>
-                                <input type="hidden"
-                                       name="@Html.FieldNameFor(m => m.ApplicabilityProviders[providerIndex].ProviderName)"
-                                       value="provider.ProviderName"/>
+                                @Html.HiddenFor(m => m.ApplicabilityProviders[providerIndex].ProviderLabel)
+                                @Html.HiddenFor(m => m.ApplicabilityProviders[providerIndex].ProviderName)
                             </td>
                             <td class="form-check">
                                 @Html.CheckBoxFor(m => m.ApplicabilityProviders[providerIndex].AvailableForConfiguration,
@@ -79,12 +75,8 @@
                         <tr>
                             <td>
                                 @provider.ProviderLabel
-                                <input type="hidden"
-                                       name="@Html.FieldNameFor(m => m.LineProviders[providerIndex].ProviderLabel)"
-                                       value="provider.ProviderLabel"/>
-                                <input type="hidden"
-                                       name="@Html.FieldNameFor(m => m.LineProviders[providerIndex].ProviderName)"
-                                       value="provider.ProviderName"/>
+                                @Html.HiddenFor(m => m.LineProviders[providerIndex].ProviderLabel)
+                                @Html.HiddenFor(m => m.LineProviders[providerIndex].ProviderName)
                             </td>
                             <td class="form-check">
                                 @Html.CheckBoxFor(m => m.LineProviders[providerIndex].AvailableForConfiguration,
