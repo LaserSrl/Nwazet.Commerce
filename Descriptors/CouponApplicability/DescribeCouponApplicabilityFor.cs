@@ -26,6 +26,7 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
         public LocalizedString Name { get; protected set; }
         public LocalizedString Description { get; protected set; }
         public List<TDescriptor> Types { get; protected set; }
+
     }
 
     [OrchardFeature("Nwazet.Couponing")]
@@ -44,6 +45,7 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
             Action<CouponApplicabilityCriterionContext> additionCriterion,
             Action<CouponApplicabilityCriterionContext> processingCriterion,
             Func<CouponContext, LocalizedString> display,
+            bool forConfiguration, bool forProcessing,
             string form = null) {
 
             if (Types == null) {
@@ -58,6 +60,8 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
                 AdditionCriterion = additionCriterion,
                 ProcessingCriterion = processingCriterion,
                 Display = display,
+                IsAvailableForConfiguration = forConfiguration,
+                IsAvailableForProcessing = forProcessing,
                 Form = form
             });
             return this;
@@ -80,6 +84,7 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
             Action<CouponLineCriterionContext> criterion,
             Func<CouponContext, LocalizedString> display,
             Func<CouponApplicabilityContext, LocalizedString> failureMessage,
+            bool forConfiguration, bool forProcessing,
             string form = null) {
 
             if (Types == null) {
@@ -94,6 +99,8 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
                 Criterion = criterion,
                 Display = display,
                 FailureMessage = failureMessage,
+                IsAvailableForConfiguration = forConfiguration,
+                IsAvailableForProcessing = forProcessing,
                 Form = form
             });
             return this;

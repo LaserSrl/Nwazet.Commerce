@@ -30,7 +30,8 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
         public override LocalizedString ProviderDisplayName => T("Criteria on the authentication state");
 
         public void Describe(DescribeCouponApplicabilityContext describe) {
-
+            var isAvailableForConfiguration = IsAvailableForConfiguration();
+            var isAvailableForProcessing = IsAvailableForProcessing();
             describe
                 .For("User", T("Authentication State"), T("Authentication State"))
                 .Element("User is authenticated",
@@ -39,6 +40,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     (ctx) => ApplyCriteria(ctx, (b) => b, T("Coupon {0} is only available to authenticated users.", ctx.CouponRecord.Code)),
                     (ctx) => ApplyCriteria(ctx, (b) => b, T("Coupon {0} is only available to authenticated users.", ctx.CouponRecord.Code)),
                     (ctx) => T("User is authenticated"),
+                    isAvailableForConfiguration, isAvailableForProcessing,
                     null) // null form because there's nothing special to configure
                 .Element("User is not authenticated",
                     T("User is not authenticated"),
@@ -46,6 +48,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     (ctx) => ApplyCriteria(ctx, (b) => !b, T("Coupon {0} is not available to authenticated users.", ctx.CouponRecord.Code)),
                     (ctx) => ApplyCriteria(ctx, (b) => !b, T("Coupon {0} is not available to authenticated users.", ctx.CouponRecord.Code)),
                     (ctx) => T("User is not authenticated"),
+                    isAvailableForConfiguration, isAvailableForProcessing,
                     null);
         }
         
