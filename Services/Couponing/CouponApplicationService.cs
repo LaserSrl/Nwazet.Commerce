@@ -36,6 +36,7 @@ namespace Nwazet.Commerce.Services.Couponing {
         private readonly IRepository<CouponApplicabilityCriterionRecord> _criteriaRepository;
         private readonly IRepository<CouponLineCriterionRecord> _lineCriteriaRepository;
         private readonly ITokenizer _tokenizer;
+        private readonly IEnumerable<ICouponUserIdentifierProvider> _couponUserIdentifierProviders;
 
         public CouponApplicationService(
             ICouponRepositoryService couponRepositoryService,
@@ -47,7 +48,8 @@ namespace Nwazet.Commerce.Services.Couponing {
             IUsedCouponsRepositoryService usedCouponsRepositoryService,
             IRepository<CouponApplicabilityCriterionRecord> criteriaRepository,
             IRepository<CouponLineCriterionRecord> lineCriteriaRepository,
-            ITokenizer tokenizer) {
+            ITokenizer tokenizer,
+            IEnumerable<ICouponUserIdentifierProvider> couponUserIdentifierProviders) {
 
             _couponRepositoryService = couponRepositoryService;
             _workContextAccessor = workContextAccessor;
@@ -59,6 +61,8 @@ namespace Nwazet.Commerce.Services.Couponing {
             _criteriaRepository = criteriaRepository;
             _lineCriteriaRepository = lineCriteriaRepository;
             _tokenizer = tokenizer;
+            _couponUserIdentifierProviders = couponUserIdentifierProviders
+                .OrderByDescending(cuip => cuip.Priority);
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
             _notificationsSent = new HashSet<string>();
@@ -252,12 +256,23 @@ namespace Nwazet.Commerce.Services.Couponing {
                 };
                 couponUsedRecord.WasInvalid = !CanProcess(applicabilityContext);
 
-                // TODO: providers to set the values of
-                // couponUsedRecord.AdditionalUserIdentifier
-                // and
-                // couponUsedRecord.IdentifierType
-                // The providers should be put in a property of context so they can be passed
-                // around to whatever code needs them.
+                if (_couponUserIdentifierProviders.Any()) {
+                    // TODO: providers to set the values of
+                    // couponUsedRecord.AdditionalUserIdentifier
+                    // and
+                    // couponUsedRecord.IdentifierType
+                    // The providers should be put in a property of context so they can be passed
+                    // around to whatever code needs them.
+                    foreach (var provider in _couponUserIdentifierProviders) {
+                        var identifier = provider.GetAdditionalUserIdentifier(applicabilityContext);
+                        if (!string.IsNullOrWhiteSpace(identifier)) {
+                            couponUsedRecord.AdditionalUserIdentifier = identifier;
+                            couponUsedRecord.IdentifierType = provider.GetIdentifierType(applicabilityContext);
+                            // found the highest priority thing, so we are done?
+                            break;
+                        }
+                    }
+                }
 
                 // that CouponUsedRecord should actually be saved in the db
                 _usedCouponsRepositoryService.CreateRecord(couponUsedRecord);
