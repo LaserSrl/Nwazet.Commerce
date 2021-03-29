@@ -8,9 +8,11 @@ using Nwazet.Commerce.ViewModels.Couponing;
 using Orchard;
 using Orchard.Caching;
 using Orchard.ContentManagement;
+using Orchard.Environment.Extensions;
 using Orchard.Localization;
 
 namespace Nwazet.Commerce.Services.Couponing {
+    [OrchardFeature("Nwazet.Couponing")]
     public abstract class BaseCouponCriterionProvider : ICouponCriterionProvider {
         protected readonly IWorkContextAccessor _workContextAccessor;
         protected readonly ICacheManager _cacheManager;
