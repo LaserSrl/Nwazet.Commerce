@@ -541,6 +541,7 @@
     <Compile Include="Routes\WishListRoutes.cs" />
     <Compile Include="Security\HierachiesAuthorizationEventHandler.cs" />
     <Compile Include="Security\PreventDeletingDefaultVatConfigurationEventHandler.cs" />
+    <Compile Include="Security\ProductAttributeAuthorizationEventHandler.cs" />
     <Compile Include="Security\TerritoriesAuthorizationEventHandler.cs" />
     <Compile Include="Security\WishListsAuthorizationEventHandler.cs" />
     <Compile Include="Services\BaseOrderAdditionalInformationProvider.cs" />
