@@ -27,9 +27,10 @@ namespace Nwazet.Commerce.Services {
             return value;
         }
 
-        public dynamic BuildInputShape(ProductAttributePart part) {
+        public dynamic BuildInputShape(ProductAttributePart part, ProductAttributesPart product) {
             return _shapeFactory.TextProductAttributeExtensionInput(
                 ExtensionName: Name,
+                Product: product,
                 Part: part);
         }
 

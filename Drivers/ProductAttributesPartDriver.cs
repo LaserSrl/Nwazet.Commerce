@@ -53,7 +53,7 @@ namespace Nwazet.Commerce.Drivers {
                         Part = a,
                         // Return all possible attribute extensions input shapes
                         AttributeExtensionShapes = _attributeExtensions.Where(e => a.AttributeValues.Any(av => av.ExtensionProvider == e.Name))
-                            .Select(e => e.BuildInputShape(a))
+                            .Select(e => e.BuildInputShape(a, attributesPart))
                     }),
                 CurrencyProvider: _currencyProvider
                 );

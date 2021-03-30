@@ -570,7 +570,9 @@
     <Compile Include="Services\Couponing\ICouponApplicabilityCriterionProvider.cs" />
     <Compile Include="Services\Couponing\ICouponApplicationService.cs" />
     <Compile Include="Services\Couponing\ICouponRepositoryService.cs" />
+    <Compile Include="Services\Couponing\ICouponUserIdentifierProvider.cs" />
     <Compile Include="Services\Couponing\IUsedCouponsRepositoryService.cs" />
+    <Compile Include="Services\Couponing\NullCouponUserIdentifierProvider.cs" />
     <Compile Include="Services\Couponing\UsedCouponsRepositoryService.cs" />
     <Compile Include="Services\CurrencyProviderBase.cs" />
     <Compile Include="Services\DefaultOrderStatusProvider.cs" />
