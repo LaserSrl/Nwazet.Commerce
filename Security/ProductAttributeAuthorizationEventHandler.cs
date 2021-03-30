@@ -10,11 +10,8 @@ namespace Nwazet.Commerce.Security {
         public void Checking(CheckAccessContext context) {
             Permission permission = context.Permission;
             // adjusting permissions only if the content is not securable
-            // or is attacchable to CT
-            if ((context.Content.Is<ProductAttributePart>()
-                && !context.Content.ContentItem.TypeDefinition.Settings.GetModel<ContentTypeSettings>().Securable)
-                || context.Content.Is<ProductAttributesPart>())
-            {
+            if (context.Content.Is<ProductAttributePart>()
+                && !context.Content.ContentItem.TypeDefinition.Settings.GetModel<ContentTypeSettings>().Securable) {
                 if (context.Permission == Orchard.Core.Contents.Permissions.CreateContent) {
                     permission = CommercePermissions.ManageAttributes;
                 }
