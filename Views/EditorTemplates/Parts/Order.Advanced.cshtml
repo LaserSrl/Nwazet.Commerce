@@ -172,11 +172,16 @@
                     // TODO
                 }
                 @if (additionalVariations.Any()) {
-                    <tr>
-                        <td colspan="5" class="label">@T("Cart level variations")</td>
-                        <td></td>
-                        <td class="price">@currencyInUse.PriceAsString(0.0m, cultureInUse)</td>
-                    </tr>
+                    foreach (var av in additionalVariations) {
+                        foreach (var detail in av.Details.Where(oid => oid.InformationType == OrderInformationType.CartPrice)) {
+                            
+                            <tr>
+                                <td colspan="5" class="label">@detail.Label</td>
+                                <td></td>
+                                <td class="price">@currencyInUse.PriceAsString(detail.Value, cultureInUse)</td>
+                            </tr>
+                        }
+                    }
                 }
                 <tr>
                     <td colspan="5" class="label">@T("Total taxable amount for products")</td>

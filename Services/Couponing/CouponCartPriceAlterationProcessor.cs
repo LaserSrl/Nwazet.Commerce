@@ -94,6 +94,9 @@ namespace Nwazet.Commerce.Services.Couponing {
                                 return _productPriceService
                                     .GetPrice(cartLine.Product, discount, shoppingCart.Country, shoppingCart.ZipCode);
                             });
+                    case CouponType.CartAmount:
+                        // this is after VAT
+                        return -coupon.Value;
                     default:
                         break;
                 }
@@ -128,8 +131,9 @@ namespace Nwazet.Commerce.Services.Couponing {
                         var value = coupon.Value / (1m + rate);
                         return -quantity * value;
 
-                    //    // flat coupon on the cart? That does nothing clear
-                    //    // to a single product line
+                    case CouponType.CartAmount:
+                    // flat coupon on the cart? That does nothing clear
+                    // to a single product line
                     default:
                         return 0.0m;
                 }
