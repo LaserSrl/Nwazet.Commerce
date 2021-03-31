@@ -77,7 +77,9 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     var pastUses = _usedCouponsRepositoryService
                         .Query()
                         .Where(cur =>
-                            cur.CouponRecord_Id == context.ApplicabilityContext.Coupon.Id)
+                            cur.CouponRecord_Id == context.ApplicabilityContext.Coupon.Id
+                            // only count coupons that were actually spent
+                            && cur.WasInvalid == false)
                         .Count();
                     if (pastUses < 0) {
                         // sanity check

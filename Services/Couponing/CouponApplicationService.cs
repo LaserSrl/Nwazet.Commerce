@@ -153,11 +153,11 @@ namespace Nwazet.Commerce.Services.Couponing {
                 }
             }
             if (!context.IsApplicable && context.ShouldNotify) {
-                if (context.Message != null && !string.IsNullOrWhiteSpace(context.Message.Text)) {
-                    Warning(context.Message);
-                } else {
-                    Warning(T("Coupon code {0} is not valid", context.Coupon.Code));
+                if (context.Message == null || string.IsNullOrWhiteSpace(context.Message.Text)) {
+                    context.Message = T("Coupon code {0} is not valid", context.Coupon.Code);
                 }
+
+                Warning(context.Message);
             }
             return context.IsApplicable;
         }
@@ -192,7 +192,12 @@ namespace Nwazet.Commerce.Services.Couponing {
                     _notifier.Information(T("Coupon {0} was successfully applied", context.Coupon.Code));
                 }
             } else {
-                Warning(T("Coupon code {0} is not valid", context.CouponCode));
+
+                if (context.Message == null || string.IsNullOrWhiteSpace(context.Message.Text)) {
+                    context.Message = T("Coupon code {0} is not valid", context.Coupon?.Code ?? context.CouponCode);
+                }
+
+                Warning(context.Message);
             }
         }
 
@@ -202,6 +207,12 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
             if (RemoveCouponInternal(context)) {
                 _notifier.Information(T("Coupon {0} was removed", context.CouponCode));
+                // formal step for coherence with the rest of the API
+                context.IsApplicable = true;
+            } else {
+                // formal step for coherence with the rest of the API
+                context.IsApplicable = false;
+                context.Message = T("Coupon code {0} is not valid", context.Coupon?.Code ?? context.CouponCode);
             }
         }
 

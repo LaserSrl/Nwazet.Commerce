@@ -100,6 +100,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                                     .Query()
                                     .Where(cur =>
                                         cur.CouponRecord_Id == context.ApplicabilityContext.Coupon.Id
+                                        && cur.WasInvalid == false // only count coupons that were actually spent
                                         && cur.IdentifierType == providerType  
                                         && cur.AdditionalUserIdentifier == identifier)
                                     .Count();
@@ -114,6 +115,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                             .Query()
                             .Where(cur => 
                                 cur.CouponRecord_Id == context.ApplicabilityContext.Coupon.Id
+                                        && cur.WasInvalid == false // only count coupons that were actually spent
                                 && cur.UserPartRecord_Id == userId)
                             .Count();
                     }

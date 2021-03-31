@@ -16,13 +16,16 @@ namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.Couponing")]
     public class CouponingSiteSettingPartDriver : ContentPartDriver<CouponingSiteSettingPart> {
 
+        private readonly IEnumerable<ICouponApplicabilityCriterion> _applicabilityCriteria;
         private readonly IEnumerable<ICouponApplicabilityCriterionProvider> _applicabilityCriteriaProviders;
         private readonly IEnumerable<ICouponLineApplicabilityCriterionProvider> _applicabilityLineCriteriaProviders;
 
         public CouponingSiteSettingPartDriver(
+            IEnumerable<ICouponApplicabilityCriterion> applicabilityCriteria,
             IEnumerable<ICouponApplicabilityCriterionProvider> applicabilityCriteriaProviders,
             IEnumerable<ICouponLineApplicabilityCriterionProvider> applicabilityLineCriteriaProviders) {
 
+            _applicabilityCriteria = applicabilityCriteria;
             _applicabilityCriteriaProviders = applicabilityCriteriaProviders;
             _applicabilityLineCriteriaProviders = applicabilityLineCriteriaProviders;
 
@@ -39,6 +42,13 @@ namespace Nwazet.Commerce.Drivers {
 
         protected override DriverResult Editor(CouponingSiteSettingPart part, dynamic shapeHelper) {
             var vm = new CouponingSiteSettingViewModel();
+            foreach (var provider in _applicabilityCriteria) {
+                vm.BasicApplicabilityProviders.Add(new BasicApplicabilityConfigurationViewModel {
+                    ProviderName = provider.ProviderName,
+                    ProviderLabel = provider.ProviderDisplayName.Text,
+                    EvaluateCriterion = provider.EvaluateCriterion()
+                });
+            }
             foreach (var provider in _applicabilityCriteriaProviders) {
                 vm.ApplicabilityProviders.Add(new ProviderConfigurationViewModel {
                     ProviderName = provider.ProviderName,
@@ -63,6 +73,7 @@ namespace Nwazet.Commerce.Drivers {
             if (updater is ECommerceSettingsAdminController
                 && updater.TryUpdateModel(vm, Prefix, null, null)) {
                 // store the new settings
+                part.SetBasicApplicabilityConfiguration(vm.BasicApplicabilityProviders);
                 part.SetCouponProvidersConfiguration(vm.ApplicabilityProviders);
                 part.SetCouponLineProvidersConfiguration(vm.LineProviders);
             }

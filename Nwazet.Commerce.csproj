@@ -558,6 +558,7 @@
     <Compile Include="ApplicabilityCriteria\Couponing\NoDuplicatesCouponApplicabilityCriterion.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\CouponApplicabilityContext.cs" />
     <Compile Include="Descriptors\CouponApplicability\CouponApplicabilityCriterionDescriptor.cs" />
+    <Compile Include="Services\Couponing\BaseCouponApplicabilityCriterion.cs" />
     <Compile Include="Services\Couponing\BaseCouponCriterionProvider.cs" />
     <Compile Include="Services\Couponing\CouponCartLifeCycleEventHandler.cs" />
     <Compile Include="Services\Couponing\CouponCartPriceAlterationProcessor.cs" />

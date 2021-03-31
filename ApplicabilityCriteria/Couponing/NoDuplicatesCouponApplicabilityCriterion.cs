@@ -1,6 +1,8 @@
 ﻿using Nwazet.Commerce.Descriptors.CouponApplicability;
 using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Services.Couponing;
+using Orchard;
+using Orchard.Caching;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using System;
@@ -11,35 +13,40 @@ using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
-    public class NoDuplicatesCouponApplicabilityCriterion : ICouponApplicabilityCriterion {
+    public class NoDuplicatesCouponApplicabilityCriterion 
+        : BaseCouponApplicabilityCriterion, ICouponApplicabilityCriterion {
         // This implementation provides general tests that are ok for any and every coupon.
         // More specialized criteria should have their own implementations that only check
         // their single condition. For example, this is not the place to check that the cart
         // isn't empty, as on principle there may be coupons that can be added to empty carts.
-        public NoDuplicatesCouponApplicabilityCriterion() {
+        public NoDuplicatesCouponApplicabilityCriterion(
+            IWorkContextAccessor workContextAccessor,
+            ICacheManager cacheManager,
+            ISignals signals)
+            : base(workContextAccessor, cacheManager, signals) {
 
-            T = NullLocalizer.Instance;
         }
 
-        public Localizer T { get; set; }
+        public override string ProviderName =>
+            "NoDuplicatesCouponApplicabilityCriterion";
 
-        public void CanBeAdded(CouponApplicabilityContext context) {
-            
-            if (context.IsApplicable) {
-                if (context.ShoppingCart?.PriceAlterations != null
-                    && context.ShoppingCart.PriceAlterations.Any(cpa =>
-                        CouponingUtilities.CouponAlterationType.Equals(cpa.AlterationType)
-                        && context.Coupon.Code.Equals(cpa.Key, StringComparison.InvariantCultureIgnoreCase))) {
-                    // is this coupon already applied?
-                    // can't apply the same coupon twice
-                    context.IsApplicable = false;
-                    context.Message = T("Coupon code {0} is already in use.", context.Coupon.Code);
+        public override LocalizedString ProviderDisplayName => 
+            T("Prevent duplicate coupons in the same cart.");
+
+        public override void CanBeAdded(CouponApplicabilityContext context) {
+            if (EvaluateCriterion()) {
+                if (context.IsApplicable) {
+                    if (context.ShoppingCart?.PriceAlterations != null
+                        && context.ShoppingCart.PriceAlterations.Any(cpa =>
+                            CouponingUtilities.CouponAlterationType.Equals(cpa.AlterationType)
+                            && context.Coupon.Code.Equals(cpa.Key, StringComparison.InvariantCultureIgnoreCase))) {
+                        // is this coupon already applied?
+                        // can't apply the same coupon twice
+                        context.IsApplicable = false;
+                        context.Message = T("Coupon code {0} is already in use.", context.Coupon.Code);
+                    }
                 }
             }
-        }
-
-        public void CanBeProcessed(CouponApplicabilityContext context) {
-            
         }
         
     }
