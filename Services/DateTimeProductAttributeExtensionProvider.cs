@@ -70,9 +70,10 @@ namespace Nwazet.Commerce.Services {
             // this is ever used somewhere without further validation.
         }
 
-        public dynamic BuildInputShape(ProductAttributePart part) {
+        public dynamic BuildInputShape(ProductAttributePart part, ProductAttributesPart product) {
             return _shapeFactory.DateTimeProductAttributeExtensionInput(
                 ExtensionName: Name,
+                Product: product,
                 Part: part,
                 Prefix: "ext.productattributes.a" + part.Id);
         }

@@ -171,11 +171,13 @@
                                 && old.InformationType != OrderInformationType.FrontEndInfo));
                     // TODO
                 }
-                @if (additionalVariations.Any()) {
+
+                @foreach (var av in additionalVariations.Where(av => av.InformationType != OrderInformationType.CartPrice)) {
+                    @* Here for cart-level variations of before VAT stuff *@  
                     <tr>
-                        <td colspan="5" class="label">@T("Cart level variations")</td>
+                        <td colspan="5" class="label">@av.Label</td>
                         <td></td>
-                        <td class="price">@currencyInUse.PriceAsString(0.0m, cultureInUse)</td>
+                        <td class="price">@currencyInUse.PriceAsString(av.Value, cultureInUse)</td>
                     </tr>
                 }
                 <tr>
@@ -188,11 +190,21 @@
                     <td colspan="3"></td>
                     <td class="price">@currencyInUse.PriceAsString(vatSum, cultureInUse)</td>
                 </tr>
+
                 @if (Model.Order.Taxes != null && Model.Order.Taxes.Amount > 0.0m) {
                     <tr class="taxes">
                         <td colspan="5" class="label">@T("Taxes {0}", string.IsNullOrWhiteSpace(Model.Order.Taxes.Name) ? T("Taxes").Text : Model.Order.Taxes.Name)</td>
                         <td colspan="3"></td>
                         <td class="price">@currencyInUse.PriceAsString(Model.Order.Taxes.Amount, cultureInUse)</td>
+                    </tr>
+                }
+                
+                @foreach (var av in additionalVariations.Where(av => av.InformationType == OrderInformationType.CartPrice)) {
+                    @* Cart-level variations (inclusive of VAT) *@ 
+                    <tr>
+                        <td colspan="5" class="label">@av.Label [@(av.Description)]</td>
+                        <td colspan="4"></td>
+                        <td class="price">@currencyInUse.PriceAsString(av.Value, cultureInUse)</td>
                     </tr>
                 }
                 @if (Model.Order.ShippingOption != null) {

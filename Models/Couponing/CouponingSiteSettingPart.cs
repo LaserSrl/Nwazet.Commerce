@@ -10,6 +10,11 @@ namespace Nwazet.Commerce.Models {
     public class CouponingSiteSettingPart : ContentPart {
         public const string CacheKey = "CouponingSiteSettingPart";
 
+        public virtual string CouponBasicApplicabilityConfiguration {
+            get { return this.Retrieve(p => p.CouponBasicApplicabilityConfiguration); }
+            set { this.Store(p => p.CouponBasicApplicabilityConfiguration, value); }
+        }
+
         public virtual string CouponProvidersConfiguration {
             get { return this.Retrieve(p => p.CouponProvidersConfiguration); }
             set { this.Store(p => p.CouponProvidersConfiguration, value); }
@@ -18,6 +23,19 @@ namespace Nwazet.Commerce.Models {
         public virtual string CouponLineProvidersConfiguration {
             get { return this.Retrieve(p => p.CouponLineProvidersConfiguration); }
             set { this.Store(p => p.CouponLineProvidersConfiguration, value); }
+        }
+
+
+        public IList<BasicApplicabilityConfigurationViewModel> BasicApplicabilityProviders {
+            get {
+                try {
+                    return JsonConvert
+                        .DeserializeObject<List<BasicApplicabilityConfigurationViewModel>>(
+                            CouponBasicApplicabilityConfiguration ?? "[]");
+                } catch (Exception) {
+                    return new List<BasicApplicabilityConfigurationViewModel>();
+                }
+            }
         }
 
         public IList<ProviderConfigurationViewModel> ApplicabilityProviders {
@@ -42,6 +60,10 @@ namespace Nwazet.Commerce.Models {
                     return new List<ProviderConfigurationViewModel>();
                 }
             }
+        }
+
+        public void SetBasicApplicabilityConfiguration(IList<BasicApplicabilityConfigurationViewModel> providers) {
+            CouponBasicApplicabilityConfiguration = JsonConvert.SerializeObject(providers);
         }
 
         public void SetCouponProvidersConfiguration(IList<ProviderConfigurationViewModel> providers) {

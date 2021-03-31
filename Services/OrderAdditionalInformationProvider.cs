@@ -44,6 +44,14 @@ namespace Nwazet.Commerce.Services {
                                 Description = productPart.Sku,
                                 InformationType = OrderInformationType.OriginalLineData,
                                 ProcessorClass = this.GetType().FullName
+                            },
+                            new OrderInformationDetail {
+                                Label = "VersionRecordId",
+                                Description = productPart.ContentItem.VersionRecord.Id.ToString(),
+                                Value = productPart.ContentItem.VersionRecord.Id,
+                                ValueType = OrderValueType.Number,
+                                InformationType = OrderInformationType.OriginalLineData,
+                                ProcessorClass = this.GetType().FullName
                             }
                         }
                     }.ToXML();
