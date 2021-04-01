@@ -31,7 +31,6 @@ namespace Nwazet.Commerce.Migrations {
             SchemaBuilder.CreateTable("TerritoryInternalRecord", table => table
                 .Column<int>("Id", col => col.Identity().PrimaryKey())
                 .Column<string>("NameHash")
-                .Column<string>("TerritoriesFullPath")
                 .Column<string>("Name", col => col.NotNull().Unlimited()));
 
             SchemaBuilder.CreateTable("TerritoryHierarchyPartRecord", table => table
@@ -42,7 +41,8 @@ namespace Nwazet.Commerce.Migrations {
                 .ContentPartRecord()
                 .Column<int>("TerritoryInternalRecord_Id")
                 .Column<int>("ParentTerritory_Id")
-                .Column<int>("Hierarchy_Id"));
+                .Column<int>("Hierarchy_Id")
+                .Column<string>("TerritoriesFullPath"));
 
             // create an index on the name because we often search using that
             // Since the Name column is nvarchar, it cannot have an index itself

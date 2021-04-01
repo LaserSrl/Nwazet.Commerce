@@ -1,6 +1,7 @@
 ﻿using Nwazet.Commerce.ApplicabilityCriteria.Couponing;
 using Nwazet.Commerce.Descriptors.CouponApplicability;
 using Orchard;
+using Orchard.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,5 +34,17 @@ namespace Nwazet.Commerce.Services.Couponing {
         /// in place.</remarks>
         void CanBeProcessed(CouponApplicabilityContext context);
 
+        /// <summary>
+        /// Tells whether this criterion should be considered or not. Note that 
+        /// implementations of this interface affect all coupons in a tenant, so
+        /// an enabled criterion will always run.
+        /// </summary>
+        /// <returns></returns>
+        bool EvaluateCriterion();
+        /// <summary>
+        /// Name for the provider used as key for its settings.
+        /// </summary>
+        string ProviderName { get; }
+        LocalizedString ProviderDisplayName { get; }
     }
 }

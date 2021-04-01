@@ -56,12 +56,13 @@ namespace Nwazet.Commerce.Models {
     }
 
     public enum OrderInformationType {
-        RawLinePrice,
+        RawLinePrice, // line level variation of price (before VAT)
         VAT,
         OriginalLineData,
         OriginalOrderData,
         TextInfo, // use this to display more details at backoffice, especially for order-level (rather than line-level) stuff
-        FrontEndInfo // use this for stuff you may wish to display to the user
+        FrontEndInfo, // use this for stuff you may wish to display to the user
+        CartPrice, // Cart level variation of price (after VAT)
     }
 
     public enum OrderValueType {

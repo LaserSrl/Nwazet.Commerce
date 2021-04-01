@@ -5,6 +5,48 @@
     <legend>@T("Enabled providers for couponing criteria.")</legend>
 
     <fieldset>
+        <legend>@T("Basic applicability tests")</legend>
+        <span class="hint">
+            @T("These criteria, when active, affect all coupons.")
+        </span>
+        @if(Model.BasicApplicabilityProviders.Any()) {
+            var providerIndex = 0;
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>@T("Provider name")</th>
+                        <th>@T("Evaluate criterion")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var provider in Model.BasicApplicabilityProviders) {
+                        <tr>
+                            <td>
+                                @provider.ProviderLabel
+                                @Html.HiddenFor(m => m.BasicApplicabilityProviders[providerIndex].ProviderLabel)
+                                @Html.HiddenFor(m => m.BasicApplicabilityProviders[providerIndex].ProviderName)
+                            </td>
+                            <td class="form-check">
+                                @Html.CheckBoxFor(m => m.BasicApplicabilityProviders[providerIndex].EvaluateCriterion,
+                                    new {
+                                        id = Html.FieldIdFor(m => m.BasicApplicabilityProviders[providerIndex].EvaluateCriterion),
+                                        @class = "form-check-input"
+                                    })
+                            </td>
+                        </tr>
+                        providerIndex++;
+                    }
+                
+                </tbody>
+            </table>
+        } else {
+            <span>
+                @T("No provider available for configuration.")
+            </span>
+        }
+    </fieldset>
+
+    <fieldset>
         <legend>@T("Applicability providers")</legend>
         <span class="hint">
             @T("Criteria from these providers determine whether a coupon can be added to the cart.")

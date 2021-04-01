@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Nwazet.Commerce.ApplicabilityCriteria.Couponing;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.ViewModels.Couponing;
 using Orchard;
@@ -10,15 +6,20 @@ using Orchard.Caching;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Services.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
-    public abstract class BaseCouponCriterionProvider : ICouponCriterionProvider {
+    public abstract class BaseCouponApplicabilityCriterion : ICouponApplicabilityCriterion {
         protected readonly IWorkContextAccessor _workContextAccessor;
         protected readonly ICacheManager _cacheManager;
         protected readonly ISignals _signals;
 
-        public BaseCouponCriterionProvider(
+        public BaseCouponApplicabilityCriterion(
             IWorkContextAccessor workContextAccessor,
             ICacheManager cacheManager,
             ISignals signals) {
@@ -26,35 +27,33 @@ namespace Nwazet.Commerce.Services.Couponing {
             _workContextAccessor = workContextAccessor;
             _cacheManager = cacheManager;
             _signals = signals;
+
+            T = NullLocalizer.Instance;
         }
+
+        public Localizer T { get; set; }
 
         public abstract string ProviderName { get; }
         public abstract LocalizedString ProviderDisplayName { get; }
-        
-        public virtual bool IsAvailableForConfiguration() {
+
+        public virtual bool EvaluateCriterion() {
             var settingForProvider = SettingForProvider();
             if (settingForProvider != null) {
-                return settingForProvider.AvailableForConfiguration;
+                return settingForProvider.EvaluateCriterion;
             }
-            return false;
+            // default true, because implementations represent basic tests that
+            // we wanto to be running more often than not.
+            return true;
         }
 
-        public virtual bool IsAvailableForProcessing() {
-            var settingForProvider = SettingForProvider();
-            if (settingForProvider != null) {
-                return settingForProvider.AvailableForProcessing;
-            }
-            return false;
-        }
+        // empty implementations to override
+        public virtual void CanBeAdded(CouponApplicabilityContext context) { }
+        public virtual void CanBeProcessed(CouponApplicabilityContext context) { }
 
-        protected ProviderConfigurationViewModel SettingForProvider() {
+        protected BasicApplicabilityConfigurationViewModel SettingForProvider() {
             var settings = GetSettings();
-            var settingForProvider = settings.ApplicabilityProviders
+            var settingForProvider = settings.BasicApplicabilityProviders
                 .FirstOrDefault(pcvm => ProviderName.Equals(pcvm.ProviderName));
-            if (settingForProvider == null) {
-                settingForProvider = settings.LineProviders
-                .FirstOrDefault(pcvm => ProviderName.Equals(pcvm.ProviderName));
-            }
             return settingForProvider;
         }
 
