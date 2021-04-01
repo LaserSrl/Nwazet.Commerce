@@ -35,6 +35,7 @@ namespace Nwazet.Commerce.Tokens {
                 .Token("ShippingCost", content => content.As<ProductPart>().ShippingCost)
                 .Token("Weight", content => content.As<ProductPart>().Weight)
                 .Token("MinimumOrderQuantity", content => content.As<ProductPart>().MinimumOrderQuantity)
+                .Token("MaximumOrderQuantity", content => content.As<ProductPart>().MaximumOrderQuantity)
                 .Token("AuthenticationRequired", content => content.As<ProductPart>().AuthenticationRequired)
                 .Token("FrontendPriceString", content => content.As<PricePart>()
                     .FrontendUnitPrice

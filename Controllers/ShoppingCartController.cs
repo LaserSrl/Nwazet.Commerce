@@ -105,7 +105,7 @@ namespace Nwazet.Commerce.Controllers {
                         };
                     });
 
-            // Retrieve minimum order quantity
+            // Retrieve minimum/maximum order quantity
             Dictionary<int, List<string>> productMessages = new Dictionary<int, List<string>>();
             var productPart = _contentManager.Get<ProductPart>(id);
             string productTitle = _contentManager.GetItemMetadata(productPart.ContentItem).DisplayText;
@@ -114,7 +114,8 @@ namespace Nwazet.Commerce.Controllers {
                     quantity = productPart.MinimumOrderQuantity;
                     if (productMessages.ContainsKey(id)) {
                         productMessages[id].Add(T("Quantity increased to match minimum possible for {0}.", productTitle).Text);
-                    } else {
+                    }
+                    else {
                         productMessages.Add(id, new List<string>() { T("Quantity increased to match minimum possible for {0}.", productTitle).Text });
                     }
                 }
@@ -123,8 +124,25 @@ namespace Nwazet.Commerce.Controllers {
                     quantity = productPart.Inventory;
                     if (productMessages.ContainsKey(id)) {
                         productMessages[id].Add(T("Quantity decreased to match inventory for {0}.", productTitle).Text);
-                    } else {
+                    }
+                    else {
                         productMessages.Add(id, new List<string>() { T("Quantity decreased to match inventory for {0}.", productTitle).Text });
+                    }
+                }
+                if (productPart.MaximumOrderQuantity > 0) { // unlimited quantities are not allowed
+                    var existingCartitem = _shoppingCart.FindCartItem(productPart.Id, productattributes);
+                    var currentQty = 0;
+                    if (existingCartitem != null) {
+                        currentQty = existingCartitem.Quantity;
+                    }
+                    if (quantity + currentQty > productPart.MaximumOrderQuantity && productPart.MaximumOrderQuantity > 0) {
+                        quantity = productPart.MaximumOrderQuantity - currentQty;
+                        if (productMessages.ContainsKey(id)) {
+                            productMessages[id].Add(T("Quantity decreased to match maximum possible for {0}.", productTitle).Text);
+                        }
+                        else {
+                            productMessages.Add(id, new List<string>() { T("Quantity decreased to match maximum possible for {0}.", productTitle).Text });
+                        }
                     }
                 }
             }
@@ -153,7 +171,7 @@ namespace Nwazet.Commerce.Controllers {
         [Themed]
         [OutputCache(Duration = 0)]
         public ActionResult Index(Dictionary<int, List<string>> productMessages = null) {
-            if (productMessages == null || productMessages.Count==0) {
+            if (productMessages == null || productMessages.Count == 0) {
                 if (TempData["ProductMessages"] != null) {
                     productMessages = (Dictionary<int, List<string>>)TempData["ProductMessages"];
                 }
@@ -169,7 +187,8 @@ namespace Nwazet.Commerce.Controllers {
                         _shoppingCart.ZipCode,
                         _shoppingCart.ShippingOption,
                         productMessages));
-            } catch (ShippingException ex) {
+            }
+            catch (ShippingException ex) {
                 _shoppingCart.Country = null;
                 _shoppingCart.ZipCode = null;
                 _shoppingCart.ShippingOption = null;
@@ -186,7 +205,7 @@ namespace Nwazet.Commerce.Controllers {
             Dictionary<int, List<string>> productMessages = null) {
 
             var shape = _shapeFactory.ShoppingCart();
-            
+
             var productQuantities = _shoppingCart
                 .GetProducts()
                 .Where(p => p.Quantity > 0)
@@ -230,7 +249,7 @@ namespace Nwazet.Commerce.Controllers {
 
                 if (!shopItemsAllDigital) {
                     if (!isSummary && shippingOption == null) {
-                        
+
                         shape.ShippingOptions = allShippingOptions;
                     }
                 }
@@ -252,7 +271,7 @@ namespace Nwazet.Commerce.Controllers {
             }
             if (displayCheckoutButtons) {
                 //check whether back-order is allowed for products whose inventory is less than the requested quantity
-                displayCheckoutButtons = !productQuantities.Any(pq => 
+                displayCheckoutButtons = !productQuantities.Any(pq =>
                     !pq.Product.ProductService.MayAddToCart(pq.Product, pq.Quantity));
             }
             if (displayCheckoutButtons) {
@@ -308,6 +327,7 @@ namespace Nwazet.Commerce.Controllers {
                     ShippingCost: productQuantity.Product.ShippingCost,
                     Weight: productQuantity.Product.Weight,
                     MinimumOrderQuantity: productQuantity.Product.MinimumOrderQuantity,
+                    MaximumOrderQuantity: productQuantity.Product.MaximumOrderQuantity,
                     Messages: productMessages == null ?
                         (string)null :
                         productMessages.ContainsKey(productQuantity.Product.Id) ?
@@ -327,7 +347,8 @@ namespace Nwazet.Commerce.Controllers {
                         true,
                         _shoppingCart.Country,
                         _shoppingCart.ZipCode));
-            } catch (ShippingException ex) {
+            }
+            catch (ShippingException ex) {
                 _shoppingCart.Country = null;
                 _shoppingCart.ZipCode = null;
                 _shoppingCart.ShippingOption = null;
@@ -361,7 +382,8 @@ namespace Nwazet.Commerce.Controllers {
 
             if (items != null) {
                 UpdateShoppingCart(items.Reverse());
-            } else {
+            }
+            else {
                 // call handlers if nothing was changed in terms of the items
                 foreach (var handler in _cartLifeCycleEventHandlers) {
                     handler.Updated();
@@ -388,7 +410,8 @@ namespace Nwazet.Commerce.Controllers {
                         true,
                         _shoppingCart.Country,
                         _shoppingCart.ZipCode));
-            } catch (ShippingException ex) {
+            }
+            catch (ShippingException ex) {
                 _shoppingCart.Country = null;
                 _shoppingCart.ZipCode = null;
                 _shoppingCart.ShippingOption = null;
@@ -413,7 +436,8 @@ namespace Nwazet.Commerce.Controllers {
                             RemovalAction = cpaa.RemovalAction
                         }));
                     alterations.AddRange(_shoppingCart.PriceAlterations);
-                } else {
+                }
+                else {
                     alterations.AddRange(priceAlterations
                         .Select(cpaa => new CartPriceAlteration {
                             AlterationType = cpaa.AlterationType,
@@ -481,7 +505,7 @@ namespace Nwazet.Commerce.Controllers {
             var newItems = new List<ShoppingCartItem>();
             newItems.AddRange(_shoppingCart.Items);
             //we use a KeyValuePair because item.QUantity is not alowed to be negative
-            var itemsInBoth = new List<KeyValuePair<int,ShoppingCartItem>>(); //quantity variation, item
+            var itemsInBoth = new List<KeyValuePair<int, ShoppingCartItem>>(); //quantity variation, item
             itemsInBoth.AddRange(
                 newItems
                 .Select(newSci => {
@@ -498,7 +522,8 @@ namespace Nwazet.Commerce.Controllers {
             foreach (var item in itemsInBoth.Where(kvp => kvp.Key != 0)) {
                 if (item.Key > 0) { //increase in quantity
                     addedItems.Add(item.Value);
-                } else if (item.Key < 0) { //decrease in quantity
+                }
+                else if (item.Key < 0) { //decrease in quantity
                     removedItems.Add(item.Value);
                 }
                 //if quantity has not changed, we do not raise an event for that item
@@ -530,7 +555,8 @@ namespace Nwazet.Commerce.Controllers {
                         var product = products.Where(p => p.Id == item.ProductId).FirstOrDefault();
                         if (product != null) {
                             minimumOrderQuantites.Add(product.Id, product.MinimumOrderQuantity);
-                        } else {
+                        }
+                        else {
                             // This ensures the dictionary will have all the keys needed for the items
                             minimumOrderQuantites.Add(item.ProductId, defaultMinimumQuantity);
                         }

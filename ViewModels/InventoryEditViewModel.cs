@@ -12,11 +12,13 @@ namespace Nwazet.Commerce.ViewModels {
             OutOfStockMessage = part.OutOfStockMessage;
             AllowBackOrder = part.AllowBackOrder;
             MinimumOrderQuantity = part.MinimumOrderQuantity;
+            MaximumOrderQuantity = part.MaximumOrderQuantity;
         }
 
         public int Inventory { get; set; }
         public string OutOfStockMessage { get; set; }
         public bool AllowBackOrder { get; set; }
         public int MinimumOrderQuantity { get; set; }
+        public int MaximumOrderQuantity { get; set; }
     }
 }

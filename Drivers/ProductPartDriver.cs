@@ -78,6 +78,7 @@ namespace Nwazet.Commerce.Drivers {
                     IsDigital: part.IsDigital,
                     ConsiderInventory: part.ConsiderInventory,
                     MinimumOrderQuantity: part.MinimumOrderQuantity,
+                    MaximumOrderQuantity: part.MaximumOrderQuantity,
                     ContentPart: part,
                     CurrencyProvider: _currencyProvider,
                     ProductAttributes: attributeShapes
@@ -90,6 +91,7 @@ namespace Nwazet.Commerce.Drivers {
                             return shapeHelper.Parts_Product_AddButton(
                                 ProductId: part.Id,
                                 MinimumOrderQuantity: part.MinimumOrderQuantity,
+                                MaximumOrderQuantity: part.MaximumOrderQuantity,
                                 ProductAttributes: attributeShapes);
                         })
                     );

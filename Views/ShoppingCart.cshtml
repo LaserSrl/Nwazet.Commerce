@@ -70,6 +70,7 @@
                             var linePriceAdjustment = (double)item.LinePriceAdjustment;
                             var totalPrice = quantity * unitPrice + linePriceAdjustment;
                             var minimumOrderQuantity = item.MinimumOrderQuantity;
+                            var maximumOrderQuantity = item.MaximumOrderQuantity;
                             var productInventory = (int)item.Inventory;
                             bool prodIsDigital = (bool)item.IsDigital;
                             bool prodConsiderInventory = (bool)item.ConsiderInventory;
@@ -98,7 +99,11 @@
                                         if (minimumOrderQuantity > 1) {
                                             <br /><strong>Minimum order of @minimumOrderQuantity required.</strong>
                                         }
-                                    } else {
+                                        if (maximumOrderQuantity > 0) {
+                                            <br /><strong>Maximum order of @maximumOrderQuantity required.</strong>
+                                        }
+                                    }
+                                    else {
                                         if (item.ProductAttributes != null) {
                                             var attrIndex = 0;
                                             foreach (KeyValuePair<int, ProductAttributeValueExtended> attribute in item.ProductAttributes) {
@@ -111,7 +116,7 @@
                                             }
                                         }
                                         <input name="@(propertyNamePrefix + ".ProductId")" type="hidden" value="@product.Id" />
-                                        <input name="@(propertyNamePrefix + ".Quantity")" type="number" class="quantity addtocart-quantity" value="@quantity" min="0" data-cart-product-id="@product.Id" />
+                                        <input name="@(propertyNamePrefix + ".Quantity")" type="number" class="quantity addtocart-quantity" value="@quantity" min="0" @((int)maximumOrderQuantity > 0 ? "max=" + maximumOrderQuantity : "") data-cart-product-id="@product.Id" />
                                         if (quantity > productInventory && (!prodIsDigital || (prodIsDigital && prodConsiderInventory))) {
                                             string allowBackOrderMsg = (bool)item.AllowBackOrder ? T("Back order is allowed").Text : T("Back order is not allowed").Text;
                                             <span class="issue">

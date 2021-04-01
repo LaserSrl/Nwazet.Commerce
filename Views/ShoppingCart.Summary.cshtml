@@ -32,7 +32,7 @@
 
                     var productAttributes = (IDictionary<int, ProductAttributeValueExtended>)item.ProductAttributes;
                     if (productAttributes != null && productAttributes.Any()) {
-                        var additionalText = 
+                        var additionalText =
                             AttributeNameUtilities.AttributesDisplayText(productAttributes: productAttributes, product: contentItem, separator: ", ");
                         if (!string.IsNullOrWhiteSpace(additionalText)) {
                             title += "(" + additionalText + ")";
@@ -43,6 +43,7 @@
                     var unitPrice = (double)item.DiscountedPrice;
                     var totalPrice = quantity * unitPrice;
                     var minimumOrderQuantity = item.MinimumOrderQuantity;
+                    var maximumOrderQuantity = item.MaximumOrderQuantity;
                     var productInventory = (int)item.Inventory;
                     bool prodIsDigital = (bool)item.IsDigital;
                     bool prodConsiderInventory = (bool)item.ConsiderInventory;
@@ -68,7 +69,7 @@
                             }
                             <input name="@(propertyNamePrefix + ".ProductId")" type="hidden" value="@product.Id" />
                             <span class="numeric">
-                                <input name="@(propertyNamePrefix + ".Quantity")" type="number" class="quantity addtocart-quantity" value="@quantity" min="0" data-cart-product-id="@product.Id"/>
+                                <input name="@(propertyNamePrefix + ".Quantity")" type="number" class="quantity addtocart-quantity" value="@quantity" min="0" data-cart-product-id="@product.Id" />
                                 @if (quantity > productInventory && (!prodIsDigital || (prodIsDigital && prodConsiderInventory))) {
                                     string allowBackOrderMsg = (bool)item.AllowBackOrder ? T("Back order is allowed").Text : T("Back order is not allowed").Text;
                                     <span class="issue">
@@ -80,6 +81,10 @@
                             @if (minimumOrderQuantity > 1) {
                                 <br /><strong>Minimum order of @minimumOrderQuantity required.</strong>
                             }
+                            @if (maximumOrderQuantity > 0) {
+                            <br /><strong>Maximum order of @maximumOrderQuantity required.</strong>
+                            }
+
                         </span>
                     </li>
                 }
