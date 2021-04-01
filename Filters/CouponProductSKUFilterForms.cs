@@ -187,7 +187,7 @@ namespace Nwazet.Commerce.Filters {
                 case ProductCouponSKUOperator.ProductMatchesSKU:
                     return skus.Any(s => s.Equals(sku));
                 case ProductCouponSKUOperator.ProductDoesntMatchSKU:
-                    return skus.Any(s => s.Equals(sku));
+                    return !skus.Any(s => s.Equals(sku));
                 default:
                     throw new ArgumentOutOfRangeException();
             }
