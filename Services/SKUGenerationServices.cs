@@ -82,7 +82,7 @@ namespace Nwazet.Commerce.Services {
                 .OrderBy(i => i).LastOrDefault();
 
             return version != null ?
-                string.Format("{0}-{!}", part.Sku, version) :
+                string.Format("{0}-{1}", part.Sku, version) :
                 part.Sku;
         }
 
