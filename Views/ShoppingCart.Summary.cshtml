@@ -13,7 +13,8 @@
         <div id="product-update-messages" class="message-Information">
             @allMessages
         </div>
-    } else {
+    }
+    else {
         <div id="shopping-cart-notification" class="message-Information hide"></div>
     }
     if (items.Any()) {
@@ -21,6 +22,8 @@
             new Dictionary<string, object> { { "enctype", "multipart/form-data" } })) {
             @Html.Hidden("Country", (string)Model.Country)
             @Html.Hidden("ZipCode", (string)Model.ZipCode)
+            @Html.Hidden("NwazetCart.Painter.Source", (string)Model.Source)
+            @Html.Hidden("NwazetCart.Painter.Quantity", (int)Model.Quantity)
             <h1><a href="@cartUrl">@T("Your Cart")</a></h1>
             <ul class="cart-item-list">
                 @for (var i = 0; i < items.Count; i++) {
@@ -51,7 +54,8 @@
                         @if (imageUrl != null) {
                             <a href="@Url.ItemDisplayUrl(contentItem)" class="product-image-link" data-product-id="@contentItem.Id"><img src="@Href(imageUrl)" alt="@title" class="product-image" /></a>
                             <a href="@Url.ItemDisplayUrl(contentItem)" class="product-name" data-product-id="@contentItem.Id">@title</a>
-                        } else {
+                        }
+                        else {
                             <a href="@Url.ItemDisplayUrl(contentItem)" data-product-id="@contentItem.Id">@title</a>
                         }
                         <span class="action"><a class="delete" href="#" data-cart-product-id="@product.Id">@T("Remove")</a></span>
@@ -82,7 +86,7 @@
                                 <br /><strong>Minimum order of @minimumOrderQuantity required.</strong>
                             }
                             @if (maximumOrderQuantity > 0) {
-                            <br /><strong>Maximum order of @maximumOrderQuantity required.</strong>
+                                <br /><strong>Maximum order of @maximumOrderQuantity required.</strong>
                             }
 
                         </span>

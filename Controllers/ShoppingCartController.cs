@@ -8,12 +8,14 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.MediaLibrary.Fields;
 using Orchard.Mvc;
+using Orchard.Mvc.Html;
 using Orchard.Themes;
 using Orchard.UI.Notify;
 using Orchard.Workflows.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Controllers {
@@ -147,18 +149,27 @@ namespace Nwazet.Commerce.Controllers {
                 }
             }
 
-            _shoppingCart.Add(id, quantity, productattributes);
-
-            var newItem = new ShoppingCartItem(id, quantity, productattributes);
-            foreach (var handler in _cartLifeCycleEventHandlers) {
-                handler.ItemAdded(newItem);
+            if (quantity > 0) {
+                _shoppingCart.Add(id, quantity, productattributes);
+                if (productMessages.ContainsKey(id)) {
+                    productMessages[id].Add(T.Plural("{0} {1} has been added to cart.", "{0} {1} have been added to cart.", quantity, productTitle).Text);
+                }
+                else {
+                    productMessages.Add(id, new List<string>() { T.Plural("{0} {1} has been added to cart.", "{0} {1} have been added to cart.", quantity, productTitle).Text });
+                }
+                var newItem = new ShoppingCartItem(id, quantity, productattributes);
+                foreach (var handler in _cartLifeCycleEventHandlers) {
+                    handler.ItemAdded(newItem);
+                }
             }
-
             // Test isAjaxRequest too because iframe posts won't return true for Request.IsAjaxRequest()
             if (Request.IsAjaxRequest() || isAjaxRequest) {
                 return new ShapePartialResult(
                     this,
-                    BuildCartShape(true, _shoppingCart.Country, _shoppingCart.ZipCode, null, productMessages));
+                    BuildCartShape(true, _shoppingCart.Country, _shoppingCart.ZipCode, null, productMessages, new CartPainter {
+                        Source = "Add",
+                        Quantity = quantity
+                    }));
             }
             // added tempdata because passing the parameter to the redirecttoaction
             // there were 2 problems:
@@ -202,8 +213,10 @@ namespace Nwazet.Commerce.Controllers {
             string country = null,
             string zipCode = null,
             ShippingOption shippingOption = null,
-            Dictionary<int, List<string>> productMessages = null) {
+            Dictionary<int, List<string>> productMessages = null,
+            CartPainter cartPainter = null) {
 
+            cartPainter = cartPainter ?? new CartPainter();
             var shape = _shapeFactory.ShoppingCart();
 
             var productQuantities = _shoppingCart
@@ -293,6 +306,8 @@ namespace Nwazet.Commerce.Controllers {
             shape.CurrencyProvider = _currencyProvider;
 
             shape.PriceAlterations = _shoppingCart.PriceAlterationAmounts;
+            shape.Source = cartPainter.Source;
+            shape.Quantity = cartPainter.Quantity;
 
             // Weld additional cart shapes
             shape.CartExtensionShapes = _cartExtensionProviders
@@ -579,5 +594,17 @@ namespace Nwazet.Commerce.Controllers {
 
             return RedirectToAction("Index");
         }
+
+        class CartPainter {
+            public CartPainter() {
+                Source = "Refresh";
+                Quantity = 0;
+            }
+            public string Source { get; set; }
+            public int Quantity { get; set; }
+        }
+
     }
+
+
 }

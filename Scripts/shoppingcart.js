@@ -1,16 +1,16 @@
-﻿jQuery(function($) {
-    var hasLocalStorage = function() {
-            try {
-                return "localStorage" in window && window.localStorage !== null;
-            } catch(e) {
-                return false;
-            }
-        },
+﻿jQuery(function ($) {
+    var hasLocalStorage = function () {
+        try {
+            return "localStorage" in window && window.localStorage !== null;
+        } catch (e) {
+            return false;
+        }
+    },
         setUseLocalStorage = function (data, status) {
             useLocalStorage = !!(data.Response);
         },
         useLocalStorage = true,
-        setLoading = function(state) {
+        setLoading = function (state) {
             if (hasLocalStorage()) {
                 localStorage["nwazet-cart-loading"] = !!state;
             }
@@ -19,8 +19,8 @@
         loading = hasLocalStorage() ? localStorage["nwazet-cart-loading"] == "true" : false,
         nwazetCart = "nwazet.cart",
         cartContainer = $(".shopping-cart-container"),
-        setQuantityToZero = function(parentTag) {
-            return function(button) {
+        setQuantityToZero = function (parentTag) {
+            return function (button) {
                 if (findNextIndex(button.closest("form")) === 1 && hasLocalStorage()) {
                     localStorage.removeItem(nwazetCart);
                 }
@@ -33,11 +33,11 @@
             if (!loading && form && form.length > 0) {
                 setLoading(true);
                 cartContainer.load(form[0].action || updateUrl, form.serializeArray(), onCartLoad);
-                $(this).trigger("nwazet.cartupdating");
+                $(document).trigger("nwazet.cartupdating");
             }
             return false;
         },
-        buildForm = function(state, container) {
+        buildForm = function (state, container) {
             $.each(state, function (key, value) {
                 if (key !== "__RequestVerificationToken") {
                     container.append($("<input type='hidden'/>")
@@ -47,7 +47,7 @@
             });
             return container;
         },
-        notify = function(text) {
+        notify = function (text) {
             $("#shopping-cart-notification")
                 .html(text)
                 .show();
@@ -121,14 +121,18 @@
                 } else {
                     setLoading(false);
                 }
-                $(this).trigger("nwazet.cartupdated");
+                $(document).trigger("nwazet.cartupdated");
+                if (cartContainer.children('input#NwazetCart_Painter_Source').val() == "Add" && parseInt(cartContainer.children('input#NwazetCart_Painter_Quantity').val()) > 0){
+                    $(document).trigger("nwazet.addedtocart");
+                }
+
             }
         },
-        findNextIndex = function(form) {
+        findNextIndex = function (form) {
             var maxIndex = -1;
             if (form) {
                 var formData = form.serializeArray();
-                $.each(formData, function() {
+                $.each(formData, function () {
                     var name = this.name;
                     if (name.substr(0, 6) === "items[" && name.slice(-11) === "].ProductId") {
                         maxIndex = Math.max(maxIndex, +name.slice(6, name.length - 11));
@@ -169,19 +173,19 @@
     }
 
     $(document)
-        .on("click", ".shoppingcart .delete", function() {
-            $(this).trigger("nwazet.removefromcart");
+        .on("click", ".shoppingcart .delete", function () {
+            $(document).trigger("nwazet.removefromcart");
             setQuantityToZero("tr,li")($(this)).submit();
         })
-        .on("click", ".minicart .delete", function() {
-            $(this).trigger("nwazet.removefromcart");
+        .on("click", ".minicart .delete", function () {
+            $(document).trigger("nwazet.removefromcart");
             return cartContainerLoad(setQuantityToZero("tr,li")($(this)));
         })
-        .on("click", ".minicart .update-button", function() {
+        .on("click", ".minicart .update-button", function () {
             return cartContainerLoad($(this).closest("form"));
         })
-        .on("submit", "form.addtocart", function(e) {
-            $(this).trigger("nwazet.addtocart");
+        .on("submit", "form.addtocart", function (e) {
+            $(document).trigger("nwazet.addtocart");
             e.preventDefault();
             var addForm = $(this),
                 addFormData = addForm.serializeArray(),
@@ -202,6 +206,5 @@
             } else {
                 cartContainer.load(action, addFormData, onCartLoad);
             }
-            $(this).trigger("nwazet.addedtocart");
         });
 });
