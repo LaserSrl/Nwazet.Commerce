@@ -36,12 +36,9 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             _usedCouponsRepositoryService = usedCouponsRepositoryService;
             _couponUserIdentifierProviders = couponUserIdentifierProviders
                 .OrderByDescending(cuip => cuip.Priority);
-
-            T = NullLocalizer.Instance;
+            
         }
-
-        public Localizer T { get; set; }
-
+        
         public override string ProviderName =>
             "MaxUsesPerUserCouponApplicabilityCriteria";
 
