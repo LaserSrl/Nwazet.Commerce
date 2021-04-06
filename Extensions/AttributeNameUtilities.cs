@@ -145,6 +145,32 @@ namespace Nwazet.Commerce.Extensions {
             return key;
         }
 
+        public static string GenerateUniqueKey(this ShoppingCartItem item) {
+            var key = "";
+            // We should be accounting for product attributes:
+            //  - having different attributes means we may have multiple lines in the order for a product with
+            //    the same Id.
+            //  - It means that the way this data is stored has to be adapted to accomodate for it.
+            //  - While they would have the same VAT Rate (at least for now), those multiple lines could in
+            //    principle have different prices
+            //  - That means that the product's Id is not enough of a key
+            if (item.AttributeIdsToValues == null || !item.AttributeIdsToValues.Any()) {
+                // this is like this for retrocompatibility with the time attributes were
+                // not considered correctly.
+                key = item.ProductId.ToString();
+            }
+            else {
+                // there are attributes
+                var keyStruct = new KeyFormat {
+                    ProductId = item.ProductId,
+                    Attributes = item.AttributeIdsToValues as Dictionary<int, ProductAttributeValueExtended>
+                };
+
+                key = JsonConvert.SerializeObject(keyStruct, Formatting.None);
+            }
+            return key;
+        }
+
         struct KeyFormat {
             public int ProductId { get; set; }
             public Dictionary<int, ProductAttributeValueExtended> Attributes { get; set; }

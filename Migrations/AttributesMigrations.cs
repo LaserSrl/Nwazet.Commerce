@@ -77,6 +77,13 @@ namespace Nwazet.Commerce.Migrations {
 
             return 4;
         }
+
+        public int UpdateFrom4() {
+            ContentDefinitionManager.AlterTypeDefinition("ProductAttribute", cfg => cfg
+                .WithPart("IdentityPart"));
+
+            return 5;
+        }
         
     }
 }

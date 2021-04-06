@@ -5128,3 +5128,6 @@ msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
 msgid "Weight"
 msgstr "Peso"
 
+msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
+msgid "{0} {1} has been added to cart."
+msgstr "{0} {1} è stato aggiunto al carrello."

@@ -29,12 +29,9 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             : base(workContextAccessor, cacheManager, signals) {
 
             _usedCouponsRepositoryService = usedCouponsRepositoryService;
-
-            T = NullLocalizer.Instance;
+            
         }
-
-        public Localizer T { get; set; }
-
+      
         public override string ProviderName =>
             "MaxUsesCouponApplicabilityCriteria";
 

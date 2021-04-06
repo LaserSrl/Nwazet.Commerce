@@ -109,6 +109,12 @@ namespace Nwazet.Commerce.Models {
                 return minimumOrderQuantity > 1 ? minimumOrderQuantity.Value : 1;
             }
         }
+        public int MaximumOrderQuantity {
+            get {
+                var maximumOrderQuantity = this.As<InventoryPart>()?.MaximumOrderQuantity;
+                return maximumOrderQuantity > 0 ? maximumOrderQuantity.Value : 0;
+            }
+        }
 
         /// <summary>
         /// Back reference to service used for common operations.

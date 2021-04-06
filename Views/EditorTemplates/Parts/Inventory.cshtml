@@ -15,4 +15,7 @@
     <span class="hint">@T("If unchecked, the add button won't be visible on the product page when the inventory is zero or less.")</span>
     <label class="sub" for="@Html.IdFor(m => m.MinimumOrderQuantity)">@T("Minimum order quantity")</label>
     @Html.TextBoxFor(m => m.MinimumOrderQuantity, new { @class = "text", @type = "number", min = "1" })<br />
+    <label class="sub" for="@Html.IdFor(m => m.MaximumOrderQuantity)">@T("Maximum order quantity")</label>
+    @Html.TextBoxFor(m => m.MaximumOrderQuantity, new { @class = "text", @type = "number", min = "0" })
+    <span class="hint">@T("Insert 0 (zero) to allow any quantity.")</span>
 </fieldset>
