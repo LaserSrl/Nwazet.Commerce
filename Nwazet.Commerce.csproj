@@ -255,6 +255,8 @@
     <Compile Include="ApplicabilityCriteria\CartSubTotalCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\CartWeightCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\AuthenticationStateCouponApplicabilityCriterion.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\CartHasProductBySKUCouponApplicabilityCriteria.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\CartHasProductBySKUCouponLineApplicabilityCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\MaxUsesCouponApplicabilityCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\MaxUsesPerUserCouponApplicabilityCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\NumericCriterionBase.cs" />
@@ -340,6 +342,7 @@
     <Compile Include="Features\CurrencyProviderBySiteSettingFeature.cs" />
     <Compile Include="Features\InventoryBySKUFeature.cs" />
     <Compile Include="Filters\BaseDecimalFilterProvider.cs" />
+    <Compile Include="Filters\CouponProductSKUFilterForms.cs" />
     <Compile Include="Filters\FilterHelper.cs" />
     <Compile Include="Filters\PositiveIntegerValueForm.cs" />
     <Compile Include="Filters\ProductDiscountPriceFilter.cs" />

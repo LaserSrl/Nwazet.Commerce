@@ -94,7 +94,7 @@ namespace Nwazet.Commerce.Controllers {
             // bind form with existing values.
             if (criterionId != -1) {
                 var critRecord = coupon.Record
-                    .ApplicabilityCriteria
+                    .LineCriteria
                     .FirstOrDefault(ac => ac.Id == criterionId);
                 if (critRecord != null) {
                     description = critRecord.Description;
