@@ -1,4 +1,5 @@
-﻿using Nwazet.Commerce.Models;
+﻿using Nwazet.Commerce.Extensions;
+using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels;
 using Nwazet.Commerce.ViewModels.ShoppingCart;
@@ -80,7 +81,7 @@ namespace Nwazet.Commerce.Controllers {
         [HttpPost]
         public ActionResult Add(int id, int quantity = 1, bool isAjaxRequest = false) {
             var attemptedQuantity = quantity;
-
+            var sourceLineKey = "";
             // Manually parse product attributes because of a breaking change
             // in MVC 5 dictionary model binding
             var form = HttpContext.Request.Form;
@@ -201,6 +202,7 @@ namespace Nwazet.Commerce.Controllers {
                     productMessages.Add(id, new List<ItemLog>() { itemLog });
                 }
                 var newItem = new ShoppingCartItem(id, quantity, productattributes);
+                sourceLineKey = newItem.GenerateUniqueKey();
                 foreach (var handler in _cartLifeCycleEventHandlers) {
                     handler.ItemAdded(newItem);
                 }
@@ -211,7 +213,8 @@ namespace Nwazet.Commerce.Controllers {
                     this,
                     BuildCartShape(true, _shoppingCart.Country, _shoppingCart.ZipCode, null, productMessages, new CartPainter {
                         SourceAction = "Add",
-                        MovedQuantity = quantity
+                        MovedQuantity = quantity,
+                        SourceLineKey = sourceLineKey
                     }));
             }
             // added tempdata because passing the parameter to the redirecttoaction
@@ -351,6 +354,7 @@ namespace Nwazet.Commerce.Controllers {
             shape.PriceAlterations = _shoppingCart.PriceAlterationAmounts;
             shape.SourceAction = cartPainter.SourceAction;
             shape.MovedQuantity = cartPainter.MovedQuantity;
+            shape.SourceLineKey = cartPainter.SourceLineKey;
 
             // Weld additional cart shapes
             shape.CartExtensionShapes = _cartExtensionProviders
@@ -648,6 +652,7 @@ namespace Nwazet.Commerce.Controllers {
                 SourceAction = "Refresh";
                 MovedQuantity = 0;
             }
+            public string SourceLineKey { get; set; }
             public string SourceAction { get; set; }
             public int MovedQuantity { get; set; }
         }

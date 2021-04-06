@@ -1,4 +1,5 @@
 ﻿jQuery(function ($) {
+    var processedAddToCart = [];
     var hasLocalStorage = function () {
         try {
             return "localStorage" in window && window.localStorage !== null;
@@ -33,7 +34,7 @@
             if (!loading && form && form.length > 0) {
                 setLoading(true);
                 cartContainer.load(form[0].action || updateUrl, form.serializeArray(), onCartLoad);
-                $(document).trigger("nwazet.cartupdating");
+                $(this).trigger("nwazet.cartupdating");
             }
             return false;
         },
@@ -53,7 +54,7 @@
                 .show();
             console.log(text);
         },
-        onCartLoad = function (text, status) {
+        onCartLoad = function (text, status, jqXHR) {
             $("#shopping-cart-notification").hide();
             if (status === "error") {
                 notify(window.Nwazet.FailedToLoadCart);
@@ -121,12 +122,26 @@
                 } else {
                     setLoading(false);
                 }
-                $(document).trigger("nwazet.cartupdated");
-                if (cartContainer.children('input#NwazetCart_Painter_SourceAction').val() == "Add" && parseInt(cartContainer.children('input#NwazetCart_Painter_MovedQuantity').val()) > 0){
-                    $(document).trigger("nwazet.addedtocart");
-                }
-
+                $(this).trigger("nwazet.cartupdated");
             }
+        },
+        onCartLoadWrapper = function (sender) {
+            return function (text, status, jqXHR) {
+                onCartLoad(text, status, jqXHR);
+                var movedQuantity = parseInt(cartContainer.children('input#NwazetCart_Painter_MovedQuantity').val());
+                var lineKey = parseInt(cartContainer.children('input#NwazetCart_Painter_SourceLikeKey').val());
+
+                if (cartContainer.children('input#NwazetCart_Painter_SourceAction').val() == "Add" && movedQuantity > 0) {
+                    var cartGuid = cartContainer.children('input#NwazetCart_Painter_Guid').val();
+                    if (processedAddToCart.indexOf(cartGuid) == -1) {
+                        processedAddToCart.push(cartGuid);
+                        $(sender).trigger("nwazet.addedtocart", {
+                            movedQuantity: movedQuantity,
+                            lineKey: lineKey
+                        });
+                    }
+                }
+            };
         },
         findNextIndex = function (form) {
             var maxIndex = -1;
@@ -174,18 +189,18 @@
 
     $(document)
         .on("click", ".shoppingcart .delete", function () {
-            $(document).trigger("nwazet.removefromcart");
+            $(this).trigger("nwazet.removefromcart");
             setQuantityToZero("tr,li")($(this)).submit();
         })
         .on("click", ".minicart .delete", function () {
-            $(document).trigger("nwazet.removefromcart");
+            $(this).trigger("nwazet.removefromcart");
             return cartContainerLoad(setQuantityToZero("tr,li")($(this)));
         })
         .on("click", ".minicart .update-button", function () {
             return cartContainerLoad($(this).closest("form"));
         })
         .on("submit", "form.addtocart", function (e) {
-            $(document).trigger("nwazet.addtocart");
+            $(this).trigger("nwazet.addtocart");
             e.preventDefault();
             var addForm = $(this),
                 addFormData = addForm.serializeArray(),
@@ -204,7 +219,7 @@
                     onCartLoad(content, "success");
                 });
             } else {
-                cartContainer.load(action, addFormData, onCartLoad);
+                cartContainer.load(action, addFormData, onCartLoadWrapper(this));
             }
         });
 });

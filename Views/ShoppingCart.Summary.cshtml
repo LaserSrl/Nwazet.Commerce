@@ -24,6 +24,8 @@
             @Html.Hidden("ZipCode", (string)Model.ZipCode)
             @Html.Hidden("NwazetCart.Painter.SourceAction", (string)Model.SourceAction)
             @Html.Hidden("NwazetCart.Painter.MovedQuantity", (int)Model.MovedQuantity)
+            @Html.Hidden("NwazetCart.Painter.Guid", Guid.NewGuid())
+            @Html.Hidden("NwazetCart.Painter.SourceLineKey", (string)Model.SourceLineKey)
             <h1><a href="@cartUrl">@T("Your Cart")</a></h1>
             <ul class="cart-item-list">
                 @for (var i = 0; i < items.Count; i++) {
