@@ -754,6 +754,7 @@
     <Compile Include="ViewModels\ProductEditorViewModel.cs" />
     <Compile Include="ViewModels\ProductVatConfigurationPartEditorViewModel.cs" />
     <Compile Include="ViewModels\ReportDataViewModel.cs" />
+    <Compile Include="ViewModels\ShoppingCart\ItemLog.cs" />
     <Compile Include="ViewModels\TaxIndexViewModel.cs" />
     <Compile Include="ViewModels\DiscountEditorViewModel.cs" />
     <Compile Include="ViewModels\ProductAttributesPartEditViewModel.cs" />

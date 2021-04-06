@@ -122,7 +122,7 @@
                     setLoading(false);
                 }
                 $(document).trigger("nwazet.cartupdated");
-                if (cartContainer.children('input#NwazetCart_Painter_Source').val() == "Add" && parseInt(cartContainer.children('input#NwazetCart_Painter_Quantity').val()) > 0){
+                if (cartContainer.children('input#NwazetCart_Painter_SourceAction').val() == "Add" && parseInt(cartContainer.children('input#NwazetCart_Painter_MovedQuantity').val()) > 0){
                     $(document).trigger("nwazet.addedtocart");
                 }
 

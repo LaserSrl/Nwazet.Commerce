@@ -22,8 +22,8 @@
             new Dictionary<string, object> { { "enctype", "multipart/form-data" } })) {
             @Html.Hidden("Country", (string)Model.Country)
             @Html.Hidden("ZipCode", (string)Model.ZipCode)
-            @Html.Hidden("NwazetCart.Painter.Source", (string)Model.Source)
-            @Html.Hidden("NwazetCart.Painter.Quantity", (int)Model.Quantity)
+            @Html.Hidden("NwazetCart.Painter.SourceAction", (string)Model.SourceAction)
+            @Html.Hidden("NwazetCart.Painter.MovedQuantity", (int)Model.MovedQuantity)
             <h1><a href="@cartUrl">@T("Your Cart")</a></h1>
             <ul class="cart-item-list">
                 @for (var i = 0; i < items.Count; i++) {
