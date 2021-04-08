@@ -1,5 +1,5 @@
 ﻿# Orchard resource strings - it-IT
-# Copyright (c) 2020 Laser s.r.l.
+# Copyright (c) 2021 Laser s.r.l.
 
 
 # > #: msgctxt { contesto del messaggio - Originale }
@@ -100,6 +100,142 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/Content-Order.SummaryAdmin.cshtml"
 msgid "View order"
 msgstr "Visualizza ordine"
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
+msgid "Amount: fixed amount off the price of each single item it applies to. If the amount is 1$, and a cartline the coupon applies to has quantity = 3, the coupon will take 3$ off the final (after VAT) price for that line."
+msgstr "Amount: valore fisso dal prezzo di ciascun elemento a cui venga applicato. Se il valore è 1$, ed una riga del carrello a cui sia applicato il coupon ha quantità = 3, il coupon ridurrà di 3$ il prezzo finale (IVA inclusa) per quella riga."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
+msgid "CartAmount: fixed amount off the total (after VAT) for the cart."
+msgstr "CartAmount: valore fisso tolto dal totale (IVA inclusa) del carrello."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
+msgid "Coupon's value"
+msgstr "Valore del coupon"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
+msgid "Percent: percent of the price of each single item it applies to."
+msgstr "Percent: percentuale del prezzo di ciascun elemento a cui sia applicato il coupon."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
+msgid "Select a type"
+msgstr "Seleziona un tipo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
+msgid "The coupon's value type."
+msgstr "Il tipo del valore del coupon."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
+msgid "The coupon's value/amount."
+msgstr "Il valore del coupon."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
+msgid "The value type affects the meaning given to the value."
+msgstr "Il tipo del valore determina il significato del valore inserito."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
+msgid "Value type"
+msgstr "Tipo di valore"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
+msgid "Value/Amount"
+msgstr "Valore/Quantità"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsNewPartial.cshtml"
+msgid "Actions"
+msgstr "Azioni"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsNewPartial.cshtml"
+msgid "Apply the rule only to cart items matching the following conditions (leave blank for all items)."
+msgstr "Applica ai soli elementi del carrello che soddisfano le seguenti condizioni (lascia vuoto, se vuoi applicare a tutti gli elementi)."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsNewPartial.cshtml"
+msgid "Save the coupon to be able to add the conditions for the cart items the coupons will affect."
+msgstr "Salva il coupon per inserire le condizioni per gli elementi di carrello che saranno influenzati dai coupon."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsPartial.cshtml"
+msgid " (this provider is disabled for processing. It will be ignored when using the coupon.)"
+msgstr "(l'esecuzione di questo provider è disabilitata. Sarà quindi ignorato durante la verifica di validità del coupon.)"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsPartial.cshtml"
+msgid "+ Add a new Line Criterion"
+msgstr "+ Aggiungi un Criterio di riga"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsPartial.cshtml"
+msgid "Actions"
+msgstr "Azioni"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsPartial.cshtml"
+msgid "All configured criteria must apply for a line to be affected by the coupon. Make sure to save your changes to the rest of the coupon before editing the criteria."
+msgstr "Perchè una riga sia influenzata da un coupon dovranno verificarsi tutti i criteri. Salva le modifiche al resto del coupon prima di modificare i criteri."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsPartial.cshtml"
+msgid "Apply the rule only to cart items matching the following conditions (leave blank for all items)."
+msgstr "Applica ai soli elementi del carrello che soddisfano le seguenti condizioni (lascia vuoto, se vuoi applicare a tutti gli elementi)."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsPartial.cshtml"
+msgid "Delete"
+msgstr "Elimina"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsPartial.cshtml"
+msgid "Description"
+msgstr "Descrizione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsPartial.cshtml"
+msgid "Edit"
+msgstr "Modifica"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsPartial.cshtml"
+msgid "This provider is disabled for configuration. You may not edit or remove this criterion."
+msgstr "La configurazione di questo provider è disabilitata. Non puoi modificare né cancellare questo criterio."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponConditionsNewPartial.cshtml"
+msgid "Conditions"
+msgstr "Condizioni"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponConditionsNewPartial.cshtml"
+msgid "Save the coupon to be able to add criteria and conditions for the coupon."
+msgstr "Salva il coupon per aggiungere criteri e condizioni."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponConditionsNewPartial.cshtml"
+msgid "The coupon will be allowed only if the following conditions are met (leave blank to always allow the coupon)."
+msgstr "Sarà possibile usare il coupon solo se al verificarsi delle condizioni seguenti (non selezionarne per permettere sempre l'uso del coupon)."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponConditionsPartial.cshtml"
+msgid " (this provider is disabled for processing. It will be ignored when using the coupon.)"
+msgstr "(l'esecuzione di questo provider è disabilitata. Sarà quindi ignorato durante la verifica di validità del coupon.)"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponConditionsPartial.cshtml"
+msgid "+ Add a new Criterion"
+msgstr "+ Aggiungi un Criterio"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponConditionsPartial.cshtml"
+msgid "All configured criteria must be verified for this coupon to be considered valid. Make sure to save your changes to the rest of the coupon before editing the criteria."
+msgstr "Perchè un coupon sia considerato valid dovranno verificarsi tutti i criteri. Salva le modifiche al resto del coupon prima di modificare i criteri."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponConditionsPartial.cshtml"
+msgid "Conditions"
+msgstr "Condizioni"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponConditionsPartial.cshtml"
+msgid "Delete"
+msgstr "Elimina"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponConditionsPartial.cshtml"
+msgid "Description"
+msgstr "Descrizione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponConditionsPartial.cshtml"
+msgid "Edit"
+msgstr "Modifica"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponConditionsPartial.cshtml"
+msgid "The coupon will be allowed only if the following conditions are met (leave blank to always allow the coupon)."
+msgstr "Sarà possibile usare il coupon solo se al verificarsi delle condizioni seguenti (non selezionarne per permettere sempre l'uso del coupon)."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponConditionsPartial.cshtml"
+msgid "This provider is disabled for configuration. You may not edit or remove this criterion."
+msgstr "La configurazione di questo provider è disabilitata. Non puoi modificare né cancellare questo criterio."
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
 msgid "Check to activate the coupon."
 msgstr "Seleziona per attivare il coupon."
@@ -107,6 +243,10 @@ msgstr "Seleziona per attivare il coupon."
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
 msgid "Code"
 msgstr "Codice"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Coupon definition"
+msgstr "Definizione del coupon"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
 msgid "Coupon's name"
@@ -208,9 +348,17 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/Create.cshtml"
 msgid "New Coupon"
 msgstr "Nuovo Coupon"
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/Create.cshtml"
+msgid "Save"
+msgstr "Salva"
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/Edit.cshtml"
 msgid "Edit Coupon {0}"
 msgstr "Modifica il coupon {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/Edit.cshtml"
+msgid "Save"
+msgstr "Salva"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/Index.cshtml"
 msgid "Add"
@@ -227,6 +375,82 @@ msgstr "Applica coupon"
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCartExtension.cshtml"
 msgid "Enter Your Coupon Code"
 msgstr "Inserisci il tuo codice coupon"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCriterion/Add.cshtml"
+msgid " (this provider is disabled for processing. It will be ignored when using the coupon.)"
+msgstr "(l'esecuzione di questo provider è disabilitata. Sarà quindi ignorato durante la verifica di validità del coupon.)"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCriterion/Add.cshtml"
+msgid "Add a Criterion"
+msgstr "Aggiungi un Criterio"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCriterion/Add.cshtml"
+msgid "Description"
+msgstr "Descrizione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCriterion/Add.cshtml"
+msgid "Name"
+msgstr "Nome"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCriterion/Add.cshtml"
+msgid "There are no currently available criteria"
+msgstr "Non ci sono criteri disponibili."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCriterion/Edit.cshtml"
+msgid "Description"
+msgstr "Descrizione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCriterion/Edit.cshtml"
+msgid "Edit Criterion - {0}"
+msgstr "Modifica Criterio - {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCriterion/Edit.cshtml"
+msgid "Save"
+msgstr "Salva"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCriterion/Edit.cshtml"
+msgid "You may optionally give a description to this criterion, to be used in the dashboard screens."
+msgstr "Opzionalmente puoi dare una descrizione di questo criterio da usare nelle pagine della dashboard."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingLineCriterion/Add.cshtml"
+msgid " (this provider is disabled for processing. It will be ignored when using the coupon.)"
+msgstr "(l'esecuzione di questo provider è disabilitata. Sarà quindi ignorato durante la verifica di validità del coupon.)"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingLineCriterion/Add.cshtml"
+msgid "Add a Criterion"
+msgstr "Aggiungi un Criterio"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingLineCriterion/Add.cshtml"
+msgid "Description"
+msgstr "Descrizione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingLineCriterion/Add.cshtml"
+msgid "Name"
+msgstr "Nome"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingLineCriterion/Add.cshtml"
+msgid "There are no currently available criteria"
+msgstr "Non ci sono criteri disponibili."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingLineCriterion/Edit.cshtml"
+msgid "Description"
+msgstr "Descrizione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingLineCriterion/Edit.cshtml"
+msgid "Edit Criterion - {0}"
+msgstr "Modifica Criterio - {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingLineCriterion/Edit.cshtml"
+msgid "Save"
+msgstr "Salva"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingLineCriterion/Edit.cshtml"
+msgid "You may optionally give a description to this criterion, to be used in the dashboard screens."
+msgstr "Opzionalmente puoi dare una descrizione di questo criterio da usare nelle pagine della dashboard."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/DateTimeProductAttributeExtensionInput.cshtml"
+msgid "Insert a date"
+msgstr "Inserisci una data"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/BundleProductLocalizationSettings.cshtml"
 msgid "Check to attempt to replace selected products with their translation in the bundle's culture. This only applies if the bundle has a LocalizationPart."
@@ -565,8 +789,16 @@ msgid "If unchecked, the add button won't be visible on the product page when th
 msgstr "Se non selezionato, il pulsante per aggiungere il prodotto non sarà visibile quando l'inventario è zero o meno."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
+msgid "Insert 0 (zero) to allow any quantity."
+msgstr "Inserisci 0 (zero) per consentire qualsiasi quantità."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
 msgid "Inventory"
 msgstr "Inventario"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
+msgid "Maximum order quantity"
+msgstr "Quantità massima ordinabile"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
 msgid "Minimum order quantity"
@@ -1114,7 +1346,7 @@ msgstr "Lascia il prezzo scontato vuoto per usare il prezzo regolare."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.cshtml"
 msgid "Minimum order quantity"
-msgstr "Minima quantità per l'ordine"
+msgstr "Quantità minima ordinabile"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.cshtml"
 msgid "Out of stock message"
@@ -1471,6 +1703,10 @@ msgstr "Identità dei Territori"
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/TerritoryPartEdit.cshtml"
 msgid "This is a child of "
 msgstr "Questo è un figlio di"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/TerritoryPartEdit.cshtml"
+msgid "This territory has {0} children at first level"
+msgstr "Questo territorio ha {0} figli di primo livello"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/TerritoryPartEdit.cshtml"
 msgid "This territory has {0} children. ({1} on first level)"
@@ -1880,6 +2116,54 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/AdvancedSK
 msgid "The definition of the pattern"
 msgstr "La definizione del pattern"
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "Allow configuration"
+msgstr "Consenti la configurazione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "Allow processing"
+msgstr "Consenti l'esecuzione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "Applicability providers"
+msgstr "Provider di applicabilità"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "Basic applicability tests"
+msgstr "Test di applicabilità base"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "Criteria from these providers determine whether a coupon can be added to the cart."
+msgstr "I criteri da questi providers determinano se un coupon possa essere aggiunto al carrello."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "Enabled providers for couponing criteria."
+msgstr "Abilita i provider relativi ai criteri di applicazione dei coupon."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "Evaluate criterion"
+msgstr "Valuta il criterio"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "No provider available for configuration."
+msgstr "Nessun provider disponibile per la configurazione."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "Provider name"
+msgstr "Nome del provider"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "Providers for cart-line criteria."
+msgstr "Criteri per gli elementi nel carrello."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "These criteria, when active, affect all coupons."
+msgstr "Questi criteri, quando attivi, si applicano a tutti i coupon."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "These providers enable conditions to select specific cart-lines that will be affected by a coupon."
+msgstr "Questi providers abilitano condizioni per selezionare specifiche righe del carrello che saranno influenzate dal coupon."
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Currency.cshtml"
 msgid "Define currency to be used for prices across the site."
 msgstr "Definisci una valuta che sarà usata per i prezzi sul sito."
@@ -1967,6 +2251,14 @@ msgstr "Modifica {0}"
 msgctxt "~/Modules/Nwazet.Commerce/Views/HierarchyTerritoriesAdmin/EditTerritory.cshtml"
 msgid "Edit {0} for {1}"
 msgstr "Modifica {0} per {1}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/HierarchyTerritoriesAdmin/GetChildNodes.cshtml"
+msgid "Delete"
+msgstr "Elimina"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/HierarchyTerritoriesAdmin/GetChildNodes.cshtml"
+msgid "Edit"
+msgstr "Modifica"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/HierarchyTerritoriesAdmin/Index.cshtml"
 msgid " | "
@@ -2099,6 +2391,10 @@ msgstr "Subtotale"
 msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
 msgid "Taxes {0}"
 msgstr "Tasse {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "There is no shipment for this order."
+msgstr "Non è prevista alcuna spedizione per questo ordine."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
 msgid "Total"
@@ -3328,6 +3624,122 @@ msgctxt "Nwazet.Commerce.ApplicabilityCriteria.CartWeightCriteria"
 msgid "Cart Weight Criterion"
 msgstr "Criterio sul peso del Carrello"
 
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.AuthenticationStateCouponApplicabilityCriterion"
+msgid "Authentication State"
+msgstr "Stato dell'autenticazione"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.AuthenticationStateCouponApplicabilityCriterion"
+msgid "Coupon {0} is not available to authenticated users."
+msgstr "Il coupon {0} non è disponibile per gli utenti autenticati."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.AuthenticationStateCouponApplicabilityCriterion"
+msgid "Coupon {0} is only available to authenticated users."
+msgstr "Il coupon {0} è disponibile solo per gli utenti autenticati."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.AuthenticationStateCouponApplicabilityCriterion"
+msgid "Criteria on the authentication state"
+msgstr "Criteri relativi allo stato di autenticazione"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.AuthenticationStateCouponApplicabilityCriterion"
+msgid "User is authenticated"
+msgstr "L'utente è autenticato"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.AuthenticationStateCouponApplicabilityCriterion"
+msgid "User is not authenticated"
+msgstr "L'utente non è autenticato"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.CartHasProductBySKUCouponApplicabilityCriteria"
+msgid "Cart products"
+msgstr "Prodotti del carrello"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.CartHasProductBySKUCouponApplicabilityCriteria"
+msgid "Coupon code {0} is not valid"
+msgstr "Il codice coupon {0} non è valido"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.CartHasProductBySKUCouponApplicabilityCriteria"
+msgid "Criteria for whether the cart contains specific products based on their SKU."
+msgstr "Criteri riguardo il fatto che il carrello contenga prodotti specifici sulla base dei loro SKU."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.CartHasProductBySKUCouponApplicabilityCriteria"
+msgid "Product SKUs match provided ones"
+msgstr "Gli SKU di prodotto coincidono con quelli dati."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.CartHasProductBySKUCouponLineApplicabilityCriteria"
+msgid "Cart products"
+msgstr "Prodotti del carrello"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.CartHasProductBySKUCouponLineApplicabilityCriteria"
+msgid "Coupon {0} is not valid for {1}."
+msgstr "Il coupon {0} non è valido per {1}."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.CartHasProductBySKUCouponLineApplicabilityCriteria"
+msgid "Coupon {0} is not valid for any product in your cart."
+msgstr "Il coupon {0} non è valido per alcun elemento del carrello."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.CartHasProductBySKUCouponLineApplicabilityCriteria"
+msgid "Coupon {0} is not valid."
+msgstr "Il coupon {0} non è valido."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.CartHasProductBySKUCouponLineApplicabilityCriteria"
+msgid "Coupon applies only to items with specific SKUs."
+msgstr "Il coupon è applicabile solo a elementi specifici."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.CartHasProductBySKUCouponLineApplicabilityCriteria"
+msgid "Line product's SKU matches one from a list"
+msgstr "Lo SKU dell'elemento coincide con uno della lista"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MaxUsesCouponApplicabilityCriteria"
+msgid "Coupon code {0} is not valid"
+msgstr "Il codice coupon {0} non è valido"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MaxUsesCouponApplicabilityCriteria"
+msgid "Criterion on the number of times a coupon has been used in total."
+msgstr "Criterio relativo al numero di volte che il coupon è stato usato in totale."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MaxUsesCouponApplicabilityCriteria"
+msgid "Number of times the coupon was used"
+msgstr "Numero di volte che il coupon è stato usato"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MaxUsesCouponApplicabilityCriteria"
+msgid "Number of times the coupon was used by anyone"
+msgstr "Numero di volte che il coupon è stato usato in totale"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MaxUsesCouponApplicabilityCriteria"
+msgid "The coupon has been used fewer than '{0}' times"
+msgstr "Il coupon è stato usato meno di '{0}' volte"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MaxUsesPerUserCouponApplicabilityCriteria"
+msgid "Coupon code {0} has been used already"
+msgstr "Il coupon {0} è già stato utilizzato"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MaxUsesPerUserCouponApplicabilityCriteria"
+msgid "Coupon code {0} is not valid"
+msgstr "Il codice coupon {0} non è valido"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MaxUsesPerUserCouponApplicabilityCriteria"
+msgid "Criterion on the number of coupon uses per user."
+msgstr "Criterio relativo al numero di volte che il coupon è stato usato dall'utente."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MaxUsesPerUserCouponApplicabilityCriteria"
+msgid "Number of times the coupon was used"
+msgstr "Numero di volte che il coupon è stato usato"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MaxUsesPerUserCouponApplicabilityCriteria"
+msgid "Number of times the user used this coupon"
+msgstr "Numero di volte che il coupon è stato usato dall'utente"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MaxUsesPerUserCouponApplicabilityCriteria"
+msgid "User has used the coupon fewer than '{0}' times"
+msgstr "L'utente ha usato il coupon meno di '{0}' volte"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NoDuplicatesCouponApplicabilityCriterion"
+msgid "Coupon code {0} is already in use."
+msgstr "Il codice coupon {0} è già in uso"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NoDuplicatesCouponApplicabilityCriterion"
+msgid "Prevent duplicate coupons in the same cart."
+msgstr "Impedisci di inserire più volte lo stesso coupon nello stesso carrello."
+
 msgctxt "Nwazet.Commerce.Controllers.AttributesAdminController"
 msgid "Not authorized to manage product attributes"
 msgstr "Non autorizzato a gestire gli attributi di prodotto"
@@ -3347,6 +3759,14 @@ msgstr "Il coupon è stato aggiornato."
 msgctxt "Nwazet.Commerce.Controllers.CouponingAdminController"
 msgid "The coupon is not valid."
 msgstr "Il coupon non è valido."
+
+msgctxt "Nwazet.Commerce.Controllers.CouponingCriterionController"
+msgid "Not authorized to manage coupons"
+msgstr "Non sei autorizzato alla gestione dei coupon"
+
+msgctxt "Nwazet.Commerce.Controllers.CouponingLineCriterionController"
+msgid "Not authorized to manage coupons"
+msgstr "Non sei autorizzato alla gestione dei coupon"
 
 msgctxt "Nwazet.Commerce.Controllers.ECommerceSettingsAdminController"
 msgid "Not authorized to manage e-commerce settings"
@@ -3383,6 +3803,10 @@ msgstr "Il tipo richiesto \"{0}\" non coincide con il Tipo di Territorio atteso 
 msgctxt "Nwazet.Commerce.Controllers.HierarchyTerritoriesAdminController"
 msgid "The requested type \"{0}\" does not match the expected TerritoryType for the hierarchy."
 msgstr "Il tipo richiesto \"{0}\" non coincide con il Tipo di Territorio atteso per la gerarchia."
+
+msgctxt "Nwazet.Commerce.Controllers.HierarchyTerritoriesAdminController"
+msgid "There are no territories that may be added to hierarchy \"{0}\"."
+msgstr "Non ci sono territori che possano essere aggiunti alla gerarchia \"{0}\"."
 
 msgctxt "Nwazet.Commerce.Controllers.HierarchyTerritoriesAdminController"
 msgid "There are no territories that may be added to hierarchy \"{1}\"."
@@ -3529,8 +3953,20 @@ msgid "Not authorized to manage shippings"
 msgstr "Non autorizzato a gestire le spedizioni"
 
 msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
+msgid "{0} {1} has been added to cart."
+msgstr "{0} {1} è stato aggiunto al carrello."
+
+msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
+msgid "{0} {1} have been added to cart."
+msgstr "{0} {1} sono stati aggiunti al carrello."
+
+msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
 msgid "Quantity decreased to match inventory for {0}."
 msgstr "Quantità ridotta per coincidere con l'inventario di {0}."
+
+msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
+msgid "Quantity decreased to match maximum possible for {0}."
+msgstr "Quantità diminuita alla massima consentita per {0}."
 
 msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
 msgid "Quantity increased to match minimum possible for {0}."
@@ -3760,6 +4196,74 @@ msgctxt "Nwazet.Commerce.Extensions.TerritoriesUtilities"
 msgid "Part record cannot be null."
 msgstr "Il record della parte non può essere null."
 
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Cart contains all these product SKUs: {0}"
+msgstr "Il carrello contiene tutti questi SKU di prodotto: {0}"
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Cart contains at least one of these product SKUs: {0}"
+msgstr "Il carrello contiene almeno uno di questi SKU di prodotto: {0}"
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Cart contains at least one product corresponding to one of the SKUs"
+msgstr "Il carrello contiene almeno un prodotto corrispondente ad uno degli SKU"
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Cart contains no product corresponding to any of the SKUs"
+msgstr "Il carrello non contiene nessun prodotto che corrisponda ad uno degli SKU"
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Cart contains none of these product SKUs: {0}"
+msgstr "Il carrello non contiene nessuno di questi SKU di prodotto: {0}"
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Cart contains only products corresponding to the SKUs"
+msgstr "Il carrello contiene esclusivamente prodotti corrispondenti agli SKU"
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Cart contains products corresponding to all the SKUs"
+msgstr "Il carrello contiene prodotti corrispondenti a ciascuno degli SKU"
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Cart doesn't contain any of these product SKUs: {0}"
+msgstr "Il carrello non contiene nessuno di questi SKU di prodotto: {0}"
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Must select a valid operator."
+msgstr "Devi selezionare un operatore valido."
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Operator"
+msgstr "Operatore"
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Product of the line corresponds to one of the SKUs"
+msgstr "Il prodotto della riga corrisponde ad uno degli SKU."
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Product of the line corresponds to one of these product SKUs: {0}"
+msgstr "Il prodotto della riga corrisponde ad uno di questi SKU: {0}"
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Product of the line doesn't correspond to any of the SKUs"
+msgstr "Il prodotto della riga non corrisponde a nessuno degli SKU."
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Product of the line doesn't correspond to any of these product SKUs: {0}"
+msgstr "Il prodotto della riga non corrisponde a nessuno di questi SKU: {0}"
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Product Skus. Write one SKU per line."
+msgstr "SKU dei prodotti. Uno per riga."
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "The Product Skus"
+msgstr "Gli Sku dei prodotti"
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
+msgid "Value cannot be empty."
+msgstr "Il valore non può essere vuoto."
+
 msgctxt "Nwazet.Commerce.Filters.FilterHelper"
 msgid "{0} contains '{1}'"
 msgstr "{0} contiene '{1}'"
@@ -3839,6 +4343,18 @@ msgstr "{0} NON è uguale a '{1}'"
 msgctxt "Nwazet.Commerce.Filters.FilterHelper"
 msgid "{0} starts with '{1}'"
 msgstr "{0} inizia con '{1}'"
+
+msgctxt "Nwazet.Commerce.Filters.PositiveIntegerValueForm"
+msgid "Enter the value."
+msgstr "Inserisci il valore."
+
+msgctxt "Nwazet.Commerce.Filters.PositiveIntegerValueForm"
+msgid "Value"
+msgstr "Valore"
+
+msgctxt "Nwazet.Commerce.Filters.PositiveIntegerValueForm"
+msgid "Value must be a positive integer (it is allowed to be a token)."
+msgstr "Il valore deve essere un numero intero positivo (non sono consentiti Token)."
 
 msgctxt "Nwazet.Commerce.Filters.ProductDiscountPriceFilter"
 msgid "Product"
@@ -4021,6 +4537,70 @@ msgid "Operator"
 msgstr "Operatore"
 
 msgctxt "Nwazet.Commerce.Filters.ProductPriceFilterForm"
+msgid "Value"
+msgstr "Valore"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilter"
+msgid "Price with VAT"
+msgstr "Prezzo con IVA"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilter"
+msgid "Product"
+msgstr "Prodotto"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilter"
+msgid "Product Price after VAT computations."
+msgstr "Prezzo del prodotto IVA inclusa."
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilter"
+msgid "Product Price with VAT"
+msgstr "Prezzo del prodotto IVA inclusa"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
+msgid "Is between"
+msgstr "È compreso"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
+msgid "Is equal to"
+msgstr "È uguale a"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
+msgid "Is greater than"
+msgstr "È maggiore di"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
+msgid "Is greater than or equal to"
+msgstr "È maggiore o uguale a"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
+msgid "Is less than"
+msgstr "È minore di"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
+msgid "Is less than or equal to"
+msgstr "È minore o uguale a"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
+msgid "Is not between"
+msgstr "Non è compreso"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
+msgid "Is not equal to"
+msgstr "NON è uguale"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
+msgid "Max"
+msgstr "Max"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
+msgid "Min"
+msgstr "Min"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
+msgid "Operator"
+msgstr "Operatore"
+
+msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
 msgid "Value"
 msgstr "Valore"
 
@@ -4344,6 +4924,26 @@ msgctxt "Nwazet.Commerce.Models.ShoppingCart"
 msgid "Couldn't add this product because of invalid attributes. Please refresh the page and try again."
 msgstr "Impossible aggiungere questo prodotto a causa di attributi non validi. Ricarica la pagina e riprova."
 
+msgctxt "Nwazet.Commerce.Projections.PriceWithVatSortCriterionProvider"
+msgid "Product"
+msgstr "Prodotto"
+
+msgctxt "Nwazet.Commerce.Projections.PriceWithVatSortCriterionProvider"
+msgid "Sort based on the price after VAT is applied, ascending."
+msgstr "Ordinamento per prezzo IVATO, crescente."
+
+msgctxt "Nwazet.Commerce.Projections.PriceWithVatSortCriterionProvider"
+msgid "Sort based on the price after VAT is applied, descending."
+msgstr "Ordinamento per prezzo IVATO, decrescente."
+
+msgctxt "Nwazet.Commerce.Projections.PriceWithVatSortCriterionProvider"
+msgid "Sort based on the price after VAT is applied."
+msgstr "Ordinamento per prezzo IVATO."
+
+msgctxt "Nwazet.Commerce.Projections.PriceWithVatSortCriterionProvider"
+msgid "Sort by price"
+msgstr "Ordinamento per prezzo"
+
 msgctxt "Nwazet.Commerce.Recipes.Providers.Builders.TerritoriesStep"
 msgid "Exports definitions, items and identity records. This is the recommended way to export territories and hierarchies."
 msgstr "Esporta definizioni, oggetti e records delle identità. Questo è il modo raccomandato per esportare territori e gerarchie."
@@ -4460,6 +5060,14 @@ msgctxt "Nwazet.Commerce.Services.BundleProductLocalizationBundleService"
 msgid "Some of the products are in the wrong culture: {0}"
 msgstr "Alcuni dei prodotti hanno la cultura sbagliata: {0}"
 
+msgctxt "Nwazet.Commerce.Services.CheckoutItem."
+msgid "Taxable"
+msgstr "Imponibile"
+
+msgctxt "Nwazet.Commerce.Services.CheckoutItem."
+msgid "VAT Rate"
+msgstr "Aliquota IVA"
+
 msgctxt "Nwazet.Commerce.Services.Couponing.BasicCouponApplicabilityCriterion"
 msgid "Coupon code {0} is already in use."
 msgstr "Il codice coupon {0} è già in uso"
@@ -4475,6 +5083,10 @@ msgstr "Coupon {0} applicato con successo"
 msgctxt "Nwazet.Commerce.Services.Couponing.CouponApplicationService"
 msgid "Coupon code {0} is not valid"
 msgstr "Il codice coupon {0} non è valido"
+
+msgctxt "Nwazet.Commerce.Services.Couponing.CouponCartPriceAlterationProcessor"
+msgid "{0} not valid"
+msgstr "[0] non valido"
 
 msgctxt "Nwazet.Commerce.Services.DefaultOrderStatusProvider"
 msgid "Accepted"
@@ -5128,6 +5740,3 @@ msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
 msgid "Weight"
 msgstr "Peso"
 
-msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
-msgid "{0} {1} has been added to cart."
-msgstr "{0} {1} è stato aggiunto al carrello."
