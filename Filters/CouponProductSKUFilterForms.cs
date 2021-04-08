@@ -39,15 +39,15 @@ namespace Nwazet.Commerce.Filters {
 
                     f._Operator.Add(new SelectListItem {
                         Value = Convert.ToString(CartCouponSKUOperator.CartContainsAllSKUs),
-                        Text = T("Cart contains all the products corresponding to the SKUs").Text
+                        Text = T("Cart contains products corresponding to all the SKUs").Text
                     });
                     f._Operator.Add(new SelectListItem {
                         Value = Convert.ToString(CartCouponSKUOperator.CartContainsAnySKU),
-                        Text = T("Cart contains at least one of the products corresponding to the SKUs").Text
+                        Text = T("Cart contains at least one product corresponding to one of the SKUs").Text
                     });
                     f._Operator.Add(new SelectListItem {
                         Value = Convert.ToString(CartCouponSKUOperator.CartContainsNone),
-                        Text = T("Cart contains none of the products corresponding to the SKUs").Text
+                        Text = T("Cart contains no product corresponding to any of the SKUs").Text
                     });
                     f._Operator.Add(new SelectListItem {
                         Value = Convert.ToString(CartCouponSKUOperator.CartContainsNoOther),
