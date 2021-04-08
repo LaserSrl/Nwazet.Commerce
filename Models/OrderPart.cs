@@ -390,6 +390,7 @@ namespace Nwazet.Commerce.Models {
                         .FromAttr(e => e.Date)
                         .FromAttr(e => e.Category)
                         .FromAttr(e => e.Description)
+                        .FromAttr(e=>e.UserName)
                         .Context);
             }
             internal set {
@@ -400,11 +401,12 @@ namespace Nwazet.Commerce.Models {
                                 .ToAttr(e => e.Date)
                                 .ToAttr(e => e.Category)
                                 .ToAttr(e => e.Description)
+                                .ToAttr(e => e.UserName)
                                 .Element)));
             }
         }
 
-        public OrderEvent LogActivity(string category, string description) {
+        public OrderEvent LogActivity(string category, string description, string userName) {
             var eventsElement = ActivityDocument.Element(EventsName);
             if (eventsElement == null) {
                 ActivityDocument.Add(eventsElement = new XElement(EventsName));
@@ -412,12 +414,14 @@ namespace Nwazet.Commerce.Models {
             var orderEvent = new OrderEvent {
                 Date = DateTime.UtcNow,
                 Category = category,
-                Description = description
+                Description = description,
+                UserName = userName
             };
             eventsElement.Add(new XElement(EventName).With(orderEvent)
                 .ToAttr(e => e.Date)
                 .ToAttr(e => e.Category)
                 .ToAttr(e => e.Description)
+                .ToAttr(e => e.UserName)
                 .Element);
             Record.Activity = ActivityDocument.ToString(SaveOptions.DisableFormatting);
             return orderEvent;
