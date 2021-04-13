@@ -8,6 +8,7 @@
 @using System.Collections.Generic
 
 @{
+    // this shape manages and collaborates with the ProductAttributes.cshtml shape
     Script.Require("jQuery").AtFoot();
 
     string dataPartName = HttpUtility.JavaScriptStringEncode(Model.Part.PartDefinition.Name);
@@ -47,11 +48,9 @@
                 @foreach (ProductAttributePart badAttribute in Model.AttributesToHide) {
                     string idString = badAttribute.Id.ToString(CultureInfo.InvariantCulture);
                     <text>
-                    $("label.forcheckbox[for='@Html.Id(idString)']").hide();
-                    $("#@Html.Id(idString)").hide();
+                    $('div[data-id="' + @idString + '"]').hide();
                     </text>
-            }
-
+                }
             });
         </script>
     }
@@ -77,6 +76,81 @@
                     </text>
             }
             });
+        </script>
+    }
+}
+
+@using (Script.Foot()) {
+    //these scripts are for managing attributes in a product in the create phase
+    if (!Model.AttributesToMark.Any() && !Model.AttributesToHide.Any()) {
+        <script type="text/javascript">
+            $(function () {
+                @foreach (ProductAttributePart attribute in Model.Attributes) {
+                    string idString = attribute.Id.ToString(CultureInfo.InvariantCulture);
+                    LocalizationPart lPart = attribute.ContentItem.As<LocalizationPart>();
+                    string mark = "";
+                    string culture = "";
+                    if (lPart == null || lPart.Culture == null || string.IsNullOrEmpty(lPart.Culture.Culture)) {
+                        mark = T(" (Culture undefined)").Text;
+                        culture = "undefined";
+                    } else {
+                        mark = T(" ({0})", lPart.Culture.Culture).Text;
+                        culture = lPart.Culture.Culture;
+                    }
+
+                    // same logic used for editing
+                    // if "Don't show attributes" is not selected
+                    // so during the create, have to see them all 
+                    if (!settings.HideAttributesFromEditor) {
+                        <text>
+                        $("label.forcheckbox[for='@Html.Id(idString)']")[0].innerText += "@mark";
+                        </text>
+                    }
+
+                    <text>
+                    $('div[data-id="' + @idString + '"]').attr("data-lang", "@culture");
+                    </text>
+                }
+            });
+
+           
+
+            @if (settings.HideAttributesFromEditor) {
+                <text>
+                $("#Localization_SelectedCulture").on('change', function () {
+                    DisplayCurrentLanguage($(this).val());
+                });
+                </text>
+            }
+
+            function DisplayCurrentLanguage(selectedLang) {
+                $("[data-lang]").each(function () {
+                    if ($(this).attr("data-lang") == selectedLang) {
+                        $(this).show();
+                    }
+                    else {
+                        // both flags exclude the possibility of selecting the undefined culture
+                        // so if flagged we hide the check without culture
+                        @if(settings.RemoveAttributesWithoutLocalization || settings.AssertAttributesHaveSameCulture) {
+                            <text>
+                            $(this).hide();
+                            $(this).find("input:checkbox").prop("checked",false);
+                            </text>
+                        }
+                        else {
+                            <text>
+                            if ($(this).attr("data-lang") == "undefined") {
+                                $(this).show();
+                            }
+                            else{
+                                $(this).hide();
+                                $(this).find("input:checkbox").prop("checked", false);
+                            }
+                            </text>
+                        }
+                    }
+                });
+            }
         </script>
     }
 }

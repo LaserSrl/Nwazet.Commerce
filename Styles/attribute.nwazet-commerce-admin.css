@@ -59,3 +59,11 @@ ul#NwazetCommerceAttribute_AttributeValues > li > div {
     min-width: auto !important;
     width: 100%;
 }
+
+.wrap-checkbox-attribute {
+    display: inline-block;
+}
+
+.wrap-checkbox-attribute .forcheckbox {
+    margin: 0 .8em 0 0;
+}
