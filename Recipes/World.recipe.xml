@@ -3373,4 +3373,7 @@ territories import "Zimbabwe"
       <TitlePart Title="Alderney (Channel Islands) (Great Britain and Northern Ireland)" />
     </Territory>
   </Content>
+  <Command>
+    territories calculatefullpath
+  </Command>
 </Orchard>
