@@ -3,7 +3,7 @@
 @using Nwazet.Commerce.Services
 @using System.Linq;
 @{
-    Script.Include("attribute-extensions.js").AtFoot();
+    Script.Require("Nwazet.AttributeExtensions").AtFoot();
     var attributeFieldName = Html.Name("productattributes");
     var attributes = Model.ProductAttributes == null ? null : ((IEnumerable<ProductAttributePartDisplayViewModel>)Model.ProductAttributes).ToList();
 }

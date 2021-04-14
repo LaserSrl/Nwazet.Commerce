@@ -4,11 +4,13 @@
 
 @{
     Script.Require("jQuery");
-    Style.Include("territory-hierarchies-admin.css", "territory-hierarchies-admin.min.css");
+    Style.Require("Nwazet.Territory-Hierarchies-Admin");
 
     Script.Require("jQueryUI_Sortable").AtFoot();
-    Script.Include("jquery.mjs.nestedSortable.js", "jquery.mjs.nestedSortable.min.js").AtFoot();
-    Script.Include("territory-hierarchies-admin.js", "territory-hierarchies-admin.min.js").AtFoot();
+    //also used in \src\Orchard.Web\Core\Navigation\Views\Admin\Index.cshtml 
+    //the resource should be defined in Orchard.Resources as a ResourceManifest
+    Script.Include("jquery.mjs.nestedSortable.js", "jquery.mjs.nestedSortable.min.js").AtFoot(); 
+    Script.Require("Nwazet.Territory-Hierarchies-Admin").AtFoot();
 
     Layout.Title(T("Manage Territories"));
 

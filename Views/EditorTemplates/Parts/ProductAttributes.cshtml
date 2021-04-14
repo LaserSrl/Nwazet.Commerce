@@ -4,7 +4,7 @@
 @model Nwazet.Commerce.ViewModels.ProductAttributesPartEditViewModel
 @{
     // this shape has javascript references in the shape AttributeLocalizationProductAttributes.cshtml
-    Style.Include("attribute.nwazet-commerce-admin.css?v=1");
+    Style.Require("Nwazet.Attribute-Admin").AtHead();
 
     var currentAttributeIds = Model.Part.AttributeIds.ToList();
 }

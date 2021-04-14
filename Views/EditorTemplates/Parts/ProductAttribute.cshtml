@@ -1,10 +1,10 @@
 ﻿@model Nwazet.Commerce.ViewModels.ProductAttributePartEditViewModel
 @{
-    Style.Include("attribute.nwazet-commerce-admin.css?v=1");
+    Style.Require("Nwazet.Attribute-Admin").AtHead();
 
     Script.Require("jQueryUI_Sortable").AtFoot();
-    Script.Include("mustache.js");
-    Script.Include("attribute-admin.js").AtFoot();
+    Script.Require("Mustache").AtFoot();
+    Script.Require("Nwazet.Attribute-Admin").AtFoot();
 }
 <fieldset>
     <label class="sub" for="@Html.IdFor(m => m.DisplayName)">@T("Display Name")</label><br />
