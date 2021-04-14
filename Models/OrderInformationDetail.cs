@@ -68,6 +68,7 @@ namespace Nwazet.Commerce.Models {
     public enum OrderValueType {
         Number, // a quantity perhaps?
         Percent, // a rate: e.g. for VAT. Note that value in this case should be as a fraction of 1 (i.e. for 10% the value should be 0.10)
-        Currency // an amount
+        Currency, // an amount
+        Ignore // Ignore the value. Generally, in this case the Description will atter more / contain all the info
     }
 }
