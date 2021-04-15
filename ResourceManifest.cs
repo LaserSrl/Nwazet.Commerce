@@ -13,7 +13,7 @@ namespace Nwazet.Commerce {
 
             manifest.DefineScript("Nwazet.iframe-transport").SetUrl("jquery.iframe-transport.js").SetDependencies("jQuery");
             manifest.DefineScript("Nwazet.ShoppingCart")
-                .SetUrl("shoppingcart.min.js", "shoppingcart.js").SetDependencies("jQuery");
+                .SetUrl("shoppingcart.min.js?v=1.0", "shoppingcart.js?v=1.0").SetDependencies("jQuery");
             manifest.DefineScript("Nwazet.AttributeExtensions")
                 .SetUrl("attribute-extensions.min.js", "attribute-extensions.js");
         }
