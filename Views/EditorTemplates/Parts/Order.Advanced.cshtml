@@ -264,6 +264,9 @@
                                         case OrderValueType.Percent:
                                             valueText = string.Format("{0} %", (element.Value * 100m).ToString());
                                             break;
+                                        case OrderValueType.Ignore:
+                                            valueText = "";
+                                            break;
                                         case OrderValueType.Number:
                                         default:
                                             valueText = element.Value.ToString();
