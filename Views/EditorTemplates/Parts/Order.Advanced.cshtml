@@ -4,6 +4,7 @@
 @using Nwazet.Commerce.Models;
 @using System.Linq;
 @using Orchard.ContentManagement;
+@using Nwazet.Commerce.Extensions;
 
 @model Nwazet.Commerce.ViewModels.OrderEditorViewModel
 @{
@@ -12,6 +13,7 @@
     Script.Include("order-admin.js", "order-admin.min.js");
 
     var _contentManager = WorkContext.Resolve<IContentManager>();
+    var _attributeExtensionProviders = WorkContext.Resolve<IEnumerable<IProductAttributeExtensionProvider>>();
 
     Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
     CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
@@ -22,6 +24,7 @@
     var taxableSum = 0.0m;
     var totalSum = 0.0m; // sum of order total including VAT
     var vatSum = 0.0m; // sum of VAT applied to products
+
 }
 
 <div class="order-editor">
@@ -46,10 +49,12 @@
             </thead>
             <tbody id="order_products_table_body">
                 @foreach (var item in Model.OrderItems) {
-                    
+
+                    var product = _contentManager.Get(item.ProductId)?.As<ProductPart>();
                     var lineInformation = Model.Order
                         .LineInformation
-                        .Where(ola => ola.ProductId == item.ProductId);
+                        .Where(ola => (ola.ComputedKey == item.AsUniqueKey())
+                            || (ola.ComputedKey == item.ProductId.ToString()));
                     var baseLineInfo = lineInformation.SelectMany(ola => ola.Details
                         .Where(old => old.InformationType == OrderInformationType.OriginalLineData));
 
@@ -66,9 +71,19 @@
                         <td class="description">
                             @{ 
                                 var itemTitle = item.Title;
+                                var productAttributes = (IDictionary<int, ProductAttributeValueExtended>)item.Attributes;
+                                if (productAttributes != null && productAttributes.Any()) {
+                                    var additionalText = 
+                                        AttributeNameUtilities.AttributesDisplayText(productAttributes, (IContent)product, _attributeExtensionProviders);
+                                    if (!string.IsNullOrWhiteSpace(additionalText)) {
+                                        itemTitle += " (" +
+                                            additionalText.Trim()
+                                            + ")";
+                                    }
+                                }
                             }
                             @* check is a product *@
-                            @if (_contentManager.Get(item.ProductId)?.As<ProductPart>() != null) {
+                            @if (product != null) {
                                 <a href="@Url.ItemDisplayUrl(Model.Products[item.ProductId])" target="_blank">@itemTitle</a>
                             }
                             else {
@@ -156,11 +171,13 @@
                                 && old.InformationType != OrderInformationType.FrontEndInfo));
                     // TODO
                 }
-                @if (additionalVariations.Any()) {
+
+                @foreach (var av in additionalVariations.Where(av => av.InformationType != OrderInformationType.CartPrice)) {
+                    @* Here for cart-level variations of before VAT stuff *@  
                     <tr>
-                        <td colspan="5" class="label">@T("Cart level variations")</td>
+                        <td colspan="5" class="label">@av.Label</td>
                         <td></td>
-                        <td class="price">@currencyInUse.PriceAsString(0.0m, cultureInUse)</td>
+                        <td class="price">@currencyInUse.PriceAsString(av.Value, cultureInUse)</td>
                     </tr>
                 }
                 <tr>
@@ -173,11 +190,21 @@
                     <td colspan="3"></td>
                     <td class="price">@currencyInUse.PriceAsString(vatSum, cultureInUse)</td>
                 </tr>
+
                 @if (Model.Order.Taxes != null && Model.Order.Taxes.Amount > 0.0m) {
                     <tr class="taxes">
                         <td colspan="5" class="label">@T("Taxes {0}", string.IsNullOrWhiteSpace(Model.Order.Taxes.Name) ? T("Taxes").Text : Model.Order.Taxes.Name)</td>
                         <td colspan="3"></td>
                         <td class="price">@currencyInUse.PriceAsString(Model.Order.Taxes.Amount, cultureInUse)</td>
+                    </tr>
+                }
+                
+                @foreach (var av in additionalVariations.Where(av => av.InformationType == OrderInformationType.CartPrice)) {
+                    @* Cart-level variations (inclusive of VAT) *@ 
+                    <tr>
+                        <td colspan="5" class="label">@av.Label [@(av.Description)]</td>
+                        <td colspan="4"></td>
+                        <td class="price">@currencyInUse.PriceAsString(av.Value, cultureInUse)</td>
                     </tr>
                 }
                 @if (Model.Order.ShippingOption != null) {
@@ -236,6 +263,9 @@
                                             break;
                                         case OrderValueType.Percent:
                                             valueText = string.Format("{0} %", (element.Value * 100m).ToString());
+                                            break;
+                                        case OrderValueType.Ignore:
+                                            valueText = "";
                                             break;
                                         case OrderValueType.Number:
                                         default:

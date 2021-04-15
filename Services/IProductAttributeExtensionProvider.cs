@@ -8,8 +8,8 @@ namespace Nwazet.Commerce.Services {
         string Name { get; }
         string DisplayName { get; }
         string Serialize(string value, Dictionary<string, string> form, HttpFileCollectionBase files);
-        dynamic BuildInputShape(ProductAttributePart part);
+        dynamic BuildInputShape(ProductAttributePart part, ProductAttributesPart product);
         dynamic BuildAdminShape(string value);
-        string DisplayString(string value);
+        string DisplayString(ProductAttributeValueExtendedContext context);
     }
 }

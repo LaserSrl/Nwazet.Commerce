@@ -1,16 +1,17 @@
-﻿jQuery(function($) {
-    var hasLocalStorage = function() {
-            try {
-                return "localStorage" in window && window.localStorage !== null;
-            } catch(e) {
-                return false;
-            }
-        },
+﻿jQuery(function ($) {
+    var processedAddToCart = [];
+    var hasLocalStorage = function () {
+        try {
+            return "localStorage" in window && window.localStorage !== null;
+        } catch (e) {
+            return false;
+        }
+    },
         setUseLocalStorage = function (data, status) {
             useLocalStorage = !!(data.Response);
         },
         useLocalStorage = true,
-        setLoading = function(state) {
+        setLoading = function (state) {
             if (hasLocalStorage()) {
                 localStorage["nwazet-cart-loading"] = !!state;
             }
@@ -19,8 +20,8 @@
         loading = hasLocalStorage() ? localStorage["nwazet-cart-loading"] == "true" : false,
         nwazetCart = "nwazet.cart",
         cartContainer = $(".shopping-cart-container"),
-        setQuantityToZero = function(parentTag) {
-            return function(button) {
+        setQuantityToZero = function (parentTag) {
+            return function (button) {
                 if (findNextIndex(button.closest("form")) === 1 && hasLocalStorage()) {
                     localStorage.removeItem(nwazetCart);
                 }
@@ -37,7 +38,7 @@
             }
             return false;
         },
-        buildForm = function(state, container) {
+        buildForm = function (state, container) {
             $.each(state, function (key, value) {
                 if (key !== "__RequestVerificationToken") {
                     container.append($("<input type='hidden'/>")
@@ -47,13 +48,13 @@
             });
             return container;
         },
-        notify = function(text) {
+        notify = function (text) {
             $("#shopping-cart-notification")
                 .html(text)
                 .show();
             console.log(text);
         },
-        onCartLoad = function (text, status) {
+        onCartLoad = function (text, status, jqXHR) {
             $("#shopping-cart-notification").hide();
             if (status === "error") {
                 notify(window.Nwazet.FailedToLoadCart);
@@ -124,11 +125,29 @@
                 $(this).trigger("nwazet.cartupdated");
             }
         },
-        findNextIndex = function(form) {
+        onCartLoadWrapper = function (sender) {
+            return function (text, status, jqXHR) {
+                onCartLoad(text, status, jqXHR);
+                var movedQuantity = parseInt(cartContainer.children('input#NwazetCart_Painter_MovedQuantity').val());
+                var lineKey = parseInt(cartContainer.children('input#NwazetCart_Painter_SourceLikeKey').val());
+
+                if (cartContainer.children('input#NwazetCart_Painter_SourceAction').val() == "Add" && movedQuantity > 0) {
+                    var cartGuid = cartContainer.children('input#NwazetCart_Painter_Guid').val();
+                    if (processedAddToCart.indexOf(cartGuid) == -1) {
+                        processedAddToCart.push(cartGuid);
+                        $(sender).trigger("nwazet.addedtocart", {
+                            movedQuantity: movedQuantity,
+                            lineKey: lineKey
+                        });
+                    }
+                }
+            };
+        },
+        findNextIndex = function (form) {
             var maxIndex = -1;
             if (form) {
                 var formData = form.serializeArray();
-                $.each(formData, function() {
+                $.each(formData, function () {
                     var name = this.name;
                     if (name.substr(0, 6) === "items[" && name.slice(-11) === "].ProductId") {
                         maxIndex = Math.max(maxIndex, +name.slice(6, name.length - 11));
@@ -169,18 +188,18 @@
     }
 
     $(document)
-        .on("click", ".shoppingcart .delete", function() {
+        .on("click", ".shoppingcart .delete", function () {
             $(this).trigger("nwazet.removefromcart");
             setQuantityToZero("tr,li")($(this)).submit();
         })
-        .on("click", ".minicart .delete", function() {
+        .on("click", ".minicart .delete", function () {
             $(this).trigger("nwazet.removefromcart");
             return cartContainerLoad(setQuantityToZero("tr,li")($(this)));
         })
-        .on("click", ".minicart .update-button", function() {
+        .on("click", ".minicart .update-button", function () {
             return cartContainerLoad($(this).closest("form"));
         })
-        .on("submit", "form.addtocart", function(e) {
+        .on("submit", "form.addtocart", function (e) {
             $(this).trigger("nwazet.addtocart");
             e.preventDefault();
             var addForm = $(this),
@@ -200,8 +219,7 @@
                     onCartLoad(content, "success");
                 });
             } else {
-                cartContainer.load(action, addFormData, onCartLoad);
+                cartContainer.load(action, addFormData, onCartLoadWrapper(this));
             }
-            $(this).trigger("nwazet.addedtocart");
         });
 });

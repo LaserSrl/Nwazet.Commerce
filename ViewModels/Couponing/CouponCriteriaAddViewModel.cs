@@ -1,0 +1,21 @@
+﻿using Nwazet.Commerce.Descriptors;
+using Nwazet.Commerce.Descriptors.CouponApplicability;
+using Orchard.Environment.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Nwazet.Commerce.ViewModels.Couponing {
+    [OrchardFeature("Nwazet.Couponing")]
+    public class CouponCriteriaAddViewModel {
+        public int Id { get; set; }
+        public IEnumerable<TypeDescriptor<CouponApplicabilityCriterionDescriptor>> Criteria { get; set; }
+    }
+    [OrchardFeature("Nwazet.Couponing")]
+    public class CouponLineCriteriaAddViewModel {
+        public int Id { get; set; }
+        public IEnumerable<TypeDescriptor<CouponLineApplicabilityCriterionDescriptor>> Criteria { get; set; }
+    }
+}

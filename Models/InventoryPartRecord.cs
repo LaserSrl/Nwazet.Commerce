@@ -8,5 +8,6 @@ namespace Nwazet.Commerce.Models {
         public virtual string OutOfStockMessage { get; set; }
         public virtual bool AllowBackOrder { get; set; }
         public virtual int MinimumOrderQuantity { get; set; }
+        public virtual int MaximumOrderQuantity { get; set; } 
     }
 }

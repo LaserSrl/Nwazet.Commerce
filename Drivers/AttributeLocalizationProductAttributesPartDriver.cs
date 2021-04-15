@@ -10,6 +10,7 @@ using Nwazet.Commerce.Settings;
 using Nwazet.Commerce.ViewModels;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
+using Orchard.Core.Title.Models;
 using Orchard.Environment.Extensions;
 using Orchard.Localization.Models;
 
@@ -73,7 +74,10 @@ namespace Nwazet.Commerce.Drivers {
                         Prefix = Prefix,
                         Part = part,
                         AttributesToHide = toHide,
-                        AttributesToMark = toMark
+                        AttributesToMark = toMark,
+                        Attributes = _attributeService.Attributes
+                            .OrderBy(p => p.As<TitlePart>().Title)
+                            .ToList()
                     }));
         }
 

@@ -230,7 +230,7 @@ namespace Nwazet.Commerce.Controllers {
                 return new HttpUnauthorizedResult();
 
             var order = _orderService.Get(orderId);
-            var orderEvent = order.LogActivity(category, description);
+            var orderEvent = order.LogActivity(category, description,_orchardServices.WorkContext.CurrentUser?.UserName ?? "System");
             var result = new JsonResult {
                 Data = new {
                     Date = orderEvent.Date.ToLocalTime().ToString(CultureInfo.CurrentCulture),

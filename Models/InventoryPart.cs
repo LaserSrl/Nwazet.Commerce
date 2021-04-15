@@ -41,6 +41,17 @@ namespace Nwazet.Commerce.Models {
                 Store(r => r.MinimumOrderQuantity, minimumOrderQuantity);
             }
         }
+
+        public int MaximumOrderQuantity {
+            get {
+                var maximumOrderQuantity = Retrieve(r => r.MaximumOrderQuantity);
+                return maximumOrderQuantity > 0 ? maximumOrderQuantity : 0; // 0 = Nolimits
+            }
+            set {
+                var maximumOrderQuantity = value > 0 ? value : 0; // 0 = Nolimits
+                Store(r => r.MaximumOrderQuantity, maximumOrderQuantity);
+            }
+        }
         /// <summary>
         /// Back reference to service used for inventory operations.
         /// This is set when the InventoryPart is Activated.

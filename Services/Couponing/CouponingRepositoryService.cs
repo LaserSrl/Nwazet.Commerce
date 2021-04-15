@@ -55,7 +55,10 @@ namespace Nwazet.Commerce.Services.Couponing {
             return isValid;
         }
         private bool CheckUnicity(Coupon coupon) {
-            return Query().Any(x => x.Code.ToLowerInvariant().Equals(coupon.Code.ToLowerInvariant()) && x.Id != coupon.Id) == false;
+            return Query()
+                .Any(x => 
+                    x.Code.ToLowerInvariant().Equals(coupon.Code.ToLowerInvariant()) 
+                    && x.Id != coupon.Id) == false;
         }
     }
 }

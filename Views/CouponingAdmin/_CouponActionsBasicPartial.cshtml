@@ -1,0 +1,36 @@
+﻿@using Nwazet.Commerce.ViewModels.Couponing;
+@model Coupon
+
+<div class="form-group">
+    @Html.LabelFor(m => m.CouponType, 
+        T("Value type").Text, 
+        new { @for = Html.FieldIdFor(m => m.CouponType) })
+    @Html.DropDownListFor(m => m.CouponType, 
+        new SelectList(Enum.GetValues(typeof(Nwazet.Commerce.Models.Couponing.CouponType))), 
+        T("Select a type").Text, 
+        new { @class = "form-control text medium", id = Html.FieldIdFor(m => m.CouponType), aria_describedby = "couponTypeHelp" })
+    <small id="couponTypeHelp" class="form-text text-muted hint">@T("The coupon's value type.")</small>
+    <small class="form-text text-muted hint">
+        @T("The value type affects the meaning given to the value.")
+    </small>
+    <small class="form-text text-muted hint">
+        @T("Percent: percent of the price of each single item it applies to.")
+    </small>
+    <small class="form-text text-muted hint">
+        @T("Amount: fixed amount off the price of each single item it applies to. If the amount is 1$, and a cartline the coupon applies to has quantity = 3, the coupon will take 3$ off the final (after VAT) price for that line.")
+    </small>
+    <small class="form-text text-muted hint">
+        @T("CartAmount: fixed amount off the total (after VAT) for the cart.")
+    </small>
+</div>
+<div class="form-group">
+    @Html.LabelFor(m => m.Value, T("Value/Amount").Text, new { @for = Html.FieldIdFor(m => m.Value) })
+    <input type="number" class="form-control text small"
+            step="0.01" min="0"
+            id="@Html.FieldIdFor(m => m.Value)"
+            name="@Html.FieldNameFor(m => m.Value)"
+            aria_describedby="couponValueHelp"
+            placeholder="@T("Coupon's value")" 
+            value="@Model.Value.ToString("0.##")"/>
+    <small id="couponValueHelp" class="form-text text-muted hint">@T("The coupon's value/amount.")</small>
+</div>

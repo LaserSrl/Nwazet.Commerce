@@ -74,8 +74,7 @@ namespace Nwazet.Commerce.Drivers {
         private const string UserName = "User";
         private const string AdditionalInformationName = "AdditionalOrderInformation";
 
-        protected override string Prefix
-        {
+        protected override string Prefix {
             get { return "NwazetCommerceOrder"; }
         }
 
@@ -130,7 +129,7 @@ namespace Nwazet.Commerce.Drivers {
                 .FirstOrDefault(s => s.GetChargeAdminUrl(part.Charge?.TransactionId) != null);
             string linkToTransaction = string.Empty;
             string paymentProviderText = string.Empty;
-            if(checkoutUsed != null) {
+            if (checkoutUsed != null) {
                 linkToTransaction = checkoutUsed.GetChargeAdminUrl(part.Charge.TransactionId);
                 paymentProviderText = checkoutUsed.GetChargeInfo(part.Charge.TransactionId);
             }
@@ -169,7 +168,7 @@ namespace Nwazet.Commerce.Drivers {
                 UserName = part.User == null ? "" : part.User.UserName,
                 UserNameNeeded = productContents
                     .Any(p => p.As<ProductPart>() == null ? false : p.As<ProductPart>().AuthenticationRequired),
-                CurrencyCode = string.IsNullOrWhiteSpace(part.CurrencyCode) 
+                CurrencyCode = string.IsNullOrWhiteSpace(part.CurrencyCode)
                     ? _currencyProvider.CurrencyCode : part.CurrencyCode,
                 // additional stuff to be displayed for the order:
                 AdditionalMetadataShapes = _orderAdditionalInformationProviders
@@ -259,7 +258,7 @@ namespace Nwazet.Commerce.Drivers {
 
             if (previousStatus != part.Status) {
                 eventText += T("Status changed from {0} to {1}. ",
-                        _orderService.StatusLabels.FirstOrDefault(s=>s.Key.StatusName == previousStatus).Value,
+                        _orderService.StatusLabels.FirstOrDefault(s => s.Key.StatusName == previousStatus).Value,
                         _orderService.StatusLabels.FirstOrDefault(s => s.Key.StatusName == part.Status).Value).Text;
                 _workflowManager.TriggerEvent("OrderStatusChanged", part,
                     () => new Dictionary<string, object> {
@@ -294,7 +293,7 @@ namespace Nwazet.Commerce.Drivers {
             }
 
             if (!String.IsNullOrWhiteSpace(eventText)) {
-                part.LogActivity(OrderPart.Event, eventText);
+                part.LogActivity(OrderPart.Event, eventText, _orchardServices.WorkContext.CurrentUser?.UserName ?? "System");
             }
 
             return Editor(part, shapeHelper);
@@ -403,6 +402,7 @@ namespace Nwazet.Commerce.Drivers {
                         .FromAttr(ev => ev.Date)
                         .FromAttr(ev => ev.Category)
                         .FromAttr(ev => ev.Description)
+                        .FromAttr(ev => ev.UserName)
                         .Context);
             }
 
@@ -481,12 +481,13 @@ namespace Nwazet.Commerce.Drivers {
                         .ToAttr(e => e.Date)
                         .ToAttr(e => e.Category)
                         .ToAttr(e => e.Description)
+                        .ToAttr(e => e.UserName)
                         .Element)))
 
                 .AddEl(new XElement(UserName).With(part.User)
                     .ToAttr(u => u.UserName)
                 )
-                
+
                 .AddEl(new XElement(AdditionalInformationName,
                     part.AdditionalElements));
 

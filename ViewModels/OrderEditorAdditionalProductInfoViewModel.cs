@@ -21,10 +21,12 @@ namespace Nwazet.Commerce.ViewModels {
         public string HeaderClass { get; set; }
 
         /// <summary>
-        /// This Dictionary contains the information we wish to add. The key is the
-        /// Id of the product the information is about.
+        /// This Dictionary contains the information we wish to add.
+        /// In an order, there may be more than one item for the same Product ContentItem when
+        /// attributes are involved. That means the key for the Information Dictionary has to be
+        /// more complex than just that ContentItem's Id
         /// </summary>
-        public Dictionary<int, string> Information { get; set; }
+        public Dictionary<string, string> Information { get; set; }
         /// <summary>
         /// The css class for the element that will represent the information.
         /// </summary>

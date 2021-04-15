@@ -11,28 +11,50 @@
     Style.Include("order-admin.css", "order-admin.min.css");
     Script.Include("order-admin.js", "order-admin.min.js");
 }
-@helper ViewItemActivity(bool compareEqual, OrderEvent orderEvent, List<string> dateActivity) {
-    <li>
-        @if (compareEqual) {
-            <p>
-                @T("From {0} to {1}", dateActivity.First(), dateActivity.Last())
-                (@orderEvent.Category)
-                @Html.Raw(orderEvent.Description)
-                @T("({0})", dateActivity.Count)
-            </p>
-        } else {
-            <p>
-                @orderEvent.Date.ToLocalTime().ToString(CultureInfo.CurrentCulture)
-                (@orderEvent.Category)
-                @Html.Raw(orderEvent.Description)
-            </p>
-        }
+@helper ViewItemActivityTemplate() {
+    <li class="order-event-log-{cssclass}">
+        <p>
+            <span class="order-event-log-date">
+                {date}
+            </span>
+            <span class="order-event-log-category">
+                ({category})
+            </span>
+            <span class="order-event-log-author">
+                {author}:
+            </span>
+            <span class="order-event-log-text">
+                {text}
+            </span>
+        </p>
     </li>
+}
+@functions {
+    public string ViewItemActivity(bool compareEqual, OrderEvent orderEvent, List<string> dateActivity) {
+        string rawTemplate = ViewItemActivityTemplate().ToString();
+        string cssclass = orderEvent.Category.ToLowerInvariant().Replace(" ", "-");
+        string author = orderEvent.UserName;
+        string category = orderEvent.Category;
+        string text = orderEvent.Description;
+        string date = orderEvent.Date.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+        if (compareEqual) {
+            date = T("From {0} to {1}", dateActivity.First(), dateActivity.Last()).Text;
+            text += "\r\n" + T("({0})", dateActivity.Count).Text;
+        }
+        return rawTemplate.Replace("{cssclass}", cssclass)
+                          .Replace("{date}", date)
+                          .Replace("{category}", category)
+                          .Replace("{text}", text)
+                          .Replace("{author}", author);
+    }
 }
 <div class="order-editor">
     <fieldset class="order-events"
               data-add-event-url="@Url.Action("AddEvent", "OrderAdmin", new {area = "Nwazet.Commerce"})" data-order-id="@Model.Order.Id">
         <legend>@T("Activity:")</legend>
+        <ul style="" id="order-event-log-item-template">
+            @ViewItemActivityTemplate()
+        </ul>
         <ul class="order-event-log">
             @{
                 if (Model.Order.Activity != null) {
@@ -46,13 +68,14 @@
 
                         if (i + 1 == listActivity.Count) {
                             @Html.Raw(ViewItemActivity(compareEqual, listActivity[i], dateActivity));
-                        } else {
+                        }
+                        else {
                             if (listActivity[i].Description.Trim() != listActivity[i + 1].Description.Trim()) {
                                 @Html.Raw(ViewItemActivity(compareEqual, listActivity[i], dateActivity));
-
                                 dateActivity = new List<string>();
                                 compareEqual = false;
-                            } else {
+                            }
+                            else {
                                 compareEqual = true;
                             }
                         }
@@ -72,7 +95,7 @@
                 }
             </ul>
             <textarea class="new-order-event-description"></textarea>
-            <button type="button" class="new-order-event-add button grey">@T("Add")</button>
+            <button type="button" class="new-order-event-add button grey" data-currentuser>@T("Add")</button>
         </div>
     </fieldset>
 </div>

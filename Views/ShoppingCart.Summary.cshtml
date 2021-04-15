@@ -1,5 +1,6 @@
 ﻿@using Nwazet.Commerce.Models
 @using Orchard.ContentManagement
+@using Nwazet.Commerce.Extensions;
 @{
     var items = (IList<dynamic>)Model.ShopItems;
     var subtotal = (decimal)Model.Subtotal;
@@ -12,7 +13,8 @@
         <div id="product-update-messages" class="message-Information">
             @allMessages
         </div>
-    } else {
+    }
+    else {
         <div id="shopping-cart-notification" class="message-Information hide"></div>
     }
     if (items.Any()) {
@@ -20,6 +22,10 @@
             new Dictionary<string, object> { { "enctype", "multipart/form-data" } })) {
             @Html.Hidden("Country", (string)Model.Country)
             @Html.Hidden("ZipCode", (string)Model.ZipCode)
+            @Html.Hidden("NwazetCart.Painter.SourceAction", (string)Model.SourceAction)
+            @Html.Hidden("NwazetCart.Painter.MovedQuantity", (int)Model.MovedQuantity)
+            @Html.Hidden("NwazetCart.Painter.Guid", Guid.NewGuid())
+            @Html.Hidden("NwazetCart.Painter.SourceLineKey", (string)Model.SourceLineKey)
             <h1><a href="@cartUrl">@T("Your Cart")</a></h1>
             <ul class="cart-item-list">
                 @for (var i = 0; i < items.Count; i++) {
@@ -27,15 +33,22 @@
                     var propertyNamePrefix = string.Format("items[{0}]", i);
                     var product = (IProduct)item.Product;
                     var contentItem = (IContent)item.Product;
-                    var title = item.Title
-                                        + (item.ProductAttributes == null || item.ProductAttributes.Count == 0
-                                               ? "" : " (" + string.Join(", ", ((Dictionary<int, ProductAttributeValueExtended>)item.ProductAttributes).Values
-                                               .Select(v => v.Value + (v.ExtensionProviderInstance != null ? v.ExtensionProviderInstance.DisplayString(v.ExtendedValue) : ""))) + ")");
+                    var title = item.Title;
+
+                    var productAttributes = (IDictionary<int, ProductAttributeValueExtended>)item.ProductAttributes;
+                    if (productAttributes != null && productAttributes.Any()) {
+                        var additionalText =
+                            AttributeNameUtilities.AttributesDisplayText(productAttributes: productAttributes, product: contentItem, separator: ", ");
+                        if (!string.IsNullOrWhiteSpace(additionalText)) {
+                            title += "(" + additionalText + ")";
+                        }
+                    }
                     string imageUrl = (item.ProductImage != null && item.ProductImage.MediaParts.Count > 0) ? item.ProductImage.MediaParts[0].MediaUrl : null;
                     var quantity = (int)item.Quantity;
                     var unitPrice = (double)item.DiscountedPrice;
                     var totalPrice = quantity * unitPrice;
                     var minimumOrderQuantity = item.MinimumOrderQuantity;
+                    var maximumOrderQuantity = item.MaximumOrderQuantity;
                     var productInventory = (int)item.Inventory;
                     bool prodIsDigital = (bool)item.IsDigital;
                     bool prodConsiderInventory = (bool)item.ConsiderInventory;
@@ -43,7 +56,8 @@
                         @if (imageUrl != null) {
                             <a href="@Url.ItemDisplayUrl(contentItem)" class="product-image-link" data-product-id="@contentItem.Id"><img src="@Href(imageUrl)" alt="@title" class="product-image" /></a>
                             <a href="@Url.ItemDisplayUrl(contentItem)" class="product-name" data-product-id="@contentItem.Id">@title</a>
-                        } else {
+                        }
+                        else {
                             <a href="@Url.ItemDisplayUrl(contentItem)" data-product-id="@contentItem.Id">@title</a>
                         }
                         <span class="action"><a class="delete" href="#" data-cart-product-id="@product.Id">@T("Remove")</a></span>
@@ -61,7 +75,7 @@
                             }
                             <input name="@(propertyNamePrefix + ".ProductId")" type="hidden" value="@product.Id" />
                             <span class="numeric">
-                                <input name="@(propertyNamePrefix + ".Quantity")" type="number" class="quantity addtocart-quantity" value="@quantity" min="0" data-cart-product-id="@product.Id"/>
+                                <input name="@(propertyNamePrefix + ".Quantity")" type="number" class="quantity addtocart-quantity" value="@quantity" min="0" data-cart-product-id="@product.Id" />
                                 @if (quantity > productInventory && (!prodIsDigital || (prodIsDigital && prodConsiderInventory))) {
                                     string allowBackOrderMsg = (bool)item.AllowBackOrder ? T("Back order is allowed").Text : T("Back order is not allowed").Text;
                                     <span class="issue">
@@ -73,6 +87,10 @@
                             @if (minimumOrderQuantity > 1) {
                                 <br /><strong>Minimum order of @minimumOrderQuantity required.</strong>
                             }
+                            @if (maximumOrderQuantity > 0) {
+                                <br /><strong>Maximum order of @maximumOrderQuantity required.</strong>
+                            }
+
                         </span>
                     </li>
                 }

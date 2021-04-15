@@ -179,6 +179,10 @@ namespace Nwazet.Commerce.Services {
             return GetRate(vatConfig, destination);
         }
 
+        public decimal GetRate(ProductPart part, string country, string zipcode) {
+            return GetRate(part, FindDestination(country, zipcode));
+        }
+
         public decimal GetRate(
             VatConfigurationPart vatConfig, IEnumerable<TerritoryInternalRecord> destination) {
             // the destination collection contains the territories from the most to the least
@@ -234,6 +238,27 @@ namespace Nwazet.Commerce.Services {
                 .GetTerritoryInternal(Settings.DefaultTerritoryForVatId);
         }
 
+
+        private TerritoryInternalRecord FindDestination(string country, string zipCode) {
+            if (GetDefaultDestination() == null) {
+                // the configuration is telling that the prices on the frontend should be 
+                // "before tax"
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(country) && string.IsNullOrWhiteSpace(zipCode)) {
+                return null;
+            }
+            var destination = !string.IsNullOrWhiteSpace(zipCode)
+                ? _territoriesRepositoryService.GetTerritoryInternal(zipCode)
+                : null;
+            if (destination == null) {
+                destination = !string.IsNullOrWhiteSpace(country)
+                    ? _territoriesRepositoryService.GetTerritoryInternal(country)
+                    : null;
+            }
+            return destination;
+        }
 
         private VatConfigurationPart GetVatConfiguration(ProductPart part) {
             return part
@@ -299,5 +324,6 @@ namespace Nwazet.Commerce.Services {
                             && tpr.TerritoryInternalRecord.Id == destination.Id);
                 });
         }
+
     }
 }

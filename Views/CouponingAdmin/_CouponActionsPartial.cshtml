@@ -1,0 +1,63 @@
+﻿@using Nwazet.Commerce.ViewModels.Couponing;
+@model Coupon
+
+<fieldset>
+    <legend>@T("Actions")</legend>
+    @Html.Partial("_CouponActionsBasicPartial", Model)
+    <fieldset>
+        <legend>@T("Apply the rule only to cart items matching the following conditions (leave blank for all items).")</legend>
+        <span class="hint">
+            @T("All configured criteria must apply for a line to be affected by the coupon. Make sure to save your changes to the rest of the coupon before editing the criteria.")
+        </span>
+        <table class="items">
+            <thead>
+                <tr>
+                    <th scope="col">@T("Description")</th>
+                    <th scope="col" class="actions">
+                        @Html.ActionLink(T("+ Add a new Line Criterion").Text,
+                            "Add",
+                            new {
+                                controller = "CouponingLineCriterion",
+                                area = "Nwazet.Commerce",
+                                id = Model.Id })
+                    </th>
+                </tr>
+            </thead>
+            @foreach (var criterion in Model.LineCriteria) {
+                var displayText = criterion.DisplayText;
+                if (!criterion.IsAvailableForProcessing) {
+                    displayText += T(" (this provider is disabled for processing. It will be ignored when using the coupon.)");
+                }
+                <tr>
+                    <td>@displayText</td>
+                    <td>
+                        @if (criterion.IsAvailableForConfiguration) {
+                            <text>
+                            @Html.ActionLink(T("Edit").Text,
+                                "Edit",
+                                new {
+                                    controller = "CouponingLineCriterion",
+                                    area = "Nwazet.Commerce",
+                                    id = Model.Id,
+                                    category = criterion.Category,
+                                    type = criterion.Type,
+                                    criterionId = criterion.CriterionRecordId }) |
+                            @Html.ActionLink(T("Delete").Text,
+                                "Delete",
+                                new { controller = "CouponingLineCriterion",
+                                    area = "Nwazet.Commerce",
+                                    id = Model.Id,
+                                    criterionId = criterion.CriterionRecordId },
+                                new { itemprop = "RemoveUrl UnsafeUrl" })
+                            </text>
+                        } else {
+                            <span>
+                                @T("This provider is disabled for configuration. You may not edit or remove this criterion.")
+                            </span>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    </fieldset>
+</fieldset>

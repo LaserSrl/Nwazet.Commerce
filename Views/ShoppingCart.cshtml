@@ -2,6 +2,8 @@
 @using Orchard.ContentManagement
 @using System.Collections.Generic
 @using Nwazet.Commerce.ViewModels;
+@using Nwazet.Commerce.Services;
+@using Nwazet.Commerce.Extensions;
 @{
     Script.Require("jQuery");
     Script.Include("shoppingcart.js", "shoppingcart.min.js");
@@ -51,10 +53,16 @@
                             var propertyNamePrefix = string.Format("items[{0}]", i);
                             var product = (IProduct)item.Product;
                             var contentItem = (IContent)item.Product;
-                            var title = item.Title
-                                        + (item.ProductAttributes == null || item.ProductAttributes.Count == 0
-                                               ? "" : " (" + string.Join(", ", ((Dictionary<int, ProductAttributeValueExtended>)item.ProductAttributes).Values
-                                                    .Select(v => v.Value + (v.ExtensionProviderInstance != null ? v.ExtensionProviderInstance.DisplayString(v.ExtendedValue) : ""))) + ")");
+                            var title = item.Title;
+                            var productAttributes = (IDictionary<int, ProductAttributeValueExtended>)item.ProductAttributes;
+                            if (productAttributes != null && productAttributes.Any()) {
+                                var additionalText = 
+                                    AttributeNameUtilities.AttributesDisplayText(productAttributes: productAttributes, product: contentItem, separator: ", ");
+                        
+                                if (!string.IsNullOrWhiteSpace(additionalText)) {
+                                    title += "(" + additionalText + ")";
+                                }
+                            }
                             string imageUrl = (item.ProductImage != null && item.ProductImage.MediaParts.Count > 0) ? item.ProductImage.MediaParts[0].MediaUrl : null;
                             var quantity = (int)item.Quantity;
                             var unitPrice = (double)item.DiscountedPrice;
@@ -62,6 +70,7 @@
                             var linePriceAdjustment = (double)item.LinePriceAdjustment;
                             var totalPrice = quantity * unitPrice + linePriceAdjustment;
                             var minimumOrderQuantity = item.MinimumOrderQuantity;
+                            var maximumOrderQuantity = item.MaximumOrderQuantity;
                             var productInventory = (int)item.Inventory;
                             bool prodIsDigital = (bool)item.IsDigital;
                             bool prodConsiderInventory = (bool)item.ConsiderInventory;
@@ -90,7 +99,11 @@
                                         if (minimumOrderQuantity > 1) {
                                             <br /><strong>Minimum order of @minimumOrderQuantity required.</strong>
                                         }
-                                    } else {
+                                        if (maximumOrderQuantity > 0) {
+                                            <br /><strong>Maximum order of @maximumOrderQuantity required.</strong>
+                                        }
+                                    }
+                                    else {
                                         if (item.ProductAttributes != null) {
                                             var attrIndex = 0;
                                             foreach (KeyValuePair<int, ProductAttributeValueExtended> attribute in item.ProductAttributes) {
@@ -103,7 +116,7 @@
                                             }
                                         }
                                         <input name="@(propertyNamePrefix + ".ProductId")" type="hidden" value="@product.Id" />
-                                        <input name="@(propertyNamePrefix + ".Quantity")" type="number" class="quantity addtocart-quantity" value="@quantity" min="0" data-cart-product-id="@product.Id" />
+                                        <input name="@(propertyNamePrefix + ".Quantity")" type="number" class="quantity addtocart-quantity" value="@quantity" min="0" @((int)maximumOrderQuantity > 0 ? "max=" + maximumOrderQuantity : "") data-cart-product-id="@product.Id" />
                                         if (quantity > productInventory && (!prodIsDigital || (prodIsDigital && prodConsiderInventory))) {
                                             string allowBackOrderMsg = (bool)item.AllowBackOrder ? T("Back order is allowed").Text : T("Back order is not allowed").Text;
                                             <span class="issue">
