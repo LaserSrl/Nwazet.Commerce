@@ -233,6 +233,12 @@ namespace Nwazet.Commerce.Controllers {
                     productMessages = (Dictionary<int, List<ItemLog>>)TempData["ProductMessages"];
                 }
             }
+            if (TempData["ModelState"] != null) {
+                var oldState = (ModelStateDictionary)TempData["ModelState"];
+                foreach (var oldKey in oldState.Keys) {
+                    ModelState.Add(oldKey, oldState[oldKey]);
+                }
+            }
 
             _wca.GetContext().Layout.IsCartPage = true;
             try {
