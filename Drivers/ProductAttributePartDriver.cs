@@ -11,6 +11,7 @@ using Nwazet.Commerce.ViewModels;
 using Orchard.Localization;
 using Orchard.UI.Notify;
 using Orchard.Utility.Extensions;
+using System.Text.RegularExpressions;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.Attributes")]
@@ -52,12 +53,16 @@ namespace Nwazet.Commerce.Drivers {
                         TechnicalName = part.TechnicalName,
                         SortOrder = part.SortOrder,
                         AttributeValues = part.AttributeValues,
-                        AttributeExtensionProviders = _attributeExtensionProviders
+                        AttributeExtensionProviders = _attributeExtensionProviders,
+                        CssName = part.CssName,
+                        Meaning = part.Meaning
                     }));
         }
 
         //POST
         protected override DriverResult Editor(ProductAttributePart part, IUpdateModel updater, dynamic shapeHelper) {
+            var technicalName = part.TechnicalName;
+
             if (updater.TryUpdateModel(part, Prefix, null, null)) {
                 //check TechnicalName for invalid characters
                 if (!String.Equals(part.TechnicalName, part.TechnicalName.ToSafeName(), StringComparison.OrdinalIgnoreCase)) {
@@ -70,6 +75,20 @@ namespace Nwazet.Commerce.Drivers {
                         T("Attribute technical names in conflict. \"{0}\" is already set for a previously created attribute so now it has been changed to \"{1}\"",
                         tName, part.TechnicalName));
                 }
+
+                // valid CssName and Meaning
+                var pattern = @"^[a-zA-Z0-9 ]*$";
+                if (!Regex.IsMatch(part.CssName, pattern)) {
+                    updater.AddModelError("CssName", T("The css name contains invalid characters."));
+                }
+                if (!Regex.IsMatch(part.Meaning, pattern)) {
+                    updater.AddModelError("Meaning", T("The meaning contains invalid characters."));
+                }
+
+                // in edit the value of technical name cannot be changed
+                if (!string.IsNullOrEmpty(technicalName) && technicalName != part.TechnicalName) {
+                    part.TechnicalName = technicalName;
+                }
             }
             return Editor(part, shapeHelper);
         }
@@ -81,6 +100,8 @@ namespace Nwazet.Commerce.Drivers {
             }
             part.DisplayName = context.Attribute(part.PartDefinition.Name, "DisplayName");
             part.TechnicalName = context.Attribute(part.PartDefinition.Name, "TechnicalName");
+            part.CssName = context.Attribute(part.PartDefinition.Name, "CssName");
+            part.Meaning = context.Attribute(part.PartDefinition.Name, "Meaning");
             int so = 0;
             int.TryParse(context.Attribute(part.PartDefinition.Name, "SortOrder"), out so);
             part.SortOrder = so;
@@ -90,6 +111,8 @@ namespace Nwazet.Commerce.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("SortOrder", part.SortOrder);
             context.Element(part.PartDefinition.Name).SetAttributeValue("DisplayName", part.DisplayName);
             context.Element(part.PartDefinition.Name).SetAttributeValue("TechnicalName", part.TechnicalName);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("CssName", part.CssName);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("Meaning", part.Meaning);
             context.Element(part.PartDefinition.Name).SetAttributeValue("Values", part.Record.AttributeValues);
         }
     }

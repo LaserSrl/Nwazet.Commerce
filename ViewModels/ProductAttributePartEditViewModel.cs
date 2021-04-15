@@ -9,5 +9,7 @@ namespace Nwazet.Commerce.ViewModels {
         public string DisplayName { get; set; }
         public string TechnicalName { get; set; }
         public IEnumerable<IProductAttributeExtensionProvider> AttributeExtensionProviders { get; set; }
+        public string CssName { get; set; }
+        public string Meaning { get; set; }
     }
 }
