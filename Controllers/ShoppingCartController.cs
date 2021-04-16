@@ -258,6 +258,22 @@ namespace Nwazet.Commerce.Controllers {
                 .ToList();
             var productShapes = GetProductShapesFromQuantities(productQuantities, country, zipCode, productMessages);
             shape.ShopItems = productShapes;
+            // addtional messages that are not tied to any specific product that is actually 
+            // in the cart. e.g. a message explaining why a given product was not added to the
+            // cart: such a message would not be among any cart line's messages, because of
+            // course no cart line would match.
+            var additionalMessages = productMessages
+                ?.Where(pm => !productQuantities
+                    .Select(pq => pq.GenerateUniqueKey())
+                    .Contains(pm.Key))
+                ?.SelectMany(pm => pm.Value)
+                ?? Enumerable.Empty<ItemLog>();
+            shape.AdditionalMessages = additionalMessages.Any()
+                ? string.Join(Environment.NewLine, additionalMessages.Select(x => x.Message))
+                : (string)null;
+            shape.AdditionalLogs = additionalMessages.Any()
+                ? additionalMessages
+                : null;
 
             // We need to make sure that the selected shipping option (if any) is still valid
             // for whatever the current parameters and cart contents are
