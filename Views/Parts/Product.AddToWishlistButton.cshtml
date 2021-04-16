@@ -8,8 +8,8 @@
     IUser user = (IUser)Model.User;
 
     Script.Require("jQuery");
-    Style.Include("wishlists.nwazet-commerce.css", "wishlists.nwazet-commerce.min.css");
-    Script.Include("wishlists.js", "wishlists.min.js");
+    Style.Require("Nwazet.WishLists");
+    Script.Require("Nwazet.Wishlists");
 
     var addToWishlistText = T("Add to WishList").Text;
 }

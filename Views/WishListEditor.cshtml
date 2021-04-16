@@ -1,6 +1,6 @@
 ﻿@{
     Script.Require("jQuery");
-    Style.Include("wishlists.nwazet-commerce.css", "wishlists.nwazet-commerce.min.css");
+    Style.Require("Nwazet.WishLists");
 
     var productId = (int)Model.ProductId;
     var creationShapes = (IEnumerable<dynamic>)Model.CreationShapes;
