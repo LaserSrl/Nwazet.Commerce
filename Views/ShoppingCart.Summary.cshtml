@@ -10,6 +10,11 @@
         string allMessages = string.Join(Environment.NewLine,
             items.Where(it => !string.IsNullOrEmpty(it.Messages))
                 .Select(it => it.Messages));
+        if (Model.AdditionalMessages != null && Model.AdditionalMessages.Any()) {
+            allMessages = string.Join(Environment.NewLine,
+                allMessages,
+                Model.AdditionalMessages);
+        }
         <div id="product-update-messages" class="message-Information">
             @allMessages
         </div>
