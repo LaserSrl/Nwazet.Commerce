@@ -111,8 +111,12 @@ namespace Nwazet.Commerce.Controllers {
                         };
                     });
 
+            // dictionary for messages, keyed for each single cart line
+            Dictionary<string, List<ItemLog>> productMessages = new Dictionary<string, List<ItemLog>>();
+            var msgKey = new ShoppingCartItem(id, quantity, productattributes).GenerateUniqueKey();
+            productMessages.Add(msgKey, new List<ItemLog>());
+
             // Retrieve minimum/maximum order quantity
-            Dictionary<int, List<ItemLog>> productMessages = new Dictionary<int, List<ItemLog>>();
             var productPart = _contentManager.Get<ProductPart>(id);
             string productTitle = _contentManager.GetItemMetadata(productPart.ContentItem).DisplayText;
             ItemLog itemLog = null;
@@ -128,12 +132,7 @@ namespace Nwazet.Commerce.Controllers {
                         ProductResultedAction = ProductResultedActionOptions.IncreasedToMatchMinimum,
                         ProductTitle = productTitle
                     };
-                    if (productMessages.ContainsKey(id)) {
-                        productMessages[id].Add(itemLog);
-                    }
-                    else {
-                        productMessages.Add(id, new List<ItemLog>() { itemLog });
-                    }
+                    productMessages[msgKey].Add(itemLog);
                 }
                 //only add to cart if there are at least as many available products as the requested quantity
                 if (!productPart.ProductService.MayAddToCart(productPart, quantity)) {
@@ -147,13 +146,7 @@ namespace Nwazet.Commerce.Controllers {
                         ProductResultedAction = ProductResultedActionOptions.DecreasedToMatchInventory,
                         ProductTitle = productTitle
                     };
-
-                    if (productMessages.ContainsKey(id)) {
-                        productMessages[id].Add(itemLog);
-                    }
-                    else {
-                        productMessages.Add(id, new List<ItemLog>() { itemLog });
-                    }
+                    productMessages[msgKey].Add(itemLog);
                 }
                 if (productPart.MaximumOrderQuantity > 0) { // unlimited quantities are not allowed
                     var existingCartitem = _shoppingCart.FindCartItem(productPart.Id, productattributes);
@@ -172,13 +165,7 @@ namespace Nwazet.Commerce.Controllers {
                             ProductResultedAction = ProductResultedActionOptions.DecreasedToMatchMaximum,
                             ProductTitle = productTitle
                         };
-
-                        if (productMessages.ContainsKey(id)) {
-                            productMessages[id].Add(itemLog);
-                        }
-                        else {
-                            productMessages.Add(id, new List<ItemLog>() { itemLog });
-                        }
+                        productMessages[msgKey].Add(itemLog);
                     }
                 }
             }
@@ -194,13 +181,7 @@ namespace Nwazet.Commerce.Controllers {
                     ProductResultedAction = ProductResultedActionOptions.AddedToCart,
                     ProductTitle = productTitle
                 };
-
-                if (productMessages.ContainsKey(id)) {
-                    productMessages[id].Add(itemLog);
-                }
-                else {
-                    productMessages.Add(id, new List<ItemLog>() { itemLog });
-                }
+                productMessages[msgKey].Add(itemLog);
                 var newItem = new ShoppingCartItem(id, quantity, productattributes);
                 sourceLineKey = newItem.GenerateUniqueKey();
                 foreach (var handler in _cartLifeCycleEventHandlers) {
@@ -227,10 +208,10 @@ namespace Nwazet.Commerce.Controllers {
 
         [Themed]
         [OutputCache(Duration = 0)]
-        public ActionResult Index(Dictionary<int, List<ItemLog>> productMessages = null) {
+        public ActionResult Index(Dictionary<string, List<ItemLog>> productMessages = null) {
             if (productMessages == null || productMessages.Count == 0) {
                 if (TempData["ProductMessages"] != null) {
-                    productMessages = (Dictionary<int, List<ItemLog>>)TempData["ProductMessages"];
+                    productMessages = (Dictionary<string, List<ItemLog>>)TempData["ProductMessages"];
                 }
             }
             if (TempData["ModelState"] != null) {
@@ -265,7 +246,7 @@ namespace Nwazet.Commerce.Controllers {
             string country = null,
             string zipCode = null,
             ShippingOption shippingOption = null,
-            Dictionary<int, List<ItemLog>> productMessages = null,
+            Dictionary<string, List<ItemLog>> productMessages = null,
             CartPainter cartPainter = null) {
 
             cartPainter = cartPainter ?? new CartPainter();
@@ -375,40 +356,45 @@ namespace Nwazet.Commerce.Controllers {
         private IEnumerable<dynamic> GetProductShapesFromQuantities(
             IEnumerable<ShoppingCartQuantityProduct> productQuantities,
             string country = null, string zipCode = null,
-            Dictionary<int, List<ItemLog>> productMessages = null) {
+            Dictionary<string, List<ItemLog>> productMessages = null) {
+
             var productShapes = productQuantities.Select(
-                productQuantity => _shapeFactory.ShoppingCartItem(
-                    Quantity: productQuantity.Quantity,
-                    Product: productQuantity.Product,
-                    Sku: productQuantity.Product.Sku,
-                    Title: _contentManager.GetItemMetadata(productQuantity.Product).DisplayText,
-                    ProductAttributes: productQuantity.AttributeIdsToValues,
-                    ContentItem: (productQuantity.Product).ContentItem,
-                    ProductImage: ((MediaLibraryPickerField)productQuantity.Product.ContentItem.Parts.SelectMany(part => part.Fields).FirstOrDefault(field => field.Name == "ProductImage")),
-                    IsDigital: productQuantity.Product.IsDigital,
-                    ConsiderInventory: productQuantity.Product.ConsiderInventory,
-                    Price: _productPriceService.GetPrice(productQuantity.Product, country, zipCode),
-                    OriginalPrice: _productPriceService.GetPrice(productQuantity.Product, country, zipCode),
-                    DiscountedPrice: _productPriceService.GetPrice(productQuantity.Product, productQuantity.Price, country, zipCode),
-                    LinePriceAdjustment: _productPriceService.GetPrice(productQuantity.Product, productQuantity.LinePriceAdjustment, country, zipCode),
-                    Promotion: productQuantity.Promotion,
-                    ShippingCost: productQuantity.Product.ShippingCost,
-                    Weight: productQuantity.Product.Weight,
-                    MinimumOrderQuantity: productQuantity.Product.MinimumOrderQuantity,
-                    MaximumOrderQuantity: productQuantity.Product.MaximumOrderQuantity,
-                    Messages: productMessages == null ?
-                        (string)null :
-                        productMessages.ContainsKey(productQuantity.Product.Id) ?
-                            string.Join(Environment.NewLine, productMessages[productQuantity.Product.Id].Select(x=>x.Message)) :
-                            (string)null,
-                    Logs: productMessages == null ?
-                                null :
-                                productMessages.ContainsKey(productQuantity.Product.Id) ?
-                                     productMessages[productQuantity.Product.Id]:
-                                     null,
-                    Inventory: productQuantity.Product.Inventory,
-                    AllowBackOrder: productQuantity.Product.AllowBackOrder
-                    )).ToList();
+                productQuantity => {
+                    var lineKey = productQuantity.GenerateUniqueKey();
+
+                    return _shapeFactory.ShoppingCartItem(
+                        Quantity: productQuantity.Quantity,
+                        Product: productQuantity.Product,
+                        Sku: productQuantity.Product.Sku,
+                        Title: _contentManager.GetItemMetadata(productQuantity.Product).DisplayText,
+                        ProductAttributes: productQuantity.AttributeIdsToValues,
+                        ContentItem: (productQuantity.Product).ContentItem,
+                        ProductImage: ((MediaLibraryPickerField)productQuantity.Product.ContentItem.Parts.SelectMany(part => part.Fields).FirstOrDefault(field => field.Name == "ProductImage")),
+                        IsDigital: productQuantity.Product.IsDigital,
+                        ConsiderInventory: productQuantity.Product.ConsiderInventory,
+                        Price: _productPriceService.GetPrice(productQuantity.Product, country, zipCode),
+                        OriginalPrice: _productPriceService.GetPrice(productQuantity.Product, country, zipCode),
+                        DiscountedPrice: _productPriceService.GetPrice(productQuantity.Product, productQuantity.Price, country, zipCode),
+                        LinePriceAdjustment: _productPriceService.GetPrice(productQuantity.Product, productQuantity.LinePriceAdjustment, country, zipCode),
+                        Promotion: productQuantity.Promotion,
+                        ShippingCost: productQuantity.Product.ShippingCost,
+                        Weight: productQuantity.Product.Weight,
+                        MinimumOrderQuantity: productQuantity.Product.MinimumOrderQuantity,
+                        MaximumOrderQuantity: productQuantity.Product.MaximumOrderQuantity,
+                        Messages: productMessages == null ?
+                            (string)null :
+                            productMessages.ContainsKey(lineKey) ?
+                                string.Join(Environment.NewLine, productMessages[lineKey].Select(x => x.Message)) :
+                                (string)null,
+                        Logs: productMessages == null ?
+                                    null :
+                                    productMessages.ContainsKey(lineKey) ?
+                                         productMessages[lineKey] :
+                                         null,
+                        Inventory: productQuantity.Product.Inventory,
+                        AllowBackOrder: productQuantity.Product.AllowBackOrder
+                    );
+                }).ToList();
             return productShapes;
         }
 
