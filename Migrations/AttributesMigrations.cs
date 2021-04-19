@@ -84,6 +84,13 @@ namespace Nwazet.Commerce.Migrations {
 
             return 5;
         }
-        
+
+        public int UpdateFrom5() {
+            SchemaBuilder.AlterTable("ProductAttributePartRecord", table => table
+                .AddColumn<string>("CssName"));
+            SchemaBuilder.AlterTable("ProductAttributePartRecord", table => table
+                .AddColumn<string>("Meaning"));
+            return 6;
+        }
     }
 }

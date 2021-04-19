@@ -76,5 +76,23 @@
     "inputFiles": [
       "Scripts/attribute-extensions.js"
     ]
+  },
+  {
+    "outputFileName": "Scripts/jquery.iframe-transport.min.js",
+    "inputFiles": [
+      "Scripts/jquery.iframe-transport.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/attribute-admin.min.js",
+    "inputFiles": [
+      "Scripts/attribute-admin.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/mustache.min.js",
+    "inputFiles": [
+      "Scripts/mustache.js"
+    ]
   }
 ]

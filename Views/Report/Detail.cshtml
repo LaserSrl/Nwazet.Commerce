@@ -6,7 +6,7 @@
     Style.Require("jQueryCalendars_Picker");
     Style.Require("jQueryTimeEntry");
     Style.Require("jQueryDateTimeEditor");
-    Style.Include("reports-admin.css");
+    Style.Require("Nwazet.Report-Admin");
 
     Layout.Title = Model.Name;
 
@@ -120,6 +120,6 @@
     @Display.CalendarsPickerLocalization()
     @Display.TimeEntryLocalization()
     Script.Require("jQueryCalendars_Picker").AtFoot();
-    Script.Include("chartjs.js", "chartjs.min.js").AtFoot();
-    Script.Include("report.js", "report.min.js").AtFoot();
+    Script.Require("Nwazet.ChartJs").AtFoot();
+    Script.Require("Nwazet.Report").AtFoot();
 }
