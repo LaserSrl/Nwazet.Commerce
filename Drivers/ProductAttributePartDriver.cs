@@ -96,7 +96,12 @@ namespace Nwazet.Commerce.Drivers {
         protected override void Importing(ProductAttributePart part, ImportContentContext context) {
             var values = context.Attribute(part.PartDefinition.Name, "Values");
             if (!String.IsNullOrWhiteSpace(values)) {
-                part.Record.AttributeValues = values;
+                //part.Record.AttributeValues = values;
+                try {
+                    part.AttributeValues = ProductAttributeValue.DeserializeAttributeValues(values);
+                } catch (Exception) {
+
+                }
             }
             part.DisplayName = context.Attribute(part.PartDefinition.Name, "DisplayName");
             part.TechnicalName = context.Attribute(part.PartDefinition.Name, "TechnicalName");

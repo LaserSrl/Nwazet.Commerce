@@ -6,7 +6,7 @@
 @using Nwazet.Commerce.Extensions;
 @{
     Script.Require("jQuery");
-    Script.Include("shoppingcart.js", "shoppingcart.min.js");
+    Script.Require("Nwazet.ShoppingCart");
     var items = (IList<dynamic>)Model.ShopItems;
     var subtotal = (double) Model.Subtotal;
     var readOnly = Model.ReadOnly != null && Model.ReadOnly == true;

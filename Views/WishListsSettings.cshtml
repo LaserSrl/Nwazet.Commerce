@@ -3,7 +3,7 @@
 @using Orchard.ContentManagement
 @{
     Script.Require("jQuery");
-    Style.Include("wishlists.nwazet-commerce.css", "wishlists.nwazet-commerce.min.css");
+    Style.Require("Nwazet.WishLists");
 
     var wishLists = ((IEnumerable<WishListListPart>)Model.WishLists).ToArray();
     var settingsShapes = (List<dynamic>)Model.SettingsShapes;
