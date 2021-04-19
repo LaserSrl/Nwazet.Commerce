@@ -2,7 +2,7 @@
 @{
     var title = Layout.Title = T("Send money with <a href=\"https://stripe.com/\">Stripe</a> - 1: Billing");
     Script.Require("jQuery");
-    Script.Include("ship.js");
+    Script.Require("Nwazet.Ship");
     using (Script.Foot()) {
         <script type="text/javascript">
             var requiredFormat = "@T("{0} is required.")",
