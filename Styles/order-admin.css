@@ -109,6 +109,24 @@
   display: block;
   margin-bottom: 6px;
 }
+.order-editor .order-event-log li.order-event-log-error {
+  color: #dd4b39;
+}
+.order-editor .order-event-log li.order-event-log-warning {
+  color: #f39c12;
+}
+.order-editor .order-event-log li.order-event-log-task {
+  color: #00c0ef;
+}
+.order-editor .order-event-log li.order-event-log-event {
+  color: #777;
+}
+.order-editor .order-event-log li.order-event-log-note {
+  color: #3c8dbc;
+}
+.order-editor #order-event-log-item-template {
+  display: none;
+}
 @media print {
   .order-event-add {
     display: none;
@@ -118,5 +136,5 @@
   display: inline-block;
 }
 .padding-left-15 {
-  padding-left: 15px!important;
+  padding-left: 15px !important;
 }

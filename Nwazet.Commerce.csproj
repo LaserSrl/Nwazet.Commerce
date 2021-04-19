@@ -99,6 +99,9 @@
     <Content Include="LICENSE.txt" />
     <Content Include="Recipes\World.recipe.xml" />
     <Content Include="Scripts\attribute-admin.js" />
+    <Content Include="Scripts\attribute-admin.min.js">
+      <DependentUpon>attribute-admin.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\attribute-extensions.min.js">
       <DependentUpon>attribute-extensions.js</DependentUpon>
     </Content>
@@ -111,11 +114,17 @@
       <DependentUpon>inventory.js</DependentUpon>
     </Content>
     <Content Include="Scripts\jquery.iframe-transport.js" />
+    <Content Include="Scripts\jquery.iframe-transport.min.js">
+      <DependentUpon>jquery.iframe-transport.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\jquery.mjs.nestedSortable.js" />
     <Content Include="Scripts\jquery.mjs.nestedSortable.min.js">
       <DependentUpon>jquery.mjs.nestedSortable.js</DependentUpon>
     </Content>
     <Content Include="Scripts\mustache.js" />
+    <Content Include="Scripts\mustache.min.js">
+      <DependentUpon>mustache.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\order-admin.js" />
     <Content Include="Scripts\order-admin.min.js">
       <DependentUpon>order-admin.js</DependentUpon>
@@ -255,6 +264,8 @@
     <Compile Include="ApplicabilityCriteria\CartSubTotalCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\CartWeightCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\AuthenticationStateCouponApplicabilityCriterion.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\CartHasProductBySKUCouponApplicabilityCriteria.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\CartHasProductBySKUCouponLineApplicabilityCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\MaxUsesCouponApplicabilityCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\MaxUsesPerUserCouponApplicabilityCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\NumericCriterionBase.cs" />
@@ -340,6 +351,7 @@
     <Compile Include="Features\CurrencyProviderBySiteSettingFeature.cs" />
     <Compile Include="Features\InventoryBySKUFeature.cs" />
     <Compile Include="Filters\BaseDecimalFilterProvider.cs" />
+    <Compile Include="Filters\CouponProductSKUFilterForms.cs" />
     <Compile Include="Filters\FilterHelper.cs" />
     <Compile Include="Filters\PositiveIntegerValueForm.cs" />
     <Compile Include="Filters\ProductDiscountPriceFilter.cs" />
@@ -754,6 +766,7 @@
     <Compile Include="ViewModels\ProductEditorViewModel.cs" />
     <Compile Include="ViewModels\ProductVatConfigurationPartEditorViewModel.cs" />
     <Compile Include="ViewModels\ReportDataViewModel.cs" />
+    <Compile Include="ViewModels\ShoppingCart\ItemLog.cs" />
     <Compile Include="ViewModels\TaxIndexViewModel.cs" />
     <Compile Include="ViewModels\DiscountEditorViewModel.cs" />
     <Compile Include="ViewModels\ProductAttributesPartEditViewModel.cs" />

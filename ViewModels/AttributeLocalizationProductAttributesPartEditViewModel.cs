@@ -8,5 +8,6 @@ namespace Nwazet.Commerce.ViewModels {
         public IEnumerable<IContent> AttributesToMark { get; set; }
         public ProductAttributesPart Part { get; set; }
         public string Prefix { get; set; }
+        public IEnumerable<IContent> Attributes { get; set; }
     }
 }

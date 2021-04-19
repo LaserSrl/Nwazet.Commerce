@@ -1,6 +1,8 @@
-﻿using Nwazet.Commerce.Models;
+﻿using Nwazet.Commerce.Extensions;
+using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels;
+using Nwazet.Commerce.ViewModels.ShoppingCart;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.DisplayManagement;
@@ -8,12 +10,14 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.MediaLibrary.Fields;
 using Orchard.Mvc;
+using Orchard.Mvc.Html;
 using Orchard.Themes;
 using Orchard.UI.Notify;
 using Orchard.Workflows.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Controllers {
@@ -76,6 +80,8 @@ namespace Nwazet.Commerce.Controllers {
 
         [HttpPost]
         public ActionResult Add(int id, int quantity = 1, bool isAjaxRequest = false) {
+            var attemptedQuantity = quantity;
+            var sourceLineKey = "";
             // Manually parse product attributes because of a breaking change
             // in MVC 5 dictionary model binding
             var form = HttpContext.Request.Form;
@@ -105,42 +111,92 @@ namespace Nwazet.Commerce.Controllers {
                         };
                     });
 
-            // Retrieve minimum order quantity
-            Dictionary<int, List<string>> productMessages = new Dictionary<int, List<string>>();
+            // dictionary for messages, keyed for each single cart line
+            Dictionary<string, List<ItemLog>> productMessages = new Dictionary<string, List<ItemLog>>();
+            var msgKey = new ShoppingCartItem(id, quantity, productattributes).GenerateUniqueKey();
+            productMessages.Add(msgKey, new List<ItemLog>());
+
+            // Retrieve minimum/maximum order quantity
             var productPart = _contentManager.Get<ProductPart>(id);
             string productTitle = _contentManager.GetItemMetadata(productPart.ContentItem).DisplayText;
+            ItemLog itemLog = null;
             if (productPart != null) {
                 if (quantity < productPart.MinimumOrderQuantity) {
                     quantity = productPart.MinimumOrderQuantity;
-                    if (productMessages.ContainsKey(id)) {
-                        productMessages[id].Add(T("Quantity increased to match minimum possible for {0}.", productTitle).Text);
-                    } else {
-                        productMessages.Add(id, new List<string>() { T("Quantity increased to match minimum possible for {0}.", productTitle).Text });
-                    }
+                    itemLog = new ItemLog {
+                        LocalizedMessage = T("Quantity increased to match minimum possible for {0}.", productTitle),
+                        LocalizedBaseMessage = T("Quantity increased to match minimum possible for {0}.", "{0}").Text,
+                        MovedQuantityAttemped = attemptedQuantity,
+                        ProductAction = ProductActionOptions.Added,
+                        MovedQuantity = quantity,
+                        ProductResultedAction = ProductResultedActionOptions.IncreasedToMatchMinimum,
+                        ProductTitle = productTitle
+                    };
+                    productMessages[msgKey].Add(itemLog);
                 }
                 //only add to cart if there are at least as many available products as the requested quantity
                 if (!productPart.ProductService.MayAddToCart(productPart, quantity)) {
                     quantity = productPart.Inventory;
-                    if (productMessages.ContainsKey(id)) {
-                        productMessages[id].Add(T("Quantity decreased to match inventory for {0}.", productTitle).Text);
-                    } else {
-                        productMessages.Add(id, new List<string>() { T("Quantity decreased to match inventory for {0}.", productTitle).Text });
+                    itemLog = new ItemLog {
+                        LocalizedMessage = T("Quantity decreased to match inventory for {0}.", productTitle),
+                        LocalizedBaseMessage = T("Quantity decreased to match inventory for {0}.", "{0}").Text,
+                        MovedQuantityAttemped = attemptedQuantity,
+                        ProductAction = ProductActionOptions.Added,
+                        MovedQuantity = quantity,
+                        ProductResultedAction = ProductResultedActionOptions.DecreasedToMatchInventory,
+                        ProductTitle = productTitle
+                    };
+                    productMessages[msgKey].Add(itemLog);
+                }
+                if (productPart.MaximumOrderQuantity > 0) { // unlimited quantities are not allowed
+                    var existingCartitem = _shoppingCart.FindCartItem(productPart.Id, productattributes);
+                    var currentQty = 0;
+                    if (existingCartitem != null) {
+                        currentQty = existingCartitem.Quantity;
+                    }
+                    if (quantity + currentQty > productPart.MaximumOrderQuantity && productPart.MaximumOrderQuantity > 0) {
+                        quantity = productPart.MaximumOrderQuantity - currentQty;
+                        itemLog = new ItemLog {
+                            LocalizedMessage = T("Quantity decreased to match maximum possible for {0}.", productTitle),
+                            LocalizedBaseMessage = T("Quantity decreased to match maximum possible for {0}.", "{0}").Text,
+                            MovedQuantityAttemped = attemptedQuantity,
+                            ProductAction = ProductActionOptions.Added,
+                            MovedQuantity = quantity,
+                            ProductResultedAction = ProductResultedActionOptions.DecreasedToMatchMaximum,
+                            ProductTitle = productTitle
+                        };
+                        productMessages[msgKey].Add(itemLog);
                     }
                 }
             }
 
-            _shoppingCart.Add(id, quantity, productattributes);
-
-            var newItem = new ShoppingCartItem(id, quantity, productattributes);
-            foreach (var handler in _cartLifeCycleEventHandlers) {
-                handler.ItemAdded(newItem);
+            if (quantity > 0) {
+                _shoppingCart.Add(id, quantity, productattributes);
+                itemLog = new ItemLog {
+                    LocalizedMessage = T.Plural("{0} {1} has been added to cart.", "{0} {1} have been added to cart.", quantity, productTitle),
+                    LocalizedBaseMessage = T.Plural("{0} {1} has been added to cart.", "{0} {1} have been added to cart.", quantity, "{0}").Text,
+                    MovedQuantityAttemped = attemptedQuantity,
+                    ProductAction = ProductActionOptions.Added,
+                    MovedQuantity = quantity,
+                    ProductResultedAction = ProductResultedActionOptions.AddedToCart,
+                    ProductTitle = productTitle
+                };
+                productMessages[msgKey].Add(itemLog);
+                var newItem = new ShoppingCartItem(id, quantity, productattributes);
+                sourceLineKey = newItem.GenerateUniqueKey();
+                foreach (var handler in _cartLifeCycleEventHandlers) {
+                    handler.ItemAdded(newItem);
+                }
             }
-
             // Test isAjaxRequest too because iframe posts won't return true for Request.IsAjaxRequest()
             if (Request.IsAjaxRequest() || isAjaxRequest) {
                 return new ShapePartialResult(
                     this,
-                    BuildCartShape(true, _shoppingCart.Country, _shoppingCart.ZipCode, null, productMessages));
+                    BuildCartShape(true, _shoppingCart.Country, _shoppingCart.ZipCode, null, productMessages, new CartPainter {
+                        SourceAction = "Add",
+                        MovedQuantity = quantity,
+                        SourceLineKey = sourceLineKey
+                    }));
             }
             // added tempdata because passing the parameter to the redirecttoaction
             // there were 2 problems:
@@ -152,10 +208,16 @@ namespace Nwazet.Commerce.Controllers {
 
         [Themed]
         [OutputCache(Duration = 0)]
-        public ActionResult Index(Dictionary<int, List<string>> productMessages = null) {
-            if (productMessages == null || productMessages.Count==0) {
+        public ActionResult Index(Dictionary<string, List<ItemLog>> productMessages = null) {
+            if (productMessages == null || productMessages.Count == 0) {
                 if (TempData["ProductMessages"] != null) {
-                    productMessages = (Dictionary<int, List<string>>)TempData["ProductMessages"];
+                    productMessages = (Dictionary<string, List<ItemLog>>)TempData["ProductMessages"];
+                }
+            }
+            if (TempData["ModelState"] != null) {
+                var oldState = (ModelStateDictionary)TempData["ModelState"];
+                foreach (var oldKey in oldState.Keys) {
+                    ModelState.Add(oldKey, oldState[oldKey]);
                 }
             }
 
@@ -169,7 +231,8 @@ namespace Nwazet.Commerce.Controllers {
                         _shoppingCart.ZipCode,
                         _shoppingCart.ShippingOption,
                         productMessages));
-            } catch (ShippingException ex) {
+            }
+            catch (ShippingException ex) {
                 _shoppingCart.Country = null;
                 _shoppingCart.ZipCode = null;
                 _shoppingCart.ShippingOption = null;
@@ -183,16 +246,34 @@ namespace Nwazet.Commerce.Controllers {
             string country = null,
             string zipCode = null,
             ShippingOption shippingOption = null,
-            Dictionary<int, List<string>> productMessages = null) {
+            Dictionary<string, List<ItemLog>> productMessages = null,
+            CartPainter cartPainter = null) {
 
+            cartPainter = cartPainter ?? new CartPainter();
             var shape = _shapeFactory.ShoppingCart();
-            
+
             var productQuantities = _shoppingCart
                 .GetProducts()
                 .Where(p => p.Quantity > 0)
                 .ToList();
             var productShapes = GetProductShapesFromQuantities(productQuantities, country, zipCode, productMessages);
             shape.ShopItems = productShapes;
+            // addtional messages that are not tied to any specific product that is actually 
+            // in the cart. e.g. a message explaining why a given product was not added to the
+            // cart: such a message would not be among any cart line's messages, because of
+            // course no cart line would match.
+            var additionalMessages = productMessages
+                ?.Where(pm => !productQuantities
+                    .Select(pq => pq.GenerateUniqueKey())
+                    .Contains(pm.Key))
+                ?.SelectMany(pm => pm.Value)
+                ?? Enumerable.Empty<ItemLog>();
+            shape.AdditionalMessages = additionalMessages.Any()
+                ? string.Join(Environment.NewLine, additionalMessages.Select(x => x.Message))
+                : (string)null;
+            shape.AdditionalLogs = additionalMessages.Any()
+                ? additionalMessages
+                : null;
 
             // We need to make sure that the selected shipping option (if any) is still valid
             // for whatever the current parameters and cart contents are
@@ -230,7 +311,7 @@ namespace Nwazet.Commerce.Controllers {
 
                 if (!shopItemsAllDigital) {
                     if (!isSummary && shippingOption == null) {
-                        
+
                         shape.ShippingOptions = allShippingOptions;
                     }
                 }
@@ -252,7 +333,7 @@ namespace Nwazet.Commerce.Controllers {
             }
             if (displayCheckoutButtons) {
                 //check whether back-order is allowed for products whose inventory is less than the requested quantity
-                displayCheckoutButtons = !productQuantities.Any(pq => 
+                displayCheckoutButtons = !productQuantities.Any(pq =>
                     !pq.Product.ProductService.MayAddToCart(pq.Product, pq.Quantity));
             }
             if (displayCheckoutButtons) {
@@ -274,6 +355,9 @@ namespace Nwazet.Commerce.Controllers {
             shape.CurrencyProvider = _currencyProvider;
 
             shape.PriceAlterations = _shoppingCart.PriceAlterationAmounts;
+            shape.SourceAction = cartPainter.SourceAction;
+            shape.MovedQuantity = cartPainter.MovedQuantity;
+            shape.SourceLineKey = cartPainter.SourceLineKey;
 
             // Weld additional cart shapes
             shape.CartExtensionShapes = _cartExtensionProviders
@@ -288,34 +372,45 @@ namespace Nwazet.Commerce.Controllers {
         private IEnumerable<dynamic> GetProductShapesFromQuantities(
             IEnumerable<ShoppingCartQuantityProduct> productQuantities,
             string country = null, string zipCode = null,
-            Dictionary<int, List<string>> productMessages = null) {
+            Dictionary<string, List<ItemLog>> productMessages = null) {
+
             var productShapes = productQuantities.Select(
-                productQuantity => _shapeFactory.ShoppingCartItem(
-                    Quantity: productQuantity.Quantity,
-                    Product: productQuantity.Product,
-                    Sku: productQuantity.Product.Sku,
-                    Title: _contentManager.GetItemMetadata(productQuantity.Product).DisplayText,
-                    ProductAttributes: productQuantity.AttributeIdsToValues,
-                    ContentItem: (productQuantity.Product).ContentItem,
-                    ProductImage: ((MediaLibraryPickerField)productQuantity.Product.ContentItem.Parts.SelectMany(part => part.Fields).FirstOrDefault(field => field.Name == "ProductImage")),
-                    IsDigital: productQuantity.Product.IsDigital,
-                    ConsiderInventory: productQuantity.Product.ConsiderInventory,
-                    Price: _productPriceService.GetPrice(productQuantity.Product, country, zipCode),
-                    OriginalPrice: _productPriceService.GetPrice(productQuantity.Product, country, zipCode),
-                    DiscountedPrice: _productPriceService.GetPrice(productQuantity.Product, productQuantity.Price, country, zipCode),
-                    LinePriceAdjustment: _productPriceService.GetPrice(productQuantity.Product, productQuantity.LinePriceAdjustment, country, zipCode),
-                    Promotion: productQuantity.Promotion,
-                    ShippingCost: productQuantity.Product.ShippingCost,
-                    Weight: productQuantity.Product.Weight,
-                    MinimumOrderQuantity: productQuantity.Product.MinimumOrderQuantity,
-                    Messages: productMessages == null ?
-                        (string)null :
-                        productMessages.ContainsKey(productQuantity.Product.Id) ?
-                            string.Join(Environment.NewLine, productMessages[productQuantity.Product.Id]) :
-                            (string)null,
-                    Inventory: productQuantity.Product.Inventory,
-                    AllowBackOrder: productQuantity.Product.AllowBackOrder
-                    )).ToList();
+                productQuantity => {
+                    var lineKey = productQuantity.GenerateUniqueKey();
+
+                    return _shapeFactory.ShoppingCartItem(
+                        Quantity: productQuantity.Quantity,
+                        Product: productQuantity.Product,
+                        Sku: productQuantity.Product.Sku,
+                        Title: _contentManager.GetItemMetadata(productQuantity.Product).DisplayText,
+                        ProductAttributes: productQuantity.AttributeIdsToValues,
+                        ContentItem: (productQuantity.Product).ContentItem,
+                        ProductImage: ((MediaLibraryPickerField)productQuantity.Product.ContentItem.Parts.SelectMany(part => part.Fields).FirstOrDefault(field => field.Name == "ProductImage")),
+                        IsDigital: productQuantity.Product.IsDigital,
+                        ConsiderInventory: productQuantity.Product.ConsiderInventory,
+                        Price: _productPriceService.GetPrice(productQuantity.Product, country, zipCode),
+                        OriginalPrice: _productPriceService.GetPrice(productQuantity.Product, country, zipCode),
+                        DiscountedPrice: _productPriceService.GetPrice(productQuantity.Product, productQuantity.Price, country, zipCode),
+                        LinePriceAdjustment: _productPriceService.GetPrice(productQuantity.Product, productQuantity.LinePriceAdjustment, country, zipCode),
+                        Promotion: productQuantity.Promotion,
+                        ShippingCost: productQuantity.Product.ShippingCost,
+                        Weight: productQuantity.Product.Weight,
+                        MinimumOrderQuantity: productQuantity.Product.MinimumOrderQuantity,
+                        MaximumOrderQuantity: productQuantity.Product.MaximumOrderQuantity,
+                        Messages: productMessages == null ?
+                            (string)null :
+                            productMessages.ContainsKey(lineKey) ?
+                                string.Join(Environment.NewLine, productMessages[lineKey].Select(x => x.Message)) :
+                                (string)null,
+                        Logs: productMessages == null ?
+                                    null :
+                                    productMessages.ContainsKey(lineKey) ?
+                                         productMessages[lineKey] :
+                                         null,
+                        Inventory: productQuantity.Product.Inventory,
+                        AllowBackOrder: productQuantity.Product.AllowBackOrder
+                    );
+                }).ToList();
             return productShapes;
         }
 
@@ -327,7 +422,8 @@ namespace Nwazet.Commerce.Controllers {
                         true,
                         _shoppingCart.Country,
                         _shoppingCart.ZipCode));
-            } catch (ShippingException ex) {
+            }
+            catch (ShippingException ex) {
                 _shoppingCart.Country = null;
                 _shoppingCart.ZipCode = null;
                 _shoppingCart.ShippingOption = null;
@@ -361,7 +457,8 @@ namespace Nwazet.Commerce.Controllers {
 
             if (items != null) {
                 UpdateShoppingCart(items.Reverse());
-            } else {
+            }
+            else {
                 // call handlers if nothing was changed in terms of the items
                 foreach (var handler in _cartLifeCycleEventHandlers) {
                     handler.Updated();
@@ -388,7 +485,8 @@ namespace Nwazet.Commerce.Controllers {
                         true,
                         _shoppingCart.Country,
                         _shoppingCart.ZipCode));
-            } catch (ShippingException ex) {
+            }
+            catch (ShippingException ex) {
                 _shoppingCart.Country = null;
                 _shoppingCart.ZipCode = null;
                 _shoppingCart.ShippingOption = null;
@@ -413,7 +511,8 @@ namespace Nwazet.Commerce.Controllers {
                             RemovalAction = cpaa.RemovalAction
                         }));
                     alterations.AddRange(_shoppingCart.PriceAlterations);
-                } else {
+                }
+                else {
                     alterations.AddRange(priceAlterations
                         .Select(cpaa => new CartPriceAlteration {
                             AlterationType = cpaa.AlterationType,
@@ -481,7 +580,7 @@ namespace Nwazet.Commerce.Controllers {
             var newItems = new List<ShoppingCartItem>();
             newItems.AddRange(_shoppingCart.Items);
             //we use a KeyValuePair because item.QUantity is not alowed to be negative
-            var itemsInBoth = new List<KeyValuePair<int,ShoppingCartItem>>(); //quantity variation, item
+            var itemsInBoth = new List<KeyValuePair<int, ShoppingCartItem>>(); //quantity variation, item
             itemsInBoth.AddRange(
                 newItems
                 .Select(newSci => {
@@ -498,7 +597,8 @@ namespace Nwazet.Commerce.Controllers {
             foreach (var item in itemsInBoth.Where(kvp => kvp.Key != 0)) {
                 if (item.Key > 0) { //increase in quantity
                     addedItems.Add(item.Value);
-                } else if (item.Key < 0) { //decrease in quantity
+                }
+                else if (item.Key < 0) { //decrease in quantity
                     removedItems.Add(item.Value);
                 }
                 //if quantity has not changed, we do not raise an event for that item
@@ -530,7 +630,8 @@ namespace Nwazet.Commerce.Controllers {
                         var product = products.Where(p => p.Id == item.ProductId).FirstOrDefault();
                         if (product != null) {
                             minimumOrderQuantites.Add(product.Id, product.MinimumOrderQuantity);
-                        } else {
+                        }
+                        else {
                             // This ensures the dictionary will have all the keys needed for the items
                             minimumOrderQuantites.Add(item.ProductId, defaultMinimumQuantity);
                         }
@@ -553,5 +654,18 @@ namespace Nwazet.Commerce.Controllers {
 
             return RedirectToAction("Index");
         }
+
+        class CartPainter {
+            public CartPainter() {
+                SourceAction = "Refresh";
+                MovedQuantity = 0;
+            }
+            public string SourceLineKey { get; set; }
+            public string SourceAction { get; set; }
+            public int MovedQuantity { get; set; }
+        }
+
     }
+
+
 }

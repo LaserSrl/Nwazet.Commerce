@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nwazet.Commerce.Models;
+﻿using Nwazet.Commerce.Models;
 using Nwazet.Commerce.ViewModels.Couponing;
 using Orchard;
 using Orchard.Caching;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
+using System.Linq;
 
 namespace Nwazet.Commerce.Services.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
@@ -26,7 +22,11 @@ namespace Nwazet.Commerce.Services.Couponing {
             _workContextAccessor = workContextAccessor;
             _cacheManager = cacheManager;
             _signals = signals;
+
+            T = NullLocalizer.Instance;
         }
+
+        public Localizer T { get; set; }
 
         public abstract string ProviderName { get; }
         public abstract LocalizedString ProviderDisplayName { get; }

@@ -26,7 +26,8 @@ namespace Nwazet.Commerce.Drivers {
                     Inventory: part.ProductInventoryService.GetInventory(part),
                     OutOfStockMessage: part.OutOfStockMessage,
                     AllowBackOrder: part.AllowBackOrder,
-                    MinimumOrderQuantity: part.MinimumOrderQuantity));
+                    MinimumOrderQuantity: part.MinimumOrderQuantity,
+                    MaximumOrderQuantity: part.MaximumOrderQuantity));
         }
 
         protected override DriverResult Editor(InventoryPart part, dynamic shapeHelper) {
@@ -46,6 +47,7 @@ namespace Nwazet.Commerce.Drivers {
                 part.OutOfStockMessage = viewModel.OutOfStockMessage;
                 part.AllowBackOrder = viewModel.AllowBackOrder;
                 part.MinimumOrderQuantity = viewModel.MinimumOrderQuantity;
+                part.MaximumOrderQuantity = viewModel.MaximumOrderQuantity;
             }
             return Editor(part, shapeHelper);
         }
@@ -56,7 +58,8 @@ namespace Nwazet.Commerce.Drivers {
                 .ToAttr(p => p.Inventory)
                 .ToAttr(p => p.OutOfStockMessage)
                 .ToAttr(p => p.AllowBackOrder)
-                .ToAttr(p => p.MinimumOrderQuantity);
+                .ToAttr(p => p.MinimumOrderQuantity)
+                .ToAttr(p => p.MaximumOrderQuantity);
         }
 
         protected override void Importing(InventoryPart part, ImportContentContext context) {
@@ -68,7 +71,8 @@ namespace Nwazet.Commerce.Drivers {
                 .FromAttr(p => p.Inventory)
                 .FromAttr(p => p.OutOfStockMessage)
                 .FromAttr(p => p.AllowBackOrder)
-                .FromAttr(p => p.MinimumOrderQuantity);
+                .FromAttr(p => p.MinimumOrderQuantity)
+                .FromAttr(p => p.MaximumOrderQuantity);
         }
     }
 }

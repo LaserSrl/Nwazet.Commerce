@@ -100,6 +100,11 @@ namespace Nwazet.Commerce.Recipes.Providers.Builders {
                     .Add(ExportTerritories(hierarchy));
                 }
             }
+
+            // Adds to the exported xml, the command to recalculate the TerritoryPart.TerritoriesFullPath property.
+            context.RecipeDocument.Element("Orchard")
+                .Add(CalculateFullPath());
+
         }
 
         /// <summary>
@@ -220,6 +225,13 @@ namespace Nwazet.Commerce.Recipes.Providers.Builders {
             foreach (var tir in _territoriesRepositoryService.GetTerritories()) {
                 root.Add($"territories import \"{tir.Name}\"" + Environment.NewLine);
             }
+            return root;
+        }
+
+        private XElement CalculateFullPath() {
+            var root = new XElement("Command");
+            root.Add(Environment.NewLine);
+                root.Add($"territories calculatefullpath" + Environment.NewLine);
             return root;
         }
     }

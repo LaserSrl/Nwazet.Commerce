@@ -9,9 +9,9 @@
                                        new { area = "Nwazet.Commerce", id = productId }),
                             FormMethod.Post,
                             new Dictionary<string, object> {
-        {"class", "addtocart"},
-        {"data-productid", productId},
-        {"enctype", "multipart/form-data"}
+{"class", "addtocart"},
+{"data-productid", productId},
+{"enctype", "multipart/form-data"}
                             })) {
 
     if (Model.ProductAttributes != null) {
@@ -26,10 +26,13 @@
 
     <div class="addtocart-quantity-and-button">
         <input name="id" value="@productId" type="hidden" />
-        <input name="quantity" value="@quantityValue" class="addtocart-quantity" type="number" min="0" />
+        <input name="quantity" value="@quantityValue" class="addtocart-quantity" type="number" min="0" @((int)Model.MaximumOrderQuantity > 0 ? "max=" + Model.MaximumOrderQuantity : "") />
         <button type="submit" class="addtocart-button">@T("Add to cart")</button>
         @if ((int)Model.MinimumOrderQuantity > 1) {
             <br /><strong>Minimum order of @Model.MinimumOrderQuantity required.</strong>
+        }
+        @if ((int)Model.MaximumOrderQuantity > 0) {
+            <br /><strong>Maximum order of @Model.MaximumOrderQuantity required.</strong>
         }
     </div>
 }

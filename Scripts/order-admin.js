@@ -35,6 +35,7 @@
 
     $(".new-order-event-add").click(function (e) {
         e.preventDefault();
+        var htmlTemplate = $('#order-event-log-item-template').html();
         var button = $(e.target),
             container = button.closest(".order-events"),
             url = container.data("add-event-url"),
@@ -50,10 +51,21 @@
                 description: description,
                 __RequestVerificationToken: token
             }, function (data) {
-                container.find("ul.order-event-log")
-                    .append($("<li></li>")
-                        .append($("<h3></h3>").html(data.Date + " (" + data.Category + ")"))
-                        .append($("<p></p>").html(data.Description)));
+                if (htmlTemplate == "") {
+                    container.find("ul.order-event-log")
+                        .prepend($("<li></li>")
+                            .append($("<h3></h3>").html(data.Date + " (" + data.Category + ")"))
+                            .append($("<p></p>").html(data.Description)));
+                } else {
+                    var htmlPreprend = htmlTemplate
+                        .replace("{cssclass}", data.Category.toLowerCase().replace(" ", "-"))
+                        .replace("{date}", data.Date)
+                        .replace("{category}", data.Category)
+                        .replace("{text}", data.Description)
+                        .replace("{author}", "");
+                    container.find("ul.order-event-log")
+                        .prepend(htmlPreprend)
+                }
                 descriptionElement.val("");
             });
         }

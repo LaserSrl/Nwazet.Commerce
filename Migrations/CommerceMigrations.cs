@@ -318,5 +318,11 @@ namespace Nwazet.Commerce.Migrations {
             });
             return 15;
         }
+
+        public int UpdateFrom15() {
+            SchemaBuilder.AlterTable("InventoryPartRecord", table => table
+                .AddColumn<int>("MaximumOrderQuantity"));
+            return 16;
+        }
     }
 }

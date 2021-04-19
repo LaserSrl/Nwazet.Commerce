@@ -9,8 +9,8 @@
 @model Nwazet.Commerce.ViewModels.OrderEditorViewModel
 @{
     Script.Require("jQuery");
-    Style.Include("order-admin.css", "order-admin.min.css");
-    Script.Include("order-admin.js", "order-admin.min.js");
+    Style.Require("Nwazet.Order-Admin").AtHead();
+    Script.Require("Nwazet.Order-Admin").AtHead();
 
     var _contentManager = WorkContext.Resolve<IContentManager>();
     var _attributeExtensionProviders = WorkContext.Resolve<IEnumerable<IProductAttributeExtensionProvider>>();
@@ -263,6 +263,9 @@
                                             break;
                                         case OrderValueType.Percent:
                                             valueText = string.Format("{0} %", (element.Value * 100m).ToString());
+                                            break;
+                                        case OrderValueType.Ignore:
+                                            valueText = "";
                                             break;
                                         case OrderValueType.Number:
                                         default:

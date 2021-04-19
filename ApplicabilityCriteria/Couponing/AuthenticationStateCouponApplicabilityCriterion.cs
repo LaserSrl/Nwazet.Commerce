@@ -20,11 +20,9 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             ICacheManager cacheManager,
             ISignals signals)
             : base(workContextAccessor, cacheManager, signals) {
-            T = NullLocalizer.Instance;
+            
         }
-
-        public Localizer T { get; set; }
-
+        
         public override string ProviderName => "AuthenticationStateCouponApplicabilityCriterion";
 
         public override LocalizedString ProviderDisplayName => T("Criteria on the authentication state");

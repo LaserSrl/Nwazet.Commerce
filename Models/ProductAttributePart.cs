@@ -43,6 +43,16 @@ namespace Nwazet.Commerce.Models {
             set { Store(r => r.TechnicalName, value); }
         }
 
+        public string CssName {
+            get { return Retrieve(r => r.CssName); }
+            set { Store(r => r.CssName, value); }
+        }
+
+        public string Meaning {
+            get { return Retrieve(r => r.Meaning); }
+            set { Store(r => r.Meaning, value); }
+        }
+
         internal string AttributeValuesString
         {
             get

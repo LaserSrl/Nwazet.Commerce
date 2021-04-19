@@ -125,7 +125,8 @@ namespace Nwazet.Commerce.Migrations {
             return 5;
         }
 
-
+        // this method is same as \Nwazet.Commerce\Commands\TerritoriesCommands.cs
+        //TODO: maybe it should be better to have a service for that
         private void UpdatePath(int parentId, int hierarchyId, string parentPath, IEnumerable<TerritoryPartRecord> territoryItems) {
             if (hierarchyId <= 0) {
                 return;

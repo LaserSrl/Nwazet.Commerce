@@ -89,6 +89,7 @@ namespace Nwazet.Commerce.Drivers {
                 shapes.Add(ContentShape("Parts_Product_AddToCartFromWishList", () =>
                     shapeHelper.Parts_Product_AddToCartFromWishList(
                         MinimumOrderQuantity: product.MinimumOrderQuantity,
+                        MaximumOrderQuantity: product.MaximumOrderQuantity,
                         WishListItemId: part.ContentItem.Id,
                         WishListId: part.WishList.ContentItem.Id
                     )));

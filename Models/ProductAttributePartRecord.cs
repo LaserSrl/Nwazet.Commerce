@@ -10,5 +10,7 @@ namespace Nwazet.Commerce.Models {
         public virtual int SortOrder { get; set; }
         public virtual string DisplayName { get; set; }
         public virtual string TechnicalName { get; set; }
+        public virtual string CssName { get; set; }
+        public virtual string Meaning { get; set; }
     }
 }
