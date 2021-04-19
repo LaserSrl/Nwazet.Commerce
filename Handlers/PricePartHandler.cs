@@ -25,6 +25,16 @@ namespace Nwazet.Commerce.Handlers {
                             : productPart.Price;
                 }
             });
+
+            OnImported<ProductPart>((context, productPart) => {
+                var pricePart = productPart.As<PricePart>();
+                if (pricePart != null) {
+                    pricePart.EffectiveUnitPrice =
+                        productPart.DiscountPrice > 0 && productPart.DiscountPrice < productPart.Price
+                            ? productPart.DiscountPrice
+                            : productPart.Price;
+                }
+            });
         }
 
         protected override void Activating(ActivatingContentContext context) {
