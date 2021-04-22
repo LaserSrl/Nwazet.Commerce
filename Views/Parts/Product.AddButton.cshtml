@@ -11,6 +11,7 @@
                             new Dictionary<string, object> {
 {"class", "addtocart"},
 {"data-productid", productId},
+{"data-form-role","addtocart" },
 {"enctype", "multipart/form-data"}
                             })) {
 
@@ -27,7 +28,10 @@
     <div class="addtocart-quantity-and-button">
         <input name="id" value="@productId" type="hidden" />
         <input name="quantity" value="@quantityValue" class="addtocart-quantity" type="number" min="0" @((int)Model.MaximumOrderQuantity > 0 ? "max=" + Model.MaximumOrderQuantity : "") />
-        <button type="submit" class="addtocart-button">@T("Add to cart")</button>
+        <div data-cart-button-state="button">
+            <button type="submit" class="addtocart-button">@T("Add to cart")</button>
+        </div>
+        <div data-cart-button-state="spinner" style="display:none"><span>@T("Adding...")</span></div>
         @if ((int)Model.MinimumOrderQuantity > 1) {
             <br /><strong>Minimum order of @Model.MinimumOrderQuantity required.</strong>
         }

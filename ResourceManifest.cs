@@ -15,6 +15,8 @@ namespace Nwazet.Commerce {
                 .SetUrl("jquery.iframe-transport.min.js","jquery.iframe-transport.js").SetDependencies("jQuery"); //Duplicated: should we use Orchard.Resources version?
             manifest.DefineScript("Nwazet.ShoppingCart")
                 .SetUrl("shoppingcart.min.js?v=1.0", "shoppingcart.js?v=1.0").SetDependencies("jQuery");
+            manifest.DefineScript("Nwazet.CartSpinner")
+                .SetUrl("cartspinner.min.js?v=1.0", "cartspinner.js?v=1.0").SetDependencies("jQuery");
             manifest.DefineScript("Nwazet.AttributeExtensions")
                 .SetUrl("attribute-extensions.min.js", "attribute-extensions.js");
 
