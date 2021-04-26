@@ -105,6 +105,10 @@
     <Content Include="Scripts\attribute-extensions.min.js">
       <DependentUpon>attribute-extensions.js</DependentUpon>
     </Content>
+    <Content Include="Scripts\cartspinner.js" />
+    <Content Include="Scripts\cartspinner.min.js">
+      <DependentUpon>cartspinner.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\chartjs.js" />
     <Content Include="Scripts\chartjs.min.js">
       <DependentUpon>chartjs.js</DependentUpon>
