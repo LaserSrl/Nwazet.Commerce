@@ -249,6 +249,7 @@
     <None Include="Views\CouponingAdmin\_CouponsListPartial.cshtml" />
     <Content Include="Views\ProductAdmin\CreateProduct.cshtml" />
     <Content Include="Views\ProductAdmin\CreatableTypeList.cshtml" />
+    <Content Include="Views\InventorySummaryAdmin.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\CreatableTypeList.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\CreateHierarchy.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\EditHierarchy.cshtml" />

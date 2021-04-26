@@ -5,7 +5,7 @@
                 __RequestVerificationToken: $("input[name=__RequestVerificationToken]").val()
             }, function(data) {
                 for (var sku in data) {
-                    $(".inventory .value." + sku)
+                    $("[data-sku-value='" + sku+"']")
                         .data("inventory", data[sku])
                         .slideUp(function() {
                             var that = $(this);

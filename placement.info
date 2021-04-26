@@ -60,6 +60,7 @@
   <Place Parts_ProductVatConfiguration_Edit="Content:3.5" />
   <Match DisplayType="SummaryAdmin">
     <Place Parts_Product="Content:2;Alternate=ProductSummaryAdmin"/>
+    <Place Parts_Inventory="Content:2.1;Alternate=InventorySummaryAdmin"/>
     <Place Parts_Product_AddButton="-"/>
     <Place Parts_Product_AddToWishlistButton="-"/>
     <Place Parts_Product_PriceTiers="-"/>
