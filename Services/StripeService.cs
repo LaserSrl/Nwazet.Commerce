@@ -92,7 +92,8 @@ namespace Nwazet.Commerce.Services {
                         + AttributeNameUtilities.AttributesDisplayText(
                             productAttributes: (Dictionary<int, ProductAttributeValueExtended>)p.ProductAttributes, 
                             product: (IContent)p.Product, separator: ", "),
-                    Attributes = p.ProductAttributes
+                    Attributes = p.ProductAttributes,
+                    ProductVersion = p.Product.ContentItem.Version
                 }).ToArray(),
                 shippingOption == null ? 0 : shippingOption.Price,
                 shippingOption == null ? null : shippingOption.Description,

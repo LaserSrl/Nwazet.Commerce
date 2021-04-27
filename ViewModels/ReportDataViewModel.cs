@@ -45,6 +45,7 @@ namespace Nwazet.Commerce.ViewModels {
         }
         public TimePeriod Granularity { get; set; }
         public IEnumerable<string> Series { get; set; } 
+        public IEnumerable<int> OrderBySeriesId { get; set; }
         public ICurrencyProvider CurrencyProvider { get; set; }
     }
 }

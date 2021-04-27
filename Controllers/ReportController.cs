@@ -120,6 +120,7 @@ namespace Nwazet.Commerce.Controllers {
                 ChartType = reportService.ChartType,
                 DataPoints = data.DataPoints,
                 Series = series,
+                OrderBySeriesId = data.OrderBySeriesId,
                 StartDateEditor = new DateTimeEditor {
                     Date = _dateServices.ConvertToLocalizedDateString(startDate.ToUniversalTime()),
                     ShowDate = true,
