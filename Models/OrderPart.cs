@@ -95,6 +95,7 @@ namespace Nwazet.Commerce.Models {
                         .ToAttr(i => i.OriginalPrice)
                         .ToAttr(i => i.LinePriceAdjustment)
                         .ToAttr(i => i.PromotionId)
+                        .ToAttr(i=> i.ProductVersion)
                         .Element
                     // product attributes
                     .AddEl(new XElement(AttributesName, it.Attributes != null ? it.Attributes.Select(at => {
@@ -195,6 +196,7 @@ namespace Nwazet.Commerce.Models {
                         .FromAttr(i => i.OriginalPrice)
                         .FromAttr(i => i.LinePriceAdjustment)
                         .FromAttr(i => i.PromotionId)
+                        .FromAttr(i => i.ProductVersion)
                         .Context;
                         if (el.Element(AttributesName) != null) {
                             checkoutItem.Attributes =
