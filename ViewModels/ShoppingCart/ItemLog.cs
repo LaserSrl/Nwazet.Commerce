@@ -22,6 +22,7 @@ namespace Nwazet.Commerce.ViewModels.ShoppingCart {
     }
 
     public enum ProductResultedActionOptions {
-        IncreasedToMatchMinimum, DecreasedToMatchInventory, DecreasedToMatchMaximum, AddedToCart, RemovedFromCart
+        IncreasedToMatchMinimum, DecreasedToMatchInventory, DecreasedToMatchMaximum, AddedToCart, RemovedFromCart,
+        Error
     }
 }
