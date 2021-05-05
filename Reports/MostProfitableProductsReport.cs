@@ -54,24 +54,40 @@ namespace Nwazet.Commerce.Reports {
                 .List()
                 .ToList();
             var totalRevenues = new Dictionary<int, decimal>();
+            var products = new Dictionary<int, string>();
+            var productsVersion = new Dictionary<int, int>();
             foreach (var order in orders) {
                 var checkoutItems = order.As<OrderPart>().Items;
+
+                // TO DO: within the dictionary there must be the uniquekey and not the product id
+                var titleProduct = checkoutItems
+                    .Select(i => _contentManager.Get<TitlePart>(i.ProductId, 
+                                (i.ProductVersion != 0 ? VersionOptions.Number(i.ProductVersion) :
+                                VersionOptions.Number(_contentManager.GetAllVersions(i.ProductId).Max(cv => cv.VersionRecord.Number)))))
+                    .ToDictionary(t => t.Id,t=>t.Title);
+                
                 foreach (var checkoutItem in checkoutItems) {
                     var productId = checkoutItem.ProductId;
                     var totalPrice = (checkoutItem.Quantity*checkoutItem.Price) + checkoutItem.LinePriceAdjustment;
                     if (totalRevenues.ContainsKey(productId)) {
                         totalRevenues[productId] += totalPrice;
+                        // check if the version of the product I am adding is correct
+                        // is greater than or equal to the version already saved and replace the title
+                        var versionSaved = productsVersion.FirstOrDefault(t => t.Key == productId).Value;
+                        if (checkoutItem.ProductVersion != 0 && versionSaved != 0 && checkoutItem.ProductVersion > versionSaved) {
+                            products[productId] = titleProduct.FirstOrDefault(t => t.Key == productId).Value;
+                            productsVersion[productId] = checkoutItem.ProductVersion;
+                        }
                     }
                     else {
                         totalRevenues.Add(productId, totalPrice);
+                        // add the title to the product list
+                        products.Add(productId, titleProduct.FirstOrDefault(t => t.Key == productId).Value);
+                        // save the version in another list 
+                        productsVersion.Add(productId, checkoutItem.ProductVersion);
                     }
                 }
             }
-            var products = _contentManager.GetMany<TitlePart>(
-                totalRevenues.Keys,
-                VersionOptions.Published,
-                QueryHints.Empty)
-                .ToDictionary(title => title.Id, title => title.Title);
             return new ReportData {
                 DataPoints = totalRevenues
                     .Select(q => new ReportDataPoint {

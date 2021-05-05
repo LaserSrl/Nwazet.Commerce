@@ -182,6 +182,8 @@ namespace Nwazet.Commerce.Controllers {
                     //these checks reduce the likelihood that we get here even though someone has tampered with the page.
                     var wishListItem = _contentManager.Get<WishListItemPart>(wishListItemId);
                     if (wishListItem != null) {
+                        // TODO: upgrade this so it behaves like the updated shoppingcart controller
+                        // with tryadd and item messages
                         _shoppingCart.Add(wishListItem.Item.ProductId, quantity, wishListItem.Item.AttributeIdsToValues);
 
                         var newItem = new ShoppingCartItem(

@@ -358,6 +358,7 @@ namespace Nwazet.Commerce.Drivers {
                             .FromAttr(coi => coi.Price)
                             .FromAttr(coi => coi.LinePriceAdjustment)
                             .FromAttr(coi => coi.PromotionId)
+                            .FromAttr(coi => coi.ProductVersion)
                             .Context;
                             if (i.Element(AttributesName) != null) {
                                 checkoutItem.Attributes =
@@ -445,6 +446,7 @@ namespace Nwazet.Commerce.Drivers {
                             .ToAttr(i => i.Price)
                             .ToAttr(i => i.LinePriceAdjustment)
                             .ToAttr(i => i.PromotionId)
+                            .ToAttr(i => i.ProductVersion)
                             .Element
                             .AddEl(new XElement(AttributesName, it.Attributes != null ? it.Attributes.Select(at => {
                                 var attrEl = new XElement(AttributeName);

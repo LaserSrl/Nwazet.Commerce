@@ -1437,12 +1437,20 @@ msgid "Add Attribute Value"
 msgstr "Aggiungi un Valore di Attributo"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
+msgid "Allows discrimination between attributes. It is placed in the html of the attribute either among the css classes  (meaning-{valore})  or as a data attribute."
+msgstr "Permette la discriminazione tra gli attributi. Viene usato nell'html dell'attributo tra le classi css (\"meaning-{valore}\") o con un attributo data-meaning=\"{valore}\"."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
 msgid "Apply To Line"
 msgstr "Applica alla Linea"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
 msgid "Attribute Value Options"
 msgstr "Optioni dei Valori di Attributo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
+msgid "Css Name"
+msgstr "Classe css"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
 msgid "Delete"
@@ -1459,6 +1467,10 @@ msgstr "Estensione"
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
 msgid "Label for attribute drop-down list. Leave empty to hide label."
 msgstr "Etichetta per la drop-down dell'attributo. Lasciare vuoto per nascondere l'etichetta."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
+msgid "Meaning"
+msgstr "Significato"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
 msgid "Name"
@@ -1495,6 +1507,14 @@ msgstr "Nome Tecnico"
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
 msgid "Technical name of the attribute."
 msgstr "Nome tecnico dell'attributo."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
+msgid "Technical Name: {0}"
+msgstr "Nome tecnico: {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
+msgid "The value allows you to add styling to the html of the attribute."
+msgstr "Questo valore permette di aggiungere stili all'html dell'attributo."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
 msgid "When checked, Apply To Line causes the price adjustment to be applied to the line total. By default, the adjustment is applied to the unit price."
@@ -2304,6 +2324,18 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/HierarchyTerritoriesAdmin/Index.cshtml"
 msgid "You need to hit \"Save All\" in order to save your changes."
 msgstr "Devi premere \"Salva Tutto\" per salvare le tua modifiche."
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/InventorySummaryAdmin.cshtml"
+msgid "Add one"
+msgstr "Aggiungi uno"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/InventorySummaryAdmin.cshtml"
+msgid "Inventory:"
+msgstr "Inventario:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/InventorySummaryAdmin.cshtml"
+msgid "Remove one"
+msgstr "Rimuovi uno"
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/Order_CheckPassword.cshtml"
 msgid "OK"
 msgstr "OK"
@@ -2528,9 +2560,17 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.AddButton.cshtml"
 msgid "Add to cart"
 msgstr "Aggiungi al carrello"
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.AddButton.cshtml"
+msgid "Adding..."
+msgstr "In aggiunta..."
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.AddToCartFromWishlist.cshtml"
 msgid "Add to cart"
 msgstr "Aggiungi al carrello"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.AddToCartFromWishlist.cshtml"
+msgid "Adding"
+msgstr "In aggiunta"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.AddToWishlistButton.cshtml"
 msgid "Add to WishList"
@@ -3953,6 +3993,10 @@ msgid "Not authorized to manage shippings"
 msgstr "Non autorizzato a gestire le spedizioni"
 
 msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
+msgid "{0}"
+msgstr "{0}"
+
+msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
 msgid "{0} {1} has been added to cart."
 msgstr "{0} {1} è stato aggiunto al carrello."
 
@@ -4063,6 +4107,14 @@ msgstr "L'URL del tracciamento è cambiato a {1}."
 msgctxt "Nwazet.Commerce.Drivers.ProductAttributePartDriver"
 msgid "Attribute technical names in conflict. \"{0}\" is already set for a previously created attribute so now it has been changed to \"{1}\""
 msgstr "Conflitto tra i nomi tecnici degli attributi. \"{0}\" è già impostato per un attributo creato in precedenza quindi è stato cambiato in \"{1}\""
+
+msgctxt "Nwazet.Commerce.Drivers.ProductAttributePartDriver"
+msgid "The css name contains invalid characters."
+msgstr "Il nome della classe css contiene caratteri non validi."
+
+msgctxt "Nwazet.Commerce.Drivers.ProductAttributePartDriver"
+msgid "The meaning contains invalid characters."
+msgstr "Il significato contiene caratteri non validi."
 
 msgctxt "Nwazet.Commerce.Drivers.ProductAttributePartDriver"
 msgid "The technical name contains invalid characters."

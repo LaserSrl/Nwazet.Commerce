@@ -171,21 +171,33 @@ namespace Nwazet.Commerce.Controllers {
             }
 
             if (quantity > 0) {
-                _shoppingCart.Add(id, quantity, productattributes);
-                itemLog = new ItemLog {
-                    LocalizedMessage = T.Plural("{0} {1} has been added to cart.", "{0} {1} have been added to cart.", quantity, productTitle),
-                    LocalizedBaseMessage = T.Plural("{0} {1} has been added to cart.", "{0} {1} have been added to cart.", quantity, "{0}").Text,
-                    MovedQuantityAttemped = attemptedQuantity,
-                    ProductAction = ProductActionOptions.Added,
-                    MovedQuantity = quantity,
-                    ProductResultedAction = ProductResultedActionOptions.AddedToCart,
-                    ProductTitle = productTitle
-                };
-                productMessages[msgKey].Add(itemLog);
-                var newItem = new ShoppingCartItem(id, quantity, productattributes);
-                sourceLineKey = newItem.GenerateUniqueKey();
-                foreach (var handler in _cartLifeCycleEventHandlers) {
-                    handler.ItemAdded(newItem);
+                if (_shoppingCart.TryAdd(id, quantity, productattributes)) {
+                    itemLog = new ItemLog {
+                        LocalizedMessage = T.Plural("{0} {1} has been added to cart.", "{0} {1} have been added to cart.", quantity, productTitle),
+                        LocalizedBaseMessage = T.Plural("{0} {1} has been added to cart.", "{0} {1} have been added to cart.", quantity, "{0}").Text,
+                        MovedQuantityAttemped = attemptedQuantity,
+                        ProductAction = ProductActionOptions.Added,
+                        MovedQuantity = quantity,
+                        ProductResultedAction = ProductResultedActionOptions.AddedToCart,
+                        ProductTitle = productTitle
+                    };
+                    productMessages[msgKey].Add(itemLog);
+                    var newItem = new ShoppingCartItem(id, quantity, productattributes);
+                    sourceLineKey = newItem.GenerateUniqueKey();
+                    foreach (var handler in _cartLifeCycleEventHandlers) {
+                        handler.ItemAdded(newItem);
+                    }
+                } else {
+                    itemLog = new ItemLog {
+                        LocalizedMessage = T("Impossible to add {0} to cart.", productTitle),
+                        LocalizedBaseMessage = T("Impossible to add {0} to cart.", "{0}").Text,
+                        MovedQuantityAttemped = attemptedQuantity,
+                        ProductAction = ProductActionOptions.Added,
+                        MovedQuantity = quantity,
+                        ProductResultedAction = ProductResultedActionOptions.Error,
+                        ProductTitle = productTitle
+                    };
+                    productMessages[msgKey].Add(itemLog);
                 }
             }
             // Test isAjaxRequest too because iframe posts won't return true for Request.IsAjaxRequest()

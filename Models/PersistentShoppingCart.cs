@@ -52,6 +52,19 @@ namespace Nwazet.Commerce.Models {
             return _attributesDrivers.All(d => d.ValidateAttributes(product, attributeIdsToValues));
         }
 
+        public override bool TryAdd(int productId, int quantity = 1, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues = null) {
+            if (!ValidateAttributes(productId, attributeIdsToValues)) {
+                // If attributes don't validate, don't add the product, but notify
+                _notifier.Warning(T("Couldn't add this product because of invalid attributes. Please refresh the page and try again."));
+                return false;
+            }
+
+            _persistentShoppingCartServices.AddItem(new ShoppingCartItem(productId, quantity, attributeIdsToValues));
+
+            _products = null;
+            return true;
+        }
+
         public override void Add(int productId, int quantity = 1, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues = null) {
             if (!ValidateAttributes(productId, attributeIdsToValues)) {
                 // If attributes don't validate, don't add the product, but notify
