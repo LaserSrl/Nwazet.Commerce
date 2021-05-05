@@ -115,6 +115,7 @@ namespace Nwazet.Commerce.Models {
             }
         }
 
+        public abstract bool TryAdd(int productId, int quantity = 1, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues = null);
         public abstract void Add(int productId, int quantity = 1, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues = null);
         public virtual void AddRange(IEnumerable<ShoppingCartItem> items) {
             foreach (var item in items) {
