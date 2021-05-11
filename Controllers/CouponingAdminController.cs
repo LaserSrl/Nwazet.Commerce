@@ -54,6 +54,7 @@ namespace Nwazet.Commerce.Controllers {
             _transactionManager = transactionManager;
             _notifier = notifier;
             _couponApplicationService = couponApplicationService;
+            _workContextAccessor = workContextAccessor;
 
             _shapeFactory = shapeFactory;
 
@@ -71,7 +72,6 @@ namespace Nwazet.Commerce.Controllers {
             if (!_authorizer.Authorize(CouponingPermissions.ManageCoupons)) {
                 return new HttpUnauthorizedResult();
             }
-
 
             var pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
             var pagerShape = _shapeFactory.Pager(pager)
@@ -112,13 +112,18 @@ namespace Nwazet.Commerce.Controllers {
         [HttpPost, ActionName("Create")]
         [Orchard.Mvc.FormValueRequired("submit.Save")]
         public ActionResult CreatePost() {
-            //TODO: read the record from the DB and update it with the Model
             if (!_authorizer.Authorize(CouponingPermissions.ManageCoupons)) {
                 return new HttpUnauthorizedResult();
             }
             var model = new Coupon();
             if (!TryUpdateModel(model, null, null, new[] { "Id" })) {
                 _transactionManager.Cancel();
+                return View(model);
+            }
+            decimal value;
+            if (!decimal.TryParse(model.Value, NumberStyles.Any, _cultureInfo.Value, out value)) {
+                _transactionManager.Cancel();
+                AddModelError("Value", T("{0} is an invalid number", T(model.Value)));
                 return View(model);
             }
             try {
@@ -164,6 +169,12 @@ namespace Nwazet.Commerce.Controllers {
                 _transactionManager.Cancel();
                 return EditView(model);
             }
+            decimal value;
+            if (!decimal.TryParse(model.Value, NumberStyles.Any, _cultureInfo.Value, out value)) {
+                _transactionManager.Cancel();
+                AddModelError("Value", T("{0} is an invalid number", T(model.Value)));
+                return EditView(model);
+            }
             try {
                 _couponRepositoryService.UpdateRecord(model);
             }
@@ -180,33 +191,54 @@ namespace Nwazet.Commerce.Controllers {
             }
 
             _notifier.Add(NotifyType.Information, T("The coupon has been updated."));
-            return EditView(model);
+            return RedirectToAction("Edit", new { id = model.Id });
         }
 
-        private ActionResult EditView(Coupon coupon) {
+        private ActionResult EditView(Coupon coupon, bool retry = true) {
             if (coupon == null || coupon.Record == null) {
                 return HttpNotFound();
             }
-            // The following information is in the CouponRecord. Here we are 
-            // "translating" it to the vms.
-            // populate the vm "summaries" for the criteria
-            foreach (var crit in coupon.Record.ApplicabilityCriteria) {
-                var descriptor = _couponApplicationService
-                    .GetCriterion(crit.Category, crit.Type);
-                if (descriptor != null) {
-                    coupon.ApplicabilityCriteria.Add(
-                        CriterionToEntry(crit, descriptor));
+            try {
+                // This portion may fail when we have canceled a transaction for an error.
+                // That would cause an exception as NHibernate tries to fetch lazy information
+                // while the transaction has already been canceled.
+
+                // The following information is in the CouponRecord. Here we are 
+                // "translating" it to the vms.
+                // populate the vm "summaries" for the criteria
+                foreach (var crit in coupon.Record.ApplicabilityCriteria) {
+                    var descriptor = _couponApplicationService
+                        .GetCriterion(crit.Category, crit.Type);
+                    if (descriptor != null) {
+                        coupon.ApplicabilityCriteria.Add(
+                            CriterionToEntry(crit, descriptor));
+                    }
+                }
+                // populate the vm "summaries" for the line conditions
+                foreach (var crit in coupon.Record.LineCriteria) {
+                    var descriptor = _couponApplicationService
+                        .GetLineCriterion(crit.Category, crit.Type);
+                    if (descriptor != null) {
+                        coupon.LineCriteria.Add(
+                            CriterionToEntry(crit, descriptor));
+                    }
+                }
+            } catch (Exception) {
+                if (retry) {
+                    // fetch the record again and try to display it.
+                    var dbCoupon = _couponRepositoryService.Get(coupon.Id);
+                    // copy edited information from the vm we started from so that it
+                    // carries over into the UI
+                    dbCoupon.Value = coupon.Value;
+                    dbCoupon.Name = coupon.Name;
+                    dbCoupon.Code = coupon.Code;
+                    dbCoupon.CouponType = coupon.CouponType;
+                    dbCoupon.Published = coupon.Published;
+                    // don't try to fetch everything again
+                    return EditView(dbCoupon, false);
                 }
             }
-            // populate the vm "summaries" for the line conditions
-            foreach (var crit in coupon.Record.LineCriteria) {
-                var descriptor = _couponApplicationService
-                    .GetLineCriterion(crit.Category, crit.Type);
-                if (descriptor != null) {
-                    coupon.LineCriteria.Add(
-                        CriterionToEntry(crit, descriptor));
-                }
-            }
+            
             return View(coupon);
         }
 

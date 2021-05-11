@@ -29,64 +29,37 @@ namespace Nwazet.Commerce.Extensions {
         /// <returns>A copy of the IEnumerable whose elements can be safely manipulated without affecting 
         /// records in the database.</returns>
         public static IEnumerable<Coupon> ToCoupon(
-            this IEnumerable<CouponRecord> records) {
-
-            var copy = new List<Coupon>(records.Count());
-            copy.AddRange(records.Select(tir => tir.ToCoupon()));
-            return copy;
-        }
-
-        public static IEnumerable<Coupon> ToCoupon(
             this IEnumerable<CouponRecord> records, CultureInfo cultureInfo) {
 
             var copy = new List<Coupon>(records.Count());
             copy.AddRange(records.Select(tir => tir.ToCoupon(cultureInfo)));
             return copy;
         }
-
-        public static Coupon ToCoupon(this CouponRecord record) {
-            if (record == null) {
-                return null;
-            }
-            return new Coupon {
-                Id = record.Id,
-                Name = record.Name,
-                Code = record.Code,
-                Value = record.Value,
-                CouponType = record.CouponType,
-                Published = record.Published,
-                Record = record
-            };
-        }
+        
         public static Coupon ToCoupon(this CouponRecord record, CultureInfo cultureInfo) {
             if (record == null) {
                 return null;
             }
-            // TODO: Value from decimal in the record to string in the viewModel
+
             return new Coupon {
                 Id = record.Id,
                 Name = record.Name,
                 Code = record.Code,
-                Value = record.Value,
+                Value = Convert.ToString(record.Value, cultureInfo),
                 CouponType = record.CouponType,
                 Published = record.Published,
                 Record = record
             };
         }
-
-        public static void FromCoupon(this CouponRecord record, Coupon coupon) {
-            record.Name = coupon.Name;
-            record.Code = coupon.Code;
-            record.Value = coupon.Value;
-            record.CouponType = coupon.CouponType;
-            record.Published = coupon.Published;
-        }
-
+        
         public static void FromCoupon(this CouponRecord record, Coupon coupon, CultureInfo cultureInfo) {
-            // TODO: Value from string in the viewmodel to decimal in the record
+            //  Value from string in the viewmodel to decimal in the record
+            decimal value;
+            if (decimal.TryParse(coupon.Value, NumberStyles.Any, cultureInfo, out value)) {
+                record.Value = value;
+            }
             record.Name = coupon.Name;
             record.Code = coupon.Code;
-            record.Value = coupon.Value;
             record.CouponType = coupon.CouponType;
             record.Published = coupon.Published;
         }
