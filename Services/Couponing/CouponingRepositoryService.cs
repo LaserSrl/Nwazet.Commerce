@@ -10,17 +10,27 @@ using Orchard.Environment.Extensions;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.ViewModels.Couponing;
 using Orchard.ContentManagement;
+using Orchard;
+using System.Globalization;
 
 namespace Nwazet.Commerce.Services.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
     public class CouponingRepositoryService : ICouponRepositoryService {
 
         private readonly IRepository<CouponRecord> _couponsRepository;
+        private readonly IWorkContextAccessor _workContextAccessor;
+
+        private readonly Lazy<CultureInfo> _cultureInfo;
 
         public CouponingRepositoryService(
-            IRepository<CouponRecord> couponsRepository) {
+            IRepository<CouponRecord> couponsRepository,
+            IWorkContextAccessor workContextAccessor) {
 
             _couponsRepository = couponsRepository;
+            _workContextAccessor = workContextAccessor;
+
+            _cultureInfo = new Lazy<CultureInfo>(() => 
+                CultureInfo.GetCultureInfo(_workContextAccessor.GetContext().CurrentCulture));
         }
 
         public IQueryable<CouponRecord> Query() {
@@ -28,20 +38,20 @@ namespace Nwazet.Commerce.Services.Couponing {
         }
 
         public Coupon Get(int id) {
-            var coupon = _couponsRepository.Get(id).ToCoupon();
+            var coupon = _couponsRepository.Get(id).ToCoupon(_cultureInfo.Value);
             return coupon;
         }
 
         public int CreateRecord(Coupon coupon) {
             var record = new CouponRecord();
-            record.FromCoupon(coupon);
+            record.FromCoupon(coupon, _cultureInfo.Value);
             _couponsRepository.Create(record);
             return record.Id;
         }
 
         public void UpdateRecord(Coupon coupon) {
             var record = _couponsRepository.Get(coupon.Id);
-            record.FromCoupon(coupon);
+            record.FromCoupon(coupon, _cultureInfo.Value);
         }
 
         public void DeleteRecord(int id) {

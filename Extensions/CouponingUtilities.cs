@@ -5,6 +5,7 @@ using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,6 +36,14 @@ namespace Nwazet.Commerce.Extensions {
             return copy;
         }
 
+        public static IEnumerable<Coupon> ToCoupon(
+            this IEnumerable<CouponRecord> records, CultureInfo cultureInfo) {
+
+            var copy = new List<Coupon>(records.Count());
+            copy.AddRange(records.Select(tir => tir.ToCoupon(cultureInfo)));
+            return copy;
+        }
+
         public static Coupon ToCoupon(this CouponRecord record) {
             if (record == null) {
                 return null;
@@ -48,10 +57,33 @@ namespace Nwazet.Commerce.Extensions {
                 Published = record.Published,
                 Record = record
             };
-
+        }
+        public static Coupon ToCoupon(this CouponRecord record, CultureInfo cultureInfo) {
+            if (record == null) {
+                return null;
+            }
+            // TODO: Value from decimal in the record to string in the viewModel
+            return new Coupon {
+                Id = record.Id,
+                Name = record.Name,
+                Code = record.Code,
+                Value = record.Value,
+                CouponType = record.CouponType,
+                Published = record.Published,
+                Record = record
+            };
         }
 
         public static void FromCoupon(this CouponRecord record, Coupon coupon) {
+            record.Name = coupon.Name;
+            record.Code = coupon.Code;
+            record.Value = coupon.Value;
+            record.CouponType = coupon.CouponType;
+            record.Published = coupon.Published;
+        }
+
+        public static void FromCoupon(this CouponRecord record, Coupon coupon, CultureInfo cultureInfo) {
+            // TODO: Value from string in the viewmodel to decimal in the record
             record.Name = coupon.Name;
             record.Code = coupon.Code;
             record.Value = coupon.Value;

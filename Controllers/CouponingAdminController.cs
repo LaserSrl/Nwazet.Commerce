@@ -19,6 +19,8 @@ using System.Web.Mvc;
 using Orchard.Forms.Services;
 using Nwazet.Commerce.Descriptors.CouponApplicability;
 using Nwazet.Commerce.Models;
+using Orchard;
+using System.Globalization;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Couponing")]
@@ -32,6 +34,9 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ITransactionManager _transactionManager;
         private readonly INotifier _notifier;
         private readonly ICouponApplicationService _couponApplicationService;
+        private readonly IWorkContextAccessor _workContextAccessor;
+
+        private readonly Lazy<CultureInfo> _cultureInfo;
 
         public CouponingAdminController(
             IShapeFactory shapeFactory,
@@ -40,7 +45,8 @@ namespace Nwazet.Commerce.Controllers {
             ICouponRepositoryService couponRepositoryService,
             ITransactionManager transactionManager,
             INotifier notifier,
-            ICouponApplicationService couponApplicationService) {
+            ICouponApplicationService couponApplicationService,
+            IWorkContextAccessor workContextAccessor) {
 
             _authorizer = authorizer;
             _siteService = siteService;
@@ -50,6 +56,9 @@ namespace Nwazet.Commerce.Controllers {
             _couponApplicationService = couponApplicationService;
 
             _shapeFactory = shapeFactory;
+
+            _cultureInfo = new Lazy<CultureInfo>(() =>
+                CultureInfo.GetCultureInfo(_workContextAccessor.GetContext().CurrentCulture));
 
             T = NullLocalizer.Instance;
         }
@@ -69,7 +78,10 @@ namespace Nwazet.Commerce.Controllers {
                 .TotalItemCount(_couponRepositoryService.Query().Count());
 
             var items = _couponRepositoryService
-                .Query().OrderBy(x => x.Code).Paginate(pager.GetStartIndex(), pager.PageSize).ToCoupon();
+                .Query()
+                .OrderBy(x => x.Code)
+                .Paginate(pager.GetStartIndex(), pager.PageSize)
+                .ToCoupon(_cultureInfo.Value);
 
             dynamic viewModel = _shapeFactory.ViewModel()
                 .Coupons(items)
