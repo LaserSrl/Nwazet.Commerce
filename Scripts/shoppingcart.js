@@ -128,6 +128,7 @@
         onCartLoadWrapper = function (sender) {
             return function (text, status, jqXHR) {
                 onCartLoad(text, status, jqXHR);
+                $(sender).trigger("nwazet.addtocartreturned");
                 var movedQuantity = parseInt(cartContainer.children('input#NwazetCart_Painter_MovedQuantity').val());
                 var lineKey = parseInt(cartContainer.children('input#NwazetCart_Painter_SourceLikeKey').val());
 

@@ -100,5 +100,11 @@
     "inputFiles": [
       "Scripts/mustache.js"
     ]
+  },
+  {
+    "outputFileName": "Scripts/productsunavailable.min.js",
+    "inputFiles": [
+      "Scripts/productsunavailable.js"
+    ]
   }
 ]
