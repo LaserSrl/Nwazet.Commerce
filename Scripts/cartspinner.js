@@ -6,7 +6,7 @@
             $(this).find("[data-cart-button-state='spinner']").show();
 
         })
-        .on("nwazet.addedtocart", "[data-form-role='addtocart']", function (e, context) {
+        .on("nwazet.addtocartreturned", "[data-form-role='addtocart']", function (e, context) {
             // restored button
             $(this).find("[data-cart-button-state='spinner']").hide();
             $(this).find("[data-cart-button-state='button']").show();
