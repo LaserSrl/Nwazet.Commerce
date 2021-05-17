@@ -22,7 +22,7 @@
                     <td><input type="checkbox" value="@cr.Id" name="itemIds" /></td>
                     <td>@cr.Name</td>
                     <td>@cr.Code</td>
-                    <td>@cr.Value.ToString("#.##")  @cr.CouponType.ToString()</td>
+                    <td>@cr.Value  @cr.CouponType.ToString()</td>
                     <td>@(cr.Published ? T("Published") : T("Unpublished"))</td>
                     <td>
                         @Html.ActionLink(T("Edit").Text, "Edit", "CouponingAdmin", new { id = cr.Id }, null) |
