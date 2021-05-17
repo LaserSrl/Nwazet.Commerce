@@ -14,7 +14,7 @@ namespace Nwazet.Commerce.ViewModels.Couponing {
         public Coupon() {
             Id = 0;
             Published = false;
-            Value = 0;
+            Value = "0.0";
             CouponType = CouponType.Percent;
             ApplicabilityCriteria = new List<CouponApplicabilityCriterionEntry>();
             LineCriteria = new List<CouponApplicabilityCriterionEntry>();
@@ -38,7 +38,7 @@ namespace Nwazet.Commerce.ViewModels.Couponing {
         #endregion
         #region Actions
         public CouponType CouponType { get; set; }
-        public decimal Value { get; set; }
+        public string Value { get; set; }
 
         public List<CouponApplicabilityCriterionEntry> LineCriteria { get; set; }
         #endregion
