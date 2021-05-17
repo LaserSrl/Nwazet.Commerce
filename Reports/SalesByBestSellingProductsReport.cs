@@ -63,35 +63,44 @@ namespace Nwazet.Commerce.Reports {
             var results = new List<ReportDataPoint>(numberOfPoints);
             var intervalStart = startDate;
             var intervalEnd = startDate + granularity;
-            var seriesProductIds = orders
+            var seriesIds = orders
                 .SelectMany(order => order
                     .As<OrderPart>()
                     .Items
                     .Select(item => new {
                         Id = item.ProductId,
-                        Amount = (item.Quantity * item.Price) + item.LinePriceAdjustment
+                        Amount = (item.Quantity * item.Price) + item.LinePriceAdjustment,
+                        ProductVersion = item.ProductVersion
                     }))
                 .GroupBy(item => item.Id)
                 .Select(group => new {
                     Id = group.Key,
-                    Amount = group.Sum(item => item.Amount)
+                    Amount = group.Sum(item => item.Amount),
+                    ProductVersion = group.Max(item => item.ProductVersion)
                 })
                 .OrderByDescending(sale => sale.Amount)
-                .Take(HowManyProductsAreDisplayed)
-                .Select(sale => sale.Id)
-                .ToList();
-            var series = _contentManager
-                .GetMany<TitlePart>(seriesProductIds, VersionOptions.Published, QueryHints.Empty)
-                .ToDictionary(
-                    item => item.Id,
-                    item => item.Title
-                );
+                .Take(HowManyProductsAreDisplayed);
+
+            var seriesProductIds = seriesIds
+                .Select(sale => sale.Id);
+
+            var seriesProduct = seriesIds
+                .ToDictionary(sale => sale.Id, sale => sale.ProductVersion);
+
+            // TO DO: within the dictionary there must be the uniquekey and not the product id
+            var titleProducts = seriesProduct
+                .Select(i => _contentManager.Get<TitlePart>(i.Key,
+                            (i.Key != 0 ? VersionOptions.Number(i.Value) :
+                            VersionOptions.Number(_contentManager.GetAllVersions(i.Key).Max(cv => cv.VersionRecord.Number)))))
+                .ToDictionary(t => t.Id, t => t.Title);
+
             while (intervalStart < endDate) {
                 var ordersForInterval = orders.Where(
                     common => common.CreatedUtc >= intervalStart
                               && common.CreatedUtc < intervalEnd)
                     .Select(common => common.As<OrderPart>())
                     .ToList();
+                               
                 results.Add(new ReportDataPoint {
                     Description = granularity.ToString(intervalStart, CultureInfo.CurrentUICulture),
                     Value = ordersForInterval.Any()
@@ -102,11 +111,12 @@ namespace Nwazet.Commerce.Reports {
                             .Items
                             .Where(item => seriesProductIds.Contains(item.ProductId)))
                         .GroupBy(item => item.ProductId)
-                        .Where(group => series.ContainsKey(group.Key))
+                        .Where(group => titleProducts.ContainsKey(group.Key))
                         .ToDictionary(
-                            group => series[group.Key],
+                            group => group.Key,
                             group => new ReportDataPoint {
-                                Value = group.Sum(item => (item.Quantity*item.Price) + item.LinePriceAdjustment)
+                                Description = titleProducts[group.Key],
+                                Value = group.Sum(item => (item.Quantity * item.Price) + item.LinePriceAdjustment)
                             })
                 });
                 intervalStart = intervalEnd;
@@ -115,8 +125,9 @@ namespace Nwazet.Commerce.Reports {
             return new ReportData {
                 DataPoints = results,
                 Series = seriesProductIds
-                    .Where(id => series.ContainsKey(id))
-                    .Select(id => series[id]).ToList()
+                    .Where(id => titleProducts.ContainsKey(id))
+                    .Select(id => titleProducts[id]).ToList(),
+                OrderBySeriesId= seriesProductIds
             };
         }
     }
