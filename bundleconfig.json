@@ -102,6 +102,12 @@
     ]
   },
   {
+    "outputFileName": "Scripts/productsunavailable.min.js",
+    "inputFiles": [
+      "Scripts/productsunavailable.js"
+    ]
+  },
+  {
     "outputFileName": "Styles/attribute.nwazet-commerce-admin.min.css",
     "inputFiles": [
       "Styles/attribute.nwazet-commerce-admin.css"

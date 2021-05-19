@@ -12,6 +12,8 @@ namespace Nwazet.Commerce.Models {
         public int Quantity { get; set; }
         public decimal Price { get; set; }
 
+        public int ProductVersion { get; set; }
+
         public decimal OriginalPrice { get; set; }
 
         public decimal LinePriceAdjustment { get; set; }

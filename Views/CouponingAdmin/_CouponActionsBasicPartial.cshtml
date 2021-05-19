@@ -1,5 +1,9 @@
 ﻿@using Nwazet.Commerce.ViewModels.Couponing;
+@using System.Globalization;
 @model Coupon
+@{ 
+    var currentCulture = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
+}
 
 <div class="form-group">
     @Html.LabelFor(m => m.CouponType, 
@@ -25,12 +29,13 @@
 </div>
 <div class="form-group">
     @Html.LabelFor(m => m.Value, T("Value/Amount").Text, new { @for = Html.FieldIdFor(m => m.Value) })
-    <input type="number" class="form-control text small"
-            step="0.01" min="0"
-            id="@Html.FieldIdFor(m => m.Value)"
-            name="@Html.FieldNameFor(m => m.Value)"
-            aria_describedby="couponValueHelp"
-            placeholder="@T("Coupon's value")" 
-            value="@Model.Value.ToString("0.##")"/>
-    <small id="couponValueHelp" class="form-text text-muted hint">@T("The coupon's value/amount.")</small>
+    @Html.TextBoxFor(m => m.Value, new {
+        @class = "form-control text small",
+        step= "0.01", min ="0",
+        aria_describedby="couponValueHelp",
+        placeholder = T("Coupon's value") })
+    @Html.ValidationMessageFor(m => m.Value)
+    <small id="couponValueHelp" class="form-text text-muted hint">
+        @T("The coupon's value/amount. The decimal separator is '{0}'", currentCulture.NumberFormat.NumberDecimalSeparator)
+    </small>
 </div>
