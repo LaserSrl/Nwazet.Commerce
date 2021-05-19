@@ -100,5 +100,65 @@
     "inputFiles": [
       "Scripts/mustache.js"
     ]
+  },
+  {
+    "outputFileName": "Styles/attribute.nwazet-commerce-admin.min.css",
+    "inputFiles": [
+      "Styles/attribute.nwazet-commerce-admin.css"
+    ]
+  },
+  {
+    "outputFileName": "Styles/bundle.nwazet-commerce-admin.min.css",
+    "inputFiles": [
+      "Styles/bundle.nwazet-commerce-admin.css"
+    ]
+  },
+  {
+    "outputFileName": "Styles/discount.nwazet-commerce-admin.min.css",
+    "inputFiles": [
+      "Styles/discount.nwazet-commerce-admin.css"
+    ]
+  },
+  {
+    "outputFileName": "Styles/menu.nwazet-commerce-admin.min.css",
+    "inputFiles": [
+      "Styles/menu.nwazet-commerce-admin.css"
+    ]
+  },
+  {
+    "outputFileName": "Styles/reports-admin.min.css",
+    "inputFiles": [
+      "Styles/reports-admin.css"
+    ]
+  },
+  {
+    "outputFileName": "Styles/workflows-activity-cart-updated.min.css",
+    "inputFiles": [
+      "Styles/workflows-activity-cart-updated.css"
+    ]
+  },
+  {
+    "outputFileName": "Styles/workflows-activity-new-order.min.css",
+    "inputFiles": [
+      "Styles/workflows-activity-new-order.css"
+    ]
+  },
+  {
+    "outputFileName": "Styles/workflows-activity-order-status-changed-product.min.css",
+    "inputFiles": [
+      "Styles/workflows-activity-order-status-changed-product.css"
+    ]
+  },
+  {
+    "outputFileName": "Styles/workflows-activity-order-status-changed.min.css",
+    "inputFiles": [
+      "Styles/workflows-activity-order-status-changed.css"
+    ]
+  },
+  {
+    "outputFileName": "Styles/workflows-activity-order-tracking-url-changed.min.css",
+    "inputFiles": [
+      "Styles/workflows-activity-order-tracking-url-changed.css"
+    ]
   }
 ]
