@@ -117,6 +117,10 @@
 
             @if (settings.HideAttributesFromEditor) {
                 <text>
+                $(document).ready(function () {
+                    DisplayCurrentLanguage($("#Localization_SelectedCulture").val());
+                });
+
                 $("#Localization_SelectedCulture").on('change', function () {
                     DisplayCurrentLanguage($(this).val());
                 });

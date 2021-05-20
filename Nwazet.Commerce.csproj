@@ -164,9 +164,21 @@
     <Content Include="Scripts\wishlists.min.js">
       <DependentUpon>wishlists.js</DependentUpon>
     </Content>
+    <Content Include="Styles\attribute.nwazet-commerce-admin.min.css">
+      <DependentUpon>attribute.nwazet-commerce-admin.css</DependentUpon>
+    </Content>
     <Content Include="Styles\bundle.nwazet-commerce-admin.css" />
     <Content Include="Styles\attribute.nwazet-commerce-admin.css" />
+    <Content Include="Styles\bundle.nwazet-commerce-admin.min.css">
+      <DependentUpon>bundle.nwazet-commerce-admin.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\discount.nwazet-commerce-admin.min.css">
+      <DependentUpon>discount.nwazet-commerce-admin.css</DependentUpon>
+    </Content>
     <Content Include="Styles\images\move.gif" />
+    <Content Include="Styles\menu.nwazet-commerce-admin.min.css">
+      <DependentUpon>menu.nwazet-commerce-admin.css</DependentUpon>
+    </Content>
     <Content Include="Styles\product-admin.css">
       <DependentUpon>product-admin.less</DependentUpon>
     </Content>
@@ -174,6 +186,9 @@
       <DependentUpon>product-admin.css</DependentUpon>
     </Content>
     <Content Include="Styles\reports-admin.css" />
+    <Content Include="Styles\reports-admin.min.css">
+      <DependentUpon>reports-admin.css</DependentUpon>
+    </Content>
     <Content Include="Styles\territory-hierarchies-admin.css" />
     <Content Include="Styles\territory-hierarchies-admin.min.css">
       <DependentUpon>territory-hierarchies-admin.css</DependentUpon>
@@ -182,7 +197,19 @@
     <Content Include="Styles\wishlists.nwazet-commerce.min.css">
       <DependentUpon>wishlists.nwazet-commerce.css</DependentUpon>
     </Content>
+    <Content Include="Styles\workflows-activity-cart-updated.min.css">
+      <DependentUpon>workflows-activity-cart-updated.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\workflows-activity-new-order.min.css">
+      <DependentUpon>workflows-activity-new-order.css</DependentUpon>
+    </Content>
     <Content Include="Styles\workflows-activity-order-status-changed-product.css" />
+    <Content Include="Styles\workflows-activity-order-status-changed-product.min.css">
+      <DependentUpon>workflows-activity-order-status-changed-product.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\workflows-activity-order-status-changed.min.css">
+      <DependentUpon>workflows-activity-order-status-changed.css</DependentUpon>
+    </Content>
     <Content Include="Styles\workflows-activity-order-tracking-url-changed.css" />
     <Content Include="Styles\workflows-activity-new-order.css" />
     <Content Include="Styles\workflows-activity-order-status-changed.css" />
@@ -210,6 +237,9 @@
     <None Include="Views\CouponingAdmin\Create.cshtml" />
     <None Include="Views\CouponingAdmin\Edit.cshtml" />
     <None Include="Views\CouponingAdmin\Index.cshtml" />
+    <Content Include="Styles\workflows-activity-order-tracking-url-changed.min.css">
+      <DependentUpon>workflows-activity-order-tracking-url-changed.css</DependentUpon>
+    </Content>
     <Content Include="Views\CouponingCartExtension.cshtml" />
     <None Include="Views\CouponingCriterion\Add.cshtml" />
     <None Include="Views\CouponingCriterion\Edit.cshtml" />
