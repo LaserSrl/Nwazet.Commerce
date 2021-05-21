@@ -5138,7 +5138,7 @@ msgstr "Il codice coupon {0} non è valido"
 
 msgctxt "Nwazet.Commerce.Services.Couponing.CouponCartPriceAlterationProcessor"
 msgid "{0} not valid"
-msgstr "[0] non valido"
+msgstr "{0} non valido"
 
 msgctxt "Nwazet.Commerce.Services.DefaultOrderStatusProvider"
 msgid "Accepted"
