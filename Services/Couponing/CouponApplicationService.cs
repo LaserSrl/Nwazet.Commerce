@@ -120,22 +120,23 @@ namespace Nwazet.Commerce.Services.Couponing {
             if (context.IsApplicable) {
                 // TODO: prepare tokens
                 Dictionary<string, object> tokens = new Dictionary<string, object>();
-                foreach (var criterion in context.Coupon.LineCriteria) {
-                    var descriptor = GetLineCriterion(criterion.Category, criterion.Type);
-                    // descriptor should exist and be enabled
-                    if (descriptor == null || !descriptor.IsAvailableForProcessing) {
-                        continue;
-                    }
-                    // We need to test for each line. Note that this method, if the context
-                    // is defined for a specific line already, returns itself rather than 
-                    // a list of contexts for every cart line. We force a ToList() there to
-                    // force enumerating, so we have the actual objects rather than a reference
-                    // to how to get them, because otherwise the wrong references may be passed
-                    // around at later steps (basically, the providers would change the 
-                    // IsApplicable for an object, thena  fresh one would be checked of the
-                    // flag's value).
-                    var lineContexts = context.ContextsForLines().ToList();
-                    foreach (var lineApplicabilityContext in lineContexts) {
+                // We need to test for each line. Note that this method, if the context
+                // is defined for a specific line already, returns itself rather than 
+                // a list of contexts for every cart line. We force a ToList() there to
+                // force enumerating, so we have the actual objects rather than a reference
+                // to how to get them, because otherwise the wrong references may be passed
+                // around at later steps (basically, the providers would change the 
+                // IsApplicable for an object, then a fresh one would be checked of the
+                // flag's value).
+                var lineContexts = context.ContextsForLines().ToList();
+                foreach (var lineApplicabilityContext in lineContexts) {
+                    foreach (var criterion in context.Coupon.LineCriteria) {
+                        var descriptor = GetLineCriterion(criterion.Category, criterion.Type);
+                        // descriptor should exist and be enabled
+                        if (descriptor == null || !descriptor.IsAvailableForProcessing) {
+                            continue;
+                        }
+
                         var tokenizedState = _tokenizer.Replace(criterion.State, tokens);
                         var lineCriterionContext = new CouponLineCriterionContext {
                             IsApplicable = lineApplicabilityContext.IsApplicable,
@@ -144,12 +145,17 @@ namespace Nwazet.Commerce.Services.Couponing {
                             CouponRecord = lineApplicabilityContext.Coupon
                         };
                         descriptor.Criterion(lineCriterionContext);
+                        // break as soon as we know this line is not ok for the coupon
+                        if (!lineCriterionContext.IsApplicable) {
+                            context.Message = descriptor.FailureMessage(context);
+                            // go to test next line
+                            break;
+                        }
                     }
-                    // If the criterion fails for all lines, break out
-                    if (!lineContexts.Any(lctx => lctx.IsApplicable)) {
-                        context.IsApplicable = false;
-                        context.Message = descriptor.FailureMessage(context);
-                    }
+                }
+                // If the criterion fails for all lines, break out
+                if (!lineContexts.Any(lctx => lctx.IsApplicable)) {
+                    context.IsApplicable = false;
                 }
             }
             if (!context.IsApplicable && context.ShouldNotify) {

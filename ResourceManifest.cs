@@ -14,9 +14,9 @@ namespace Nwazet.Commerce {
             manifest.DefineScript("Nwazet.iframe-transport")
                 .SetUrl("jquery.iframe-transport.min.js","jquery.iframe-transport.js").SetDependencies("jQuery"); //Duplicated: should we use Orchard.Resources version?
             manifest.DefineScript("Nwazet.ShoppingCart")
-                .SetUrl("shoppingcart.min.js?v=1.1", "shoppingcart.js?v=1.1").SetDependencies("jQuery");
+                .SetUrl("shoppingcart.min.js?v=1.2", "shoppingcart.js?v=1.2").SetDependencies("jQuery");
             manifest.DefineScript("Nwazet.CartSpinner")
-                .SetUrl("cartspinner.min.js?v=1.0", "cartspinner.js?v=1.0").SetDependencies("jQuery");
+                .SetUrl("cartspinner.min.js?v=1.2", "cartspinner.js?v=1.2").SetDependencies("jQuery");
             manifest.DefineScript("Nwazet.AttributeExtensions")
                 .SetUrl("attribute-extensions.min.js", "attribute-extensions.js");
 
@@ -40,8 +40,9 @@ namespace Nwazet.Commerce {
             manifest.DefineStyle("Nwazet.Report-Admin").SetUrl("reports-admin.min.css", "reports-admin.css");
             manifest.DefineStyle("Nwazet.Territory-Hierarchies-Admin").SetUrl("territory-hierarchies-admin.min.css", "territory-hierarchies-admin.css");
             manifest.DefineStyle("Nwazet.WishLists").SetUrl("wishlists.nwazet-commerce.min.css", "wishlists.nwazet-commerce.css");
-
-
+            
+            manifest.DefineScript("Nwazet.ProductAvailability")
+                .SetUrl("productsunavailable.min.js?v=1.0", "productsunavailable.js?v=1.0").SetDependencies("jQuery");
         }
     }
 }
