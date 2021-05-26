@@ -129,6 +129,10 @@ msgid "The coupon's value/amount."
 msgstr "Il valore del coupon."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
+msgid "The coupon's value/amount. The decimal separator is '{0}'"
+msgstr "Il valore/ammontare del coupon. Il separatore dei decimali è '{0}'"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
 msgid "The value type affects the meaning given to the value."
 msgstr "Il tipo del valore determina il significato del valore inserito."
 
@@ -3785,6 +3789,10 @@ msgid "Not authorized to manage product attributes"
 msgstr "Non autorizzato a gestire gli attributi di prodotto"
 
 msgctxt "Nwazet.Commerce.Controllers.CouponingAdminController"
+msgid "{0} is an invalid number"
+msgstr "{0} non è un numero valido"
+
+msgctxt "Nwazet.Commerce.Controllers.CouponingAdminController"
 msgid "The coupon has been created."
 msgstr "Il coupon è stato creato."
 
@@ -4003,6 +4011,10 @@ msgstr "{0} {1} è stato aggiunto al carrello."
 msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
 msgid "{0} {1} have been added to cart."
 msgstr "{0} {1} sono stati aggiunti al carrello."
+
+msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
+msgid "Impossible to add {0} to cart."
+msgstr "Impossibile aggiungere {0} al carrello."
 
 msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
 msgid "Quantity decreased to match inventory for {0}."
