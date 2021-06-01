@@ -88,7 +88,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                 switch (coupon.CouponType) {
                     case CouponType.Percent:
                         var subtotal = shoppingCart.Subtotal();
-                        return (coupon.Value / 100m) 
+                        return -(coupon.Value / 100m) 
                             * (subtotal + (previousAmounts?.Sum(cpaa => cpaa.Amount) ?? 0.0m));
                     case CouponType.Amount:
                         // The total amount for the cart is the result of adding up the amounts 
