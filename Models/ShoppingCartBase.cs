@@ -74,6 +74,7 @@ namespace Nwazet.Commerce.Models {
             get { return _cartStorage
                     .PriceAlterations
                     .Where(cpa => _cartPriceAlterationProcessors.Any(p => p.CanProcess(cpa)))
+                    .OrderByDescending(cpa => cpa.Weight)
                     .ToList(); }
             set { _cartStorage.PriceAlterations = value
                     // only keep the alterations that can be processed
@@ -82,36 +83,27 @@ namespace Nwazet.Commerce.Models {
         }
         public IEnumerable<CartPriceAlterationAmount> PriceAlterationAmounts {
             get {
-                return PriceAlterations
-                    .SelectMany(cpa => {
-                        // get processors that are able to process the alteration
-                        var processors = _cartPriceAlterationProcessors
-                            .Where(p => p.CanProcess(cpa));
-                        if (processors != null && processors.Any()) {
-                            return processors.Select(cpac => 
-                                new CartPriceAlterationAmount() {
-                                    Label = cpac.AlterationLabel(cpa, this),
-                                    Amount = cpac.AlterationAmount(cpa, this),
-                                    AlterationType = cpa.AlterationType,
-                                    Key = cpa.Key,
-                                    Weight = cpa.Weight,
-                                    RemovalAction = cpa.RemovalAction
-                                });
-                        }
-                        //var processor = _cartPriceAlterationProcessors.FirstOrDefault(p => p.CanProcess(cpa, this));
-                        //if (processor != null) {
-                        //    return new CartPriceAlterationAmount() {
-                        //        Label = processor.AlterationLabel(cpa, this),
-                        //        Amount = processor.AlterationAmount(cpa, this),
-                        //        AlterationType = cpa.AlterationType,
-                        //        Key = cpa.Key,
-                        //        Weight = cpa.Weight,
-                        //        RemovalAction = cpa.RemovalAction
-                        //    };
-                        //}
-                        return Enumerable.Empty<CartPriceAlterationAmount>();
-                    })
-                    .Where(vm => vm != null);
+                // Each alteration may affect the computation for the next.
+                // PriceAlterations is already ordered by descending Weight.
+                var amounts = new List<CartPriceAlterationAmount>();
+                var previousAlterations = new List<CartPriceAlteration>();
+                foreach (var alteration in PriceAlterations) {
+                    // get processors that are able to process the alteration
+                    var processors = _cartPriceAlterationProcessors
+                        .Where(p => p.CanProcess(alteration));
+                    // process them one by one 
+                    foreach (var processor in processors) {
+                        amounts.Add(new CartPriceAlterationAmount() {
+                            Label = processor.AlterationLabel(alteration, this),
+                            Amount = processor.AlterationAmount(alteration, this, amounts),
+                            AlterationType = alteration.AlterationType,
+                            Key = alteration.Key,
+                            Weight = alteration.Weight,
+                            RemovalAction = alteration.RemovalAction
+                        });
+                    }
+                }
+                return amounts;
             }
         }
 

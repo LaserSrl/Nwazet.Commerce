@@ -89,5 +89,13 @@ namespace Nwazet.Commerce.Migrations {
 
             return 5;
         }
+
+        public int UpdateFrom5() {
+
+            SchemaBuilder.AlterTable("CouponRecord", table =>
+                table.AddColumn<int>("Priority"));
+
+            return 6;
+        }
     }
 }

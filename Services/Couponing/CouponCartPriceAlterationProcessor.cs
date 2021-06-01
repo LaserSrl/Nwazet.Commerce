@@ -4,6 +4,7 @@ using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Models.Couponing;
 using Nwazet.Commerce.Services.Couponing;
+using Nwazet.Commerce.ViewModels;
 using Orchard;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
@@ -75,20 +76,23 @@ namespace Nwazet.Commerce.Services.Couponing {
         }
 
         public decimal AlterationAmount(
-            CartPriceAlteration alteration, IShoppingCart shoppingCart,
-            // force line computationeven if coupon would not apply
-            bool force = false) {
+            CartPriceAlteration alteration, 
+            IShoppingCart shoppingCart,
+            IEnumerable<CartPriceAlterationAmount> previousAmounts = null) {
             // The values returned by this method are "after VAT".
             // should this provider process the given CartPriceAlteration?
-            if (force || CanProcess(alteration, shoppingCart)) {
+            if (CanProcess(alteration, shoppingCart)) {
                 // get the coupon corresponding to the alteration
                 var coupon = GetCouponFromCode(alteration.Key);
                 // Do the computation
                 switch (coupon.CouponType) {
-                    // The total amount for the cart is the result of adding up the amounts 
-                    // for each line.
                     case CouponType.Percent:
+                        var subtotal = shoppingCart.Subtotal();
+                        return (coupon.Value / 100m) 
+                            * (subtotal + (previousAmounts?.Sum(cpaa => cpaa.Amount) ?? 0.0m));
                     case CouponType.Amount:
+                        // The total amount for the cart is the result of adding up the amounts 
+                        // for each line.
                         return shoppingCart.GetProducts()
                             .Sum(cartLine => {
                                 var discount = AlterationAmount(alteration, shoppingCart, cartLine);
@@ -97,6 +101,8 @@ namespace Nwazet.Commerce.Services.Couponing {
                                     .GetPrice(cartLine.Product, discount, shoppingCart.Country, shoppingCart.ZipCode);
                             });
                     case CouponType.CartAmount:
+                        // for CartAmount type coupons, the total for the cart is already
+                        // part of its definition.
                         // this is after VAT
                         return -coupon.Value;
                     default:
@@ -108,7 +114,7 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         public decimal AlterationAmount(
             CartPriceAlteration alteration, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine,
-            // force line computationeven if coupon would not apply
+            // force line computation even if coupon would not apply
             bool force = false) {
             // The amounts returned by this method are "before VAT"
             if (force || CanProcess(alteration, shoppingCart, cartLine)) {
