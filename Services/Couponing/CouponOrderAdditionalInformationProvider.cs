@@ -80,40 +80,48 @@ namespace Nwazet.Commerce.Services.Couponing {
                             var xCoupon = coupon.ToXMLElement();
                             // the coupon itself will also be in the AdditionalElements property of the order
                             yield return xCoupon;
+
+                            //  - What products of the cart, if any, does the coupon affect?
+                            // List the ids if all affected products. This may contain no ids in case
+                            // the coupon is of specific "types", e.g. when it's a coupon for free shipping.
+                            //  - For each of the products the coupon affects, what is the "value"
+                            // it affects it by?
+                            // This should be the "line value". Basically, how the coupon affects the whole
+                            // line of the order. A simple example:
+                            // Product with id 42; it's price is 50€. The coupon is a 10% discount on it.
+                            // If the quantity for product42 is 1, the coupon value for the line is 5€;
+                            // If the quantity for product42 is higher, the coupon value for the line is 5€ * quantity.
+                            // This may not always be the case. For example, a coupon may give a single free
+                            // product42 if at least 5 are being payed. In that case, whenever quantity is 
+                            // >5 the value of the coupon for the line will be 50€. Perhaps we should also
+                            // add the fact that we are adding to the quantity?
+
+                            // avoid potentially recomputing lines for each processor
+                            var productLines = cart.GetProducts();
                             if (coupon.CouponType == CouponType.CartAmount) {
-                                // TODO: do this, paying attention to taxable amounts and VAT
-                                var values = processors
-                                    .Select(p => new OrderInformationDetail {
-                                        Label = p.AlterationLabel(alteration, cart),
-                                        Value = p.AlterationAmount(alteration, cart),
-                                        Description = coupon.ToString(),
-                                        ValueType = OrderValueType.Currency,
-                                        InformationType = OrderInformationType.CartPrice,
-                                        ProcessorClass = p.GetType().FullName
-                                    });
-                                if (values.Any()) {
-                                    yield return new OrderAdditionalInformation() {
-                                        Source = xCoupon,
-                                        Details = values
-                                    }.ToXML();
+                                // spread VAT "effect" on each line
+                                foreach (var productLine in productLines) {
+                                    var values = processors
+                                        .Select(p => new OrderInformationDetail {
+                                            Label = p.AlterationLabel(alteration, cart, productLine),
+                                            // force computing a value on all lines
+                                            Value = p.AlterationAmount(alteration, cart, productLine, true),
+                                            ValueType = OrderValueType.Currency,
+                                            InformationType = OrderInformationType.RawLinePrice,
+                                            ProcessorClass = p.GetType().FullName
+                                        })
+                                        .Where(o => !string.IsNullOrWhiteSpace(o.Label));
+                                    if (values.Any()) {
+                                        var orderLinealteration = new OrderLineInformation() {
+                                            ProductId = productLine.Product.Id,
+                                            LineKey = productLine.GenerateUniqueKey(),
+                                            Details = values,
+                                            Source = xCoupon
+                                        };
+                                        yield return orderLinealteration.ToXML();
+                                    }
                                 }
                             } else {
-                                // avoid potentially recomputing lines for each processor
-                                var productLines = cart.GetProducts();
-                                //  - What products of the cart, if any, does the coupon affect?
-                                // List the ids if all affected products. This may contain no ids in case
-                                // the coupon is of specific "types", e.g. when it's a coupon for free shipping.
-                                //  - For each of the products the coupon affects, what is the "value"
-                                // it affects it by?
-                                // This should be the "line value". Basically, how the coupon affects the whole
-                                // line of the order. A simple example:
-                                // Product with id 42; it's price is 50€. The coupon is a 10% discount on it.
-                                // If the quantity for product42 is 1, the coupon value for the line is 5€;
-                                // If the quantity for product42 is higher, the coupon value for the line is 5€ * quantity.
-                                // This may not always be the case. For example, a coupon may give a single free
-                                // product42 if at least 5 are being payed. In that case, whenever quantity is 
-                                // >5 the value of the coupon for the line will be 50€. Perhaps we should also
-                                // add the fact that we are adding to the quantity?
                                 foreach (var productLine in productLines) {
                                     var values = processors
                                         .Select(p => new OrderInformationDetail {
@@ -176,45 +184,6 @@ namespace Nwazet.Commerce.Services.Couponing {
                             // the coupon itself will also be in the AdditionalElements property of the order
                             yield return xCoupon;
                         }
-                        // we need to also return the XElement that will be used in frontend to
-                        // report to the customer that they have used the coupon
-
-                        //// we need to add to this XElement all the "dynamic" results of having 
-                        //// the coupon in the current context.
-                        //if (processors.Any()) {
-                            
-                        //    //  - By what "value" does the coupon affect the cart as a whole?
-                        //    var cartValues = processors
-                        //        .Select(p => new {
-                        //            Label = p.AlterationLabel(alteration, cart),
-                        //            Value = p.AlterationAmount(alteration, cart),
-                        //            AlterationType = p.AlterationType,
-                        //            ProcessorClass = p.GetType().FullName
-                        //        })
-                        //        .Where(o => o.Value != 0.0m);
-                        //    if (cartValues.Any()) {
-                        //        // there are values affected by the coupon. We add XML like this:
-                        //        // <CartAlteration">
-                        //        //   <AlterationDetali 
-                        //        //     Label ="{Label computed}" 
-                        //        //     Value ="{alteration amount}"
-                        //        //     AlterationType = "Coupon" 
-                        //        //     ProcessorClass = "{name of the C# class for the processor}" />
-                        //        // </CartAlteration>
-                        //        // For each line in the order there may be one LineAlteration element, containing
-                        //        // one AlterationDetail element for each processor that gave results for
-                        //        // the coupon.
-                        //        xCoupon
-                        //            .AddEl(new XElement("CartAlteration",
-                        //                cartValues.Select(v =>
-                        //                    new XElement("AlterationDetail")
-                        //                        .Attr("Label", v.Label)
-                        //                        .Attr("Value", v.Value)
-                        //                        .Attr("AlterationType", v.AlterationType)
-                        //                        .Attr("ProcessorClass", v.ProcessorClass))));
-                        //    }
-                        //}
-                        //yield return xCoupon;
                     }
                 }
             }

@@ -18,7 +18,7 @@ namespace Nwazet.Commerce.Services {
         /// <returns>Returns the amount by which the price should change 
         /// (i.e. not a percentage). This amount is already affected by VAT
         /// (meaning it includes VAT).</returns>
-        decimal AlterationAmount(CartPriceAlteration alteration, IShoppingCart shoppingCart);
+        decimal AlterationAmount(CartPriceAlteration alteration, IShoppingCart shoppingCart, bool force = false);
         /// <summary>
         /// 
         /// </summary>
@@ -32,7 +32,7 @@ namespace Nwazet.Commerce.Services {
         /// <param name="alteration"></param>
         /// <returns>Returns the amount by which the price should change 
         /// (i.e. not a percentage). This amount is before VAT is applied.</returns>
-        decimal AlterationAmount(CartPriceAlteration alteration, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine);
+        decimal AlterationAmount(CartPriceAlteration alteration, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine, bool force = false);
         /// <summary>
         /// 
         /// </summary>
