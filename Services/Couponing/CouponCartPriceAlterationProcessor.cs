@@ -146,7 +146,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                         // flat coupon on the cart? We need to "spread" its VAT contribution.
                         // Note that this method, for such coupon, is not called when computing
                         // the amount by which the coupon affects the whole cart.
-                        return CartAmountOnLine(coupon, shoppingCart, cartLine);
+                        return CartAmountOnLine(coupon, shoppingCart, cartLine, previousAmounts);
                     default:
                         return 0.0m;
                 }
@@ -160,7 +160,8 @@ namespace Nwazet.Commerce.Services.Couponing {
         /// </summary>
         /// <returns></returns>
         private decimal CartAmountOnLine(
-            CouponRecord coupon, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine) {
+            CouponRecord coupon, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine,
+            IEnumerable<CartPriceAlterationAmount> previousAmounts) {
             // A coupon of this type has its VAT "effect" spread over each line
             // proportionally to the line total over the cart's subtotal
 
@@ -173,7 +174,8 @@ namespace Nwazet.Commerce.Services.Couponing {
                 _productPriceService.GetPrice(
                         cartLine.Product, cartLine.Price,
                         shoppingCart.Country, shoppingCart.ZipCode)
-                * cartLine.Quantity + cartLine.LinePriceAdjustment, 2);
+                * cartLine.Quantity + cartLine.LinePriceAdjustment
+                + (previousAmounts?.Sum(cpaa => cpaa.Amount) ?? 0.0m), 2);
             // cart products subtotal
             var cartSubtotal = shoppingCart.Subtotal();
             // coupon value spread on this line (after VAT):
