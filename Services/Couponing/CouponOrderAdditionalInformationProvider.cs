@@ -1,6 +1,7 @@
 ﻿using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Models.Couponing;
+using Nwazet.Commerce.ViewModels;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using System;
@@ -54,10 +55,22 @@ namespace Nwazet.Commerce.Services.Couponing {
         public override IEnumerable<XElement> PrepareAdditionalInformation(OrderContext context) {
             var cart = context.ShoppingCart;
             var couponAlterations = cart
+                // PriceAlterations is already ordered by descending Weight.
                 ?.PriceAlterations
                 ?.Where(pa => CouponingUtilities.CouponAlterationType
                     .Equals(pa.AlterationType));
             if (couponAlterations != null) {
+                // avoid potentially recomputing lines for each processor
+                var productLines = cart.GetProducts();
+                // Each alteration may affect the computation for the next.
+                // For each line, we are going to store the "effects" of already computed
+                // coupons.
+                var previousLineAlterations = new Dictionary<string, List<CartPriceAlterationAmount>>();
+                foreach (var pLine in productLines) {
+                    // initialize dictionar so we don't have to check that the list exists when we
+                    // actually use it.
+                    previousLineAlterations.Add(pLine.GenerateUniqueKey(), new List<CartPriceAlterationAmount>());
+                }
                 foreach (var alteration in couponAlterations) {
                     // each element we create here will need to contain sufficient information
                     // for us to completely recompute everything about this coupon later when
@@ -96,56 +109,45 @@ namespace Nwazet.Commerce.Services.Couponing {
                             // >5 the value of the coupon for the line will be 50€. Perhaps we should also
                             // add the fact that we are adding to the quantity?
 
-                            // avoid potentially recomputing lines for each processor
-                            var productLines = cart.GetProducts();
-                            if (coupon.CouponType == CouponType.CartAmount) {
-                                // spread VAT "effect" on each line
-                                foreach (var productLine in productLines) {
-                                    var values = processors
-                                        .Select(p => new OrderInformationDetail {
-                                            Label = p.AlterationLabel(alteration, cart, productLine),
-                                            // force computing a value on all lines
-                                            Value = p.AlterationAmount(alteration, cart, productLine, true),
-                                            ValueType = OrderValueType.Currency,
-                                            InformationType = OrderInformationType.RawLinePrice,
-                                            ProcessorClass = p.GetType().FullName
-                                        })
-                                        .Where(o => !string.IsNullOrWhiteSpace(o.Label));
-                                    if (values.Any()) {
-                                        var orderLinealteration = new OrderLineInformation() {
-                                            ProductId = productLine.Product.Id,
-                                            LineKey = productLine.GenerateUniqueKey(),
-                                            Details = values,
-                                            Source = xCoupon
-                                        };
-                                        yield return orderLinealteration.ToXML();
-                                    }
+                            foreach (var productLine in productLines) {
+                                var lineKey = productLine.GenerateUniqueKey();
+                                var lineValues = new List<OrderInformationDetail>();
+                                foreach (var processor in processors) {
+                                    var lineLabel = processor.AlterationLabel(alteration, cart, productLine);
+                                    var lineAmount = processor.AlterationAmount(alteration, cart, productLine,
+                                        previousLineAlterations[lineKey], 
+                                        // for coupons of type CartAmount, we need to enforce doing the computations
+                                        // also for lines the coupon would normally not apply to.
+                                        coupon.CouponType == CouponType.CartAmount);
+                                    // add "new" result to list
+                                    previousLineAlterations[lineKey].Add(new CartPriceAlterationAmount() {
+                                        Amount = lineAmount,
+                                        // we probably don't even need this next few properties for any
+                                        // computation here
+                                        Label = lineLabel,
+                                        AlterationType = alteration.AlterationType,
+                                        Key = alteration.Key,
+                                        Weight = alteration.Weight,
+                                        RemovalAction = alteration.RemovalAction
+                                    });
+                                    // add "new" results to list that will be in order XML
+                                    lineValues.Add(new OrderInformationDetail() {
+                                        Label = lineLabel,
+                                        Value = lineAmount,
+                                        ValueType = OrderValueType.Currency,
+                                        InformationType = OrderInformationType.RawLinePrice,
+                                        ProcessorClass = processor.GetType().FullName
+                                    });
                                 }
-                            } else {
-                                foreach (var productLine in productLines) {
-                                    var values = processors
-                                        .Select(p => new OrderInformationDetail {
-                                            Label = p.AlterationLabel(alteration, cart, productLine),
-                                            Value = p.AlterationAmount(alteration, cart, productLine),
-                                            ValueType = OrderValueType.Currency,
-                                            InformationType = OrderInformationType.RawLinePrice,
-                                            ProcessorClass = p.GetType().FullName
-                                        })
-                                        .Where(o => !string.IsNullOrWhiteSpace(o.Label));
-                                    if (values.Any()) {
-                                        var orderLinealteration = new OrderLineInformation() {
-                                            ProductId = productLine.Product.Id,
-                                            LineKey = productLine.GenerateUniqueKey(),
-                                            Details = values,
-                                            Source = xCoupon
-                                        };
-                                        yield return orderLinealteration.ToXML();
-                                    }
+                                if (lineValues.Any()) {
+                                    var orderLinealteration = new OrderLineInformation() {
+                                        ProductId = productLine.Product.Id,
+                                        LineKey = productLine.GenerateUniqueKey(),
+                                        Details = lineValues,
+                                        Source = xCoupon
+                                    };
+                                    yield return orderLinealteration.ToXML();
                                 }
-                                //  - By what "value" does the coupon affect the cart as a whole?
-                                // A coupon set as a % amount is applied, for the order, on each line, rather than
-                                // on the whole cart, so it will not introduce an additional element here. On the other
-                                // hand, a coupon for a flat amount (e.g. "-10€") would be here.
                             }
                             
                             // "summary" element for backend

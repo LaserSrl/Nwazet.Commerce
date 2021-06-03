@@ -42,7 +42,8 @@ namespace Nwazet.Commerce.Services {
         decimal AlterationAmount(
             CartPriceAlteration alteration, 
             IShoppingCart shoppingCart, 
-            ShoppingCartQuantityProduct cartLine, 
+            ShoppingCartQuantityProduct cartLine,
+            IEnumerable<CartPriceAlterationAmount> previousAmounts = null, 
             bool force = false);
 
         /// <summary>

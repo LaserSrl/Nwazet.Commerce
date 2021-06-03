@@ -114,6 +114,7 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         public decimal AlterationAmount(
             CartPriceAlteration alteration, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine,
+            IEnumerable<CartPriceAlterationAmount> previousAmounts = null,
             // force line computation even if coupon would not apply
             bool force = false) {
             // The amounts returned by this method are "before VAT"
@@ -129,7 +130,8 @@ namespace Nwazet.Commerce.Services.Couponing {
                             ? cartLine.Product.DiscountPrice
                             : cartLine.Product.Price;
                         var linePrice = Math.Round(itemPrice * quantity, 2)
-                            + cartLine.LinePriceAdjustment;
+                            + cartLine.LinePriceAdjustment
+                            + (previousAmounts?.Sum(cpaa => cpaa.Amount) ?? 0.0m);
                         return -linePrice * (coupon.Value / 100m);
                     case CouponType.Amount:
                         // Fixed amount discount for each single item. Compute it here before VAT.

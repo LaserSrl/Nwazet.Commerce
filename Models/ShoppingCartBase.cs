@@ -86,7 +86,6 @@ namespace Nwazet.Commerce.Models {
                 // Each alteration may affect the computation for the next.
                 // PriceAlterations is already ordered by descending Weight.
                 var amounts = new List<CartPriceAlterationAmount>();
-                var previousAlterations = new List<CartPriceAlteration>();
                 foreach (var alteration in PriceAlterations) {
                     // get processors that are able to process the alteration
                     var processors = _cartPriceAlterationProcessors
