@@ -333,7 +333,7 @@ namespace Nwazet.Commerce.Services.Couponing {
         }
 
         private void Apply(CouponApplicabilityContext context) {
-            //TODO
+
             // based on the coupon, we add a CartPriceAlteration to the shoppingCart
             // this object will be used in computing the total cart price by the 
             // implementation of ICartPriceAlterationProcessor for coupons.
@@ -343,7 +343,9 @@ namespace Nwazet.Commerce.Services.Couponing {
                 new CartPriceAlteration {
                     AlterationType = CouponingUtilities.CouponAlterationType,
                     Key = context.Coupon.Code,
-                    Weight = 1,
+                    // Higher priority coupons go first. Coupons with the same priority go based
+                    // on their value type: CartAmount > Amount > Percent
+                    Weight = context.Coupon.Priority * 100 + ((int)context.Coupon.CouponType),
                     RemovalAction = GetRemoveActionUrl(context.Coupon.Code)
                 }
             };
