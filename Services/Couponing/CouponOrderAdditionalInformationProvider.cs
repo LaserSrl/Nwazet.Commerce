@@ -71,10 +71,11 @@ namespace Nwazet.Commerce.Services.Couponing {
                 // coupons.
                 var previousLineAlterations = new Dictionary<string, List<CartPriceAlterationAmount>>();
                 foreach (var pLine in productLines) {
-                    // initialize dictionar so we don't have to check that the list exists when we
+                    // initialize dictionary so we don't have to check that the list exists when we
                     // actually use it.
                     previousLineAlterations.Add(pLine.GenerateUniqueKey(), new List<CartPriceAlterationAmount>());
                 }
+                var previousSummaryAlterations = new List<CartPriceAlterationAmount>();
                 foreach (var alteration in couponAlterations) {
                     // each element we create here will need to contain sufficient information
                     // for us to completely recompute everything about this coupon later when
@@ -153,33 +154,55 @@ namespace Nwazet.Commerce.Services.Couponing {
                                     yield return orderLinealteration.ToXML();
                                 }
                             }
-                            
+
+                            var feDetails = new List<OrderInformationDetail>();
+                            var beDetails = new List<OrderInformationDetail>();
+                            foreach (var processor in processors) {
+                                var cartLabel = processor.AlterationLabel(alteration, cart);
+                                var cartAmount = processor.AlterationAmount(alteration, cart, previousSummaryAlterations);
+                                var processorClass = processor.GetType().FullName;
+                                // add "new" results to lists
+                                previousSummaryAlterations.Add(new CartPriceAlterationAmount() {
+                                    Amount = cartAmount,
+                                    // we probably don't even need this next few properties for any
+                                    // computation here
+                                    Label = cartLabel,
+                                    AlterationType = alteration.AlterationType,
+                                    Key = alteration.Key,
+                                    Weight = alteration.Weight,
+                                    RemovalAction = alteration.RemovalAction
+                                });
+                                feDetails.Add(new OrderInformationDetail {
+                                    Label = cartLabel,
+                                    Value = cartAmount,
+                                    Description = coupon.ToString(),
+                                    ValueType = OrderValueType.Currency,
+                                    InformationType = OrderInformationType.TextInfo,
+                                    ProcessorClass = processorClass
+                                });
+                                beDetails.Add(new OrderInformationDetail {
+                                    Label = cartLabel,
+                                    Value = cartAmount,
+                                    Description = coupon.ToString(),
+                                    ValueType = OrderValueType.Currency,
+                                    InformationType = OrderInformationType.FrontEndInfo,
+                                    ProcessorClass = processorClass
+                                });
+                            }
                             // "summary" element for backend
-                            yield return new OrderAdditionalInformation() {
-                                Source = xCoupon,
-                                Details = processors.Select(p =>
-                                    new OrderInformationDetail {
-                                        Label = p.AlterationLabel(alteration, cart),
-                                        Value = p.AlterationAmount(alteration, cart),
-                                        Description = coupon.ToString(),
-                                        ValueType = OrderValueType.Currency,
-                                        InformationType = OrderInformationType.TextInfo,
-                                        ProcessorClass = p.GetType().FullName
-                                    })
-                            }.ToXML();
+                            if (beDetails != null && beDetails.Any()) {
+                                yield return new OrderAdditionalInformation() {
+                                    Source = xCoupon,
+                                    Details = beDetails
+                                }.ToXML();
+                            }
                             // "summary" element for frontend
-                            yield return new OrderAdditionalInformation() {
-                                Source = xCoupon,
-                                Details = processors.Select(p =>
-                                    new OrderInformationDetail {
-                                        Label = p.AlterationLabel(alteration, cart),
-                                        Value = p.AlterationAmount(alteration, cart),
-                                        Description = coupon.ToString(),
-                                        ValueType = OrderValueType.Currency,
-                                        InformationType = OrderInformationType.FrontEndInfo,
-                                        ProcessorClass = p.GetType().FullName
-                                    })
-                            }.ToXML();
+                            if (feDetails != null && feDetails.Any()) {
+                                yield return new OrderAdditionalInformation() {
+                                    Source = xCoupon,
+                                    Details = feDetails
+                                }.ToXML();
+                            }
                         } else {
                             // This coupon had no effect on the cart/order. Perhaps the user
                             // added it and then changed something in the context such that the
