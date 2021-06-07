@@ -45,6 +45,7 @@ namespace Nwazet.Commerce.Extensions {
                 Id = record.Id,
                 Name = record.Name,
                 Code = record.Code,
+                Priority = record.Priority,
                 Value = Convert.ToString(record.Value, cultureInfo),
                 CouponType = record.CouponType,
                 Published = record.Published,
@@ -60,6 +61,7 @@ namespace Nwazet.Commerce.Extensions {
             }
             record.Name = coupon.Name;
             record.Code = coupon.Code;
+            record.Priority = coupon.Priority;
             record.CouponType = coupon.CouponType;
             record.Published = coupon.Published;
         }
@@ -84,6 +86,7 @@ namespace Nwazet.Commerce.Extensions {
                 // definition
                 .ToAttr(c => c.Name)
                 .ToAttr(c => c.Code)
+                .ToAttr(c => c.Priority)
                 // conditions
                 .ToAttr(c => c.Published)
                 // should also serialize
