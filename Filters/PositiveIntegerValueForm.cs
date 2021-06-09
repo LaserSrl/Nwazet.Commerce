@@ -14,10 +14,13 @@ namespace Nwazet.Commerce.Filters {
 
         protected dynamic Shape { get; set; }
         public Localizer T { get; set; }
-
+        protected LocalizedString _valueLabel { get; set; }
+        protected string _formName { get; set; }
         public PositiveIntegerValueForm(IShapeFactory shapeFactory) {
             Shape = shapeFactory;
             T = NullLocalizer.Instance;
+            _valueLabel = T("Enter the value.");
+            _formName = FormName;
         }
 
         public void Describe(DescribeContext context) {
@@ -29,13 +32,13 @@ namespace Nwazet.Commerce.Filters {
                             Id: "value", Name: "Value",
                             Title: T("Value"),
                             Classes: new[] { "text medium", "tokenized" },
-                            Description: T("Enter the value."))
+                            Description: _valueLabel)
                         );
                     
                     return f;
                 };
 
-            context.Form(FormName, form);
+            context.Form(_formName, form);
         }
 
         public static int ParseStateValue(string sValue) {
@@ -46,6 +49,18 @@ namespace Nwazet.Commerce.Filters {
             return -1;
         }
     }
+
+    public class MaxPositiveIntegerValueForm : PositiveIntegerValueForm {
+        new public const string FormName = "MaxPositiveIntegerValueForm";
+
+        public MaxPositiveIntegerValueForm(IShapeFactory shapeFactory)
+            : base(shapeFactory) {
+
+            _valueLabel = T("Enter the maximum value.");
+            _formName = FormName;
+        }
+    }
+
     public class PositiveIntegerValueFormValidator : IFormEventHandler {
 
         public Localizer T { get; set; }
@@ -55,7 +70,8 @@ namespace Nwazet.Commerce.Filters {
         }
 
         public void Validating(ValidatingContext context) {
-            if (context.FormName != PositiveIntegerValueForm.FormName) {
+            if (context.FormName != PositiveIntegerValueForm.FormName
+                && context.FormName != MaxPositiveIntegerValueForm.FormName) {
                 return;
             }
 
