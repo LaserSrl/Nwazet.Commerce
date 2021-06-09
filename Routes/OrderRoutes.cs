@@ -41,6 +41,20 @@ namespace Nwazet.Commerce.Routes {
                             {"area", "Nwazet.Commerce"}
                         },
                         new MvcRouteHandler())
+                },
+                new RouteDescriptor {
+                    Route = new Route(
+                        "OrderHistory",
+                        new RouteValueDictionary {
+                            {"area", "Nwazet.Commerce"},
+                            {"controller", "OrderSsl"},
+                            {"action", "OrderHistory"}
+                        },
+                        new RouteValueDictionary(),
+                        new RouteValueDictionary {
+                            {"area", "Nwazet.Commerce"}
+                        },
+                        new MvcRouteHandler())
                 }
             };
         }
