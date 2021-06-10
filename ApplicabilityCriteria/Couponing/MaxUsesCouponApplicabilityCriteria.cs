@@ -53,7 +53,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     (ctx) => ApplyCriterion(ctx),
                     (ctx) => T("The coupon has been used fewer than '{0}' times", (int)ctx.State.Value),
                     isAvailableForConfiguration, isAvailableForProcessing,
-                    PositiveIntegerValueForm.FormName);
+                    MaxPositiveIntegerValueForm.FormName);
         }
 
         private void ApplyCriterion(
@@ -62,7 +62,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             if (context.IsApplicable) {
                 // get the value we should compare things to
                 var sValue = (string)context.State.Value;
-                var value = PositiveIntegerValueForm.ParseStateValue(sValue);
+                var value = MaxPositiveIntegerValueForm.ParseStateValue(sValue);
                 if (value <= 0) {
                     // misconfiguration
                     context.ApplicabilityContext.Message =
