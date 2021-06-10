@@ -16,6 +16,15 @@
         @Html.TextBoxFor(m => m.Code, new { @class = "form-control text medium", id = Html.FieldIdFor(m => m.Code), aria_describedby = "couponCodeHelp", placeholder = T("Coupon's unique code") })
         <small id="couponCodeHelp" class="form-text text-muted hint">@T("The coupon's code. You may only use alphanumeric characters (letters and digits).")</small>
     </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Priority, T("Priority").Text, new {
+            @for = Html.FieldIdFor(m => m.Priority) })
+        @Html.TextBoxFor(m => m.Priority, new {
+            @class = "form-control text medium", id = Html.FieldIdFor(m => m.Priority), aria_describedby = "couponPriorityHelp", placeholder = T("Coupon's priority") })
+        <small id="couponPriorityHelp" class="form-text text-muted hint">
+            @T("The coupon's priority. This is used to determine the order in which the coupons are processed. Coupons with higher priority are processed first. Coupons with the same priority are ordered based on their Value Type. Valid values for Priority are integers between 0 and 16383.")
+        </small>
+    </div>
     <div class="form-check">
         @Html.CheckBoxFor(m => m.Published, new { id = Html.FieldIdFor(m => m.Published), @class = "form-check-input" })
         @Html.LabelFor(m => m.Published, T("Is published and active").Text, new { @for = Html.FieldIdFor(m => m.Published), @class = "form-check-label forcheckbox" })

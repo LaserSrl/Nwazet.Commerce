@@ -31,6 +31,9 @@ namespace Nwazet.Commerce.ViewModels.Couponing {
         [StringLength(255),Required]
         [RegularExpression(@"[a-zA-Z0-9]{1,255}")]
         public string Code { get; set; } // Actual code for the coupon: e.g. XMAS2020
+
+        [Range(0, 16383)]
+        public int Priority { get; set; }
         #endregion
         #region Conditions
         public bool Published { get; set; }

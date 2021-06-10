@@ -12,6 +12,7 @@
                     <th><input type="checkbox" class="check-all" /></th>
                     <th>@T("Name")</th>
                     <th>@T("Code")</th>
+                    <th>@T("Priority")</th>
                     <th>@T("Value")</th>
                     <th>@T("Status")</th>
                     <th>@T("Actions")</th>
@@ -22,6 +23,7 @@
                     <td><input type="checkbox" value="@cr.Id" name="itemIds" /></td>
                     <td>@cr.Name</td>
                     <td>@cr.Code</td>
+                    <td>@cr.Priority</td>
                     <td>@cr.Value  @cr.CouponType.ToString()</td>
                     <td>@(cr.Published ? T("Published") : T("Unpublished"))</td>
                     <td>
