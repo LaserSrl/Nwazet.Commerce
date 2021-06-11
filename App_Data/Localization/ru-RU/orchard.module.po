@@ -1,0 +1,182 @@
+﻿# Orchard resource strings - ru-RU
+# Copyright (c) 2021 Laser s.r.l.
+
+
+# > #: msgctxt { contesto del messaggio - Originale }
+# > #| msgid { identificativo del messaggio - Originale }
+# > msgctxt  "{ contesto del messaggio }"
+# > msgid "{ identificativo del messaggio }"
+# > msgstr "{ messaggio }"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCartExtension.cshtml"
+msgid "Apply Coupon"
+msgstr "Использовать купон"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingCartExtension.cshtml"
+msgid "Enter Your Coupon Code"
+msgstr "Введите код купона"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "<strong>Total</strong>"
+msgstr "<strong>Итого</strong>"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "Addresses"
+msgstr "Aдреса"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "Back to List"
+msgstr "Вернуться в каталог товаров"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "Charged to:"
+msgstr "Списано с:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "E-mail:"
+msgstr "Адрес электронной почты"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "Phone:"
+msgstr "Телефон"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "Price"
+msgstr "Цена"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "Product"
+msgstr "Продукт"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "Quantity"
+msgstr "Количество"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "Shipping"
+msgstr "Доставка"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "Shipping to:"
+msgstr "Доставка:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "Status"
+msgstr "Статус"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "Thumbnail"
+msgstr "Эскиз"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
+msgid "Total"
+msgstr "Итого"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.cshtml"
+msgid " Add to Cart"
+msgstr "Добавить в корзину"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.cshtml"
+msgid " Add to cart"
+msgstr "Добавить в корзину"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.cshtml"
+msgid "Add to cart"
+msgstr "Добавить в корзину"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.cshtml"
+msgid "Quantity"
+msgstr "Количество"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Parts/Product.cshtml"
+msgid "Tipologia Prodotto"
+msgstr "Тип продукта"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShippingOptions.cshtml"
+msgid "Confirm"
+msgstr "Подтвердить"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShippingOptions.cshtml"
+msgid "Please choose your shipping option"
+msgstr "Пожалуйста, выберите вариант доставки"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
+msgid "Cart"
+msgstr "Корзина"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
+msgid "Cart Totals"
+msgstr "Общий итог корзины"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
+msgid "Price"
+msgstr "Цена"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
+msgid "Product"
+msgstr "Продукт"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
+msgid "Quantity"
+msgstr "Количество"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
+msgid "Remove"
+msgstr "Убрать"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
+msgid "Subtotal:"
+msgstr "Промежуточный итог"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
+msgid "Thumbnail"
+msgstr "Эскиз"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
+msgid "Total"
+msgstr "Итого"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCart.cshtml"
+msgid "Update Cart"
+msgstr "Обновить корзину"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCartWidget.cshtml"
+msgid "Failed to load the cart"
+msgstr "Не удалось загрузить корзину"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShoppingCartWidget.cshtml"
+msgid "Please wait while we restore your shopping cart..."
+msgstr "Пожалуйста, подождите, пока мы восстановим вашу корзину…"
+
+msgctxt "Nwazet.Commerce.Activities.NewPayment"
+msgid "Done"
+msgstr "Готово"
+
+msgctxt "Nwazet.Commerce.Controllers.OrderSslController"
+msgid "User does not have ViewOwnOrders permission"
+msgstr "У пользователя нет разрешения ViewOwnOrders"
+
+msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
+msgid "{0} {1} has been added to cart."
+msgstr "{0} {1} добавлен в корзину."
+
+msgctxt "Nwazet.Commerce.Services.Couponing.CouponApplicationService"
+msgid "Coupon code {0} is not valid"
+msgstr "Купон {0} недействителен"
+
+msgctxt "Nwazet.Commerce.Services.DefaultOrderStatusProvider"
+msgid "Accepted"
+msgstr "Принято"
+
+msgctxt "Nwazet.Commerce.Services.DefaultOrderStatusProvider"
+msgid "Archived"
+msgstr "Архивировано"
+
+msgctxt "Nwazet.Commerce.Services.DefaultOrderStatusProvider"
+msgid "Cancelled"
+msgstr "Отменено"
+
+msgctxt "Nwazet.Commerce.Services.DefaultOrderStatusProvider"
+msgid "Pending"
+msgstr "В ожидании"
+
