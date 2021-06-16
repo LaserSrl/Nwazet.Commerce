@@ -307,6 +307,7 @@
     <Compile Include="ApplicabilityCriteria\Couponing\CartHasProductBySKUCouponLineApplicabilityCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\MaxUsesCouponApplicabilityCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\MaxUsesPerUserCouponApplicabilityCriteria.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\NoNegativePriceCouponApplicabilityCriterion.cs" />
     <Compile Include="ApplicabilityCriteria\NumericCriterionBase.cs" />
     <Compile Include="Aspects\ITerritoryAddressAspect.cs" />
     <Compile Include="Commands\TerritoriesCommands.cs" />
