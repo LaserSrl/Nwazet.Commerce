@@ -1,10 +1,12 @@
 ﻿using Nwazet.Commerce.Extensions;
+using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services.Couponing;
 using Orchard;
 using Orchard.Caching;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
@@ -30,8 +32,10 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
         public override void CanBeAdded(CouponApplicabilityContext context) {
             if (EvaluateCriterion()) {
                 if (context.IsApplicable) {
-                    if (context.ShoppingCart?.PriceAlterations != null
-                        && context.ShoppingCart.PriceAlterations.Any()) {
+                    var coupons = context.ShoppingCart?.PriceAlterations != null ?
+                        context.ShoppingCart.PriceAlterations.Where(c => c.AlterationType == CouponingUtilities.CouponAlterationType) :
+                        new List<CartPriceAlteration>();
+                    if (coupons.Any()) {
                         // coupons are not cumulative
                         context.IsApplicable = false;
                         context.Message = T("Coupons are not cumulative, coupon code {0} cannot be used.", context.Coupon.Code);
@@ -43,8 +47,11 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
         public override void CanBeProcessed(CouponApplicabilityContext context) {
             if (EvaluateCriterion()) {
                 if (context.IsApplicable) {
-                    if (context.ShoppingCart?.PriceAlterations != null
-                        && context.ShoppingCart.PriceAlterations.Count() > 1) {
+                    var coupons = context.ShoppingCart?.PriceAlterations != null ?
+                        context.ShoppingCart.PriceAlterations.Where(c => c.AlterationType == CouponingUtilities.CouponAlterationType) :
+                        new List<CartPriceAlteration>();
+
+                    if (coupons.Count() > 1) {
                         // coupons are not cumulative
                         context.IsApplicable = false;
                         context.Message = T("Coupons are not cumulative, coupon code {0} cannot be used.", context.Coupon.Code);

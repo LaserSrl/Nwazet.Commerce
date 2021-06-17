@@ -1,4 +1,6 @@
 ﻿using Nwazet.Commerce.Descriptors.CouponApplicability;
+using Nwazet.Commerce.Extensions;
+using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services.Couponing;
 using Orchard;
 using Orchard.Caching;
@@ -35,21 +37,28 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                 .Element("Non cumulative State",
                     T("Non cumulative State"),
                     T("If the criteria is present the coupon is not cumulative with other coupons"),
-                    (ctx) => ApplyCriteria(ctx, (b) => b, T("Coupon {0} cannot be cumulated.", ctx.CouponRecord.Code)),
-                    (ctx) => ApplyCriteria(ctx, (b) => b, T("Coupon {0} cannot be cumulated.", ctx.CouponRecord.Code)),
+                    (ctx) => ApplyCriteria(ctx, T("Coupon {0} cannot be cumulated.", ctx.CouponRecord.Code)),
+                    (ctx) => ApplyCriteria(ctx, T("Coupon {0} cannot be cumulated.", ctx.CouponRecord.Code)),
                     (ctx) => T("Non cumulative State"),
                     isAvailableForConfiguration, isAvailableForProcessing,
                     null);
         }
 
         public void ApplyCriteria(CouponApplicabilityCriterionContext context,
-            Func<bool, bool> outerCriterion,
             LocalizedString failureMessage) {
             // Use outerCriterion to negate the test, so we can easily do
             // true/false
             if (context.IsApplicable) {
-                var result = outerCriterion(context.ApplicabilityContext.ShoppingCart?.PriceAlterations != null &&
-                    (!context.ApplicabilityContext.ShoppingCart.PriceAlterations.Any()));
+                var coupons = context.ApplicabilityContext.ShoppingCart?.PriceAlterations != null ?
+                    context.ApplicabilityContext.ShoppingCart.PriceAlterations.Where(c => c.AlterationType == CouponingUtilities.CouponAlterationType) :
+                    new List<CartPriceAlteration>();
+
+                // when the applicability condition must be true
+                // there are no coupons
+                var result = !coupons.Any() ||
+                    // if there is only one coupon and it is me
+                    (coupons.Count()==1 &&
+                    context.ApplicabilityContext.ShoppingCart.PriceAlterations.First().Key == context.CouponRecord.Code);
                 //verify is current coupon
                 if (!result) {
                     context.ApplicabilityContext.Message = failureMessage;
