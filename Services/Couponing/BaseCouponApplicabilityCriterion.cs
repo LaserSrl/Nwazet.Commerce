@@ -66,6 +66,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                         .CurrentSite.As<CouponingSiteSettingPart>();
                     var vm = new CouponingSiteSettingViewModel();
                     vm.ApplicabilityProviders = settingsPart.ApplicabilityProviders.ToList();
+                    vm.BasicApplicabilityProviders = settingsPart.BasicApplicabilityProviders.ToList();
                     vm.LineProviders = settingsPart.LineProviders.ToList();
                     return vm;
                 });

@@ -33,8 +33,8 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ICouponRepositoryService _couponRepositoryService;
         private readonly ITransactionManager _transactionManager;
         private readonly INotifier _notifier;
-        private readonly ICouponApplicationService _couponApplicationService;
         private readonly IWorkContextAccessor _workContextAccessor;
+        private readonly ICouponCriteriaManagementService _couponCriteriaManagementService;
 
         private readonly Lazy<CultureInfo> _cultureInfo;
 
@@ -45,16 +45,16 @@ namespace Nwazet.Commerce.Controllers {
             ICouponRepositoryService couponRepositoryService,
             ITransactionManager transactionManager,
             INotifier notifier,
-            ICouponApplicationService couponApplicationService,
-            IWorkContextAccessor workContextAccessor) {
+            IWorkContextAccessor workContextAccessor,
+            ICouponCriteriaManagementService couponCriteriaManagementService) {
 
             _authorizer = authorizer;
             _siteService = siteService;
             _couponRepositoryService = couponRepositoryService;
             _transactionManager = transactionManager;
             _notifier = notifier;
-            _couponApplicationService = couponApplicationService;
             _workContextAccessor = workContextAccessor;
+            _couponCriteriaManagementService = couponCriteriaManagementService;
 
             _shapeFactory = shapeFactory;
 
@@ -207,7 +207,7 @@ namespace Nwazet.Commerce.Controllers {
                 // "translating" it to the vms.
                 // populate the vm "summaries" for the criteria
                 foreach (var crit in coupon.Record.ApplicabilityCriteria) {
-                    var descriptor = _couponApplicationService
+                    var descriptor = _couponCriteriaManagementService
                         .GetCriterion(crit.Category, crit.Type);
                     if (descriptor != null) {
                         coupon.ApplicabilityCriteria.Add(
@@ -216,7 +216,7 @@ namespace Nwazet.Commerce.Controllers {
                 }
                 // populate the vm "summaries" for the line conditions
                 foreach (var crit in coupon.Record.LineCriteria) {
-                    var descriptor = _couponApplicationService
+                    var descriptor = _couponCriteriaManagementService
                         .GetLineCriterion(crit.Category, crit.Type);
                     if (descriptor != null) {
                         coupon.LineCriteria.Add(
