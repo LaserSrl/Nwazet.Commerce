@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Services.Couponing {
     public interface ICouponApplicationService : IDependency {
         /// <summary>
-        /// Attemtps to add a coupon with a given code to the shopping cart
+        /// Attempts to add a coupon with a given code to the shopping cart
         /// </summary>
         /// <param name="code"></param>
         void ApplyCoupon(CouponApplicabilityContext context);
@@ -23,8 +23,7 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         void ReevaluateValidity(CouponLifeUpdateContext context);
         void CouponUsed(CouponUsedContext context);
-
-        bool CanProcess(CouponApplicabilityContext context);
+        
 
     }
 }

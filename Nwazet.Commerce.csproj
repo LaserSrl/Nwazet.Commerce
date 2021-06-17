@@ -618,6 +618,7 @@
     <Compile Include="Services\CommerceLocalStorageSettings.cs" />
     <Compile Include="Services\Couponing\CouponApplicationService.cs" />
     <Compile Include="Services\Couponing\CouponCartExtensionProvider.cs" />
+    <Compile Include="Services\Couponing\CouponEvaluationService.cs" />
     <Compile Include="Services\Couponing\CouponingRepositoryService.cs" />
     <Compile Include="Services\Couponing\CouponLifeUpdateContext.cs" />
     <Compile Include="Services\Couponing\CouponOrderAdditionalInformationProvider.cs" />
@@ -627,6 +628,7 @@
     <Compile Include="Services\Couponing\ICouponApplicabilityCriterion.cs" />
     <Compile Include="Services\Couponing\ICouponApplicabilityCriterionProvider.cs" />
     <Compile Include="Services\Couponing\ICouponApplicationService.cs" />
+    <Compile Include="Services\Couponing\ICouponEvaluationService.cs" />
     <Compile Include="Services\Couponing\ICouponRepositoryService.cs" />
     <Compile Include="Services\Couponing\ICouponUserIdentifierProvider.cs" />
     <Compile Include="Services\Couponing\IUsedCouponsRepositoryService.cs" />

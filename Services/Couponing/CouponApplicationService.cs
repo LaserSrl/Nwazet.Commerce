@@ -29,31 +29,25 @@ namespace Nwazet.Commerce.Services.Couponing {
         private readonly ICouponRepositoryService _couponRepositoryService;
         private readonly IWorkContextAccessor _workContextAccessor;
         private readonly INotifier _notifier;
-        private readonly IEnumerable<ICouponApplicabilityCriterion> _applicabilityCriteria;
         private readonly IUsedCouponsRepositoryService _usedCouponsRepositoryService;
-        private readonly ITokenizer _tokenizer;
         private readonly IEnumerable<ICouponUserIdentifierProvider> _couponUserIdentifierProviders;
-        private readonly ICouponCriteriaManagementService _couponCriteriaManagementService;
+        private readonly ICouponEvaluationService _couponEvaluationService;
 
         public CouponApplicationService(
             ICouponRepositoryService couponRepositoryService,
             IWorkContextAccessor workContextAccessor,
             INotifier notifier,
-            IEnumerable<ICouponApplicabilityCriterion> applicabilityCriteria,
             IUsedCouponsRepositoryService usedCouponsRepositoryService,
-            ITokenizer tokenizer,
             IEnumerable<ICouponUserIdentifierProvider> couponUserIdentifierProviders,
-            ICouponCriteriaManagementService couponCriteriaManagementService) {
+            ICouponEvaluationService couponEvaluationService) {
 
             _couponRepositoryService = couponRepositoryService;
             _workContextAccessor = workContextAccessor;
             _notifier = notifier;
-            _applicabilityCriteria = applicabilityCriteria;
             _usedCouponsRepositoryService = usedCouponsRepositoryService;
-            _tokenizer = tokenizer;
             _couponUserIdentifierProviders = couponUserIdentifierProviders
                 .OrderByDescending(cuip => cuip.Priority);
-            _couponCriteriaManagementService = couponCriteriaManagementService;
+            _couponEvaluationService = couponEvaluationService;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
             _notificationsSent = new HashSet<string>();
@@ -62,118 +56,7 @@ namespace Nwazet.Commerce.Services.Couponing {
         }
 
         public Localizer T { get; set; }
-
-        private void InnerTestCriteria(
-            CouponApplicabilityContext context,
-            Action<CouponApplicabilityCriterionDescriptor, CouponApplicabilityCriterionContext> descriptorsTest,
-            Action<ICouponApplicabilityCriterion, CouponApplicabilityContext> defaultTest) {
-
-            // TODO: prepare tokens
-            Dictionary<string, object> tokens = new Dictionary<string, object>();
-
-            // Some ICouponApplicabilityCriterion will not have a description because
-            // they are there by default for all coupons.
-            foreach (var criterion in _applicabilityCriteria) {
-                defaultTest(criterion, context);
-            }
-            // After those, we check for the criteria that are configured explicitly
-            // for the coupon.
-            if (context.IsApplicable) {
-                foreach (var criterion in context.Coupon.ApplicabilityCriteria) {
-                    var tokenizedState = _tokenizer.Replace(criterion.State, tokens);
-                    var criterionContext = new CouponApplicabilityCriterionContext {
-                        IsApplicable = context.IsApplicable,
-                        ApplicabilityContext = context,
-                        State = FormParametersHelper.ToDynamic(tokenizedState),
-                        CouponRecord = context.Coupon
-                    };
-                    var descriptor = _couponCriteriaManagementService
-                        .GetCriterion(criterion.Category, criterion.Type);
-                    // descriptor should exist and be enabled
-                    if (descriptor == null || !descriptor.IsAvailableForProcessing) {
-                        continue;
-                    }
-                    descriptorsTest(descriptor, criterionContext);
-                }
-            }
-            
-        }
-
-        private bool TestCriteria(
-            CouponApplicabilityContext context,
-            Action<CouponApplicabilityCriterionDescriptor, CouponApplicabilityCriterionContext> descriptorsTest,
-            Action<ICouponApplicabilityCriterion, CouponApplicabilityContext> defaultTest) {
-
-            if (context.IsApplicable) {
-                InnerTestCriteria(context, descriptorsTest, defaultTest);
-            }
-            // Then we need to evaluate all LineCriteria that are configured for the 
-            // coupon. Each criterion has to succeed for at least 1 line of the cart
-            if (context.IsApplicable) {
-                // TODO: prepare tokens
-                Dictionary<string, object> tokens = new Dictionary<string, object>();
-                // We need to test for each line. Note that this method, if the context
-                // is defined for a specific line already, returns itself rather than 
-                // a list of contexts for every cart line. We force a ToList() there to
-                // force enumerating, so we have the actual objects rather than a reference
-                // to how to get them, because otherwise the wrong references may be passed
-                // around at later steps (basically, the providers would change the 
-                // IsApplicable for an object, then a fresh one would be checked of the
-                // flag's value).
-                var lineContexts = context.ContextsForLines().ToList();
-                foreach (var lineApplicabilityContext in lineContexts) {
-                    foreach (var criterion in context.Coupon.LineCriteria) {
-                        var descriptor = _couponCriteriaManagementService
-                            .GetLineCriterion(criterion.Category, criterion.Type);
-                        // descriptor should exist and be enabled
-                        if (descriptor == null || !descriptor.IsAvailableForProcessing) {
-                            continue;
-                        }
-
-                        var tokenizedState = _tokenizer.Replace(criterion.State, tokens);
-                        var lineCriterionContext = new CouponLineCriterionContext {
-                            IsApplicable = lineApplicabilityContext.IsApplicable,
-                            ApplicabilityContext = lineApplicabilityContext,
-                            State = FormParametersHelper.ToDynamic(tokenizedState),
-                            CouponRecord = lineApplicabilityContext.Coupon
-                        };
-                        descriptor.Criterion(lineCriterionContext);
-                        // break as soon as we know this line is not ok for the coupon
-                        if (!lineCriterionContext.IsApplicable) {
-                            context.Message = descriptor.FailureMessage(context);
-                            // go to test next line
-                            break;
-                        }
-                    }
-                }
-                // If the criterion fails for all lines, break out
-                if (!lineContexts.Any(lctx => lctx.IsApplicable)) {
-                    context.IsApplicable = false;
-                }
-            }
-            if (!context.IsApplicable && context.ShouldNotify) {
-                if (context.Message == null || string.IsNullOrWhiteSpace(context.Message.Text)) {
-                    context.Message = T("Coupon code {0} is not valid", context.Coupon.Code);
-                }
-
-                Warning(context.Message);
-            }
-            return context.IsApplicable;
-        }
-        
-
-        private bool CanApply(CouponApplicabilityContext context) {
-            return TestCriteria(context,
-                (cacd, ccc) => cacd.AdditionCriterion(ccc),
-                (cac, ctx) => cac.CanBeAdded(ctx));
-        }
-        
-        public bool CanProcess(CouponApplicabilityContext context) {
-            return TestCriteria(context,
-                (cacd, ccc) => cacd.ProcessingCriterion(ccc),
-                (cac, ctx) => cac.CanBeProcessed(ctx));
-        }
-
+                
         #region Coupon lifecycle
 
         public void ApplyCoupon(CouponApplicabilityContext context) {
@@ -185,7 +68,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                 context.Coupon = coupon;
                 context.IsApplicable = coupon.Published;
 
-                if (CanApply(context)) {
+                if (_couponEvaluationService.CanApply(context)) {
 
                     Apply(context);
                     _notifier.Information(T("Coupon {0} was successfully applied", context.Coupon.Code));
@@ -225,7 +108,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                 WorkContext = context.WorkContext,
                 IsApplicable = context.Coupon.Published
             };
-            if (!CanProcess(applicabilityContext)) {
+            if (!_couponEvaluationService.CanProcess(applicabilityContext)) {
                 // if the coupon is not valid anymore for the current cart,
                 // should we remove it?
                 // TODO: for now we choose to not remove it.
@@ -264,7 +147,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                     WorkContext = context.WorkContext,
                     IsApplicable = context.Coupon.Published
                 };
-                couponUsedRecord.WasInvalid = !CanProcess(applicabilityContext);
+                couponUsedRecord.WasInvalid = !_couponEvaluationService.CanProcess(applicabilityContext);
 
                 if (_couponUserIdentifierProviders.Any()) {
                     // TODO: providers to set the values of
