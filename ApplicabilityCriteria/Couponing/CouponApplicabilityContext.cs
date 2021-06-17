@@ -1,4 +1,5 @@
-﻿using Nwazet.Commerce.Models;
+﻿using Nwazet.Commerce.Extensions;
+using Nwazet.Commerce.Models;
 using Orchard;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
@@ -65,5 +66,12 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
         public override IEnumerable<CouponLineApplicabilityContext> ContextsForLines() {
             yield return this;
         }
+    }
+
+    [OrchardFeature("Nwazet.Couponing")]
+    public class CouponPostApplicabilityContext
+        : CouponApplicabilityContext {
+
+        
     }
 }

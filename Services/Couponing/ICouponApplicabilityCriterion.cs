@@ -34,6 +34,9 @@ namespace Nwazet.Commerce.Services.Couponing {
         /// in place.</remarks>
         void CanBeProcessed(CouponApplicabilityContext context);
 
+        void PostCanBeAdded(CouponPostApplicabilityContext context);
+        void PostCanBeProcessed(CouponPostApplicabilityContext context);
+
         /// <summary>
         /// Tells whether this criterion should be considered or not. Note that 
         /// implementations of this interface affect all coupons in a tenant, so

@@ -1,5 +1,7 @@
 ﻿using Nwazet.Commerce.ApplicabilityCriteria.Couponing;
 using Nwazet.Commerce.Descriptors.CouponApplicability;
+using Nwazet.Commerce.Extensions;
+using Nwazet.Commerce.Models;
 using Orchard.Environment.Extensions;
 using Orchard.Forms.Services;
 using Orchard.Localization;
@@ -41,20 +43,23 @@ namespace Nwazet.Commerce.Services.Couponing {
         public bool CanProcess(CouponApplicabilityContext context) {
             return TestCriteria(context,
                 (cacd, ccc) => cacd.ProcessingCriterion(ccc),
-                (cac, ctx) => cac.CanBeProcessed(ctx));
+                (cac, ctx) => cac.CanBeProcessed(ctx),
+                (cac, ctx) => cac.PostCanBeProcessed(ctx)));
         }
 
         public bool CanApply(CouponApplicabilityContext context) {
             return TestCriteria(context,
                 (cacd, ccc) => cacd.AdditionCriterion(ccc),
-                (cac, ctx) => cac.CanBeAdded(ctx));
+                (cac, ctx) => cac.CanBeAdded(ctx),
+                (cac, ctx) => cac.PostCanBeAdded(ctx));
         }
 
         #region Methods to test validity/applicability of coupon
         private bool TestCriteria(
             CouponApplicabilityContext context,
             Action<CouponApplicabilityCriterionDescriptor, CouponApplicabilityCriterionContext> descriptorsTest,
-            Action<ICouponApplicabilityCriterion, CouponApplicabilityContext> defaultTest) {
+            Action<ICouponApplicabilityCriterion, CouponApplicabilityContext> defaultTest,
+            Action<ICouponApplicabilityCriterion, CouponPostApplicabilityContext> postTest) {
 
             // Some ICouponApplicabilityCriterion will not have a description because
             // they are there by default for all coupons.
@@ -70,6 +75,11 @@ namespace Nwazet.Commerce.Services.Couponing {
             // coupon. Each criterion has to succeed for at least 1 line of the cart
             if (context.IsApplicable) {
                 TestLineCriteria(context);
+            }
+            // then we need to perform any PostProcessing tests. THese tests require computing
+            // what the results for having the coupons are.
+            if (context.IsApplicable) {
+                TestPostProcessingCriteria(context, postTest);
             }
             if (!context.IsApplicable && context.ShouldNotify) {
                 if (context.Message == null || string.IsNullOrWhiteSpace(context.Message.Text)) {
@@ -164,10 +174,22 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
         }
 
+        private void TestPostProcessingCriteria(
+            CouponApplicabilityContext context,
+            Action<ICouponApplicabilityCriterion, CouponPostApplicabilityContext> postTest) {
+
+            var tmpAdd = !CouponIsInCart(context.Coupon, context.ShoppingCart);
+        }
         #endregion
 
         #region Helpers
 
+        private bool CouponIsInCart(CouponRecord coupon, IShoppingCart cart) {
+            return cart.PriceAlterations != null
+                && cart.PriceAlterations
+                    .Any(pa => pa.AlterationType == CouponingUtilities.CouponAlterationType
+                        && pa.Key == coupon.Code);
+        }
         // prevent repeating notifications if more processes test the same stuff
         private HashSet<string> _notificationsSent;
         private void Warning(LocalizedString text) {

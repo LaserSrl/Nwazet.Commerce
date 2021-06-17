@@ -30,7 +30,10 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             "NoNegativePriceCouponApplicabilityCriterion";
 
         public override LocalizedString ProviderDisplayName =>
-            T("Pevent adding and using coupons that would cause negative price for a line or for the whole cart.");
-        
+            T("Prevent adding and using coupons that would cause negative price for a line or for the whole cart.");
+
+        public override void PostCanBeAdded(CouponPostApplicabilityContext context) {
+            
+        }
     }
 }
