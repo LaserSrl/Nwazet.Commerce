@@ -2,9 +2,95 @@
 @{
     var items = (IEnumerable<Coupon>)Model.Coupons;
     var returnUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl;
-
 }
 @using (Html.BeginFormAntiForgeryPost()) {
+    <div class="box form-horizontal">
+        <div class="box-header with-border">
+            <h3 class="box-title">@T("Manage coupon")</h3>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-sm-3 control-label">
+                    <label class="align-right gray-label">@T("Coupon creation")</label>
+                </div>
+                @Html.ActionLink(
+                    T("Add").Text,
+                    "Create",
+                    "CouponingAdmin",
+                    null,
+                    new { @class = "button primaryAction" })
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">@T("Coupon filtering")</h3>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
+                    <label for="name">@T("Name") </label>
+                    <input class="text" type="text" name="FilterOptions.Name"
+                           placeholder="@T("Name of Coupon")"
+                           value="@(Model.FilterOptions.Name)" />
+                </div>
+                <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
+                    <label for="code">@T("Code")</label>
+                    <input class="text" type="text" name="FilterOptions.Code"
+                           placeholder="@T("Code of Coupon")"
+                           value="@(Model.FilterOptions.Code)" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
+                    <label for="priority">@T("Priority")</label>
+                    <input class="text" type="text" name="FilterOptions.Priority"
+                           placeholder="@T("Priority of Coupon")"
+                           value="@(Model.FilterOptions.Priority)" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
+                    <label for="fiterOptionState" class="bulk-filter">@T("State")</label>
+                    <select id="fiterOptionState" name="FilterOptions.State">
+                        @Html.SelectOption((FiterOptionState)Model.FilterOptions.State, FiterOptionState.All, T("All States").Text)
+                        @Html.SelectOption((FiterOptionState)Model.FilterOptions.State, FiterOptionState.Published, T("Published").Text)
+                        @Html.SelectOption((FiterOptionState)Model.FilterOptions.State, FiterOptionState.UnPublished, T("UnPublished").Text)
+                    </select>
+                </div>
+                <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
+                    <label for="fiterOptionState" class="bulk-filter">@T("Value Type")</label>
+                    <select id="fiterOptionState" name="FilterOptions.ValueType">
+                        @Html.SelectOption((FiterOptionValueType)Model.FilterOptions.ValueType, FiterOptionValueType.All, T("All Types").Text)
+                        @Html.SelectOption((FiterOptionValueType)Model.FilterOptions.ValueType, FiterOptionValueType.Amount, T("Amount").Text)
+                        @Html.SelectOption((FiterOptionValueType)Model.FilterOptions.ValueType, FiterOptionValueType.Percent, T("Percent").Text)
+                        @Html.SelectOption((FiterOptionValueType)Model.FilterOptions.ValueType, FiterOptionValueType.CartAmount, T("Cart Amount").Text)
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="box-body with-border-top">
+            <div class="row">
+                <div class="col-xs-12 col-md-8 col-lg-8 margin-bottom-lg">
+                    <label for="orderResults">@T("Coupon sorting")</label>
+                    <select id="orderResults" name="FilterOptions.OrderBy">
+                        @Html.SelectOption((FilterOrderBy)Model.FilterOptions.OrderBy, FilterOrderBy.Name, T("Name").Text)
+                        @Html.SelectOption((FilterOrderBy)Model.FilterOptions.OrderBy, FilterOrderBy.Code, T("Code").Text)
+                        @Html.SelectOption((FilterOrderBy)Model.FilterOptions.OrderBy, FilterOrderBy.Priority, T("Priority").Text)
+                    </select>
+                    &nbsp;
+                    <input type="hidden" name="FilterOptions.Descending" value="false"/>
+                    <input type="checkbox" name="FilterOptions.Descending" value="true" @(Model.FilterOptions.Descending ? "checked" : string.Empty) />
+                    @T("Descending")
+                </div>
+            </div>
+        </div>
+        <div class="box-footer align-right padding-right-35">
+            <button type="submit" name="submit.Filter" value="yes please">@T("Apply")</button>
+        </div>
+    </div>
+
     <fieldset class="contentItems bulk-items">
         <table class="items" summary="@T("Table of coupons")">
             <thead>
