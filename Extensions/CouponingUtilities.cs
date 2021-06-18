@@ -22,6 +22,10 @@ namespace Nwazet.Commerce.Extensions {
         /// </summary>
         public const string CouponAttributeName = "Code";
 
+        public static int CouponAlterationWeight(CouponRecord coupon) {
+            return coupon.Priority * 100 + ((int)coupon.CouponType);
+        }
+
         /// <summary>
         /// Returns a copy of the CouponRecords
         /// </summary>

@@ -72,6 +72,83 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
     public class CouponPostApplicabilityContext
         : CouponApplicabilityContext {
 
-        
+        public CouponPostApplicabilityContext(
+            IEnumerable<CouponRecord> allCoupons) 
+            : base() {
+
+            LineContexts = new List<CouponPostLineApplicabilityContext>();
+            AllCoupons = allCoupons.ToList();
+            CouponValues = allCoupons
+                .Select(cr => new CouponValueInfo { Coupon = cr })
+                .ToList();
+        }
+
+        public CouponPostApplicabilityContext(
+            IEnumerable<CouponRecord> allCoupons,
+            CouponApplicabilityContext baseCtx) 
+            : this(allCoupons) {
+
+            Coupon = baseCtx.Coupon;
+            CouponCode = baseCtx.CouponCode;
+            ShoppingCart = baseCtx.ShoppingCart;
+            WorkContext = baseCtx.WorkContext;
+            IsApplicable = baseCtx.IsApplicable;
+            Message = baseCtx.Message;
+            ShouldNotify = baseCtx.ShouldNotify;
+
+            LineContexts.AddRange(baseCtx
+                .ContextsForLines()
+                .Select(lctx => new CouponPostLineApplicabilityContext(allCoupons, lctx)));
+        }
+
+        public List<CouponRecord> AllCoupons { get; set; }
+        public List<CouponValueInfo> CouponValues { get; set; }
+        public List<CouponPostLineApplicabilityContext> LineContexts { get; set; }
+
+        public new IEnumerable<CouponPostLineApplicabilityContext> ContextsForLines() {
+            return LineContexts;
+        }
+    }
+
+    [OrchardFeature("Nwazet.Couponing")]
+    public class CouponPostLineApplicabilityContext
+        : CouponLineApplicabilityContext {
+
+        public CouponPostLineApplicabilityContext(
+            IEnumerable<CouponRecord> allCoupons) : base() {
+
+            AllCoupons = allCoupons.ToList();
+
+            CouponValues = allCoupons
+                .Select(cr => new CouponValueInfo { Coupon = cr })
+                .ToList();
+        }
+
+        public CouponPostLineApplicabilityContext(
+            IEnumerable<CouponRecord> allCoupons, 
+            CouponLineApplicabilityContext baseCtx) 
+            : this(allCoupons) {
+
+            Coupon = baseCtx.Coupon;
+            CouponCode = baseCtx.CouponCode;
+            ShoppingCart = baseCtx.ShoppingCart;
+            WorkContext = baseCtx.WorkContext;
+            IsApplicable = baseCtx.IsApplicable;
+            Message = baseCtx.Message;
+            ShouldNotify = baseCtx.ShouldNotify;
+        }
+
+        public List<CouponRecord> AllCoupons { get; set; }
+        public List<CouponValueInfo> CouponValues { get; set; }
+
+        public new IEnumerable<CouponPostLineApplicabilityContext> ContextsForLines() {
+            yield return this;
+        }
+    }
+
+    public class CouponValueInfo {
+        public CouponRecord Coupon { get; set; }
+        public bool IsEffective { get; set; }
+        public decimal Value { get; set; }
     }
 }

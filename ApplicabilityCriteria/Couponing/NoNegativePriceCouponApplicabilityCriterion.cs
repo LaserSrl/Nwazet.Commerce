@@ -35,5 +35,9 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
         public override void PostCanBeAdded(CouponPostApplicabilityContext context) {
             
         }
+
+        public override void PostCanBeProcessed(CouponPostApplicabilityContext context) {
+            
+        }
     }
 }

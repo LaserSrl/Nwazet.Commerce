@@ -53,7 +53,7 @@ namespace Nwazet.Commerce.Services.Couponing {
         }
 
         public override IEnumerable<XElement> PrepareAdditionalInformation(OrderContext context) {
-            // TODO: there may be alterations that are not coupons. This provider shoudl not ignore
+            // TODO: there may be alterations that are not coupons. This provider should not ignore
             // them. Right now, it's not considering them when evaluating previous values to be used
             // by coupons' processing. It should, but without saving other information into the order
             // (that should probably be handled by its own provider)

@@ -20,21 +20,15 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         private readonly ICouponRepositoryService _couponRepositoryService;
         private readonly IWorkContextAccessor _workContextAccessor;
-        private readonly IProductPriceService _productPriceService;
-        private readonly IVatConfigurationService _vatConfigurationService;
         private readonly ICouponEvaluationService _couponEvaluationService;
 
         public CouponCartPriceAlterationProcessor(
             ICouponRepositoryService couponRepositoryService,
             IWorkContextAccessor workContextAccessor,
-            IProductPriceService productPriceService,
-            IVatConfigurationService vatConfigurationService,
             ICouponEvaluationService couponEvaluationService) {
 
             _couponRepositoryService = couponRepositoryService;
             _workContextAccessor = workContextAccessor;
-            _productPriceService = productPriceService;
-            _vatConfigurationService = vatConfigurationService;
             _couponEvaluationService = couponEvaluationService;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
@@ -85,28 +79,10 @@ namespace Nwazet.Commerce.Services.Couponing {
                 // get the coupon corresponding to the alteration
                 var coupon = GetCouponFromCode(alteration.Key);
                 // Do the computation
-                switch (coupon.CouponType) {
-                    case CouponType.Percent:
-                        var subtotal = shoppingCart.Subtotal();
-                        return -(coupon.Value / 100m) 
-                            * (subtotal + (previousAmounts?.Sum(cpaa => cpaa.Amount) ?? 0.0m));
-                    case CouponType.Amount:
-                        // The total amount for the cart is the result of adding up the amounts 
-                        // for each line.
-                        return shoppingCart.GetProducts()
-                            .Sum(cartLine => {
-                                var discount = AlterationAmount(alteration, shoppingCart, cartLine);
-                                // apply VAT and such
-                                return _productPriceService
-                                    .GetPrice(cartLine.Product, discount, shoppingCart.Country, shoppingCart.ZipCode);
-                            });
-                    case CouponType.CartAmount:
-                        // for CartAmount type coupons, the total for the cart is already
-                        // part of its definition.
-                        // this is after VAT
-                        return -coupon.Value;
-                    default:
-                        break;
+                var value = 0.0m;
+                if (_couponEvaluationService.TryCouponCartValue(
+                    coupon, shoppingCart, previousAmounts?.Select(cpaa => cpaa.Amount), out value)) {
+                    return value;
                 }
             }
             return 0.0m;
@@ -122,68 +98,16 @@ namespace Nwazet.Commerce.Services.Couponing {
                 // Coupons on single product lines
                 // Get the coupon corresponding to the alteration
                 var coupon = GetCouponFromCode(alteration.Key);
-                var quantity = cartLine.Quantity; // TODO: max quantity to consider for discount
-                switch (coupon.CouponType) {
-                    case CouponType.Percent:
-                        // Consider price as input, before VAT and such
-                        var itemPrice = cartLine.Product.DiscountPrice >= 0 && cartLine.Product.DiscountPrice < cartLine.Product.Price
-                            ? cartLine.Product.DiscountPrice
-                            : cartLine.Product.Price;
-                        var linePrice = Math.Round(itemPrice * quantity, 2)
-                            + cartLine.LinePriceAdjustment
-                            + (previousAmounts?.Sum(cpaa => cpaa.Amount) ?? 0.0m);
-                        return -linePrice * (coupon.Value / 100m);
-                    case CouponType.Amount:
-                        // Fixed amount discount for each single item. Compute it here before VAT.
-                        // coupon.Value is after VAT. Meaning that if you input 1.1, and the VAT is 10%,
-                        // this should return (-quantity * 1)
-                        var rate = _vatConfigurationService
-                            .GetRate(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode);
-                        var value = coupon.Value / (1m + rate);
-                        return -quantity * value;
-
-                    case CouponType.CartAmount:
-                        // flat coupon on the cart? We need to "spread" its VAT contribution.
-                        // Note that this method, for such coupon, is not called when computing
-                        // the amount by which the coupon affects the whole cart.
-                        return CartAmountOnLine(coupon, shoppingCart, cartLine, previousAmounts);
-                    default:
-                        return 0.0m;
+                var value = 0.0m;
+                if (_couponEvaluationService.TryCouponLineValue(
+                    coupon, shoppingCart, cartLine, previousAmounts?.Select(cpaa => cpaa.Amount), out value)) {
+                    return value;
                 }
             }
 
             return 0.0m;
         }
-
-        /// <summary>
-        /// compute the effect of a CartAmount coupon on a single line.
-        /// </summary>
-        /// <returns></returns>
-        private decimal CartAmountOnLine(
-            CouponRecord coupon, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine,
-            IEnumerable<CartPriceAlterationAmount> previousAmounts) {
-            // A coupon of this type has its VAT "effect" spread over each line
-            // proportionally to the line total over the cart's subtotal
-
-            var quantity = cartLine.Quantity;
-            // vat rate for the line
-            var rate = _vatConfigurationService
-                .GetRate(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode);
-            // products subtotal for the line (after VAT)
-            var lineSubtotal = Math.Round(
-                _productPriceService.GetPrice(
-                        cartLine.Product, cartLine.Price,
-                        shoppingCart.Country, shoppingCart.ZipCode)
-                * cartLine.Quantity + cartLine.LinePriceAdjustment
-                + (previousAmounts?.Sum(cpaa => cpaa.Amount) ?? 0.0m), 2);
-            // cart products subtotal
-            var cartSubtotal = shoppingCart.Subtotal();
-            // coupon value spread on this line (after VAT):
-            var couponLineValue = (coupon.Value * lineSubtotal) / cartSubtotal;
-
-            return -couponLineValue / (1m + rate); ;
-        }
-
+        
 
         public string AlterationLabel(
             CartPriceAlteration alteration, IShoppingCart shoppingCart) {
