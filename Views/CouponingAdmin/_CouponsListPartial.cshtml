@@ -204,12 +204,12 @@
         }
 
         function CheckPriority(input) {
-            @*if ($("[name='FilterOptions.PriorityFrom']").val() != '' && $("[name='FilterOptions.PriorityTo']").val() != '' &&
+            if ($("[name='FilterOptions.PriorityFrom']").val() != '' && $("[name='FilterOptions.PriorityTo']").val() != '' &&
                 parseInt($("[name='FilterOptions.PriorityTo']").val(), 10) <= parseInt($("[name='FilterOptions.PriorityFrom']").val(), 10)) {
                 input.setCustomValidity('@T("Highest priority must be greater to lowest priority.")');
             } else {
                 input.setCustomValidity('');
-            }*@
+            }
         }
         
     </script>
