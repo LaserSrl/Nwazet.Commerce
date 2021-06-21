@@ -1,5 +1,7 @@
 ﻿@using Nwazet.Commerce.ViewModels.Couponing;
 @{
+    Style.Require("Nwazet.Coupon-Admin");
+
     var items = (IEnumerable<Coupon>)Model.Coupons;
     var returnUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl;
 }
@@ -44,11 +46,49 @@
             </div>
             <div class="row">
                 <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
-                    <label for="priority">@T("Priority")</label>
-                    <input class="text" type="text" name="FilterOptions.Priority"
-                           placeholder="@T("Priority of Coupon")"
-                           value="@(Model.FilterOptions.Priority)" />
+                    <label for="fiterOptionSelectedPriority" class="bulk-filter">@T("Selected priority filter")</label>
+                    <select id="fiterOptionSelectedPriority" name="FilterOptions.SelectedPriority">
+                        @Html.SelectOption((TypePriority)Model.FilterOptions.SelectedPriority, TypePriority.Equals, T("Equals").Text)
+                        @Html.SelectOption((TypePriority)Model.FilterOptions.SelectedPriority, TypePriority.FromTo, T("From To").Text)
+                        @Html.SelectOption((TypePriority)Model.FilterOptions.SelectedPriority, TypePriority.From, T("From").Text)
+                        @Html.SelectOption((TypePriority)Model.FilterOptions.SelectedPriority, TypePriority.To, T("To").Text)
+                    </select>
                 </div>
+                <div class="col-xs-12 col-md-6 col-lg-6 margin-bottom-lg">
+                    <label>@T("Priority")</label>
+                    <div class="col-xs-6 col-md-6 col-lg-6 no-padding margin-bottom-lg from-priority">
+                        <div class="input-group">
+                            <span class="input-group-addon padding-5">@T("From")</span>
+                            <input class="text number-personalize" type="number" name="FilterOptions.PriorityFrom"
+                                   oninput="CheckPriority(this)"
+                                   step="1"
+                                   placeholder="@T("Lowest priority")"
+                                   title="@T("Insert a number")"
+                                   value="@(Model.FilterOptions.PriorityFrom)" />
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-md-6 col-lg-6 no-padding margin-bottom-lg to-priority">
+                        <div class="input-group">
+                            <span class="input-group-addon padding-5">@T("To")</span>
+                            <input class="text number-personalize" type="number" name="FilterOptions.PriorityTo"
+                                   oninput="CheckPriority(this)"
+                                   step="1"
+                                   placeholder="@T("Highest priority")"
+                                   title="@T("Insert a number")"
+                                   value="@(Model.FilterOptions.PriorityTo)" />
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6 col-lg-6 no-padding margin-bottom-lg specific-priority">
+                        <div class="input-group">
+                            <span class="input-group-addon padding-5">@T("Value")</span>
+                            <input class="text number-personalize" type="number" name="FilterOptions.Priority"
+                                   step="1"
+                                   placeholder="@T("Priority")"
+                                   title="@T("Insert a number")"
+                                   value="@(Model.FilterOptions.Priority)" />
+                            </div>
+                        </div>
+                    </div>
             </div>
             <div class="row">
                 <div class="col-xs-12 col-md-4 col-lg-4 margin-bottom-lg">
@@ -80,7 +120,7 @@
                         @Html.SelectOption((FilterOrderBy)Model.FilterOptions.OrderBy, FilterOrderBy.Priority, T("Priority").Text)
                     </select>
                     &nbsp;
-                    <input type="hidden" name="FilterOptions.Descending" value="false"/>
+                    <input type="hidden" name="FilterOptions.Descending" value="false" />
                     <input type="checkbox" name="FilterOptions.Descending" value="true" @(Model.FilterOptions.Descending ? "checked" : string.Empty) />
                     @T("Descending")
                 </div>
@@ -125,3 +165,52 @@
 @Display(Model.Pager)
 
 @Html.AntiForgeryTokenOrchard()
+
+
+@using (Script.Foot()) {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            PriorityFilterChanged();
+
+            $("#fiterOptionSelectedPriority").change(function () {
+                PriorityFilterChanged();
+            });
+        });
+
+        function PriorityFilterChanged() {
+            var selectedVal = $("#fiterOptionSelectedPriority").val();
+            switch (selectedVal) {
+                case "Equals":
+                    $(".from-priority").hide();
+                    $(".to-priority").hide();
+                    $(".specific-priority").show();
+                    break;
+                case "FromTo":
+                    $(".from-priority").show();
+                    $(".to-priority").show();
+                    $(".specific-priority").hide();
+                    break;
+                case "To":
+                    $(".from-priority").hide();
+                    $(".to-priority").show();
+                    $(".specific-priority").hide();
+                    break;
+                case "From":
+                    $(".from-priority").show();
+                    $(".to-priority").hide();
+                    $(".specific-priority").hide();
+                    break;
+            }
+        }
+
+        function CheckPriority(input) {
+            @*if ($("[name='FilterOptions.PriorityFrom']").val() != '' && $("[name='FilterOptions.PriorityTo']").val() != '' &&
+                parseInt($("[name='FilterOptions.PriorityTo']").val(), 10) <= parseInt($("[name='FilterOptions.PriorityFrom']").val(), 10)) {
+                input.setCustomValidity('@T("Highest priority must be greater to lowest priority.")');
+            } else {
+                input.setCustomValidity('');
+            }*@
+        }
+        
+    </script>
+}

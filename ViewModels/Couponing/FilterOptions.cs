@@ -11,7 +11,9 @@ namespace Nwazet.Commerce.ViewModels.Couponing {
         public string Name { get; set; }
         public string Code { get; set; }
         public string Priority { get; set; }
-        public TypePriority ChoosePriority {get;set;}
+        public string PriorityFrom { get; set; }
+        public string PriorityTo { get; set; }
+        public TypePriority SelectedPriority {get;set;}
         public FilterOrderBy OrderBy { get; set; }
         public bool Descending { get; set; }
         public FiterOptionState State { get; set; }

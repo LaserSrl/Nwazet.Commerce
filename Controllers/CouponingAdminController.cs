@@ -86,10 +86,57 @@ namespace Nwazet.Commerce.Controllers {
                     .Where(c => c.Code.ToLower().Contains(filterOptions.Code));
             }
 
-            int filterPriority = 0;
-            if (!string.IsNullOrWhiteSpace(filterOptions.Priority) && int.TryParse(filterOptions.Priority, out filterPriority)) {
-                items = items
-                    .Where(c => c.Priority == filterPriority);
+            int specificPriority = 0;
+            int fromPriority = 0;
+            int toPriority = 0;
+
+
+            switch (filterOptions.SelectedPriority) {
+                case TypePriority.Equals:
+                if (!string.IsNullOrWhiteSpace(filterOptions.Priority) && int.TryParse(filterOptions.Priority, out specificPriority)) {
+                    items = items
+                        .Where(c => c.Priority == specificPriority);
+                }
+                break;
+                case TypePriority.FromTo:
+                // se from valido e to vuoto where priority > from
+                // se to è valido e from vuoto where priority < to
+                // se from è valido e to è valido where priority > from && priority < to
+
+                if (!string.IsNullOrWhiteSpace(filterOptions.PriorityFrom) && int.TryParse(filterOptions.PriorityFrom, out fromPriority)
+                    && string.IsNullOrWhiteSpace(filterOptions.PriorityTo)) {
+                    items = items
+                        .Where(c => c.Priority >= fromPriority);
+                }
+                if (!string.IsNullOrWhiteSpace(filterOptions.PriorityTo) && int.TryParse(filterOptions.PriorityTo, out toPriority)
+                    && string.IsNullOrWhiteSpace(filterOptions.PriorityFrom)) {
+                    items = items
+                        .Where(c => c.Priority <= toPriority);
+                }
+
+                if (!string.IsNullOrWhiteSpace(filterOptions.PriorityFrom) && !string.IsNullOrWhiteSpace(filterOptions.PriorityTo)) {
+                    if (fromPriority <= toPriority) {
+                        items = items
+                          .Where(c => c.Priority >= fromPriority && c.Priority <= toPriority);
+                    }
+                    else {
+                        //error
+                        _notifier.Add(NotifyType.Error, T("Highest priority must be greater to lowest priority."));
+                    }
+                }
+                break;
+                case TypePriority.From:
+                if (!string.IsNullOrWhiteSpace(filterOptions.PriorityFrom) && int.TryParse(filterOptions.PriorityFrom, out fromPriority)) {
+                    items = items
+                        .Where(c => c.Priority >= fromPriority);
+                }
+                break;
+                case TypePriority.To:
+                if (!string.IsNullOrWhiteSpace(filterOptions.PriorityTo) && int.TryParse(filterOptions.PriorityTo, out toPriority)) {
+                    items = items
+                        .Where(c => c.Priority <= toPriority);
+                }
+                break;
             }
 
             if (filterOptions.State != FiterOptionState.All) {
@@ -108,34 +155,34 @@ namespace Nwazet.Commerce.Controllers {
 
             switch (filterOptions.OrderBy) {
                 case FilterOrderBy.Code:
-                    if (filterOptions.Descending) {
-                        items = items
-                            .OrderByDescending(c => c.Code);
-                    }
-                    else {
-                        items = items
-                            .OrderBy(c => c.Code);
-                    }
+                if (filterOptions.Descending) {
+                    items = items
+                        .OrderByDescending(c => c.Code);
+                }
+                else {
+                    items = items
+                        .OrderBy(c => c.Code);
+                }
                 break;
                 case FilterOrderBy.Name:
-                    if (filterOptions.Descending) {
-                        items = items
-                            .OrderByDescending(c => c.Name);
-                    }
-                    else {
-                        items = items
-                         .OrderBy(c => c.Name);
-                    }
+                if (filterOptions.Descending) {
+                    items = items
+                        .OrderByDescending(c => c.Name);
+                }
+                else {
+                    items = items
+                     .OrderBy(c => c.Name);
+                }
                 break;
                 case FilterOrderBy.Priority:
-                    if(filterOptions.Descending) {
-                        items = items
-                            .OrderByDescending(c => c.Priority);
-                    }
-                    else {
-                        items = items
-                            .OrderBy(c => c.Priority);
-                    }
+                if (filterOptions.Descending) {
+                    items = items
+                        .OrderByDescending(c => c.Priority);
+                }
+                else {
+                    items = items
+                        .OrderBy(c => c.Priority);
+                }
                 break;
             }
 
@@ -187,6 +234,19 @@ namespace Nwazet.Commerce.Controllers {
             else {
                 routeValues["FilterOptions.Priority"] = filterOptions.Priority;
             }
+            if (string.IsNullOrWhiteSpace(filterOptions.PriorityFrom)) {
+                routeValues.Remove("FilterOptions.PriorityFrom");
+            }
+            else {
+                routeValues["FilterOptions.PriorityFrom"] = filterOptions.PriorityFrom;
+            }
+            if (string.IsNullOrWhiteSpace(filterOptions.PriorityTo)) {
+                routeValues.Remove("FilterOptions.PriorityTo");
+            }
+            else {
+                routeValues["FilterOptions.PriorityTo"] = filterOptions.PriorityTo;
+            }
+            routeValues["FilterOptions.SelectedPriority"] = filterOptions.SelectedPriority;
 
             routeValues["FilterOptions.ValueType"] = filterOptions.ValueType;
             routeValues["FilterOptions.State"] = filterOptions.State;
