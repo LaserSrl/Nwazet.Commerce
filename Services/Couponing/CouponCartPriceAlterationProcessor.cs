@@ -20,22 +20,22 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         private readonly ICouponRepositoryService _couponRepositoryService;
         private readonly IWorkContextAccessor _workContextAccessor;
-        private readonly ICouponApplicationService _couponApplicationService;
         private readonly IProductPriceService _productPriceService;
         private readonly IVatConfigurationService _vatConfigurationService;
+        private readonly ICouponEvaluationService _couponEvaluationService;
 
         public CouponCartPriceAlterationProcessor(
             ICouponRepositoryService couponRepositoryService,
             IWorkContextAccessor workContextAccessor,
-            ICouponApplicationService couponApplicationService,
             IProductPriceService productPriceService,
-            IVatConfigurationService vatConfigurationService) {
+            IVatConfigurationService vatConfigurationService,
+            ICouponEvaluationService couponEvaluationService) {
 
             _couponRepositoryService = couponRepositoryService;
             _workContextAccessor = workContextAccessor;
-            _couponApplicationService = couponApplicationService;
             _productPriceService = productPriceService;
             _vatConfigurationService = vatConfigurationService;
+            _couponEvaluationService = couponEvaluationService;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
 
@@ -237,7 +237,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                     WorkContext = _workContextAccessor.GetContext(),
                     IsApplicable = coupon.Published
                 };
-                result = _couponApplicationService.CanProcess(context);
+                result = _couponEvaluationService.CanProcess(context);
             }
             // if the service is telling us that the coupon is not valid for
             // the current context+cart, we don't remove it, because that would
@@ -262,7 +262,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                     IsApplicable = coupon.Published,
                     CartLine = cartLine
                 };
-                result = _couponApplicationService.CanProcess(context);
+                result = _couponEvaluationService.CanProcess(context);
             }
 
             return result;
