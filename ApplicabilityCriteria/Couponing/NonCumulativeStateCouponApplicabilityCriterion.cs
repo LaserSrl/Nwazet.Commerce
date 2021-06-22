@@ -28,18 +28,20 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
 
         public override LocalizedString ProviderDisplayName => T("Criteria non cumulative state");
 
+        public static string ApplicabilityCriterionType = "Non cumulative state";
+
 
         public void Describe(DescribeCouponApplicabilityContext describe) {
             var isAvailableForConfiguration = IsAvailableForConfiguration();
             var isAvailableForProcessing = IsAvailableForProcessing();
             describe
-                .For("Coupon", T("Non cumulative state"), T("Non cumulative State"))
-                .Element("Non cumulative State",
-                    T("Non cumulative State"),
+                .For("Coupon", T("Non cumulative state"), T("Non cumulative state"))
+                .Element(ApplicabilityCriterionType,
+                    T("Non cumulative state"),
                     T("If the criteria is present the coupon is not cumulative with other coupons"),
                     (ctx) => ApplyCriteria(ctx, T("Coupon {0} cannot be cumulated.", ctx.CouponRecord.Code)),
                     (ctx) => ApplyCriteria(ctx, T("Coupon {0} cannot be cumulated.", ctx.CouponRecord.Code)),
-                    (ctx) => T("Non cumulative State"),
+                    (ctx) => T("Non cumulative state"),
                     isAvailableForConfiguration, isAvailableForProcessing,
                     null);
         }
