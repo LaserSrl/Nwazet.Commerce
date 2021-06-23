@@ -1,10 +1,12 @@
-﻿@model Nwazet.Commerce.ViewModels.BundleViewModel
+﻿@using Orchard.ContentManagement;
+
+@model Nwazet.Commerce.ViewModels.BundleViewModel
 @{
     Script.Require("jQueryUI_Autocomplete").AtHead();
     Style.Require("jQuery_Autocomplete").AtHead();
     Style.Require("Nwazet.Bundle-Admin");
     var productIndex = 0;
-    var searchid ="search"+ Guid.NewGuid().ToString();
+    var searchid = "search" + Guid.NewGuid().ToString();
 }
 <fieldset>
     <label>@T("Products in this bundle")</label>
@@ -19,13 +21,16 @@
                            name="@Html.FieldNameFor(m => m.Products[productIndex].Quantity)"
                            id="@Html.FieldNameFor(m => m.Products[productIndex].Quantity)" />
                     <a href="@(Url.ItemEditUrl(productEntry.Product))">@productEntry.DisplayText</a>
+                    @if (!productEntry.Product.ContentItem.HasPublished()) {
+                        <span> - @T("Not Published")</span>
+                    }
                 </label>
                 @{productIndex++;}
             </li>
-                    }
+        }
     </ul>
     <div class="ui-widget">
-        <input id="@searchid" />
+        <input id="@searchid" class="text medium" />
         <p class="hint">@T("Search for a product to add , at least 2 characters (title or sku).")</p>
     </div>
 </fieldset>
@@ -39,7 +44,7 @@
             $.widget("custom.myautocomplete", $.ui.autocomplete, {
                 _renderItem: function (ul, item) {
                     var row = $("<li>");
-                    var aux = "<div>" + item.DisplayText + "</div>";
+                    var aux = "<div>" + item.DisplayText + " (" + item.Sku + ")" + "</div>";
                     row = row.append($("<a>").html(aux));
                     row = row.appendTo(ul);
                     return row;

@@ -17,5 +17,6 @@ namespace Nwazet.Commerce.ViewModels {
         public int Quantity { get; set; }
         public string EditUrl { get; set; }
         public string DisplayText { get; set; }
+        public string Sku { get; set; }
     }
 }

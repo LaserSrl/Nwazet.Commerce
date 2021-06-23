@@ -47,7 +47,7 @@ namespace Nwazet.Commerce.Services {
                 List<ProductEntry> oldProducts = bvm.Products.ToList();
                 bvm.Products = new List<ProductEntry>();
                 foreach (var prodEntry in oldProducts) {
-                    var item = _contentManager.Get(prodEntry.ProductId);
+                    var item = _contentManager.Get(prodEntry.ProductId,VersionOptions.Latest);
                     var lPart = item.As<LocalizationPart>();
                     if (_bundleProductLocalizationServices.ValidLocalizationPart(lPart)) {
                         if (lPart.Culture != locPart.Culture) {
