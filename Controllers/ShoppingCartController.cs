@@ -270,7 +270,7 @@ namespace Nwazet.Commerce.Controllers {
                 .ToList();
             var productShapes = GetProductShapesFromQuantities(productQuantities, country, zipCode, productMessages);
             shape.ShopItems = productShapes;
-            // addtional messages that are not tied to any specific product that is actually 
+            // additional messages that are not tied to any specific product that is actually 
             // in the cart. e.g. a message explaining why a given product was not added to the
             // cart: such a message would not be among any cart line's messages, because of
             // course no cart line would match.
@@ -280,6 +280,12 @@ namespace Nwazet.Commerce.Controllers {
                     .Contains(pm.Key))
                 ?.SelectMany(pm => pm.Value)
                 ?? Enumerable.Empty<ItemLog>();
+
+            var dummyLog = new ItemLog();
+            dummyLog.LocalizedMessage = T("Dummy log message");
+            additionalMessages.Append(dummyLog);
+            _notifier.Warning(dummyLog.LocalizedMessage);
+
             shape.AdditionalMessages = additionalMessages.Any()
                 ? string.Join(Environment.NewLine, additionalMessages.Select(x => x.Message))
                 : (string)null;
