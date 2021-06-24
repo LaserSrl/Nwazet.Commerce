@@ -4,15 +4,18 @@ using System.Linq;
 using System.Web.Mvc;
 using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Settings;
 using Nwazet.Commerce.ViewModels;
 using Orchard.ContentManagement;
 using Orchard.Core.Title.Models;
+using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Localization.Models;
 using Orchard.Mvc.Html;
 
 namespace Nwazet.Commerce.Services {
-    public class BundleAutocompleteService : IBundleAutocompleteService {
+    [OrchardFeature("Nwazet.BundlesLocalizationExtension")]
+    public class BundleAutocompleteService : BundleAutocompleteServiceBase {
 
         private readonly IContentManager _contentManager;
         private readonly UrlHelper _url;
@@ -30,7 +33,7 @@ namespace Nwazet.Commerce.Services {
         protected virtual bool ConsiderProductValid(IContent prod, BundlePart part) {
             return true;
         }
-        public BundleViewModel BuildEditorViewModel(BundlePart part) {
+        public override BundleViewModel BuildEditorViewModel(BundlePart part) {
             var bundleProductQuantities = part.ProductQuantities.ToDictionary(pq => pq.ProductId, pq => pq.Quantity);
             var ids = part.ProductQuantities.Select(x => x.ProductId);
             return new BundleViewModel {
@@ -43,17 +46,18 @@ namespace Nwazet.Commerce.Services {
                                 ProductId = id,
                                 Product = p,
                                 Quantity = bundleProductQuantities.ContainsKey(id) ? bundleProductQuantities[id] : 0,
-                                DisplayText = _contentManager.GetItemMetadata(p).DisplayText + ValidLocalization(part,p.ContentItem)
-                               
+                                DisplayText = _contentManager.GetItemMetadata(p).DisplayText + ValidLocalization(part, p.ContentItem)
+
                             };
                         }
                     )
                     .OrderBy(vm => vm.DisplayText)
-                    .ToList()
+                    .ToList(),
+                BundlePart = part
             };
         }
 
-        private string ValidLocalization(BundlePart part,ContentItem ci) {
+        protected string ValidLocalization(BundlePart part, ContentItem ci) {
             var locPart = part.ContentItem.As<LocalizationPart>();
             var lPart = ci.As<LocalizationPart>();
             if (lPart != null && lPart.Culture != null &&
@@ -68,12 +72,12 @@ namespace Nwazet.Commerce.Services {
             return string.Empty;
         }
 
-        private IEnumerable<ProductPart> GetProductParts(IEnumerable<int> ids) {
+        protected IEnumerable<ProductPart> GetProductParts(IEnumerable<int> ids) {
             return _contentManager.GetMany<ProductPart>(ids, VersionOptions.Latest, QueryHints.Empty)
                     .Where(p => !p.Has<BundlePart>());
         }
 
-        public List<ProductEntryAutocomplete> GetProducts(string searchText, List<int> excludedProductIds) {
+        public override List<ProductEntryAutocomplete> GetProducts(int contentItemId, string searchText, List<int> excludedProductIds) {
             if (excludedProductIds == null)
                 excludedProductIds = new List<int>();
             var productAlias = "productPartVersionRecord";
@@ -89,14 +93,14 @@ namespace Nwazet.Commerce.Services {
             Action<IHqlExpressionFactory> conditionTitle = title => title.And(idNotExcluded, titleSearch);
             Action<IHqlExpressionFactory> conditionSku = sku => sku.And(idNotExcluded, skuSearch);
 
-            return _contentManager.HqlQuery()
+            var listProducts = _contentManager.HqlQuery()
                 .ForVersion(VersionOptions.Latest)
                 .Join(productPartRecordAlias)
                 .Join(titlePartRecordAlias)
                 // changed the incorrect condition not (id in (ids) and title like '%%' or sku like '%%')
                 // with the correct condition for sql (id in (ids) and title like '%%' or id in (ids) and sku like '%%')
                 .Where(a => a.ContentItem(),
-                   x=>x.Or(conditionTitle,conditionSku))
+                   x => x.Or(conditionTitle, conditionSku))
                .OrderBy(titlePartRecordAlias, o => o.Asc("Title"))
                .List()
                .Select(x => new ProductEntryAutocomplete {
@@ -109,6 +113,22 @@ namespace Nwazet.Commerce.Services {
                         x.As<LocalizationPart>().Culture.Culture : T(" (culture undefined)").Text
                })
                .ToList();
+
+            // verify setting
+            var ci = _contentManager.Get(contentItemId, VersionOptions.Latest);
+            var part = ci.As<BundlePart>();
+            var lPartBundle = part.ContentItem.As<LocalizationPart>();
+            if (listProducts.Any() && lPartBundle!=null && lPartBundle.Culture!=null) {
+                var settings = part.TypePartDefinition.Settings.GetModel<BundleProductLocalizationSettings>();
+                if ((settings.TryToLocalizeProducts && settings.RemoveProductsWithoutLocalization) ||
+                    settings.HideProductsFromEditor) {
+                    return listProducts
+                        .Where(p => p.Lang == lPartBundle.Culture.Culture)
+                        .ToList();
+                }
+            }
+
+            return listProducts;
         }
     }
 }

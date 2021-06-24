@@ -1,4 +1,5 @@
 ﻿@using Orchard.ContentManagement;
+@using Nwazet.Commerce.Models;
 
 @model Nwazet.Commerce.ViewModels.BundleViewModel
 @{
@@ -9,26 +10,50 @@
     var searchid = "search" + Guid.NewGuid().ToString();
 }
 <fieldset>
-    <label>@T("Products in this bundle")</label>
-    <ul class="bundle">
+    <legend>@T("Products in this bundle")</legend>
+    <div class="table-bundle-autocomplete">
+        <div class="row row-bundle-autocomplete">
+            <div class="col-xs-4">@T("Product")</div>
+            <div class="col-xs-4">@T("Sku")</div>
+            <div class="col-xs-2 center-align-bundle-autocomplete">@T("Quantity")</div>
+            <div class="col-xs-2"></div>
+        </div>
         @foreach (var productEntry in Model.Products) {
-            <li>
-                <input type="hidden" value="@productEntry.ProductId"
-                       name="@Html.FieldNameFor(m => m.Products[productIndex].ProductId)" />
-                <label for="@Html.FieldNameFor(m => m.Products[productIndex].Quantity)">
-                    <input type="number" min="0"
+            <div class="row row-bundle row-bundle-autocomplete">
+                <div class="col-xs-4">
+                    <label for="@Html.FieldNameFor(m => m.Products[productIndex].Quantity)">
+                        <a href="@(Url.ItemEditUrl(productEntry.Product))">@productEntry.DisplayText</a>
+                        @if (!productEntry.Product.ContentItem.HasPublished()) {
+                            <span> - @T("Not Published")</span>
+                        }
+                    </label>
+                    <input type="hidden" value="@productEntry.ProductId"
+                           name="@Html.FieldNameFor(m => m.Products[productIndex].ProductId)" />
+                </div>
+                <div class="col-xs-4">
+                    <span class="span-sku-@productIndex">@(productEntry.Product.As<ProductPart>().Sku)</span>
+                </div>
+                <div class="col-xs-2 center-align-bundle-autocomplete">
+                    <span class="quantity-@productIndex">@productEntry.Quantity</span>
+                    <input type="number" min="0" class="q-bundle-autocomplete-d-none quantity-bundle-autocomplete"
+                           onchange="ManagedQuanitity(@productIndex)"
                            value="@productEntry.Quantity"
                            name="@Html.FieldNameFor(m => m.Products[productIndex].Quantity)"
                            id="@Html.FieldNameFor(m => m.Products[productIndex].Quantity)" />
-                    <a href="@(Url.ItemEditUrl(productEntry.Product))">@productEntry.DisplayText</a>
-                    @if (!productEntry.Product.ContentItem.HasPublished()) {
-                        <span> - @T("Not Published")</span>
-                    }
-                </label>
+                </div>
+                <div class="col-xs-2 center-align-bundle-autocomplete">
+                    <a class="btn btn-success btn-sm rounded-0" onclick="EditProductQuantity(@productIndex)" title="@T("Edit Quantity")">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <a class="btn btn-danger btn-sm rounded-0" onclick="RemoveProduct(@productIndex)" title="@T("Remove Product")">
+                        <i class="glyphicon glyphicon-remove"></i>
+                    </a>
+                </div>
                 @{productIndex++;}
-            </li>
+            </div>
         }
-    </ul>
+    </div>
+    <label>@T("Select product"):</label>
     <div class="ui-widget">
         <input id="@searchid" class="text large" />
         <p class="hint">@T("Search for a product to add , at least 2 characters (title or sku).")</p>
@@ -55,7 +80,7 @@
                     $.ajax({
                         type: 'POST',
                         url: "@Url.Action("SearchProduct", "BundleAdmin", new { area = "Nwazet.Commerce" })",
-                        data: { searchText: $("#@searchid").val(), excludedProductIds: $("ul.bundle li input[type=hidden]").map(function () { return parseInt($(this).val()); }).get(), __RequestVerificationToken: aft },
+                        data: { contentItemId: @Model.BundlePart.ContentItem.Id, searchText: $("#@searchid").val(), excludedProductIds: $("div.table-bundle-autocomplete input[type=hidden]").map(function () { return parseInt($(this).val()); }).get(), __RequestVerificationToken: aft },
                         success: function (dataAutocomplete) {
                              response(dataAutocomplete);
                         },
@@ -65,11 +90,34 @@
                 },
                 minLength: 2,
                 select: function (event, ui) {
-                    var name = 'Bundle.Products[' + $('ul.bundle li').length + ']';
-                    $("ul.bundle").append('<li><input type="hidden" value="' + ui.item.ProductId + '" name="' + name + '.ProductId" /><label for="' + name + '.Quantity"><input type="number" min="0" value="' + ui.item.Quantity + '" name="' + name + '.Quantity" id="' + name + '.Quantity" /> <a href="' + ui.item.EditUrl + '">' + ui.item.DisplayText + '</a> </label></li>');
+                    var name = 'Bundle.Products[' + $('div.table-bundle-autocomplete .row-bundle').length + ']';
+                    $("div.table-bundle-autocomplete").append('<div class="row row-bundle row-bundle-autocomplete"><div class="col-xs-4"><input type="hidden" value="' + ui.item.ProductId + '" name="' + name + '.ProductId" /><label for="' + name + '.Quantity"><a href="' + ui.item.EditUrl + '">' + ui.item.DisplayText + '</a> </label></div><div class="col-xs-4"><label>' + ui.item.Sku + '</label></div><div class="col-xs-2 center-align-bundle-autocomplete"><input type="number" class="quantity-bundle-autocomplete" min="0" value="' + ui.item.Quantity + '" name="' + name + '.Quantity" id="' + name + '.Quantity" /></div><div class="col-xs-2 center-align-bundle-autocomplete"><a class="btn btn-success btn-sm rounded-0" title="@T("Edit Quantity")"><i class="fa fa-edit"></i></a><a class="btn btn-danger btn-sm rounded-0" title="@T("Remove Product")"><i class="glyphicon glyphicon-remove"></i></a></div></div>');
                 }
             });
         });
         //]]>
+
+        function EditProductQuantity(id) {
+            $(".quantity-" + id).hide();
+            $('input[name="Bundle.Products[' + id + '].Quantity').removeClass("q-bundle-autocomplete-d-none");
+        }
+
+        function RemoveProduct(id) {
+            $('label[for="Bundle.Products[' + id + '].Quantity').addClass("text-through");
+            $(".span-sku-"+id).addClass("text-through");
+            $('input[name="Bundle.Products[' + id + '].Quantity').val(0);
+            $(".quantity-" + id).text(0);
+        }
+
+        function ManagedQuanitity(id) {
+            if ($('input[name="Bundle.Products[' + id + '].Quantity').val() > 0) {
+                $('label[for="Bundle.Products[' + id + '].Quantity').removeClass("text-through");
+                $(".span-sku-" + id).removeClass("text-through");
+            } else {
+                $('label[for="Bundle.Products[' + id + '].Quantity').addClass("text-through");
+                $(".span-sku-" + id).addClass("text-through")
+            }
+        }
+
     </script>
 }
