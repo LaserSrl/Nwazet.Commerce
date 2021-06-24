@@ -18,5 +18,6 @@ namespace Nwazet.Commerce.ViewModels {
         public string EditUrl { get; set; }
         public string DisplayText { get; set; }
         public string Sku { get; set; }
+        public string Lang { get; set; }
     }
 }
