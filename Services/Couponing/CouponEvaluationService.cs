@@ -279,7 +279,9 @@ namespace Nwazet.Commerce.Services.Couponing {
                 .ToList();
 
             var postProcessingContext = new CouponPostApplicabilityContext(coupons, context);
+            // for each line, compute the contribution of every coupon, in order
             foreach (var lineContext in postProcessingContext.LineContexts) {
+                lineContext.BaseLinePrice = GetLinePrice(lineContext.CartLine);
                 var previousValues = new List<decimal>();
                 foreach (var couponInfo in lineContext.CouponValues) {
                     var currentValue = 0.0m;
@@ -290,9 +292,11 @@ namespace Nwazet.Commerce.Services.Couponing {
                             lineContext.CartLine,
                             previousValues,
                             out currentValue);
+                    // the value computed here is after vat
                     couponInfo.Value = currentValue;
                     previousValues.Add(currentValue);
                 }
+
             }
             // TODO
         }
@@ -369,8 +373,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                     var itemPrice = cartLine.Product.DiscountPrice >= 0 && cartLine.Product.DiscountPrice < cartLine.Product.Price
                         ? cartLine.Product.DiscountPrice
                         : cartLine.Product.Price;
-                    var linePrice = Math.Round(itemPrice * quantity, 2)
-                        + cartLine.LinePriceAdjustment
+                    var linePrice = GetLinePrice(cartLine, quantity, false)
                         + (previousValues?.Sum() ?? 0.0m);
                     value = -linePrice * (coupon.Value / 100m);
                     return true;
@@ -417,6 +420,20 @@ namespace Nwazet.Commerce.Services.Couponing {
             var couponLineValue = (coupon.Value * lineSubtotal) / cartSubtotal;
 
             return -couponLineValue / (1m + rate); ;
+        }
+
+        private decimal GetLinePrice(
+            ShoppingCartQuantityProduct cartLine,
+            int quantity = -1,
+            bool includingVAT = true) {
+
+            var itemPrice = cartLine.Product.DiscountPrice >= 0 && cartLine.Product.DiscountPrice < cartLine.Product.Price
+                ? (includingVAT ? _productPriceService.GetDiscountPrice(cartLine.Product) : cartLine.Product.DiscountPrice)
+                : (includingVAT ? _productPriceService.GetPrice(cartLine.Product) : cartLine.Product.Price);
+
+            quantity = quantity > 0 ? quantity : cartLine.Quantity;
+            return Math.Round(itemPrice * quantity, 2)
+                + cartLine.LinePriceAdjustment;
         }
 
         #endregion

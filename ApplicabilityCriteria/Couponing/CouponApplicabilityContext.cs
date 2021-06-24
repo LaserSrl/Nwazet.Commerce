@@ -62,6 +62,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             ShouldNotify = false;
         }
         public ShoppingCartQuantityProduct CartLine { get; set; }
+        public decimal BaseLinePrice { get; set; }
 
         public override IEnumerable<CouponLineApplicabilityContext> ContextsForLines() {
             yield return this;
@@ -136,6 +137,9 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             IsApplicable = baseCtx.IsApplicable;
             Message = baseCtx.Message;
             ShouldNotify = baseCtx.ShouldNotify;
+            // stuff specific to lines
+            CartLine = baseCtx.CartLine;
+            BaseLinePrice = baseCtx.BaseLinePrice;
         }
 
         public List<CouponRecord> AllCoupons { get; set; }
