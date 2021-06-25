@@ -12,7 +12,7 @@
 <fieldset>
     <legend>@T("Products in this bundle")</legend>
     <div class="table-bundle-autocomplete">
-        <div class="row row-bundle-autocomplete">
+        <div class="row row-bundle-autocomplete row-bundle-header @(!Model.Products.Any() ? "bundle-autocomplete-d-none" : "" )">
             <div class="col-xs-4">@T("Product")</div>
             <div class="col-xs-4">@T("Sku")</div>
             <div class="col-xs-2 center-align-bundle-autocomplete">@T("Quantity")</div>
@@ -35,7 +35,7 @@
                 </div>
                 <div class="col-xs-2 center-align-bundle-autocomplete">
                     <span class="quantity-@productIndex">@productEntry.Quantity</span>
-                    <input type="number" min="0" class="q-bundle-autocomplete-d-none quantity-bundle-autocomplete"
+                    <input type="number" min="0" class="bundle-autocomplete-d-none quantity-bundle-autocomplete"
                            onchange="ManagedQuanitity(@productIndex)"
                            value="@productEntry.Quantity"
                            name="@Html.FieldNameFor(m => m.Products[productIndex].Quantity)"
@@ -69,7 +69,10 @@
             $.widget("custom.myautocomplete", $.ui.autocomplete, {
                 _renderItem: function (ul, item) {
                     var row = $("<li>");
-                    var aux = "<div>" + item.DisplayText + " (sku: " + item.Sku + ") ("+ item.Lang +")" + "</div>";
+                    var aux = "<div>" + item.DisplayText + " (sku: " + item.Sku + ") </div>";
+                    if (item.Lang != null) {
+                        aux = "<div>" + item.DisplayText + " (sku: " + item.Sku + ") (" + item.Lang + ")" + "</div>";
+                    }
                     row = row.append($("<a>").html(aux));
                     row = row.appendTo(ul);
                     return row;
@@ -90,8 +93,10 @@
                 },
                 minLength: 2,
                 select: function (event, ui) {
-                    var name = 'Bundle.Products[' + $('div.table-bundle-autocomplete .row-bundle').length + ']';
-                    $("div.table-bundle-autocomplete").append('<div class="row row-bundle row-bundle-autocomplete"><div class="col-xs-4"><input type="hidden" value="' + ui.item.ProductId + '" name="' + name + '.ProductId" /><label for="' + name + '.Quantity"><a href="' + ui.item.EditUrl + '">' + ui.item.DisplayText + '</a> </label></div><div class="col-xs-4"><label>' + ui.item.Sku + '</label></div><div class="col-xs-2 center-align-bundle-autocomplete"><input type="number" class="quantity-bundle-autocomplete" min="0" value="' + ui.item.Quantity + '" name="' + name + '.Quantity" id="' + name + '.Quantity" /></div><div class="col-xs-2 center-align-bundle-autocomplete"><a class="btn btn-success btn-sm rounded-0" title="@T("Edit Quantity")"><i class="fa fa-edit"></i></a><a class="btn btn-danger btn-sm rounded-0" title="@T("Remove Product")"><i class="glyphicon glyphicon-remove"></i></a></div></div>');
+                    $(".row-bundle-header").removeClass("bundle-autocomplete-d-none");
+                    var newId = $('div.table-bundle-autocomplete .row-bundle').length
+                    var name = 'Bundle.Products[' + newId + ']';
+                    $("div.table-bundle-autocomplete").append('<div class="row row-bundle row-bundle-autocomplete"><div class="col-xs-4"><input type="hidden" value="' + ui.item.ProductId + '" name="' + name + '.ProductId" /><label for="' + name + '.Quantity"><a href="' + ui.item.EditUrl + '">' + ui.item.DisplayText + '</a> </label></div><div class="col-xs-4"><span class="span-sku-' + newId + '">' + ui.item.Sku + '</span></div><div class="col-xs-2 center-align-bundle-autocomplete"><input type="number" class="quantity-bundle-autocomplete" onchange="ManagedQuanitity(' + newId + ')" min="0" value="' + ui.item.Quantity + '" name="' + name + '.Quantity" id="' + name + '.Quantity" /></div><div class="col-xs-2 center-align-bundle-autocomplete"><a class="btn btn-success btn-sm rounded-0" title="@T("Edit Quantity")"><i class="fa fa-edit"></i></a> <a class="btn btn-danger btn-sm rounded-0" onclick="RemoveProduct(' + newId + ')" title="@T("Remove Product")"><i class="glyphicon glyphicon-remove"></i></a></div></div>');
                 }
             });
         });
@@ -99,7 +104,7 @@
 
         function EditProductQuantity(id) {
             $(".quantity-" + id).hide();
-            $('input[name="Bundle.Products[' + id + '].Quantity').removeClass("q-bundle-autocomplete-d-none");
+            $('input[name="Bundle.Products[' + id + '].Quantity').removeClass("bundle-autocomplete-d-none");
         }
 
         function RemoveProduct(id) {
