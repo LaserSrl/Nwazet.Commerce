@@ -62,7 +62,6 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             ShouldNotify = false;
         }
         public ShoppingCartQuantityProduct CartLine { get; set; }
-        public decimal BaseLinePrice { get; set; }
 
         public override IEnumerable<CouponLineApplicabilityContext> ContextsForLines() {
             yield return this;
@@ -73,7 +72,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
     public class CouponPostApplicabilityContext
         : CouponApplicabilityContext {
 
-        public CouponPostApplicabilityContext(
+        protected CouponPostApplicabilityContext(
             IEnumerable<CouponRecord> allCoupons) 
             : base() {
 
@@ -85,8 +84,8 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
         }
 
         public CouponPostApplicabilityContext(
-            IEnumerable<CouponRecord> allCoupons,
-            CouponApplicabilityContext baseCtx) 
+            CouponApplicabilityContext baseCtx,
+            IEnumerable<CouponRecord> allCoupons) 
             : this(allCoupons) {
 
             Coupon = baseCtx.Coupon;
@@ -99,12 +98,13 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
 
             LineContexts.AddRange(baseCtx
                 .ContextsForLines()
-                .Select(lctx => new CouponPostLineApplicabilityContext(allCoupons, lctx)));
+                .Select(lctx => new CouponPostLineApplicabilityContext(lctx, allCoupons)));
         }
 
         public List<CouponRecord> AllCoupons { get; set; }
         public List<CouponValueInfo> CouponValues { get; set; }
         public List<CouponPostLineApplicabilityContext> LineContexts { get; set; }
+        public decimal BaseCartSubtotal { get; set; }
 
         public new IEnumerable<CouponPostLineApplicabilityContext> ContextsForLines() {
             return LineContexts;
@@ -115,7 +115,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
     public class CouponPostLineApplicabilityContext
         : CouponLineApplicabilityContext {
 
-        public CouponPostLineApplicabilityContext(
+        protected CouponPostLineApplicabilityContext(
             IEnumerable<CouponRecord> allCoupons) : base() {
 
             AllCoupons = allCoupons.ToList();
@@ -126,8 +126,8 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
         }
 
         public CouponPostLineApplicabilityContext(
-            IEnumerable<CouponRecord> allCoupons, 
-            CouponLineApplicabilityContext baseCtx) 
+            CouponLineApplicabilityContext baseCtx,
+            IEnumerable<CouponRecord> allCoupons) 
             : this(allCoupons) {
 
             Coupon = baseCtx.Coupon;
@@ -139,11 +139,11 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             ShouldNotify = baseCtx.ShouldNotify;
             // stuff specific to lines
             CartLine = baseCtx.CartLine;
-            BaseLinePrice = baseCtx.BaseLinePrice;
         }
 
         public List<CouponRecord> AllCoupons { get; set; }
         public List<CouponValueInfo> CouponValues { get; set; }
+        public decimal BaseLinePrice { get; set; }
 
         public new IEnumerable<CouponPostLineApplicabilityContext> ContextsForLines() {
             yield return this;

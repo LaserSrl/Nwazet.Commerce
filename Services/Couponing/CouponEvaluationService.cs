@@ -3,6 +3,7 @@ using Nwazet.Commerce.Descriptors.CouponApplicability;
 using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Models.Couponing;
+using Orchard;
 using Orchard.Environment.Extensions;
 using Orchard.Forms.Services;
 using Orchard.Localization;
@@ -22,6 +23,7 @@ namespace Nwazet.Commerce.Services.Couponing {
         private readonly IEnumerable<ICouponApplicabilityCriterion> _applicabilityCriteria;
         private readonly ITokenizer _tokenizer;
         private readonly ICouponCriteriaManagementService _couponCriteriaManagementService;
+        private readonly IWorkContextAccessor _workContextAccessor;
 
         private readonly IProductPriceService _productPriceService;
         private readonly IVatConfigurationService _vatConfigurationService;
@@ -32,6 +34,7 @@ namespace Nwazet.Commerce.Services.Couponing {
             IEnumerable<ICouponApplicabilityCriterion> applicabilityCriteria,
             ITokenizer tokenizer,
             ICouponCriteriaManagementService couponCriteriaManagementService,
+            IWorkContextAccessor workContextAccessor,
             IProductPriceService productPriceService,
             IVatConfigurationService vatConfigurationService,
             ICouponRepositoryService couponRepositoryService) {
@@ -40,6 +43,7 @@ namespace Nwazet.Commerce.Services.Couponing {
             _applicabilityCriteria = applicabilityCriteria;
             _tokenizer = tokenizer;
             _couponCriteriaManagementService = couponCriteriaManagementService;
+            _workContextAccessor = workContextAccessor;
 
             _productPriceService = productPriceService;
             _vatConfigurationService = vatConfigurationService;
@@ -278,11 +282,11 @@ namespace Nwazet.Commerce.Services.Couponing {
                 .OrderByDescending(c => CouponingUtilities.CouponAlterationWeight(c))
                 .ToList();
 
-            var postProcessingContext = new CouponPostApplicabilityContext(coupons, context);
+            var postProcessingContext = new CouponPostApplicabilityContext(context, coupons);
             // for each line, compute the contribution of every coupon, in order
             foreach (var lineContext in postProcessingContext.LineContexts) {
                 lineContext.BaseLinePrice = GetLinePrice(lineContext.CartLine);
-                var previousValues = new List<decimal>();
+                var previousLineValues = new List<decimal>();
                 foreach (var couponInfo in lineContext.CouponValues) {
                     var currentValue = 0.0m;
                     couponInfo.IsEffective = TestCouponCriteriaOnLine(lineContext, couponInfo.Coupon)
@@ -290,13 +294,27 @@ namespace Nwazet.Commerce.Services.Couponing {
                             couponInfo.Coupon, 
                             postProcessingContext.ShoppingCart,
                             lineContext.CartLine,
-                            previousValues,
+                            previousLineValues,
                             out currentValue);
                     // the value computed here is after vat
                     couponInfo.Value = currentValue;
-                    previousValues.Add(currentValue);
+                    previousLineValues.Add(currentValue);
                 }
-
+            }
+            // compute, for the cart, the contribution of every coupon, in order
+            postProcessingContext.BaseCartSubtotal = postProcessingContext.ShoppingCart.Subtotal();
+            var previousCartValues = new List<decimal>();
+            foreach (var couponInfo in postProcessingContext.CouponValues) {
+                var currentValue = 0.0m;
+                couponInfo.IsEffective = true
+                    && TryCouponCartValue(
+                        couponInfo.Coupon,
+                        postProcessingContext.ShoppingCart,
+                        previousCartValues,
+                        out currentValue);
+                // the value computed here is after vat
+                couponInfo.Value = currentValue;
+                previousCartValues.Add(currentValue);
             }
             // TODO
         }
@@ -319,19 +337,43 @@ namespace Nwazet.Commerce.Services.Couponing {
             out decimal value) {
 
             value = 0.0m;
+            var workContext = _workContextAccessor.GetContext();
 
             // Do the computation
             switch (coupon.CouponType) {
                 case CouponType.Percent:
-                    var subtotal = cart.Subtotal();
-                    value = -(coupon.Value / 100m)
-                        * (subtotal + (previousValues?.Sum() ?? 0.0m));
+                    value = cart.GetProducts()
+                        .Sum(cartLine => {
+                            if (!TestCouponCriteriaOnLine(new CouponLineApplicabilityContext {
+                                Coupon = coupon,
+                                CouponCode = coupon.Code,
+                                ShoppingCart = cart,
+                                CartLine = cartLine,
+                                WorkContext = workContext,
+                                IsApplicable = true
+                            }, coupon)) {
+                                return 0.0m;
+                            }
+                            var partialValue = 0.0m;
+                            TryCouponLineValue(coupon, cart, cartLine, null, out partialValue);
+                            // apply VAT and such
+                            return _productPriceService
+                                .GetPrice(cartLine.Product, partialValue, cart.Country, cart.ZipCode);
+                        });
                     return true;
                 case CouponType.Amount:
                     // The total amount for the cart is the result of adding up the amounts 
                     // for each line.
                     value = cart.GetProducts()
                         .Sum(cartLine => {
+                            if (!TestCouponCriteriaOnLine(new CouponLineApplicabilityContext {
+                                    Coupon = coupon,
+                                    CouponCode = coupon.Code,
+                                    ShoppingCart = cart,
+                                    WorkContext = workContext
+                                }, coupon)) {
+                                return 0.0m;
+                            }
                             var partialValue = 0.0m;
                             TryCouponLineValue(coupon, cart, cartLine, null, out partialValue);
                             // apply VAT and such
