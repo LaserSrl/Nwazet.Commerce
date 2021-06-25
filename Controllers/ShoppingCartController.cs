@@ -243,8 +243,7 @@ namespace Nwazet.Commerce.Controllers {
                         _shoppingCart.ZipCode,
                         _shoppingCart.ShippingOption,
                         productMessages));
-            }
-            catch (ShippingException ex) {
+            } catch (ShippingException ex) {
                 _shoppingCart.Country = null;
                 _shoppingCart.ZipCode = null;
                 _shoppingCart.ShippingOption = null;
@@ -270,7 +269,48 @@ namespace Nwazet.Commerce.Controllers {
                 .ToList();
             var productShapes = GetProductShapesFromQuantities(productQuantities, country, zipCode, productMessages);
             shape.ShopItems = productShapes;
-            // addtional messages that are not tied to any specific product that is actually 
+
+            // I need to search for the items in the shopping cart that are not anymore in the products to see if some of the items have been excluded because they're not available anymore.
+            // This happens when a product is deleted or unpublished after the user adds it to the shopping cart but before the checkout.
+            // This scenario is particularly possible with persistent carts, but may also happen in session carts.
+            int unavailableItems = 0;
+            foreach (var item in _shoppingCart.Items) {
+                if (!productQuantities.Any(pq => pq.Product.Id == item.ProductId)) {
+                    // I need to remove the item from the cart.
+                    _shoppingCart.Remove(item.ProductId, item.AttributeIdsToValues);
+                    unavailableItems++;
+                }
+            }
+
+            var unavailableMessage = T(string.Empty);
+
+            if (unavailableItems == 1) {
+                unavailableMessage = T("One item in the shopping cart is't available anymore and has been removed from the cart.");
+            } else if (unavailableItems > 1) {
+                unavailableMessage = T("Several items in the shopping cart aren't available anymore and have been removed from the cart.");
+            }
+
+            if (unavailableItems > 0) {
+                // Adding message to productMessages to show it in the cart shape in every page (e.g. the small cart button on the top right corner of the page) as a dialog.
+                var msgKey = new ShoppingCartItem(0, 0, null).GenerateUniqueKey();
+                if (productMessages == null) productMessages = new Dictionary<string, List<ItemLog>>();
+                productMessages.Add(msgKey, new List<ItemLog>());
+                var unavailableItemLog = new ItemLog {
+                    LocalizedMessage = unavailableMessage,
+                    LocalizedBaseMessage = unavailableMessage.Text,
+                    MovedQuantityAttemped = 0,
+                    ProductAction = ProductActionOptions.Removed,
+                    MovedQuantity = 0,
+                    ProductResultedAction = ProductResultedActionOptions.RemovedFromCart,
+                    ProductTitle = string.Empty
+                };
+                productMessages[msgKey].Add(unavailableItemLog);
+
+                // Adding message as a warning to notifier to show it in the checkout page.
+                _notifier.Warning(unavailableMessage);
+            }
+
+            // additional messages that are not tied to any specific product that is actually 
             // in the cart. e.g. a message explaining why a given product was not added to the
             // cart: such a message would not be among any cart line's messages, because of
             // course no cart line would match.
@@ -280,6 +320,7 @@ namespace Nwazet.Commerce.Controllers {
                     .Contains(pm.Key))
                 ?.SelectMany(pm => pm.Value)
                 ?? Enumerable.Empty<ItemLog>();
+
             shape.AdditionalMessages = additionalMessages.Any()
                 ? string.Join(Environment.NewLine, additionalMessages.Select(x => x.Message))
                 : (string)null;
@@ -317,7 +358,7 @@ namespace Nwazet.Commerce.Controllers {
                           .ToList();
 
             if ((country == Country.UnitedStates && !string.IsNullOrWhiteSpace(zipCode)) ||
-                (!String.IsNullOrWhiteSpace(country) && country != Country.UnitedStates)) {
+                (!string.IsNullOrWhiteSpace(country) && country != Country.UnitedStates)) {
                 shape.Country = country;
                 shape.ZipCode = zipCode;
 
@@ -434,8 +475,7 @@ namespace Nwazet.Commerce.Controllers {
                         true,
                         _shoppingCart.Country,
                         _shoppingCart.ZipCode));
-            }
-            catch (ShippingException ex) {
+            } catch (ShippingException ex) {
                 _shoppingCart.Country = null;
                 _shoppingCart.ZipCode = null;
                 _shoppingCart.ShippingOption = null;
@@ -469,8 +509,7 @@ namespace Nwazet.Commerce.Controllers {
 
             if (items != null) {
                 UpdateShoppingCart(items.Reverse());
-            }
-            else {
+            } else {
                 // call handlers if nothing was changed in terms of the items
                 foreach (var handler in _cartLifeCycleEventHandlers) {
                     handler.Updated();
@@ -497,8 +536,7 @@ namespace Nwazet.Commerce.Controllers {
                         true,
                         _shoppingCart.Country,
                         _shoppingCart.ZipCode));
-            }
-            catch (ShippingException ex) {
+            } catch (ShippingException ex) {
                 _shoppingCart.Country = null;
                 _shoppingCart.ZipCode = null;
                 _shoppingCart.ShippingOption = null;
@@ -523,8 +561,7 @@ namespace Nwazet.Commerce.Controllers {
                             RemovalAction = cpaa.RemovalAction
                         }));
                     alterations.AddRange(_shoppingCart.PriceAlterations);
-                }
-                else {
+                } else {
                     alterations.AddRange(priceAlterations
                         .Select(cpaa => new CartPriceAlteration {
                             AlterationType = cpaa.AlterationType,
@@ -609,8 +646,7 @@ namespace Nwazet.Commerce.Controllers {
             foreach (var item in itemsInBoth.Where(kvp => kvp.Key != 0)) {
                 if (item.Key > 0) { //increase in quantity
                     addedItems.Add(item.Value);
-                }
-                else if (item.Key < 0) { //decrease in quantity
+                } else if (item.Key < 0) { //decrease in quantity
                     removedItems.Add(item.Value);
                 }
                 //if quantity has not changed, we do not raise an event for that item
@@ -642,8 +678,7 @@ namespace Nwazet.Commerce.Controllers {
                         var product = products.Where(p => p.Id == item.ProductId).FirstOrDefault();
                         if (product != null) {
                             minimumOrderQuantites.Add(product.Id, product.MinimumOrderQuantity);
-                        }
-                        else {
+                        } else {
                             // This ensures the dictionary will have all the keys needed for the items
                             minimumOrderQuantites.Add(item.ProductId, defaultMinimumQuantity);
                         }

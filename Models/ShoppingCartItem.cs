@@ -23,7 +23,9 @@ namespace Nwazet.Commerce.Models {
         public ShoppingCartItem(int productId, int quantity = 1, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues = null) {
             ProductId = productId;
             Quantity = quantity;
-            AttributeIdsToValues = attributeIdsToValues;
+            // If AttributeIdsToValues is null (in the case of PersistentShoppingCart it is), validation Razors fail.
+            // This is the reason I create a new empty Dictionary when needed.
+            AttributeIdsToValues = (attributeIdsToValues == null ? new Dictionary<int, ProductAttributeValueExtended>() : attributeIdsToValues);
         }
 
         public string AttributeDescription {
