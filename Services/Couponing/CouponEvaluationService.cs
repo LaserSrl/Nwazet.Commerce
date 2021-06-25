@@ -326,6 +326,12 @@ namespace Nwazet.Commerce.Services.Couponing {
         #endregion
 
         #region Compute values in cart
+        //TODO: we need to have a better way to do the computations
+        // for coupons.
+        public bool TryCouponCartValue() {
+            return false;
+        }
+
         public bool TryCouponCartValue(
             // we are computing stuff for this coupon
             CouponRecord coupon,

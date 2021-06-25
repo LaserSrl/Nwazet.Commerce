@@ -88,6 +88,23 @@ namespace Nwazet.Commerce.Services.Couponing {
             return 0.0m;
         }
 
+        public bool CanProcess(CartPriceAlterationContext context) {
+            if (CanProcess(context.Alteration)) {
+                var coupon = GetCouponFromCode(context.Alteration.Key);
+                return Applies(coupon, context.ShoppingCart);
+            }
+            return false;
+        }
+
+        public decimal AlterationAmount(CartPriceAlterationContext context) {
+            // The values returned by this method are "after VAT".
+            // should this provider process the given CartPriceAlteration?
+            if (CanProcess(context)) {
+
+            }
+            return 0.0m;
+        }
+
         public decimal AlterationAmount(
             CartPriceAlteration alteration, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine,
             IEnumerable<CartPriceAlterationAmount> previousAmounts = null,
