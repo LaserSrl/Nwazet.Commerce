@@ -610,7 +610,9 @@
     <Compile Include="Security\WishListsAuthorizationEventHandler.cs" />
     <Compile Include="Services\BaseOrderAdditionalInformationProvider.cs" />
     <Compile Include="Services\BaseProductPriceService.cs" />
+    <Compile Include="Services\BundleAutocompleteLocalizationService.cs" />
     <Compile Include="Services\BundleAutocompleteService.cs" />
+    <Compile Include="Services\BundleAutocompleteServiceBase.cs" />
     <Compile Include="Services\BundleProductLocalizationBundleService.cs" />
     <Compile Include="Services\BundleProductLocalizationServices.cs" />
     <Compile Include="Services\BundleServiceBase.cs" />

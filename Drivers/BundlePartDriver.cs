@@ -32,8 +32,7 @@ namespace Nwazet.Commerce.Drivers {
             _orchardServices = orchardServices;
         }
 
-        protected override string Prefix
-        {
+        protected override string Prefix {
             get { return "Bundle"; }
         }
 
@@ -58,19 +57,19 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         protected override DriverResult Editor(BundlePart part, dynamic shapeHelper) {
-           if (part.TypePartDefinition.Settings.GetModel<BundleProductSettings>().Autocomplete) {
+            if (part.TypePartDefinition.Settings.GetModel<BundleProductSettings>().Autocomplete) {
                 return ContentShape("Parts_Bundle_Autocomplete_Edit",
                     () => shapeHelper.EditorTemplate(
                     TemplateName: "Parts/BundleAutocomplete",
                     Model: _bundleAutocompleteService.BuildEditorViewModel(part),
                     Prefix: Prefix));
             }
-           else
-            return ContentShape("Parts_Bundle_Edit",
-                () => shapeHelper.EditorTemplate(
-                    TemplateName: "Parts/Bundle",
-                    Model: _bundleService.BuildEditorViewModel(part),
-                    Prefix: Prefix));
+            else
+                return ContentShape("Parts_Bundle_Edit",
+                    () => shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Bundle",
+                        Model: _bundleService.BuildEditorViewModel(part),
+                        Prefix: Prefix));
         }
 
         protected override DriverResult Editor(BundlePart part, IUpdateModel updater, dynamic shapeHelper) {
@@ -107,13 +106,16 @@ namespace Nwazet.Commerce.Drivers {
         protected override void Exporting(BundlePart part, ExportContentContext context) {
             var elt = context.Element("BundlePart");
             foreach (var productQuantity in part.ProductQuantities) {
-                var productElement = new XElement("Product");
-                productElement.SetAttributeValue("id",
-                    context.ContentManager.GetItemMetadata(
-                    context.ContentManager.Get(productQuantity.ProductId)).Identity);
-                productElement.SetAttributeValue("quantity",
-                    productQuantity.Quantity.ToString(CultureInfo.InvariantCulture));
-                elt.Add(productElement);
+                var ci = context.ContentManager.Get(productQuantity.ProductId);
+                if (ci != null) {
+                    var productElement = new XElement("Product");
+                    productElement.SetAttributeValue("id",
+                        context.ContentManager.GetItemMetadata(
+                        ci).Identity);
+                    productElement.SetAttributeValue("quantity",
+                        productQuantity.Quantity.ToString(CultureInfo.InvariantCulture));
+                    elt.Add(productElement);
+                }
             }
         }
     }

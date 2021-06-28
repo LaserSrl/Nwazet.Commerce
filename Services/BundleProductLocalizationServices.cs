@@ -44,12 +44,12 @@ namespace Nwazet.Commerce.Services {
         }
         public IEnumerable<IContent> GetProductsInTheWrongCulture(BundlePart bundlePart, LocalizationPart locPart) {
             return bundlePart.ProductIds
-                .Select(pid => _contentManager.Get(pid))
+                .Select(pid => _contentManager.Get(pid, VersionOptions.Latest))
                 .Where(WrongCulturePredicate(locPart));
         }
         public IEnumerable<IContent> GetProductsInTheWrongCulture(IEnumerable<int> productIds, LocalizationPart locPart) {
             return productIds
-                .Select(id => _contentManager.Get(id))
+                .Select(id => _contentManager.Get(id, VersionOptions.Latest))
                 .Where(WrongCulturePredicate(locPart));
         }
 
