@@ -68,10 +68,14 @@
             var aft = $("input[name=__RequestVerificationToken]:first").val();
             $.widget("custom.myautocomplete", $.ui.autocomplete, {
                 _renderItem: function (ul, item) {
+                    var state = "";
+                    if (!item.HasPublished) {
+                        state = " - @T("Not Published")";
+                    }
                     var row = $("<li>");
-                    var aux = "<div>" + item.DisplayText + " (sku: " + item.Sku + ") </div>";
+                    var aux = "<div>" + item.DisplayText + state + " (sku: " + item.Sku + ") </div>";
                     if (item.Lang != null) {
-                        aux = "<div>" + item.DisplayText + " (sku: " + item.Sku + ") (" + item.Lang + ")" + "</div>";
+                        aux = "<div>" + item.DisplayText + state + " (sku: " + item.Sku + ") (" + item.Lang + ")" + "</div>";
                     }
                     row = row.append($("<a>").html(aux));
                     row = row.appendTo(ul);
@@ -96,7 +100,11 @@
                     $(".row-bundle-header").removeClass("bundle-autocomplete-d-none");
                     var newId = $('div.table-bundle-autocomplete .row-bundle').length
                     var name = 'Bundle.Products[' + newId + ']';
-                    $("div.table-bundle-autocomplete").append('<div class="row row-bundle row-bundle-autocomplete"><div class="col-xs-4"><input type="hidden" value="' + ui.item.ProductId + '" name="' + name + '.ProductId" /><label for="' + name + '.Quantity"><a href="' + ui.item.EditUrl + '">' + ui.item.DisplayText + '</a> </label></div><div class="col-xs-4"><span class="span-sku-' + newId + '">' + ui.item.Sku + '</span></div><div class="col-xs-2 center-align-bundle-autocomplete"><input type="number" class="quantity-bundle-autocomplete" onchange="ManagedQuanitity(' + newId + ')" min="0" value="' + ui.item.Quantity + '" name="' + name + '.Quantity" id="' + name + '.Quantity" /></div><div class="col-xs-2 center-align-bundle-autocomplete"><a class="btn btn-success btn-sm rounded-0" title="@T("Edit Quantity")"><i class="fa fa-edit"></i></a> <a class="btn btn-danger btn-sm rounded-0" onclick="RemoveProduct(' + newId + ')" title="@T("Remove Product")"><i class="glyphicon glyphicon-remove"></i></a></div></div>');
+                    var state = "";
+                    if (!ui.item.HasPublished) {
+                        state = "<span> - @T("Not Published") </span>";
+                    }
+                    $("div.table-bundle-autocomplete").append('<div class="row row-bundle row-bundle-autocomplete"><div class="col-xs-4"><input type="hidden" value="' + ui.item.ProductId + '" name="' + name + '.ProductId" /><label for="' + name + '.Quantity"><a href="' + ui.item.EditUrl + '">' + ui.item.DisplayText + '</a>' + state +'</label></div><div class="col-xs-4"><span class="span-sku-' + newId + '">' + ui.item.Sku + '</span></div><div class="col-xs-2 center-align-bundle-autocomplete"><input type="number" class="quantity-bundle-autocomplete" onchange="ManagedQuanitity(' + newId + ')" min="0" value="' + ui.item.Quantity + '" name="' + name + '.Quantity" id="' + name + '.Quantity" /></div><div class="col-xs-2 center-align-bundle-autocomplete"><a class="btn btn-success btn-sm rounded-0" title="@T("Edit Quantity")"><i class="fa fa-edit"></i></a> <a class="btn btn-danger btn-sm rounded-0" onclick="RemoveProduct(' + newId + ')" title="@T("Remove Product")"><i class="glyphicon glyphicon-remove"></i></a></div></div>');
                 }
             });
         });

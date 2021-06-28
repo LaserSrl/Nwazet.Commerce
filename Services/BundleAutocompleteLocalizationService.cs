@@ -94,7 +94,8 @@ namespace Nwazet.Commerce.Services {
                       DisplayText = _contentManager.GetItemMetadata(x).DisplayText,
                       Sku = x.As<ProductPart>() != null ? x.As<ProductPart>().Sku : string.Empty,
                       Lang = (x.As<LocalizationPart>() != null && x.As<LocalizationPart>().Culture != null && !string.IsNullOrWhiteSpace(x.As<LocalizationPart>().Culture.Culture)) ?
-                        x.As<LocalizationPart>().Culture.Culture : T(" (culture undefined)").Text
+                        x.As<LocalizationPart>().Culture.Culture : T("culture undefined").Text,
+                      HasPublished= x.HasPublished()
                   })
                 .ToList();
         }
