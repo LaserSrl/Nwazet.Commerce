@@ -43,5 +43,13 @@ namespace Nwazet.Commerce.Services.Couponing {
             ShoppingCartQuantityProduct cartLine,
             IEnumerable<decimal> previousValues,
             out decimal value);
+
+        bool TryCouponCartValue(
+            CartPriceAlterationContext context,
+            out decimal value);
+
+        bool TryCouponLineValue(
+            LinePriceAlterationContext context,
+            out decimal value);
     }
 }

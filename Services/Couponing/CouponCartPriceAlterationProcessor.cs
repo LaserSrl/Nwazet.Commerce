@@ -100,7 +100,25 @@ namespace Nwazet.Commerce.Services.Couponing {
             // The values returned by this method are "after VAT".
             // should this provider process the given CartPriceAlteration?
             if (CanProcess(context)) {
-
+                // process each line, because the computation for the cart may
+                // need those partial results
+                foreach (var lineContext in context.ContextsForLines().ToList()) {
+                    var newLineValue = 0.0m;
+                    _couponEvaluationService.TryCouponLineValue(lineContext, out newLineValue);
+                    lineContext.AlterationValues.Add(new AlterationValueInfo {
+                        Alteration = lineContext.Alteration,
+                        Value = newLineValue
+                    });
+                }
+                // process cart. This computation may use the values from the lines
+                // computed above
+                var newCartValue = 0.0m;
+                _couponEvaluationService.TryCouponCartValue(context, out newCartValue);
+                context.AlterationValues.Add(new AlterationValueInfo {
+                    Alteration = context.Alteration,
+                    Value = newCartValue
+                });
+                return newCartValue;
             }
             return 0.0m;
         }
