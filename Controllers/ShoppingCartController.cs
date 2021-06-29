@@ -270,8 +270,10 @@ namespace Nwazet.Commerce.Controllers {
             var productShapes = GetProductShapesFromQuantities(productQuantities, country, zipCode, productMessages);
             shape.ShopItems = productShapes;
 
-            // I need to search for the items in the shopping cart that are not anymore in the products to see if some of the items have been excluded because they're not available anymore.
-            // This happens when a product is deleted or unpublished after the user adds it to the shopping cart but before the checkout.
+            // I need to search for the items in the shopping cart that are not anymore in the products 
+            // to see if some of the items have been excluded because they're not available anymore.
+            // This happens when a product is deleted or unpublished after the user adds it to 
+            // the shopping cart but before the checkout.
             // This scenario is particularly possible with persistent carts, but may also happen in session carts.
             int unavailableItems = 0;
             foreach (var item in _shoppingCart.Items) {
@@ -285,7 +287,7 @@ namespace Nwazet.Commerce.Controllers {
             var unavailableMessage = T(string.Empty);
 
             if (unavailableItems == 1) {
-                unavailableMessage = T("One item in the shopping cart is't available anymore and has been removed from the cart.");
+                unavailableMessage = T("One item in the shopping cart isn't available anymore and has been removed from the cart.");
             } else if (unavailableItems > 1) {
                 unavailableMessage = T("Several items in the shopping cart aren't available anymore and have been removed from the cart.");
             }
