@@ -317,6 +317,7 @@
     <Compile Include="ApplicabilityCriteria\Couponing\NonCumulativeStateCouponApplicabilityCriterion.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\NonCumulativeCouponApplicabilityCriterion.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\NoNegativePriceCouponApplicabilityCriterion.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\UserRolesCouponApplicabilityCriterion.cs" />
     <Compile Include="ApplicabilityCriteria\NumericCriterionBase.cs" />
     <Compile Include="Aspects\ITerritoryAddressAspect.cs" />
     <Compile Include="Commands\TerritoriesCommands.cs" />
@@ -418,6 +419,7 @@
     <Compile Include="Filters\ProductWeightFilter.cs" />
     <Compile Include="Filters\ProductWeightFilterForm.cs" />
     <Compile Include="Filters\ReferrerFilter.cs" />
+    <Compile Include="Filters\UserRolesFilterForm.cs" />
     <Compile Include="Handlers\AdvancedSKUManagementHandler.cs" />
     <Compile Include="Handlers\AdvancedSKUsSiteSettingPartHandler.cs" />
     <Compile Include="Handlers\BundlePartHandler.cs" />
