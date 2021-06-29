@@ -172,6 +172,12 @@
     <Content Include="Styles\bundle.nwazet-commerce-admin.min.css">
       <DependentUpon>bundle.nwazet-commerce-admin.css</DependentUpon>
     </Content>
+    <Content Include="Styles\coupon-admin.css">
+      <DependentUpon>coupon-admin.less</DependentUpon>
+    </Content>
+    <Content Include="Styles\coupon-admin.min.css">
+      <DependentUpon>coupon-admin.css</DependentUpon>
+    </Content>
     <Content Include="Styles\discount.nwazet-commerce-admin.min.css">
       <DependentUpon>discount.nwazet-commerce-admin.css</DependentUpon>
     </Content>
@@ -227,6 +233,7 @@
       <DependentUpon>compilerconfig.json</DependentUpon>
     </None>
     <None Include="packages.config" />
+    <None Include="Styles\coupon-admin.less" />
     <None Include="Styles\product-admin.less" />
     <None Include="Views\CouponingAdmin\_CouponActionsBasicPartial.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsPartial.cshtml" />
@@ -307,7 +314,10 @@
     <Compile Include="ApplicabilityCriteria\Couponing\CartHasProductBySKUCouponLineApplicabilityCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\MaxUsesCouponApplicabilityCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\MaxUsesPerUserCouponApplicabilityCriteria.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\NonCumulativeStateCouponApplicabilityCriterion.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\NonCumulativeCouponApplicabilityCriterion.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\NoNegativePriceCouponApplicabilityCriterion.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\UserRolesCouponApplicabilityCriterion.cs" />
     <Compile Include="ApplicabilityCriteria\NumericCriterionBase.cs" />
     <Compile Include="Aspects\ITerritoryAddressAspect.cs" />
     <Compile Include="Commands\TerritoriesCommands.cs" />
@@ -409,6 +419,7 @@
     <Compile Include="Filters\ProductWeightFilter.cs" />
     <Compile Include="Filters\ProductWeightFilterForm.cs" />
     <Compile Include="Filters\ReferrerFilter.cs" />
+    <Compile Include="Filters\UserRolesFilterForm.cs" />
     <Compile Include="Handlers\AdvancedSKUManagementHandler.cs" />
     <Compile Include="Handlers\AdvancedSKUsSiteSettingPartHandler.cs" />
     <Compile Include="Handlers\BundlePartHandler.cs" />
