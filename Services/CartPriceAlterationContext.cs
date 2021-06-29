@@ -20,6 +20,13 @@ namespace Nwazet.Commerce.Services {
         }
 
         public abstract IEnumerable<LinePriceAlterationContext> ContextsForLines();
+
+        public virtual void SetAlteration(CartPriceAlteration alteration) {
+            Alteration = alteration;
+            foreach (var lc in ContextsForLines()) {
+                lc.SetAlteration(alteration);
+            }
+        }
     }
     public class CartPriceAlterationContext
         : CartPriceAlterationContextBase {
@@ -63,10 +70,14 @@ namespace Nwazet.Commerce.Services {
         public override IEnumerable<LinePriceAlterationContext> ContextsForLines() {
             yield return this;
         }
+        public override void SetAlteration(CartPriceAlteration alteration) {
+            Alteration = alteration;
+        }
     }
 
     public class AlterationValueInfo {
         public CartPriceAlteration Alteration { get; set; }
         public decimal Value { get; set; }
+        public bool Effective { get; set; }
     }
 }

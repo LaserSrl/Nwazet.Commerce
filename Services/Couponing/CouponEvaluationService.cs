@@ -405,8 +405,30 @@ namespace Nwazet.Commerce.Services.Couponing {
             LinePriceAlterationContext context,
             out decimal value) {
 
+            // in case the stuff for this alteration has already been computed, it 
+            // would be in the values stored in this context. In that case, we can
+            // prevent recomputing anything
+            var existing = context.AlterationValues
+                ?.FirstOrDefault(av => 
+                    av.Alteration.AlterationType == context.Alteration.AlterationType
+                    && av.Alteration.Key == context.Alteration.Key);
+            if (existing != null) {
+                value = existing.Value;
+                return existing.Effective;
+            }
+
             value = 0.0m;
             var coupon = GetCouponFromCode(context.Alteration.Key);
+            if (!TestCouponCriteriaOnLine(new CouponLineApplicabilityContext {
+                Coupon = coupon,
+                CouponCode = coupon.Code,
+                ShoppingCart = context.ShoppingCart,
+                CartLine = context.CartLine,
+                WorkContext = context.WorkContext,
+                IsApplicable = true
+            }, coupon)) {
+                return false;
+            }
             // we are not testing for the coupon's validity here, we are assuming it
             // should be considered.
             if (coupon != null) {

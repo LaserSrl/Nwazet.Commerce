@@ -104,19 +104,21 @@ namespace Nwazet.Commerce.Services.Couponing {
                 // need those partial results
                 foreach (var lineContext in context.ContextsForLines().ToList()) {
                     var newLineValue = 0.0m;
-                    _couponEvaluationService.TryCouponLineValue(lineContext, out newLineValue);
+                    var effectiveOnLine = _couponEvaluationService.TryCouponLineValue(lineContext, out newLineValue);
                     lineContext.AlterationValues.Add(new AlterationValueInfo {
                         Alteration = lineContext.Alteration,
-                        Value = newLineValue
+                        Value = newLineValue,
+                        Effective = effectiveOnLine
                     });
                 }
                 // process cart. This computation may use the values from the lines
                 // computed above
                 var newCartValue = 0.0m;
-                _couponEvaluationService.TryCouponCartValue(context, out newCartValue);
+                var effectiveOnCart = _couponEvaluationService.TryCouponCartValue(context, out newCartValue);
                 context.AlterationValues.Add(new AlterationValueInfo {
                     Alteration = context.Alteration,
-                    Value = newCartValue
+                    Value = newCartValue,
+                    Effective = effectiveOnCart
                 });
                 return newCartValue;
             }

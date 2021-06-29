@@ -24,6 +24,8 @@ namespace Nwazet.Commerce.Services {
             IShoppingCart shoppingCart,
             IEnumerable<CartPriceAlterationAmount> previousAmounts = null);
 
+        decimal AlterationAmount(CartPriceAlterationContext context);
+
         /// <summary>
         /// 
         /// </summary>
