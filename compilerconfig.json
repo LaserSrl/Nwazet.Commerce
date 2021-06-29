@@ -6,5 +6,9 @@
   {
     "outputFile": "Styles/product-admin.css",
     "inputFile": "Styles/product-admin.less"
+  },
+  {
+    "outputFile": "Styles/coupon-admin.css",
+    "inputFile": "Styles/coupon-admin.less"
   }
 ]

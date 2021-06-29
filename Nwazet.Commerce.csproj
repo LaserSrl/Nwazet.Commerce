@@ -172,6 +172,12 @@
     <Content Include="Styles\bundle.nwazet-commerce-admin.min.css">
       <DependentUpon>bundle.nwazet-commerce-admin.css</DependentUpon>
     </Content>
+    <Content Include="Styles\coupon-admin.css">
+      <DependentUpon>coupon-admin.less</DependentUpon>
+    </Content>
+    <Content Include="Styles\coupon-admin.min.css">
+      <DependentUpon>coupon-admin.css</DependentUpon>
+    </Content>
     <Content Include="Styles\discount.nwazet-commerce-admin.min.css">
       <DependentUpon>discount.nwazet-commerce-admin.css</DependentUpon>
     </Content>
@@ -227,6 +233,7 @@
       <DependentUpon>compilerconfig.json</DependentUpon>
     </None>
     <None Include="packages.config" />
+    <None Include="Styles\coupon-admin.less" />
     <None Include="Styles\product-admin.less" />
     <None Include="Views\CouponingAdmin\_CouponActionsBasicPartial.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsPartial.cshtml" />
