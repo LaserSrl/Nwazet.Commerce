@@ -48,7 +48,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     if (coupons.Any()) {
                         // coupons are not cumulative
                         context.IsApplicable = false;
-                        context.Message = T("Coupons are not cumulative, coupon code {0} cannot be used.", context.Coupon.Code);
+                        context.Message = ErrorMessage(context.Coupon.Code);
                     }
                 }
             }
@@ -58,7 +58,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     if(coupon.ApplicabilityCriteria.Any(c=>c.Type== NonCumulativeStateCouponApplicabilityCriterion.ApplicabilityCriterionType)) {
                         // coupons are not cumulative
                         context.IsApplicable = false;
-                        context.Message = T("Coupons are not cumulative, coupon code {0} cannot be used.", context.Coupon.Code);
+                        context.Message = ErrorMessage(context.Coupon.Code);
                     }
                 } 
             }
@@ -74,7 +74,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     if (coupons.Count() > 1) {
                         // coupons are not cumulative
                         context.IsApplicable = false;
-                        context.Message = T("Coupons are not cumulative, coupon code {0} cannot be used.", context.Coupon.Code);
+                        context.Message = ErrorMessage(context.Coupon.Code);
                     }
                 }
             }
@@ -84,7 +84,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     if (coupon.ApplicabilityCriteria.Any(c => c.Type == NonCumulativeStateCouponApplicabilityCriterion.ApplicabilityCriterionType)) {
                         // coupons are not cumulative
                         context.IsApplicable = false;
-                        context.Message = T("Coupons are not cumulative, coupon code {0} cannot be used.", context.Coupon.Code);
+                        context.Message = ErrorMessage(context.Coupon.Code);
                     }
                 }
             }
@@ -97,5 +97,9 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             }
             return _loadedCoupons[code];
         }
+
+        private LocalizedString ErrorMessage(string couponCode) {
+            return T("You already have an active coupon. {0} cannot be added.", couponCode);
+        } 
     }
 }
