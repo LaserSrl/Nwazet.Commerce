@@ -59,16 +59,10 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     // do configured test
                     var result = EvaluateFilter(user, context.State);
 
-                    if (!result) {
-                        context.ApplicabilityContext.Message =
-                            T("Coupon code {0} is not valid", context.CouponRecord.Code);
-                    }
                     context.IsApplicable = result;
                     context.ApplicabilityContext.IsApplicable = result;
                 }
                 else {
-                    context.ApplicabilityContext.Message =
-                            T("Coupon code {0} is not valid", context.CouponRecord.Code);
                     context.IsApplicable = false;
                     context.ApplicabilityContext.IsApplicable = false;
                 }
