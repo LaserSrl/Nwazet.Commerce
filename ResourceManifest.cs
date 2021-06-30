@@ -37,6 +37,7 @@ namespace Nwazet.Commerce {
             manifest.DefineStyle("Nwazet.Order-Admin").SetUrl("order-admin.min.css", "order-admin.css");
             manifest.DefineStyle("Nwazet.Attribute-Admin").SetUrl("attribute.nwazet-commerce-admin.min.css?v=1", "attribute.nwazet-commerce-admin.css?v=1");
             manifest.DefineStyle("Nwazet.Product-Admin").SetUrl("product-admin.min.css?v=1.1", "product-admin.css");
+            manifest.DefineStyle("Nwazet.Coupon-Admin").SetUrl("product-admin.min.css?v=1.0", "product-admin.css");
             manifest.DefineStyle("Nwazet.Report-Admin").SetUrl("reports-admin.min.css", "reports-admin.css");
             manifest.DefineStyle("Nwazet.Territory-Hierarchies-Admin").SetUrl("territory-hierarchies-admin.min.css", "territory-hierarchies-admin.css");
             manifest.DefineStyle("Nwazet.WishLists").SetUrl("wishlists.nwazet-commerce.min.css", "wishlists.nwazet-commerce.css");
