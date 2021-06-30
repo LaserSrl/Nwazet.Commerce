@@ -39,15 +39,14 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                 .Element(ApplicabilityCriterionType,
                     T("Non cumulative state"),
                     T("If the criteria is present the coupon is not cumulative with other coupons"),
-                    (ctx) => ApplyCriteria(ctx, T("Coupon {0} cannot be cumulated.", ctx.CouponRecord.Code)),
-                    (ctx) => ApplyCriteria(ctx, T("Coupon {0} cannot be cumulated.", ctx.CouponRecord.Code)),
+                    (ctx) => ApplyCriteria(ctx),
+                    (ctx) => ApplyCriteria(ctx),
                     (ctx) => T("Non cumulative state"),
                     isAvailableForConfiguration, isAvailableForProcessing,
                     null);
         }
 
-        public void ApplyCriteria(CouponApplicabilityCriterionContext context,
-            LocalizedString failureMessage) {
+        public void ApplyCriteria(CouponApplicabilityCriterionContext context) {
             // Use outerCriterion to negate the test, so we can easily do
             // true/false
             if (context.IsApplicable) {
@@ -63,7 +62,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     context.ApplicabilityContext.ShoppingCart.PriceAlterations.First().Key == context.CouponRecord.Code);
                 //verify is current coupon
                 if (!result) {
-                    context.ApplicabilityContext.Message = failureMessage;
+                    context.ApplicabilityContext.Message = T("You already have an active coupon. {0} cannot be added.", context.CouponRecord.Code);
                 }
                 context.IsApplicable = result;
                 context.ApplicabilityContext.IsApplicable = result;
