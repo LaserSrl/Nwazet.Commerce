@@ -8,6 +8,14 @@
     Style.Require("Nwazet.Bundle-Admin");
     var productIndex = 0;
     var searchid = "search" + Guid.NewGuid().ToString();
+
+    var valueName = "__BUNDLE__NAME__";
+    var valueDisplayText = "__BUNDLE__DISPLAYTEXT__";
+    var valueProductId = "__BUNDLE__PRODUCTID__";
+    var valueEditUrl = "__BUNDLE__EDITURL__";
+    var valueState = "__BUNDLE__STATE__";
+    var valueNewId = "__BUNDLE__NEWID__";
+    var valueSku = "__BUNDLE__SKU__";
 }
 <fieldset>
     <legend>@T("Products in this bundle")</legend>
@@ -58,8 +66,37 @@
         <input id="@searchid" class="text large" />
         <p class="hint">@T("Search for a product to add , at least 2 characters (title or sku).")</p>
     </div>
-</fieldset>
 
+    <div id="template-row-bundle-autocomplete" class="bundle-autocomplete-d-none">
+        <div class="row row-bundle row-bundle-autocomplete">
+            <div class="col-xs-4">
+                <input type="hidden" value="@valueProductId" name="@(valueName).ProductId" />
+                <label for="@(valueName).Quantity">
+                    <a href="@valueEditUrl"> @valueDisplayText </a>
+                    @valueState
+                </label>
+            </div>
+            <div class="col-xs-4">
+                <span class="span-sku-@(valueNewId)">
+                    @valueSku
+                </span>
+            </div>
+            <div class="col-xs-2 center-align-bundle-autocomplete">
+                <input type="number" class="quantity-bundle-autocomplete"
+                       onchange="ManagedQuanitity(@(valueNewId))" min="0"
+                       name="@(valueName).Quantity" id="@(valueName).Quantity" />
+            </div>
+            <div class="col-xs-2 center-align-bundle-autocomplete">
+                <a class="btn btn-success btn-sm rounded-0" title="@T("Edit Quantity")">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <a class="btn btn-danger btn-sm rounded-0" onclick="RemoveProduct(@(valueNewId))" title="@T("Remove Product")">
+                    <i class="glyphicon glyphicon-remove"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</fieldset>
 
 @using (Script.Head()) {
     <script type="text/javascript">
@@ -104,7 +141,32 @@
                     if (!ui.item.HasPublished) {
                         state = "<span> - @T("Not Published") </span>";
                     }
-                    $("div.table-bundle-autocomplete").append('<div class="row row-bundle row-bundle-autocomplete"><div class="col-xs-4"><input type="hidden" value="' + ui.item.ProductId + '" name="' + name + '.ProductId" /><label for="' + name + '.Quantity"><a href="' + ui.item.EditUrl + '">' + ui.item.DisplayText + '</a>' + state +'</label></div><div class="col-xs-4"><span class="span-sku-' + newId + '">' + ui.item.Sku + '</span></div><div class="col-xs-2 center-align-bundle-autocomplete"><input type="number" class="quantity-bundle-autocomplete" onchange="ManagedQuanitity(' + newId + ')" min="0" value="' + ui.item.Quantity + '" name="' + name + '.Quantity" id="' + name + '.Quantity" /></div><div class="col-xs-2 center-align-bundle-autocomplete"><a class="btn btn-success btn-sm rounded-0" title="@T("Edit Quantity")"><i class="fa fa-edit"></i></a> <a class="btn btn-danger btn-sm rounded-0" onclick="RemoveProduct(' + newId + ')" title="@T("Remove Product")"><i class="glyphicon glyphicon-remove"></i></a></div></div>');
+
+                    // get the div with id
+                    var template = $("#template-row-bundle-autocomplete");
+                    // duplicate it, remove id
+                    var newRow = template.clone();
+
+                    var differentLang = "";
+                    if (ui.item.DifferentLang != "") {
+                        differentLang = " (" + ui.item.DifferentLang + ")";
+                    }
+
+                    // replace parameters
+                    var stringNewRow = newRow.html();
+                    stringNewRow = stringNewRow.replaceAll("@valueName", name);
+                    stringNewRow = stringNewRow.replaceAll("@valueDisplayText", ui.item.DisplayText + differentLang);
+                    stringNewRow = stringNewRow.replaceAll("@valueState", state);
+                    stringNewRow = stringNewRow.replaceAll("@valueProductId", ui.item.ProductId);
+                    stringNewRow = stringNewRow.replaceAll("@valueEditUrl", ui.item.EditUrl);
+                    stringNewRow = stringNewRow.replaceAll("@valueNewId", newId);
+                    stringNewRow = stringNewRow.replaceAll("@valueSku", ui.item.Sku);
+                    
+                    $("div.table-bundle-autocomplete")
+                        .append(stringNewRow);
+
+                    // after added html assign value to quantity input text 
+                    $("input[name = '"+name+".Quantity']").val(ui.item.Quantity);
                 }
             });
         });

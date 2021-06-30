@@ -66,7 +66,7 @@ namespace Nwazet.Commerce.Services {
             // verify setting
             var ci = _contentManager.Get(contentItemId, VersionOptions.Latest);
             var part = ci.As<BundlePart>();
-            var lPartBundle = part.ContentItem.As<LocalizationPart>();
+            var lPartBundle = part?.ContentItem.As<LocalizationPart>();
 
 
             IHqlQuery listProducts = ProductsQuery(searchText, excludedProductIds);
@@ -93,11 +93,35 @@ namespace Nwazet.Commerce.Services {
                       Quantity = 1,
                       DisplayText = _contentManager.GetItemMetadata(x).DisplayText,
                       Sku = x.As<ProductPart>() != null ? x.As<ProductPart>().Sku : string.Empty,
-                      Lang = (x.As<LocalizationPart>() != null && x.As<LocalizationPart>().Culture != null && !string.IsNullOrWhiteSpace(x.As<LocalizationPart>().Culture.Culture)) ?
-                        x.As<LocalizationPart>().Culture.Culture : T("culture undefined").Text,
-                      HasPublished= x.HasPublished()
+                      Lang = GetLang(x,lPartBundle,false),
+                      DifferentLang = GetLang(x,lPartBundle,true),
+
+                      HasPublished = x.HasPublished()
                   })
                 .ToList();
+        }
+
+        private string GetLang(ContentItem ci, LocalizationPart lPartBundle, bool onlyDifferent) {
+            var lang = T("culture undefined").Text;
+
+            if (!string.IsNullOrWhiteSpace(ci.As<LocalizationPart>()?.Culture?.Culture)) {
+                lang = ci.As<LocalizationPart>().Culture.Culture;
+            }
+
+            // check if return only lang of bundle or all language
+            if (onlyDifferent) {
+                // if bundle not have localization return all language
+                if (!string.IsNullOrWhiteSpace(lPartBundle?.Culture?.Culture) 
+                    && lang == lPartBundle.Culture.Culture) {
+                    return string.Empty;
+                }
+                else {
+                    return lang;
+                }
+            }
+            else {
+                return lang;
+            }
         }
     }
 }
