@@ -21,6 +21,7 @@ namespace Nwazet.Commerce.ViewModels {
         public string DisplayText { get; set; }
         public string Sku { get; set; }
         public string Lang { get; set; }
+        public string DifferentLang { get; set; }
         public bool HasPublished { get; set; }
     }
 }
