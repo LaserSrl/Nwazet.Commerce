@@ -33,11 +33,15 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             T("Prevent adding and using coupons that would cause negative price for a line or for the whole cart.");
 
         public override void PostCanBeAdded(CouponPostApplicabilityContext context) {
-            
+            if (EvaluateCriterion() && context.IsApplicable) {
+
+            }
         }
 
         public override void PostCanBeProcessed(CouponPostApplicabilityContext context) {
-            
+            if (EvaluateCriterion() && context.IsApplicable) {
+
+            }
         }
     }
 }
