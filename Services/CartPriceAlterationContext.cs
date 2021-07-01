@@ -37,6 +37,13 @@ namespace Nwazet.Commerce.Services {
 
         protected Dictionary<string, LinePriceAlterationContext> _lineContexts;
 
+        public LinePriceAlterationContext GetContextForLine(string key) {
+
+            return _lineContexts.ContainsKey(key)
+                ? _lineContexts[key] 
+                : ContextsForLines().FirstOrDefault(lpac => lpac.CartLine.GenerateUniqueKey() == key);
+        }
+
         public override IEnumerable<LinePriceAlterationContext> ContextsForLines() {
             if (ShoppingCart != null) {
                 var lines = ShoppingCart.GetProducts();
@@ -78,6 +85,8 @@ namespace Nwazet.Commerce.Services {
     public class AlterationValueInfo {
         public CartPriceAlteration Alteration { get; set; }
         public decimal Value { get; set; }
+        public string Label { get; set; }
         public bool Effective { get; set; }
+        public string ProcessorClass { get; set; }
     }
 }

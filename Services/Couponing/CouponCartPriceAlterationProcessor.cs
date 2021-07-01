@@ -34,12 +34,15 @@ namespace Nwazet.Commerce.Services.Couponing {
             _loadedCoupons = new Dictionary<string, CouponRecord>();
 
             T = NullLocalizer.Instance;
+
+            _processorClass = this.GetType().FullName;
         }
         public Localizer T { get; set; }
 
         // prevent loading the same coupon several times per request
         private Dictionary<string, CouponRecord> _loadedCoupons;
 
+        private string _processorClass;
 
         public string AlterationType => CouponingUtilities.CouponAlterationType;
 
@@ -69,25 +72,6 @@ namespace Nwazet.Commerce.Services.Couponing {
             return false;
         }
 
-        public decimal AlterationAmount(
-            CartPriceAlteration alteration, 
-            IShoppingCart shoppingCart,
-            IEnumerable<CartPriceAlterationAmount> previousAmounts = null) {
-            // The values returned by this method are "after VAT".
-            // should this provider process the given CartPriceAlteration?
-            if (CanProcess(alteration, shoppingCart)) {
-                // get the coupon corresponding to the alteration
-                var coupon = GetCouponFromCode(alteration.Key);
-                // Do the computation
-                var value = 0.0m;
-                if (_couponEvaluationService.TryCouponCartValue(
-                    coupon, shoppingCart, previousAmounts?.Select(cpaa => cpaa.Amount), out value)) {
-                    return value;
-                }
-            }
-            return 0.0m;
-        }
-
         public bool CanProcess(CartPriceAlterationContext context) {
             if (CanProcess(context.Alteration)) {
                 var coupon = GetCouponFromCode(context.Alteration.Key);
@@ -108,7 +92,9 @@ namespace Nwazet.Commerce.Services.Couponing {
                     lineContext.AlterationValues.Add(new AlterationValueInfo {
                         Alteration = lineContext.Alteration,
                         Value = newLineValue,
-                        Effective = effectiveOnLine
+                        Label = AlterationLabel(lineContext.Alteration, lineContext.ShoppingCart, lineContext.CartLine),
+                        Effective = effectiveOnLine,
+                        ProcessorClass = _processorClass
                     });
                 }
                 // process cart. This computation may use the values from the lines
@@ -118,33 +104,14 @@ namespace Nwazet.Commerce.Services.Couponing {
                 context.AlterationValues.Add(new AlterationValueInfo {
                     Alteration = context.Alteration,
                     Value = newCartValue,
-                    Effective = effectiveOnCart
+                    Label = AlterationLabel(context.Alteration, context.ShoppingCart),
+                    Effective = effectiveOnCart,
+                    ProcessorClass = _processorClass
                 });
                 return newCartValue;
             }
             return 0.0m;
         }
-
-        public decimal AlterationAmount(
-            CartPriceAlteration alteration, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine,
-            IEnumerable<CartPriceAlterationAmount> previousAmounts = null,
-            // force line computation even if coupon would not apply
-            bool force = false) {
-            // The amounts returned by this method are "before VAT"
-            if (force || CanProcess(alteration, shoppingCart, cartLine)) {
-                // Coupons on single product lines
-                // Get the coupon corresponding to the alteration
-                var coupon = GetCouponFromCode(alteration.Key);
-                var value = 0.0m;
-                if (_couponEvaluationService.TryCouponLineValue(
-                    coupon, shoppingCart, cartLine, previousAmounts?.Select(cpaa => cpaa.Amount), out value)) {
-                    return value;
-                }
-            }
-
-            return 0.0m;
-        }
-        
 
         public string AlterationLabel(
             CartPriceAlteration alteration, IShoppingCart shoppingCart) {
