@@ -5,9 +5,6 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
@@ -95,6 +92,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             IsApplicable = baseCtx.IsApplicable;
             Message = baseCtx.Message;
             ShouldNotify = baseCtx.ShouldNotify;
+            BaseCartSubtotal = baseCtx.ShoppingCart.Subtotal();
 
             foreach (var lctx in baseCtx.ContextsForLines()) {
                 _lineContexts.Add(
@@ -118,6 +116,11 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     foreach (var line in lines) {
                         var key = line.GenerateUniqueKey();
                         if (!_lineContexts.ContainsKey(key)) {
+                            var itemPrice = line.Product.DiscountPrice >= 0 && line.Product.DiscountPrice < line.Product.Price
+                                ? line.Product.DiscountPrice
+                                : line.Product.Price;
+                            var baseLinePrice = Math.Round(itemPrice * line.Quantity, 2)
+                                + line.LinePriceAdjustment;
                             _lineContexts.Add(
                                 key,
                                 new CouponPostLineApplicabilityContext {
@@ -129,7 +132,8 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                                     IsApplicable = true, // default to true otherwise no test will be performed
                                     ShouldNotify = this.ShouldNotify,
                                     // and finally we consider the line
-                                    CartLine = line
+                                    CartLine = line,
+                                    BaseLinePrice = baseLinePrice
                                 });
                         }
                         yield return _lineContexts[key];
@@ -165,11 +169,14 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             ShouldNotify = baseCtx.ShouldNotify;
             // stuff specific to lines
             CartLine = baseCtx.CartLine;
+
+            var itemPrice = baseCtx.CartLine.Product.DiscountPrice >= 0 && baseCtx.CartLine.Product.DiscountPrice < baseCtx.CartLine.Product.Price
+                ? baseCtx.CartLine.Product.DiscountPrice
+                : baseCtx.CartLine.Product.Price;
+            BaseLinePrice = Math.Round(itemPrice * baseCtx.CartLine.Quantity, 2)
+                + baseCtx.CartLine.LinePriceAdjustment;
         }
-
-
-        public List<CouponRecord> AllCoupons { get; set; }
-
+        
         public virtual void SetCoupon(CouponRecord coupon) {
             Coupon = coupon;
             CouponCode = coupon.Code;

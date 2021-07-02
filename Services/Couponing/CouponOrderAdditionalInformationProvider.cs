@@ -1,14 +1,8 @@
 ﻿using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
-using Nwazet.Commerce.Models.Couponing;
-using Nwazet.Commerce.ViewModels;
-using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Nwazet.Commerce.Services.Couponing {

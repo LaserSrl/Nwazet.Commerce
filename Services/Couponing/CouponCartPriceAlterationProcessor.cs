@@ -1,18 +1,11 @@
 ﻿using Nwazet.Commerce.ApplicabilityCriteria.Couponing;
-using Nwazet.Commerce.Descriptors.CouponApplicability;
 using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
-using Nwazet.Commerce.Models.Couponing;
-using Nwazet.Commerce.Services.Couponing;
-using Nwazet.Commerce.ViewModels;
 using Orchard;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Services.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
