@@ -436,6 +436,7 @@
     <Compile Include="Handlers\OrderPartAuthorizationEventHandler.cs" />
     <Compile Include="Handlers\OrderPartHandler.cs" />
     <Compile Include="Handlers\PricePartHandler.cs" />
+    <Compile Include="Handlers\BundleProductsHandler.cs" />
     <Compile Include="Handlers\ProductPartVersioningHandler.cs" />
     <Compile Include="Handlers\ProductSettingsPartHandler.cs" />
     <Compile Include="Handlers\ProductVatConfigurationPartHandler.cs" />
