@@ -24,20 +24,20 @@ namespace Nwazet.Commerce.Controllers {
     public class CouponingCriterionController : Controller {
 
         private readonly IAuthorizer _authorizer;
-        private readonly ICouponApplicationService _couponApplicationService;
         private readonly ICouponRepositoryService _couponRepositoryService;
         private readonly IFormManager _formManager;
+        private readonly ICouponCriteriaManagementService _couponCriteriaManagementService;
 
         public CouponingCriterionController(
             IAuthorizer authorizer,
-            ICouponApplicationService couponApplicationService,
             ICouponRepositoryService couponRepositoryService,
-            IFormManager formManager) {
+            IFormManager formManager,
+            ICouponCriteriaManagementService couponCriteriaManagementService) {
 
             _authorizer = authorizer;
-            _couponApplicationService = couponApplicationService;
             _couponRepositoryService = couponRepositoryService;
             _formManager = formManager;
+            _couponCriteriaManagementService = couponCriteriaManagementService;
 
             T = NullLocalizer.Instance;
         }
@@ -63,7 +63,7 @@ namespace Nwazet.Commerce.Controllers {
 
             var viewModel = new CouponCriteriaAddViewModel {
                 Id = id,
-                Criteria = _couponApplicationService.DescribeApplicabilityCriteria()
+                Criteria = _couponCriteriaManagementService.DescribeApplicabilityCriteria()
             };
 
             return View(viewModel);
@@ -81,7 +81,7 @@ namespace Nwazet.Commerce.Controllers {
                 return HttpNotFound();
             }
 
-            var criterion = _couponApplicationService
+            var criterion = _couponCriteriaManagementService
                 .GetCriterion(category, type);
             if (criterion == null) {
                 return HttpNotFound();
@@ -130,7 +130,7 @@ namespace Nwazet.Commerce.Controllers {
                 return HttpNotFound();
             }
             // get the definition for the criterion
-            var criterion = _couponApplicationService
+            var criterion = _couponCriteriaManagementService
                 .GetCriterion(category, type);
             if (criterion == null) {
                 return HttpNotFound();
@@ -202,7 +202,7 @@ namespace Nwazet.Commerce.Controllers {
                     return HttpNotFound();
                 }
                 // actually delete
-                _couponApplicationService.DeleteCriterion(criterionId);
+                _couponCriteriaManagementService.DeleteCriterion(criterionId);
             }
             // redirect to editor for the coupon
             return RedirectToAction("Edit", "CouponingAdmin", new { id = id });

@@ -44,19 +44,19 @@ namespace Nwazet.Commerce.Services {
         }
         public IEnumerable<IContent> GetProductsInTheWrongCulture(BundlePart bundlePart, LocalizationPart locPart) {
             return bundlePart.ProductIds
-                .Select(pid => _contentManager.Get(pid))
+                .Select(pid => _contentManager.Get(pid, VersionOptions.Latest))
                 .Where(WrongCulturePredicate(locPart));
         }
         public IEnumerable<IContent> GetProductsInTheWrongCulture(IEnumerable<int> productIds, LocalizationPart locPart) {
             return productIds
-                .Select(id => _contentManager.Get(id))
+                .Select(id => _contentManager.Get(id, VersionOptions.Latest))
                 .Where(WrongCulturePredicate(locPart));
         }
 
         private Func<ProductQuantity, ProductQuantityPair> TranslatedProductSelector(LocalizationPart locPart) {
             return pq => {
                 var ci = _contentManager.Get(pq.ProductId);
-                if (_localizationService.GetContentCulture(ci) == locPart.Culture.Culture) {
+                if (GetContentCulture(ci,locPart) == locPart.Culture.Culture) {
                     //this product is fine
                     return new ProductQuantityPair(pq, pq.ProductId);
                 }
@@ -68,6 +68,22 @@ namespace Nwazet.Commerce.Services {
                 return new ProductQuantityPair(pq, localized.Id);
             };
         }
+
+        private string GetContentCulture(IContent content, LocalizationPart locPart) {
+            var localized = content.As<LocalizationPart>();
+            // MUST BE removed if they have an unassigned localization part
+            // MUST NOT BE removed if they do not have a localisation part
+            if (localized == null) {
+                return locPart.Culture.Culture;
+            }
+            else if(localized?.Culture != null) {
+                return localized.Culture.Culture;
+            }
+            else {
+                return string.Empty;
+            }
+        }
+
 
         public IEnumerable<ProductQuantityPair> GetLocalizationIdPairs(BundlePart bundlePart, LocalizationPart locPart) {
             return bundlePart.ProductQuantities
