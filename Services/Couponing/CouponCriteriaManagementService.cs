@@ -43,6 +43,17 @@ namespace Nwazet.Commerce.Services.Couponing {
             return context.Describe();
         }
 
+        private IEnumerable<CouponApplicabilityCriterionDescriptor> _allACDescriptors = null;
+        private IEnumerable<CouponApplicabilityCriterionDescriptor>
+            AllApplicabilityCriteriaDescriptors() {
+
+            if (_allACDescriptors == null || !_allACDescriptors.Any()) {
+                _allACDescriptors = InnerDescribeApplicabilityCriteria()
+                    .SelectMany(x => x.Descriptors);
+            }
+            return _allACDescriptors;
+        }
+
         public IEnumerable<TypeDescriptor<CouponApplicabilityCriterionDescriptor>>
             DescribeApplicabilityCriteria() {
 
@@ -61,8 +72,7 @@ namespace Nwazet.Commerce.Services.Couponing {
         public CouponApplicabilityCriterionDescriptor
             GetCriterion(string category, string type) {
 
-            return InnerDescribeApplicabilityCriteria()
-                .SelectMany(x => x.Descriptors)
+            return AllApplicabilityCriteriaDescriptors()
                 .FirstOrDefault(c =>
                     c.Category == category
                     && c.Type == type
@@ -96,6 +106,18 @@ namespace Nwazet.Commerce.Services.Couponing {
             return context.Describe();
         }
 
+        private IEnumerable<CouponLineApplicabilityCriterionDescriptor> _allLACDescriptors = null;
+        private IEnumerable<CouponLineApplicabilityCriterionDescriptor>
+            AllLineCriteriaDescriptors() {
+
+            if (_allLACDescriptors == null || !_allLACDescriptors.Any()) {
+                _allLACDescriptors = InnerDescribeLineCriteria()
+                    .SelectMany(x => x.Descriptors);
+            }
+            return _allLACDescriptors;
+        }
+
+
         public IEnumerable<TypeDescriptor<CouponLineApplicabilityCriterionDescriptor>>
             DescribeLineCriteria() {
 
@@ -114,8 +136,7 @@ namespace Nwazet.Commerce.Services.Couponing {
         public CouponLineApplicabilityCriterionDescriptor
             GetLineCriterion(string category, string type) {
 
-            return InnerDescribeLineCriteria()
-                .SelectMany(x => x.Descriptors)
+            return AllLineCriteriaDescriptors()
                 .FirstOrDefault(c =>
                     c.Category == category
                     && c.Type == type

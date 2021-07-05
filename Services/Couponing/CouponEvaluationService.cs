@@ -1,5 +1,8 @@
 ﻿using Nwazet.Commerce.ApplicabilityCriteria.Couponing;
 using Nwazet.Commerce.Descriptors.CouponApplicability;
+using Nwazet.Commerce.Extensions;
+using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Models.Couponing;
 using Orchard.Environment.Extensions;
 using Orchard.Forms.Services;
 using Orchard.Localization;
@@ -8,8 +11,6 @@ using Orchard.UI.Notify;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Services.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
@@ -20,18 +21,32 @@ namespace Nwazet.Commerce.Services.Couponing {
         private readonly ITokenizer _tokenizer;
         private readonly ICouponCriteriaManagementService _couponCriteriaManagementService;
 
+        private readonly IProductPriceService _productPriceService;
+        private readonly IVatConfigurationService _vatConfigurationService;
+        private readonly ICouponRepositoryService _couponRepositoryService;
+
         public CouponEvaluationService(
             INotifier notifier,
             IEnumerable<ICouponApplicabilityCriterion> applicabilityCriteria,
             ITokenizer tokenizer,
-            ICouponCriteriaManagementService couponCriteriaManagementService) {
+            ICouponCriteriaManagementService couponCriteriaManagementService,
+            IProductPriceService productPriceService,
+            IVatConfigurationService vatConfigurationService,
+            ICouponRepositoryService couponRepositoryService) {
 
             _notifier = notifier;
             _applicabilityCriteria = applicabilityCriteria;
             _tokenizer = tokenizer;
             _couponCriteriaManagementService = couponCriteriaManagementService;
 
+            _productPriceService = productPriceService;
+            _vatConfigurationService = vatConfigurationService;
+            _couponRepositoryService = couponRepositoryService;
+
             _notificationsSent = new HashSet<string>();
+            _CACDescriptors = new Dictionary<string, CouponApplicabilityCriterionDescriptor>();
+            _CLACDescriptors = new Dictionary<string, CouponLineApplicabilityCriterionDescriptor>();
+            _loadedCoupons = new Dictionary<string, CouponRecord>();
 
             T = NullLocalizer.Instance;
         }
@@ -41,20 +56,23 @@ namespace Nwazet.Commerce.Services.Couponing {
         public bool CanProcess(CouponApplicabilityContext context) {
             return TestCriteria(context,
                 (cacd, ccc) => cacd.ProcessingCriterion(ccc),
-                (cac, ctx) => cac.CanBeProcessed(ctx));
+                (cac, ctx) => cac.CanBeProcessed(ctx),
+                false);
         }
 
         public bool CanApply(CouponApplicabilityContext context) {
             return TestCriteria(context,
                 (cacd, ccc) => cacd.AdditionCriterion(ccc),
-                (cac, ctx) => cac.CanBeAdded(ctx));
+                (cac, ctx) => cac.CanBeAdded(ctx),
+                true);
         }
 
         #region Methods to test validity/applicability of coupon
         private bool TestCriteria(
             CouponApplicabilityContext context,
             Action<CouponApplicabilityCriterionDescriptor, CouponApplicabilityCriterionContext> descriptorsTest,
-            Action<ICouponApplicabilityCriterion, CouponApplicabilityContext> defaultTest) {
+            Action<ICouponApplicabilityCriterion, CouponApplicabilityContext> defaultTest,
+            bool isAddition) {
 
             // Some ICouponApplicabilityCriterion will not have a description because
             // they are there by default for all coupons.
@@ -70,6 +88,16 @@ namespace Nwazet.Commerce.Services.Couponing {
             // coupon. Each criterion has to succeed for at least 1 line of the cart
             if (context.IsApplicable) {
                 TestLineCriteria(context);
+            }
+            // then we need to perform any PostProcessing tests. These tests require computing
+            // what the results for having the coupons are. In general, these tests may require
+            // a coupon to use information about the other coupons.
+            if (context.IsApplicable) {
+                if (isAddition) {
+                    TestPostApplyCriteria(context);
+                } else {
+                    TestPostProcessingCriteria(context);
+                }
             }
             if (!context.IsApplicable && context.ShouldNotify) {
                 if (context.Message == null || string.IsNullOrWhiteSpace(context.Message.Text)) {
@@ -109,8 +137,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                         State = FormParametersHelper.ToDynamic(tokenizedState),
                         CouponRecord = context.Coupon
                     };
-                    var descriptor = _couponCriteriaManagementService
-                        .GetCriterion(criterion.Category, criterion.Type);
+                    var descriptor = GetCriterion(criterion.Category, criterion.Type);
                     // descriptor should exist and be enabled
                     if (descriptor == null || !descriptor.IsAvailableForProcessing) {
                         continue;
@@ -118,6 +145,19 @@ namespace Nwazet.Commerce.Services.Couponing {
                     descriptorsTest(descriptor, criterionContext);
                 }
             }
+        }
+
+        private Dictionary<string, CouponApplicabilityCriterionDescriptor> _CACDescriptors;
+        private CouponApplicabilityCriterionDescriptor
+            GetCriterion(string category, string type) {
+
+            var key = string.Join("_", category, type);
+            if (!_CACDescriptors.ContainsKey(key)) {
+                _CACDescriptors.Add(key, _couponCriteriaManagementService
+                    .GetCriterion(category, type));
+            }
+
+            return _CACDescriptors[key];
         }
 
         private void TestLineCriteria(
@@ -135,8 +175,7 @@ namespace Nwazet.Commerce.Services.Couponing {
             var lineContexts = context.ContextsForLines().ToList();
             foreach (var lineApplicabilityContext in lineContexts) {
                 foreach (var criterion in context.Coupon.LineCriteria) {
-                    var descriptor = _couponCriteriaManagementService
-                        .GetLineCriterion(criterion.Category, criterion.Type);
+                    var descriptor = GetLineCriterion(criterion.Category, criterion.Type);
                     // descriptor should exist and be enabled
                     if (descriptor == null || !descriptor.IsAvailableForProcessing) {
                         continue;
@@ -164,10 +203,418 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
         }
 
+        private bool TestCouponCriteriaOnLine(
+            CouponLineApplicabilityContext lineApplicabilityContext,
+            CouponRecord coupon = null,
+            Dictionary<string, object> tokens = null) {
+
+            if (coupon == null) {
+                coupon = lineApplicabilityContext.Coupon;
+            }
+            foreach (var criterion in coupon.LineCriteria) {
+                var descriptor = GetLineCriterion(criterion.Category, criterion.Type);
+                // descriptor should exist and be enabled
+                if (descriptor == null || !descriptor.IsAvailableForProcessing) {
+                    continue;
+                }
+
+                var tokenizedState = _tokenizer.Replace(criterion.State, tokens);
+                var lineCriterionContext = new CouponLineCriterionContext {
+                    IsApplicable = lineApplicabilityContext.IsApplicable,
+                    ApplicabilityContext = lineApplicabilityContext,
+                    State = FormParametersHelper.ToDynamic(tokenizedState),
+                    CouponRecord = lineApplicabilityContext.Coupon
+                };
+                descriptor.Criterion(lineCriterionContext);
+                // break as soon as we know this line is not ok for the coupon
+                if (!lineCriterionContext.IsApplicable) {
+                    lineApplicabilityContext.Message = descriptor.FailureMessage(lineApplicabilityContext);
+                    // go to test next line
+                    break;
+                }
+            }
+
+            return lineApplicabilityContext.IsApplicable;
+        }
+
+        private Dictionary<string, CouponLineApplicabilityCriterionDescriptor> _CLACDescriptors;
+        private CouponLineApplicabilityCriterionDescriptor GetLineCriterion(string category, string type) {
+
+            var key = string.Join("_", category, type);
+            if (!_CLACDescriptors.ContainsKey(key)) {
+                _CLACDescriptors.Add(key, _couponCriteriaManagementService
+                    .GetLineCriterion(category, type));
+            }
+
+            return _CLACDescriptors[key];
+        }
+
+
+        private void TestPostApplyCriteria(
+            CouponApplicabilityContext context) {
+            // Here we need to be able to pass to each criterion the information
+            // about other criteria from all coupons in the cart.
+            // Example cases we need to be able to handle:
+            // - We are attempting to add coupon 'X' to the cart. Adding this coupon
+            //   would cause the price for a line of the cart to go negative. The site
+            //   is configured to prevent line prices from ever going negative.
+
+            var postProcessingContext = PreparePostProcessing(context, true);
+            foreach (var criterion in _applicabilityCriteria) {
+                criterion.PostCanBeAdded(postProcessingContext);
+            }
+            context.IsApplicable = postProcessingContext.IsApplicable;
+            if (!context.IsApplicable) {
+                context.Message = postProcessingContext.Message;
+            }
+        }
+
+        private void TestPostProcessingCriteria(
+            CouponApplicabilityContext context) {
+
+            var postProcessingContext = PreparePostProcessing(context);
+            foreach (var criterion in _applicabilityCriteria) {
+                criterion.PostCanBeProcessed(postProcessingContext);
+            }
+            context.IsApplicable = postProcessingContext.IsApplicable;
+            if (!context.IsApplicable) {
+                context.Message = postProcessingContext.Message;
+            }
+        }
+
+        private CouponPostApplicabilityContext PreparePostProcessing(
+            CouponApplicabilityContext context, bool fakeAddCoupon = false) {
+
+            // Get all the coupons from the cart
+            var coupons = context.ShoppingCart
+                .PriceAlterations
+                .Where(cpa => cpa.AlterationType == CouponingUtilities.CouponAlterationType)
+                .Select(cpa => GetCouponFromCode(cpa.Key))
+                .ToList();
+            // add the current coupon to that list
+            if (fakeAddCoupon) {
+                coupons.Add(context.Coupon);
+            }
+            // make sure that the list is sorted correctly
+            coupons = coupons
+                .OrderByDescending(c => CouponingUtilities.CouponAlterationWeight(c))
+                .ToList();
+
+            var postProcessingContext = new CouponPostApplicabilityContext(context);
+            foreach (var coupon in coupons) {
+                postProcessingContext.SetCoupon(coupon);
+                // we are preparing stuff for post processing, so for now we consider the context 
+                // to be valid (i.e. everything should be processed)
+                // Compute coupon contributions for each line
+                foreach (var lineContext in postProcessingContext.ContextsForLines().ToList()) {
+                    var newLineValue = 0.0m;
+                    var effectiveOnLine = TryCouponLineValue(lineContext, out newLineValue);
+                    lineContext.CouponValues.Add(new CouponValueInfo {
+                        Coupon = coupon,
+                        IsEffective = effectiveOnLine,
+                        Value = newLineValue
+                    });
+                }
+                // Compute contributions on the cart. This step may use values computed above.
+                var newCartValue = 0.0m;
+                var effectiveOnCart = TryCouponCartValue(postProcessingContext, out newCartValue);
+                postProcessingContext.CouponValues.Add(new CouponValueInfo {
+                    Coupon = coupon,
+                    IsEffective = effectiveOnCart,
+                    Value = newCartValue
+                });
+            }
+
+            // set the coupon we are actually testing
+            postProcessingContext.SetCoupon(context.Coupon);
+
+            return postProcessingContext;
+        }
+        #endregion
+
+        #region Compute values in cart
+        public bool TryCouponCartValue(
+            CartPriceAlterationContext context,
+            out decimal value) {
+
+            value = 0.0m;
+            var coupon = GetCouponFromCode(context.Alteration.Key);
+            if (coupon != null) {
+                switch (coupon.CouponType) {
+                    case CouponType.Percent:
+                        // The total amount for the cart is the result of adding up the amounts 
+                        // for each line.
+                        value = context.ContextsForLines()
+                            .Sum(lineContext => GetLineValue(lineContext));
+                        return true;
+                    case CouponType.Amount:
+                        // The total amount for the cart is the result of adding up the amounts 
+                        // for each line.
+                        value = context.ContextsForLines()
+                            .Sum(lineContext => GetLineValue(lineContext));
+                        return true;
+                    case CouponType.CartAmount:
+                        // for CartAmount type coupons, the total for the cart is already
+                        // part of its definition.
+                        // this is after VAT
+                        value = -coupon.Value;
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+            return false;
+        }
+
+        private decimal GetLineValue(LinePriceAlterationContext lineContext) {
+            // TryCouponLineValue tests whether the coupon applies
+            var partialValue = 0.0m;
+            TryCouponLineValue(lineContext, out partialValue);
+            // apply VAT and such
+            return _productPriceService
+                .GetPrice(
+                    lineContext.CartLine.Product,
+                    partialValue,
+                    lineContext.ShoppingCart.Country,
+                    lineContext.ShoppingCart.ZipCode);
+        }
+        
+        public bool TryCouponLineValue(
+            LinePriceAlterationContext context,
+            out decimal value) {
+
+            // in case the stuff for this alteration has already been computed, it 
+            // would be in the values stored in this context. In that case, we can
+            // prevent recomputing anything
+            var existing = context.AlterationValues
+                ?.FirstOrDefault(av => 
+                    av.Alteration.AlterationType == context.Alteration.AlterationType
+                    && av.Alteration.Key == context.Alteration.Key);
+            if (existing != null) {
+                value = existing.Value;
+                return existing.Effective;
+            }
+
+            value = 0.0m;
+            var coupon = GetCouponFromCode(context.Alteration.Key);
+            if (!TestCouponCriteriaOnLine(new CouponLineApplicabilityContext {
+                Coupon = coupon,
+                CouponCode = coupon.Code,
+                ShoppingCart = context.ShoppingCart,
+                CartLine = context.CartLine,
+                WorkContext = context.WorkContext,
+                IsApplicable = true
+            }, coupon)) {
+                return false;
+            }
+            // we are not testing for the coupon's validity here, we are assuming it
+            // should be considered.
+            if (coupon != null) {
+                var quantity = context.CartLine.Quantity; // TODO: max quantity to consider for coupon
+                switch (coupon.CouponType) {
+                    case CouponType.Percent:
+                        // Consider price as input, before VAT and such
+                        var itemPrice = 
+                            (context.CartLine.Product.DiscountPrice >= 0 
+                                && context.CartLine.Product.DiscountPrice < context.CartLine.Product.Price)
+                            ? context.CartLine.Product.DiscountPrice
+                            : context.CartLine.Product.Price;
+                        var linePrice = GetLinePrice(context.CartLine, quantity, false)
+                            + (context.AlterationValues?.Sum(av => av.Value) ?? 0.0m);
+                        value = -linePrice * (coupon.Value / 100m);
+                        return true;
+                    case CouponType.Amount:
+                        // Fixed amount discount for each single item. Compute it here before VAT.
+                        // coupon.Value is after VAT. Meaning that if you input 1.1, and the VAT is 10%,
+                        // this should return (-quantity * 1)
+                        var rate = _vatConfigurationService
+                            .GetRate(context.CartLine.Product, context.ShoppingCart.Country, context.ShoppingCart.ZipCode);
+                        var singleValue = coupon.Value / (1m + rate);
+                        value = -quantity * singleValue;
+                        return true;
+                    case CouponType.CartAmount:
+                        // flat coupon on the cart? We need to "spread" its VAT contribution.
+                        // Note that this method, for such coupon, is not called when computing
+                        // the amount by which the coupon affects the whole cart.
+                        value = CartAmountOnLine(
+                            coupon,
+                            context.ShoppingCart,
+                            context.CartLine,
+                            context.AlterationValues.Select(av => av.Value));
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+            return false;
+        }
+        
+        private bool TryCouponCartValue(
+            CouponPostApplicabilityContext context,
+            out decimal value) {
+            // TODO
+            value = 0.0m;
+            var coupon = context.Coupon;
+            if (coupon != null) {
+                switch (coupon.CouponType) {
+                    case CouponType.Percent:
+                        // The total amount for the cart is the result of adding up the amounts 
+                        // for each line.
+                        value = context.ContextsForLines()
+                            .Sum(lineContext => GetLineValue(lineContext));
+                        return true;
+                    case CouponType.Amount:
+                        // The total amount for the cart is the result of adding up the amounts 
+                        // for each line.
+                        value = context.ContextsForLines()
+                            .Sum(lineContext => GetLineValue(lineContext));
+                        return true;
+                    case CouponType.CartAmount:
+                        // for CartAmount type coupons, the total for the cart is already
+                        // part of its definition.
+                        // this is after VAT
+                        value = -coupon.Value;
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+            return false;
+        }
+
+        private decimal GetLineValue(CouponPostLineApplicabilityContext lineContext) {
+            // TryCouponLineValue tests whether the coupon applies
+            var partialValue = 0.0m;
+            TryCouponLineValue(lineContext, out partialValue);
+            // apply VAT and such
+            return _productPriceService
+                .GetPrice(
+                    lineContext.CartLine.Product,
+                    partialValue,
+                    lineContext.ShoppingCart.Country,
+                    lineContext.ShoppingCart.ZipCode);
+        }
+        
+        private bool TryCouponLineValue(
+            CouponPostLineApplicabilityContext context,
+            out decimal value) {
+
+            // in case the stuff for this alteration has already been computed, it 
+            // would be in the values stored in this context. In that case, we can
+            // prevent recomputing anything
+            var existing = context.CouponValues
+                ?.FirstOrDefault(cv =>
+                    cv.Coupon.Code == context.Coupon.Code);
+            if (existing != null) {
+                value = existing.Value;
+                return existing.IsEffective;
+            }
+
+            value = 0.0m;
+            var coupon = context.Coupon;
+            if (!TestCouponCriteriaOnLine(new CouponLineApplicabilityContext {
+                Coupon = coupon,
+                CouponCode = coupon.Code,
+                ShoppingCart = context.ShoppingCart,
+                CartLine = context.CartLine,
+                WorkContext = context.WorkContext,
+                IsApplicable = true
+            }, coupon)) {
+                return false;
+            }
+            // we are not testing for the coupon's validity here, we are assuming it
+            // should be considered.
+            if (coupon != null) {
+                var quantity = context.CartLine.Quantity; // TODO: max quantity to consider for coupon
+                switch (coupon.CouponType) {
+                    case CouponType.Percent:
+                        // Consider price as input, before VAT and such
+                        var itemPrice =
+                            (context.CartLine.Product.DiscountPrice >= 0
+                                && context.CartLine.Product.DiscountPrice < context.CartLine.Product.Price)
+                            ? context.CartLine.Product.DiscountPrice
+                            : context.CartLine.Product.Price;
+                        var linePrice = GetLinePrice(context.CartLine, quantity, false)
+                            + (context.CouponValues?.Sum(av => av.Value) ?? 0.0m);
+                        value = -linePrice * (coupon.Value / 100m);
+                        return true;
+                    case CouponType.Amount:
+                        // Fixed amount discount for each single item. Compute it here before VAT.
+                        // coupon.Value is after VAT. Meaning that if you input 1.1, and the VAT is 10%,
+                        // this should return (-quantity * 1)
+                        var rate = _vatConfigurationService
+                            .GetRate(context.CartLine.Product, context.ShoppingCart.Country, context.ShoppingCart.ZipCode);
+                        var singleValue = coupon.Value / (1m + rate);
+                        value = -quantity * singleValue;
+                        return true;
+                    case CouponType.CartAmount:
+                        // flat coupon on the cart? We need to "spread" its VAT contribution.
+                        // Note that this method, for such coupon, is not called when computing
+                        // the amount by which the coupon affects the whole cart.
+                        value = CartAmountOnLine(
+                            coupon,
+                            context.ShoppingCart,
+                            context.CartLine,
+                            context.CouponValues.Select(av => av.Value));
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+            return false;
+        }
+        
+        private decimal CartAmountOnLine(
+            CouponRecord coupon, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine,
+            IEnumerable<decimal> previousValues) {
+            // A coupon of this type has its VAT "effect" spread over each line
+            // proportionally to the line total over the cart's subtotal
+
+            var quantity = cartLine.Quantity;
+            // vat rate for the line
+            var rate = _vatConfigurationService
+                .GetRate(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode);
+            // products subtotal for the line (after VAT)
+            var lineSubtotal = Math.Round(
+                _productPriceService.GetPrice(
+                        cartLine.Product, cartLine.Price,
+                        shoppingCart.Country, shoppingCart.ZipCode)
+                * cartLine.Quantity + cartLine.LinePriceAdjustment
+                + (previousValues?.Sum() ?? 0.0m), 2);
+            // cart products subtotal
+            var cartSubtotal = shoppingCart.Subtotal();
+            // coupon value spread on this line (after VAT):
+            var couponLineValue = (coupon.Value * lineSubtotal) / cartSubtotal;
+
+            return -couponLineValue / (1m + rate); ;
+        }
+
+        private decimal GetLinePrice(
+            ShoppingCartQuantityProduct cartLine,
+            int quantity = -1,
+            bool includingVAT = true) {
+
+            var itemPrice = cartLine.Product.DiscountPrice >= 0 && cartLine.Product.DiscountPrice < cartLine.Product.Price
+                ? (includingVAT ? _productPriceService.GetDiscountPrice(cartLine.Product) : cartLine.Product.DiscountPrice)
+                : (includingVAT ? _productPriceService.GetPrice(cartLine.Product) : cartLine.Product.Price);
+
+            quantity = quantity > 0 ? quantity : cartLine.Quantity;
+            return Math.Round(itemPrice * quantity, 2)
+                + cartLine.LinePriceAdjustment;
+        }
+
         #endregion
 
         #region Helpers
-
+        // prevent loading the same coupon several times per request
+        private Dictionary<string, CouponRecord> _loadedCoupons;
+        private CouponRecord GetCouponFromCode(string code) {
+            if (!_loadedCoupons.ContainsKey(code)) {
+                _loadedCoupons.Add(code,
+                    _couponRepositoryService.Query().GetByCode(code));
+            }
+            return _loadedCoupons[code];
+        }
         // prevent repeating notifications if more processes test the same stuff
         private HashSet<string> _notificationsSent;
         private void Warning(LocalizedString text) {
