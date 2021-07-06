@@ -70,22 +70,6 @@ namespace Nwazet.Commerce.Filters {
                 };
             context.Form(FormName, form);
         }
-
-        public static LocalizedString DisplayFilter(Localizer T, dynamic state) {
-            var roles = state.Roles != null ? (string)state.Roles : string.Empty;
-            var op = (UserRolesOperator)Enum.Parse(typeof(UserRolesOperator), Convert.ToString(state.Operator));
-
-            switch (op) {
-                case UserRolesOperator.MustHaveOne:
-                    return T("The user must have at least one of these roles: {0}", roles);
-                case UserRolesOperator.MustHaveAll:
-                    return T("The user must have all these roles: {0}", roles);
-                case UserRolesOperator.MustHaveNoOne:
-                    return T("The user must have no one of these roles: {0}", roles);
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
     }
 }
 
