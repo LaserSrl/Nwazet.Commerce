@@ -121,7 +121,7 @@ namespace Nwazet.Commerce.Controllers {
                     }
                     else {
                         //error
-                        _notifier.Add(NotifyType.Error, T("Highest priority must be greater to lowest priority."));
+                        _notifier.Add(NotifyType.Error, T("Top priority must be greater to bottom priority."));
                     }
                 }
                 break;
