@@ -438,9 +438,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                         // the amount by which the coupon affects the whole cart.
                         value = CartAmountOnLine(
                             coupon,
-                            context.ShoppingCart,
-                            context.CartLine,
-                            context.AlterationValues.Select(av => av.Value));
+                            context);
                         return true;
                     default:
                         return false;
@@ -551,11 +549,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                         // flat coupon on the cart? We need to "spread" its VAT contribution.
                         // Note that this method, for such coupon, is not called when computing
                         // the amount by which the coupon affects the whole cart.
-                        value = CartAmountOnLine(
-                            coupon,
-                            context.ShoppingCart,
-                            context.CartLine,
-                            context.CouponValues.Select(av => av.Value));
+                        value = CartAmountOnLine(context);
                         return true;
                     default:
                         return false;
@@ -563,32 +557,56 @@ namespace Nwazet.Commerce.Services.Couponing {
             }
             return false;
         }
-        
-        private decimal CartAmountOnLine(
-            CouponRecord coupon, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine,
-            IEnumerable<decimal> previousValues) {
-            // A coupon of this type has its VAT "effect" spread over each line
-            // proportionally to the line total over the cart's subtotal
 
-            var quantity = cartLine.Quantity;
-            // vat rate for the line
+        private decimal CartAmountOnLine(CouponPostLineApplicabilityContext lineContext) {
+            var quantity = lineContext.CartLine.Quantity;
             var rate = _vatConfigurationService
-                .GetRate(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode);
-            // products subtotal for the line (after VAT)
-            var lineSubtotal = Math.Round(
-                _productPriceService.GetPrice(
-                        cartLine.Product, cartLine.Price,
-                        shoppingCart.Country, shoppingCart.ZipCode)
-                * cartLine.Quantity + cartLine.LinePriceAdjustment
-                + (previousValues?.Sum() ?? 0.0m), 2);
-            // cart products subtotal
-            var cartSubtotal = shoppingCart.Subtotal();
+                .GetRate(
+                    lineContext.CartLine.Product,
+                    lineContext.ShoppingCart.Country,
+                    lineContext.ShoppingCart.ZipCode);
+            var lineSubtotal =
+                Math.Round(
+                    GetLinePrice(lineContext.CartLine, quantity, true)
+                    + _productPriceService.GetPrice(
+                        lineContext.CartLine.Product, 
+                        (lineContext.CouponValues.Sum(cv => cv.Value))), 
+                    2);
+            // cart products subtotal:
+            // subtotal should be computed accounting for all previous coupons
+            var cartSubtotal = lineContext.ParentContext.BaseCartSubtotal
+                + lineContext.ParentContext.CouponValues.Sum(cv => cv.Value);
+            // coupon value spread on this line (after VAT):
+            var couponLineValue = (lineContext.Coupon.Value * lineSubtotal) / cartSubtotal;
+
+            return -couponLineValue / (1m + rate);
+        }
+
+        private decimal CartAmountOnLine(
+            CouponRecord coupon, LinePriceAlterationContext lineContext) {
+            var quantity = lineContext.CartLine.Quantity;
+            var rate = _vatConfigurationService
+                .GetRate(
+                    lineContext.CartLine.Product,
+                    lineContext.ShoppingCart.Country,
+                    lineContext.ShoppingCart.ZipCode);
+            var lineSubtotal =
+                Math.Round(
+                    GetLinePrice(lineContext.CartLine, quantity, true)
+                    + _productPriceService.GetPrice(
+                        lineContext.CartLine.Product,
+                        (lineContext.AlterationValues.Sum(cv => cv.Value))),
+                    2);
+            // cart products subtotal:
+            // subtotal should be computed accounting for all previous coupons
+            var cartSubtotal = lineContext.ShoppingCart.Subtotal()
+                + lineContext.ParentContext.AlterationValues.Sum(cv => cv.Value);
             // coupon value spread on this line (after VAT):
             var couponLineValue = (coupon.Value * lineSubtotal) / cartSubtotal;
 
-            return -couponLineValue / (1m + rate); ;
+            return -couponLineValue / (1m + rate);
         }
-
+        
         private decimal GetLinePrice(
             ShoppingCartQuantityProduct cartLine,
             int quantity = -1,
