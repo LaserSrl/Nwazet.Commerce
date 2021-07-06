@@ -62,7 +62,7 @@
                             <input class="text number-personalize" type="number" name="FilterOptions.PriorityFrom"
                                    oninput="CheckPriority(this)"
                                    step="1"
-                                   placeholder="@T("Lowest priority")"
+                                   placeholder="@T("Bottom priority")"
                                    title="@T("Insert a number")"
                                    value="@(Model.FilterOptions.PriorityFrom)" />
                         </div>
@@ -73,7 +73,7 @@
                             <input class="text number-personalize" type="number" name="FilterOptions.PriorityTo"
                                    oninput="CheckPriority(this)"
                                    step="1"
-                                   placeholder="@T("Highest priority")"
+                                   placeholder="@T("Top priority")"
                                    title="@T("Insert a number")"
                                    value="@(Model.FilterOptions.PriorityTo)" />
                         </div>
@@ -206,7 +206,7 @@
         function CheckPriority(input) {
             if ($("[name='FilterOptions.PriorityFrom']").val() != '' && $("[name='FilterOptions.PriorityTo']").val() != '' &&
                 parseInt($("[name='FilterOptions.PriorityTo']").val(), 10) <= parseInt($("[name='FilterOptions.PriorityFrom']").val(), 10)) {
-                input.setCustomValidity('@T("Highest priority must be greater to lowest priority.")');
+                input.setCustomValidity('@T("Top priority must be greater to bottom priority.")');
             } else {
                 input.setCustomValidity('');
             }
