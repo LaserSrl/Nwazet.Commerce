@@ -77,6 +77,10 @@ msgid "You may leave this blank for the United States."
 msgstr "Lasciare vuoto per gli Stati Uniti d'America."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Content-Order.SummaryAdmin.cshtml"
+msgid "  |  "
+msgstr "|"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Content-Order.SummaryAdmin.cshtml"
 msgid " | "
 msgstr "|"
 
@@ -131,6 +135,10 @@ msgstr "Il valore del coupon."
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
 msgid "The coupon's value/amount. The decimal separator is '{0}'"
 msgstr "Il valore/ammontare del coupon. Il separatore dei decimali è '{0}'"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
+msgid "The value type affects the meaning given to the value (i.e. how it's used in processing), as well as the order of application for coupons with the same Priority. The possible value types are described in order of priority:"
+msgstr "Il Tipo di Valore influisce sul significato dato al valore (i.e. come viene usato durante l'elaborazione) e sull'ordine di elaborazione per i coupon con Priorità equivalente. I possibili Tipo di Valore sono descritti in ordine di priorità:"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponActionsBasicPartial.cshtml"
 msgid "The value type affects the meaning given to the value."
@@ -257,6 +265,10 @@ msgid "Coupon's name"
 msgstr "Nome del coupon"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Coupon's priority"
+msgstr "Priorità coupon"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
 msgid "Coupon's unique code"
 msgstr "Codice unico del coupon"
 
@@ -273,6 +285,10 @@ msgid "Name"
 msgstr "Nome"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "Priority"
+msgstr "Priorità"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
 msgid "Save"
 msgstr "Salva"
 
@@ -287,6 +303,10 @@ msgstr "Il codice del coupon. Si possono solo usare caratteri alfanumerici (lett
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
 msgid "The coupon's name."
 msgstr "Il nome del coupon."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
+msgid "The coupon's priority. This is used to determine the order in which the coupons are processed. Coupons with higher priority are processed first. Coupons with the same priority are ordered based on their Value Type. Valid values for Priority are integers between 0 and 16383."
+msgstr "Priorità del coupon. Viene utilizzata per determinare l'ordine con il quale i coupon vengono elaborati. Coupon con una priorità più elevata vengono elaborati per primi. Coupon con equivalente proprietà sono ordinati in base al "Tipo Valore". Valori validi per la Priorità sono interi compresi tra 0 e 16383."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponPartial.cshtml"
 msgid "The coupon's value type."
@@ -309,24 +329,112 @@ msgid "Actions"
 msgstr "Azioni"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Add"
+msgstr "Aggiungi"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "All States"
+msgstr "Tutti gli stati"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "All Types"
+msgstr "Tutti i tipi"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Amount"
+msgstr "Importo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Apply"
+msgstr "Applica"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Bottom priority"
+msgstr "Priorità minima"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Cart Amount"
+msgstr "Importo del carrello"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
 msgid "Code"
 msgstr "Codice"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Code of Coupon"
+msgstr "Codice del coupon"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Coupon creation"
+msgstr "Creazione coupon"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Coupon filtering"
+msgstr "Filtro coupon"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Coupon sorting"
+msgstr "Ordinamento coupon"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
 msgid "Delete"
 msgstr "Elimina"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Descending"
+msgstr "Decrescente"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
 msgid "Edit"
 msgstr "Modifica"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Equals"
+msgstr "Uguale a"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "From"
+msgstr "Da"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "From To"
+msgstr "Da ... a"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Insert a number"
+msgstr "Inserire un numero"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Manage coupon"
+msgstr "Gestione coupon"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
 msgid "Name"
 msgstr "Nome"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Name of Coupon"
+msgstr "Nome del coupon"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Percent"
+msgstr "Percentuale"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Priority"
+msgstr "Priorità"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
 msgid "Published"
 msgstr "Pubblicato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Selected priority filter"
+msgstr "Filtro per priorità selezionato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "State"
+msgstr "Stato"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
 msgid "Status"
@@ -341,12 +449,32 @@ msgid "Territories table"
 msgstr "Tabella dei Territori"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "To"
+msgstr "A"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Top priority"
+msgstr "Priorità massima"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Top priority must be greater to bottom priority."
+msgstr "La priorità massima deve essere maggiore della priorità minima."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "UnPublished"
+msgstr "Non pubblicato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
 msgid "Unpublished"
 msgstr "Non pubblicato"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
 msgid "Value"
 msgstr "Valore"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Value Type"
+msgstr "Tipo di valore"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/Create.cshtml"
 msgid "New Coupon"
@@ -2277,6 +2405,10 @@ msgid "Edit {0} for {1}"
 msgstr "Modifica {0} per {1}"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/HierarchyTerritoriesAdmin/GetChildNodes.cshtml"
+msgid " | "
+msgstr "|"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/HierarchyTerritoriesAdmin/GetChildNodes.cshtml"
 msgid "Delete"
 msgstr "Elimina"
 
@@ -3017,6 +3149,10 @@ msgid "Choose A Report"
 msgstr "Seleziona un Report"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ShippingAdmin/Index.cshtml"
+msgid " | "
+msgstr "|"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/ShippingAdmin/Index.cshtml"
 msgid "Add a new {0}"
 msgstr "Aggiungi un nuovo {0}"
 
@@ -3385,6 +3521,10 @@ msgid "Name"
 msgstr "Nome"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/TaxAdmin/Index.cshtml"
+msgid " | "
+msgstr "|"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/TaxAdmin/Index.cshtml"
 msgid "Add a new {0}"
 msgstr "Aggiungi un nuovo {0}"
 
@@ -3596,6 +3736,22 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/WishListsSettings.cshtml"
 msgid "List name"
 msgstr "Nome della lista"
 
+msgctxt "Nwazet.Commerce.Activities.CartFinalized"
+msgid "The shopping cart has been finalized (e.g. by completing an order)."
+msgstr "Il carrello è stato finalizzato (e.g. dal completamento di un ordine)."
+
+msgctxt "Nwazet.Commerce.Activities.CartItemAdded"
+msgid "An item has been added to the cart."
+msgstr "Un oggetto è stato aggiunto al carrello."
+
+msgctxt "Nwazet.Commerce.Activities.CartItemRemoved"
+msgid "An item has been removed from the cart."
+msgstr "Un oggetto è stato rimosso dal carrello."
+
+msgctxt "Nwazet.Commerce.Activities.CartUpdated"
+msgid "The shopping cart has been updated."
+msgstr "Il carrello è stato aggiornato."
+
 msgctxt "Nwazet.Commerce.Activities.CommerceActivity"
 msgid "An item has been added to the cart."
 msgstr "Un oggetto è stato aggiunto al carrello."
@@ -3619,6 +3775,14 @@ msgstr "Il carrello è stato finalizzato (e.g. dal completamento di un ordine)."
 msgctxt "Nwazet.Commerce.Activities.CommerceActivity"
 msgid "The shopping cart has been updated."
 msgstr "Il carrello è stato aggiornato."
+
+msgctxt "Nwazet.Commerce.Activities.NewOrder"
+msgid "A new order has been passed."
+msgstr "Un nuovo ordine è stato creato."
+
+msgctxt "Nwazet.Commerce.Activities.NewPayment"
+msgid "A new payment has been made."
+msgstr "Un nuovo pagamento è stato effettuato."
 
 msgctxt "Nwazet.Commerce.Activities.OrderActivity"
 msgid "A new order has been passed."
@@ -3651,6 +3815,22 @@ msgstr "L'URL del tracking di un ordine è cambiato."
 msgctxt "Nwazet.Commerce.Activities.OrderActivity"
 msgid "Triggered for each product in the order when the status changes."
 msgstr "Attivato per ogni prodotto nell'ordine quando lo stato cambia."
+
+msgctxt "Nwazet.Commerce.Activities.OrderError"
+msgid "An order resulted in an error."
+msgstr "Un ordine ha causato un errore."
+
+msgctxt "Nwazet.Commerce.Activities.OrderStatusChanged"
+msgid "The status of an order has changed."
+msgstr "Lo stato di un ordine è stato cambiato."
+
+msgctxt "Nwazet.Commerce.Activities.OrderStatusChangedProduct"
+msgid "Triggered for each product in the order when the status changes."
+msgstr "Attivato per ogni prodotto nell'ordine quando lo stato cambia."
+
+msgctxt "Nwazet.Commerce.Activities.OrderTrackingUrlChanged"
+msgid "The tracking URL of an order has changed."
+msgstr "L'URL del tracking di un ordine è cambiato."
 
 msgctxt "Nwazet.Commerce.ApplicabilityCriteria.CartSubTotalCriteria"
 msgid "Cart Subtotal"
@@ -3784,6 +3964,58 @@ msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NoDuplicatesCouponAppli
 msgid "Prevent duplicate coupons in the same cart."
 msgstr "Impedisci di inserire più volte lo stesso coupon nello stesso carrello."
 
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NonCumulativeCouponApplicabilityCriterion"
+msgid "Coupons in the shopping cart are not cumulative"
+msgstr "I coupon nel carrello non sono cumulativi"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NonCumulativeCouponApplicabilityCriterion"
+msgid "You already have an active coupon. {0} cannot be added."
+msgstr "Hai già un coupon attivo. {0} non può essere aggiunto."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NonCumulativeStateCouponApplicabilityCriterion"
+msgid "If the criteria is present the coupon is not cumulative with other coupons"
+msgstr "Se questo criterio è presente, il coupon non è cumulativo con altri coupon"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NonCumulativeStateCouponApplicabilityCriterion"
+msgid "Non-cumulative"
+msgstr "Non cumulativo"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NonCumulativeStateCouponApplicabilityCriterion"
+msgid "Non-cumulative criteria"
+msgstr "Criterio di non cumulabilità"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NonCumulativeStateCouponApplicabilityCriterion"
+msgid "Non-cumulative status"
+msgstr "Stato non cumulativo"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NonCumulativeStateCouponApplicabilityCriterion"
+msgid "You already have an active coupon. {0} cannot be added."
+msgstr "Hai già un coupon attivo. {0} non può essere aggiunto."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.UserRolesCouponApplicabilityCriterion"
+msgid "Coupon applicability criterion according to user associated role."
+msgstr "Criterio di applicabilità del coupon in base al ruolo associato all'utente."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.UserRolesCouponApplicabilityCriterion"
+msgid "Roles for user"
+msgstr "Ruoli dell'utente"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.UserRolesCouponApplicabilityCriterion"
+msgid "The user must have all these roles: {0}"
+msgstr "L'utente deve avere tutti i seguenti ruoli: {0}"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.UserRolesCouponApplicabilityCriterion"
+msgid "The user must have at least one of these roles: {0}"
+msgstr "L'utente deve avere almeno uno dei seguenti ruoli: {0}"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.UserRolesCouponApplicabilityCriterion"
+msgid "The user must have no one of these roles: {0}"
+msgstr "L'utente non deve avere nessuno dei seguenti ruoli: {0}"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.UserRolesCouponApplicabilityCriterion"
+msgid "User roles"
+msgstr "Ruoli dell'utente"
+
 msgctxt "Nwazet.Commerce.Controllers.AttributesAdminController"
 msgid "Not authorized to manage product attributes"
 msgstr "Non autorizzato a gestire gli attributi di prodotto"
@@ -3807,6 +4039,10 @@ msgstr "Il coupon è stato aggiornato."
 msgctxt "Nwazet.Commerce.Controllers.CouponingAdminController"
 msgid "The coupon is not valid."
 msgstr "Il coupon non è valido."
+
+msgctxt "Nwazet.Commerce.Controllers.CouponingAdminController"
+msgid "Top priority must be greater to bottom priority."
+msgstr "La priorità massima deve essere maggiore della priorità minima."
 
 msgctxt "Nwazet.Commerce.Controllers.CouponingCriterionController"
 msgid "Not authorized to manage coupons"
@@ -4017,6 +4253,10 @@ msgid "Impossible to add {0} to cart."
 msgstr "Impossibile aggiungere {0} al carrello."
 
 msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
+msgid "One item in the shopping cart isn't available anymore and has been removed from the cart."
+msgstr "Un elemento nel carrello non è più disponibile ed è stato rimosso dal carrello."
+
+msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
 msgid "Quantity decreased to match inventory for {0}."
 msgstr "Quantità ridotta per coincidere con l'inventario di {0}."
 
@@ -4027,6 +4267,10 @@ msgstr "Quantità diminuita alla massima consentita per {0}."
 msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
 msgid "Quantity increased to match minimum possible for {0}."
 msgstr "Quantità aumentata per coincidere con l'inventario di {0}."
+
+msgctxt "Nwazet.Commerce.Controllers.ShoppingCartController"
+msgid "Several items in the shopping cart aren't available anymore and have been removed from the cart."
+msgstr "Alcuni elementi nel carrello non sono più disponibili e sono stati rimossi dal carrello."
 
 msgctxt "Nwazet.Commerce.Controllers.StripeController"
 msgid "Order created."
@@ -4328,6 +4572,42 @@ msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
 msgid "Value cannot be empty."
 msgstr "Il valore non può essere vuoto."
 
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterFormValidator"
+msgid "Must select a valid operator."
+msgstr "Devi selezionare un operatore valido."
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterFormValidator"
+msgid "Value cannot be empty."
+msgstr "Il valore non può essere vuoto."
+
+msgctxt "Nwazet.Commerce.Filters.CouponSingleProductSkuFilterForm"
+msgid "Operator"
+msgstr "Operatore"
+
+msgctxt "Nwazet.Commerce.Filters.CouponSingleProductSkuFilterForm"
+msgid "Product of the line corresponds to one of the SKUs"
+msgstr "Il prodotto della riga corrisponde ad uno degli SKU."
+
+msgctxt "Nwazet.Commerce.Filters.CouponSingleProductSkuFilterForm"
+msgid "Product of the line corresponds to one of these product SKUs: {0}"
+msgstr "Il prodotto della riga corrisponde ad uno di questi SKU: {0}"
+
+msgctxt "Nwazet.Commerce.Filters.CouponSingleProductSkuFilterForm"
+msgid "Product of the line doesn't correspond to any of the SKUs"
+msgstr "Il prodotto della riga non corrisponde a nessuno degli SKU."
+
+msgctxt "Nwazet.Commerce.Filters.CouponSingleProductSkuFilterForm"
+msgid "Product of the line doesn't correspond to any of these product SKUs: {0}"
+msgstr "Il prodotto della riga non corrisponde a nessuno di questi SKU: {0}"
+
+msgctxt "Nwazet.Commerce.Filters.CouponSingleProductSkuFilterForm"
+msgid "Product Skus. Write one SKU per line."
+msgstr "SKU dei prodotti. Uno per riga."
+
+msgctxt "Nwazet.Commerce.Filters.CouponSingleProductSkuFilterForm"
+msgid "The Product Skus"
+msgstr "Gli Sku dei prodotti"
+
 msgctxt "Nwazet.Commerce.Filters.FilterHelper"
 msgid "{0} contains '{1}'"
 msgstr "{0} contiene '{1}'"
@@ -4408,6 +4688,10 @@ msgctxt "Nwazet.Commerce.Filters.FilterHelper"
 msgid "{0} starts with '{1}'"
 msgstr "{0} inizia con '{1}'"
 
+msgctxt "Nwazet.Commerce.Filters.MaxPositiveIntegerValueForm"
+msgid "Enter the maximum value."
+msgstr "Inserire il valore massimo."
+
 msgctxt "Nwazet.Commerce.Filters.PositiveIntegerValueForm"
 msgid "Enter the value."
 msgstr "Inserisci il valore."
@@ -4418,7 +4702,11 @@ msgstr "Valore"
 
 msgctxt "Nwazet.Commerce.Filters.PositiveIntegerValueForm"
 msgid "Value must be a positive integer (it is allowed to be a token)."
-msgstr "Il valore deve essere un numero intero positivo (non sono consentiti Token)."
+msgstr "Il valore deve essere un numero intero positivo (sono consentiti Token)."
+
+msgctxt "Nwazet.Commerce.Filters.PositiveIntegerValueFormValidator"
+msgid "Value must be a positive integer (it is allowed to be a token)."
+msgstr "Il valore deve essere un numero intero positivo (sono consentiti Token)."
 
 msgctxt "Nwazet.Commerce.Filters.ProductDiscountPriceFilter"
 msgid "Product"
@@ -4856,6 +5144,38 @@ msgctxt "Nwazet.Commerce.Filters.ProductWeightFilterForm"
 msgid "Value"
 msgstr "Valore"
 
+msgctxt "Nwazet.Commerce.Filters.UserRolesFilterForm"
+msgid "Operator"
+msgstr "Operatore"
+
+msgctxt "Nwazet.Commerce.Filters.UserRolesFilterForm"
+msgid "Roles"
+msgstr "Ruoli"
+
+msgctxt "Nwazet.Commerce.Filters.UserRolesFilterForm"
+msgid "The user must have all the selected roles"
+msgstr "L'utente deve avere tutti i ruoli selezionati"
+
+msgctxt "Nwazet.Commerce.Filters.UserRolesFilterForm"
+msgid "The user must have all these roles: {0}"
+msgstr "L'utente deve avere tutti i seguenti ruoli: {0}"
+
+msgctxt "Nwazet.Commerce.Filters.UserRolesFilterForm"
+msgid "The user must have at least one of the selected roles"
+msgstr "L'utente deve avere almeno uno dei ruoli selezionati"
+
+msgctxt "Nwazet.Commerce.Filters.UserRolesFilterForm"
+msgid "The user must have at least one of these roles: {0}"
+msgstr "L'utente deve avere almeno uno dei seguenti ruoli: {0}"
+
+msgctxt "Nwazet.Commerce.Filters.UserRolesFilterForm"
+msgid "The user must have no one of the selected roles"
+msgstr "L'utente non deve avere nessuno dei ruoli selezionati"
+
+msgctxt "Nwazet.Commerce.Filters.UserRolesFilterForm"
+msgid "The user must have no one of these roles: {0}"
+msgstr "L'utente non deve avere nessuno dei seguenti ruoli: {0}"
+
 msgctxt "Nwazet.Commerce.Handlers.AdvancedSKUManagementHandler"
 msgid "A new SKU has been generated: \"{0}\""
 msgstr "Un nuovo SKU è stato generato: \"{0}\""
@@ -5151,6 +5471,10 @@ msgstr "Il codice coupon {0} non è valido"
 msgctxt "Nwazet.Commerce.Services.Couponing.CouponCartPriceAlterationProcessor"
 msgid "{0} not valid"
 msgstr "{0} non valido"
+
+msgctxt "Nwazet.Commerce.Services.Couponing.CouponEvaluationService"
+msgid "Coupon code {0} is not valid"
+msgstr "Il codice coupon {0} non è valido"
 
 msgctxt "Nwazet.Commerce.Services.DefaultOrderStatusProvider"
 msgid "Accepted"
