@@ -26,7 +26,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
         }
         public override string ProviderName => "NonCumulativeStateCouponApplicabilityCriterion";
 
-        public override LocalizedString ProviderDisplayName => T("Criteria non cumulative state");
+        public override LocalizedString ProviderDisplayName => T("Non-cumulative criteria");
 
         public static string ApplicabilityCriterionType = "Non cumulative state";
 
@@ -35,13 +35,13 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             var isAvailableForConfiguration = IsAvailableForConfiguration();
             var isAvailableForProcessing = IsAvailableForProcessing();
             describe
-                .For("Coupon", T("Non cumulative state"), T("Non cumulative state"))
+                .For("Coupon", T("Non-cumulative status"), T("Non-cumulative status"))
                 .Element(ApplicabilityCriterionType,
-                    T("Non cumulative state"),
+                    T("Non-cumulative"),
                     T("If the criteria is present the coupon is not cumulative with other coupons"),
                     (ctx) => ApplyCriteria(ctx),
                     (ctx) => ApplyCriteria(ctx),
-                    (ctx) => T("Non cumulative state"),
+                    (ctx) => T("Non-cumulative"),
                     isAvailableForConfiguration, isAvailableForProcessing,
                     null);
         }

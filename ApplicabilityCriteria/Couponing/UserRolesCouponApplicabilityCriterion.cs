@@ -44,9 +44,26 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     T("Roles for user"),
                     (ctx) => ApplyCriterion(ctx),
                     (ctx) => ApplyCriterion(ctx),
-                    (ctx) => UserRolesFilterForm.DisplayFilter(T, ctx.State),
+                    (ctx) => DisplayFilter(ctx.State),
                     isAvailableForConfiguration, isAvailableForProcessing,
                     UserRolesFilterForm.FormName);
+        }
+
+
+       private LocalizedString DisplayFilter(dynamic state) {
+            var roles = state.Roles != null ? (string)state.Roles : string.Empty;
+            var op = (UserRolesOperator)Enum.Parse(typeof(UserRolesOperator), Convert.ToString(state.Operator));
+
+            switch (op) {
+                case UserRolesOperator.MustHaveOne:
+                return T("The user must have at least one of these roles: {0}", roles);
+                case UserRolesOperator.MustHaveAll:
+                return T("The user must have all these roles: {0}", roles);
+                case UserRolesOperator.MustHaveNoOne:
+                return T("The user must have no one of these roles: {0}", roles);
+                default:
+                throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void ApplyCriterion(
