@@ -89,10 +89,14 @@ namespace Nwazet.Commerce.Services {
                 var bundlePart = part.As<BundlePart>();
                 var ids = bundlePart.ProductIds.ToList();
                 if (!ids.Any()) return 0;
-                inventory =
+
+                var productQuantitiesFor =
                     bundleService
-                        .GetProductQuantitiesFor(bundlePart)
-                        .Min(p => p.Product.Inventory / p.Quantity);
+                        .GetProductQuantitiesFor(bundlePart);
+                if (!productQuantitiesFor.Any()) return 0;
+
+                inventory = productQuantitiesFor
+                    .Min(p => p.Product.Inventory / p.Quantity);
             }
             return inventory;
         }

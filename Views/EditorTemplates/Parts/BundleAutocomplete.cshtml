@@ -19,6 +19,7 @@
 }
 <fieldset>
     <legend>@T("Products in this bundle")</legend>
+    <div class="message message-Warning message-warning-bundle-autocomplete bundle-autocomplete-d-none">@T("You need to save your changes.")</div>
     <div class="table-bundle-autocomplete">
         <div class="row row-bundle-autocomplete row-bundle-header @(!Model.Products.Any() ? "bundle-autocomplete-d-none" : "" )">
             <div class="col-xs-4">@T("Product")</div>
@@ -134,6 +135,8 @@
                 },
                 minLength: 2,
                 select: function (event, ui) {
+                    EnableSaveBundleMessage();
+
                     $(".row-bundle-header").removeClass("bundle-autocomplete-d-none");
                     var newId = $('div.table-bundle-autocomplete .row-bundle').length
                     var name = 'Bundle.Products[' + newId + ']';
@@ -172,12 +175,22 @@
         });
         //]]>
 
+        function EnableSaveBundleMessage() {
+            var myDiv = $(".message-warning-bundle-autocomplete");
+            $("fieldset > div.table-bundle-autocomplete").before(myDiv);
+            myDiv.show();
+        }
+
         function EditProductQuantity(id) {
+            EnableSaveBundleMessage();
+
             $(".quantity-" + id).hide();
             $('input[name="Bundle.Products[' + id + '].Quantity').removeClass("bundle-autocomplete-d-none");
         }
 
         function RemoveProduct(id) {
+            EnableSaveBundleMessage();
+
             $('label[for="Bundle.Products[' + id + '].Quantity').addClass("text-through");
             $(".span-sku-"+id).addClass("text-through");
             $('input[name="Bundle.Products[' + id + '].Quantity').val(0);
