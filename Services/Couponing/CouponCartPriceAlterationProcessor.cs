@@ -1,18 +1,11 @@
 ﻿using Nwazet.Commerce.ApplicabilityCriteria.Couponing;
-using Nwazet.Commerce.Descriptors.CouponApplicability;
 using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
-using Nwazet.Commerce.Models.Couponing;
-using Nwazet.Commerce.Services.Couponing;
-using Nwazet.Commerce.ViewModels;
 using Orchard;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Services.Couponing {
     [OrchardFeature("Nwazet.Couponing")]
@@ -20,32 +13,29 @@ namespace Nwazet.Commerce.Services.Couponing {
 
         private readonly ICouponRepositoryService _couponRepositoryService;
         private readonly IWorkContextAccessor _workContextAccessor;
-        private readonly IProductPriceService _productPriceService;
-        private readonly IVatConfigurationService _vatConfigurationService;
         private readonly ICouponEvaluationService _couponEvaluationService;
 
         public CouponCartPriceAlterationProcessor(
             ICouponRepositoryService couponRepositoryService,
             IWorkContextAccessor workContextAccessor,
-            IProductPriceService productPriceService,
-            IVatConfigurationService vatConfigurationService,
             ICouponEvaluationService couponEvaluationService) {
 
             _couponRepositoryService = couponRepositoryService;
             _workContextAccessor = workContextAccessor;
-            _productPriceService = productPriceService;
-            _vatConfigurationService = vatConfigurationService;
             _couponEvaluationService = couponEvaluationService;
 
             _loadedCoupons = new Dictionary<string, CouponRecord>();
 
             T = NullLocalizer.Instance;
+
+            _processorClass = this.GetType().FullName;
         }
         public Localizer T { get; set; }
 
         // prevent loading the same coupon several times per request
         private Dictionary<string, CouponRecord> _loadedCoupons;
 
+        private string _processorClass;
 
         public string AlterationType => CouponingUtilities.CouponAlterationType;
 
@@ -75,115 +65,46 @@ namespace Nwazet.Commerce.Services.Couponing {
             return false;
         }
 
-        public decimal AlterationAmount(
-            CartPriceAlteration alteration, 
-            IShoppingCart shoppingCart,
-            IEnumerable<CartPriceAlterationAmount> previousAmounts = null) {
+        public bool CanProcess(CartPriceAlterationContext context) {
+            if (CanProcess(context.Alteration)) {
+                var coupon = GetCouponFromCode(context.Alteration.Key);
+                return Applies(coupon, context.ShoppingCart);
+            }
+            return false;
+        }
+
+        public decimal AlterationAmount(CartPriceAlterationContext context) {
             // The values returned by this method are "after VAT".
             // should this provider process the given CartPriceAlteration?
-            if (CanProcess(alteration, shoppingCart)) {
-                // get the coupon corresponding to the alteration
-                var coupon = GetCouponFromCode(alteration.Key);
-                // Do the computation
-                switch (coupon.CouponType) {
-                    case CouponType.Percent:
-                        var subtotal = shoppingCart.Subtotal();
-                        return -(coupon.Value / 100m) 
-                            * (subtotal + (previousAmounts?.Sum(cpaa => cpaa.Amount) ?? 0.0m));
-                    case CouponType.Amount:
-                        // The total amount for the cart is the result of adding up the amounts 
-                        // for each line.
-                        return shoppingCart.GetProducts()
-                            .Sum(cartLine => {
-                                var discount = AlterationAmount(alteration, shoppingCart, cartLine);
-                                // apply VAT and such
-                                return _productPriceService
-                                    .GetPrice(cartLine.Product, discount, shoppingCart.Country, shoppingCart.ZipCode);
-                            });
-                    case CouponType.CartAmount:
-                        // for CartAmount type coupons, the total for the cart is already
-                        // part of its definition.
-                        // this is after VAT
-                        return -coupon.Value;
-                    default:
-                        break;
+            if (CanProcess(context)) {
+                // process each line, because the computation for the cart may
+                // need those partial results
+                foreach (var lineContext in context.ContextsForLines().ToList()) {
+                    var newLineValue = 0.0m;
+                    var effectiveOnLine = _couponEvaluationService.TryCouponLineValue(lineContext, out newLineValue);
+                    lineContext.AlterationValues.Add(new AlterationValueInfo {
+                        Alteration = lineContext.Alteration,
+                        Value = newLineValue,
+                        Label = AlterationLabel(lineContext.Alteration, lineContext.ShoppingCart, lineContext.CartLine),
+                        Effective = effectiveOnLine,
+                        ProcessorClass = _processorClass
+                    });
                 }
+                // process cart. This computation may use the values from the lines
+                // computed above
+                var newCartValue = 0.0m;
+                var effectiveOnCart = _couponEvaluationService.TryCouponCartValue(context, out newCartValue);
+                context.AlterationValues.Add(new AlterationValueInfo {
+                    Alteration = context.Alteration,
+                    Value = newCartValue,
+                    Label = AlterationLabel(context.Alteration, context.ShoppingCart),
+                    Effective = effectiveOnCart,
+                    ProcessorClass = _processorClass
+                });
+                return newCartValue;
             }
             return 0.0m;
         }
-
-        public decimal AlterationAmount(
-            CartPriceAlteration alteration, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine,
-            IEnumerable<CartPriceAlterationAmount> previousAmounts = null,
-            // force line computation even if coupon would not apply
-            bool force = false) {
-            // The amounts returned by this method are "before VAT"
-            if (force || CanProcess(alteration, shoppingCart, cartLine)) {
-                // Coupons on single product lines
-                // Get the coupon corresponding to the alteration
-                var coupon = GetCouponFromCode(alteration.Key);
-                var quantity = cartLine.Quantity; // TODO: max quantity to consider for discount
-                switch (coupon.CouponType) {
-                    case CouponType.Percent:
-                        // Consider price as input, before VAT and such
-                        var itemPrice = cartLine.Product.DiscountPrice >= 0 && cartLine.Product.DiscountPrice < cartLine.Product.Price
-                            ? cartLine.Product.DiscountPrice
-                            : cartLine.Product.Price;
-                        var linePrice = Math.Round(itemPrice * quantity, 2)
-                            + cartLine.LinePriceAdjustment
-                            + (previousAmounts?.Sum(cpaa => cpaa.Amount) ?? 0.0m);
-                        return -linePrice * (coupon.Value / 100m);
-                    case CouponType.Amount:
-                        // Fixed amount discount for each single item. Compute it here before VAT.
-                        // coupon.Value is after VAT. Meaning that if you input 1.1, and the VAT is 10%,
-                        // this should return (-quantity * 1)
-                        var rate = _vatConfigurationService
-                            .GetRate(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode);
-                        var value = coupon.Value / (1m + rate);
-                        return -quantity * value;
-
-                    case CouponType.CartAmount:
-                        // flat coupon on the cart? We need to "spread" its VAT contribution.
-                        // Note that this method, for such coupon, is not called when computing
-                        // the amount by which the coupon affects the whole cart.
-                        return CartAmountOnLine(coupon, shoppingCart, cartLine, previousAmounts);
-                    default:
-                        return 0.0m;
-                }
-            }
-
-            return 0.0m;
-        }
-
-        /// <summary>
-        /// compute the effect of a CartAmount coupon on a single line.
-        /// </summary>
-        /// <returns></returns>
-        private decimal CartAmountOnLine(
-            CouponRecord coupon, IShoppingCart shoppingCart, ShoppingCartQuantityProduct cartLine,
-            IEnumerable<CartPriceAlterationAmount> previousAmounts) {
-            // A coupon of this type has its VAT "effect" spread over each line
-            // proportionally to the line total over the cart's subtotal
-
-            var quantity = cartLine.Quantity;
-            // vat rate for the line
-            var rate = _vatConfigurationService
-                .GetRate(cartLine.Product, shoppingCart.Country, shoppingCart.ZipCode);
-            // products subtotal for the line (after VAT)
-            var lineSubtotal = Math.Round(
-                _productPriceService.GetPrice(
-                        cartLine.Product, cartLine.Price,
-                        shoppingCart.Country, shoppingCart.ZipCode)
-                * cartLine.Quantity + cartLine.LinePriceAdjustment
-                + (previousAmounts?.Sum(cpaa => cpaa.Amount) ?? 0.0m), 2);
-            // cart products subtotal
-            var cartSubtotal = shoppingCart.Subtotal();
-            // coupon value spread on this line (after VAT):
-            var couponLineValue = (coupon.Value * lineSubtotal) / cartSubtotal;
-
-            return -couponLineValue / (1m + rate); ;
-        }
-
 
         public string AlterationLabel(
             CartPriceAlteration alteration, IShoppingCart shoppingCart) {

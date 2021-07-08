@@ -1,4 +1,5 @@
 using Nwazet.Commerce.Services;
+using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using Orchard.UI.Notify;
@@ -18,7 +19,8 @@ namespace Nwazet.Commerce.Models {
             INotifier notifier,
             ITaxProviderService taxProviderService,
             IProductPriceService productPriceService,
-            IEnumerable<ICartPriceAlterationProcessor> cartPriceAlterationProcessors)
+            IEnumerable<ICartPriceAlterationProcessor> cartPriceAlterationProcessors,
+            IWorkContextAccessor workContextAccessor)
             : base (contentManager,
                   cartStorage,
                   priceService,
@@ -27,7 +29,8 @@ namespace Nwazet.Commerce.Models {
                   notifier,
                   taxProviderService,
                   productPriceService,
-                  cartPriceAlterationProcessors) {
+                  cartPriceAlterationProcessors,
+                  workContextAccessor) {
         }
         
         public override IEnumerable<ShoppingCartItem> Items {

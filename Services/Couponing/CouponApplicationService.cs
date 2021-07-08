@@ -221,7 +221,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                     Key = context.Coupon.Code,
                     // Higher priority coupons go first. Coupons with the same priority go based
                     // on their value type: CartAmount > Amount > Percent
-                    Weight = context.Coupon.Priority * 100 + ((int)context.Coupon.CouponType),
+                    Weight = CouponingUtilities.CouponAlterationWeight(context.Coupon),
                     RemovalAction = GetRemoveActionUrl(context.Coupon.Code)
                 }
             };
