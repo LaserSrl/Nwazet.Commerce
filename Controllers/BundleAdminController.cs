@@ -46,8 +46,8 @@ namespace Nwazet.Commerce.Controllers {
         }
 
         [HttpPost]
-        public ActionResult SearchProduct(string searchText,List<int> excludedProductIds) {
-           var model =  _bundleAutocompleteService.GetProducts(searchText, excludedProductIds);
+        public ActionResult SearchProduct(int contentItemId,string searchText,List<int> excludedProductIds) {
+           var model =  _bundleAutocompleteService.GetProducts(contentItemId, searchText, excludedProductIds);
            return Json(model);
          }
     }
