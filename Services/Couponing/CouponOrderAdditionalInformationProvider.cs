@@ -79,6 +79,14 @@ namespace Nwazet.Commerce.Services.Couponing {
                 foreach (var couponAlteration in couponAlterations) {
                     var coupon = GetCouponFromCode(couponAlteration.Key);
                     if (coupon != null) { // sanity check
+                        // The coupon should potentially add several XElements:
+                        // - 1 element containing "summary" information, telling a coupon was there
+                        // - 0+ LineAlteration elements, that apply to a single CheckoutItem
+                        // - 0+ OrderAlteration elements, that apply to the order as a whole
+                        // - 0+ other? TODO
+                        // These elements should contain all the information that will be
+                        // required to eventually repeat their computations, but also the 
+                        // results.
                         var xCoupon = coupon.ToXMLElement();
                         // the coupon itself will also be in the AdditionalElements property of the order
                         yield return xCoupon;
@@ -92,6 +100,9 @@ namespace Nwazet.Commerce.Services.Couponing {
                                 .Where(av => CouponingUtilities.CouponAlterationType.Equals(av.Alteration.AlterationType)
                                     && av.Alteration.Key == couponAlteration.Key);
                             if (lineValuesForAlteration.Any()) {
+                                // each element we create here will need to contain sufficient information
+                                // for us to completely recompute everything about this coupon later when
+                                // the order is fetched anew.
                                 yield return new OrderLineInformation() {
                                     ProductId = productLine.Product.Id,
                                     LineKey = lineKey,
@@ -113,6 +124,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                             .Where(av => CouponingUtilities.CouponAlterationType.Equals(av.Alteration.AlterationType)
                                 && av.Alteration.Key == couponAlteration.Key);
                         if (cartValuesForAlteration.Any()) {
+                            var couponString = coupon.ToString();
                             // backend info
                             yield return new OrderAdditionalInformation() {
                                 Source = xCoupon,
@@ -120,7 +132,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                                     .Select(av => new OrderInformationDetail() {
                                         Label = av.Label,
                                         Value = av.Value,
-                                        Description = coupon.ToString(),
+                                        Description = couponString,
                                         ValueType = OrderValueType.Currency,
                                         InformationType = OrderInformationType.TextInfo,
                                         ProcessorClass = av.ProcessorClass
@@ -133,7 +145,7 @@ namespace Nwazet.Commerce.Services.Couponing {
                                     .Select(av => new OrderInformationDetail() {
                                         Label = av.Label,
                                         Value = av.Value,
-                                        Description = coupon.ToString(),
+                                        Description = couponString,
                                         ValueType = OrderValueType.Currency,
                                         InformationType = OrderInformationType.FrontEndInfo,
                                         ProcessorClass = av.ProcessorClass

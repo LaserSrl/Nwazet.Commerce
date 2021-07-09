@@ -349,6 +349,10 @@ msgid "Apply"
 msgstr "Applica"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Bottom priority"
+msgstr "Priorità minima"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
 msgid "Cart Amount"
 msgstr "Importo del carrello"
 
@@ -447,6 +451,14 @@ msgstr "Tabella dei Territori"
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
 msgid "To"
 msgstr "A"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Top priority"
+msgstr "Priorità massima"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
+msgid "Top priority must be greater to bottom priority."
+msgstr "La priorità massima deve essere maggiore della priorità minima."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CouponingAdmin/_CouponsListPartial.cshtml"
 msgid "UnPublished"
@@ -3965,6 +3977,18 @@ msgid "If the criteria is present the coupon is not cumulative with other coupon
 msgstr "Se questo criterio è presente, il coupon non è cumulativo con altri coupon"
 
 msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NonCumulativeStateCouponApplicabilityCriterion"
+msgid "Non-cumulative"
+msgstr "Non cumulativo"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NonCumulativeStateCouponApplicabilityCriterion"
+msgid "Non-cumulative criteria"
+msgstr "Criterio di non cumulabilità"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NonCumulativeStateCouponApplicabilityCriterion"
+msgid "Non-cumulative status"
+msgstr "Stato non cumulativo"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NonCumulativeStateCouponApplicabilityCriterion"
 msgid "You already have an active coupon. {0} cannot be added."
 msgstr "Hai già un coupon attivo. {0} non può essere aggiunto."
 
@@ -3975,6 +3999,18 @@ msgstr "Criterio di applicabilità del coupon in base al ruolo associato all'ute
 msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.UserRolesCouponApplicabilityCriterion"
 msgid "Roles for user"
 msgstr "Ruoli dell'utente"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.UserRolesCouponApplicabilityCriterion"
+msgid "The user must have all these roles: {0}"
+msgstr "L'utente deve avere tutti i seguenti ruoli: {0}"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.UserRolesCouponApplicabilityCriterion"
+msgid "The user must have at least one of these roles: {0}"
+msgstr "L'utente deve avere almeno uno dei seguenti ruoli: {0}"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.UserRolesCouponApplicabilityCriterion"
+msgid "The user must have no one of these roles: {0}"
+msgstr "L'utente non deve avere nessuno dei seguenti ruoli: {0}"
 
 msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.UserRolesCouponApplicabilityCriterion"
 msgid "User roles"
@@ -4003,6 +4039,10 @@ msgstr "Il coupon è stato aggiornato."
 msgctxt "Nwazet.Commerce.Controllers.CouponingAdminController"
 msgid "The coupon is not valid."
 msgstr "Il coupon non è valido."
+
+msgctxt "Nwazet.Commerce.Controllers.CouponingAdminController"
+msgid "Top priority must be greater to bottom priority."
+msgstr "La priorità massima deve essere maggiore della priorità minima."
 
 msgctxt "Nwazet.Commerce.Controllers.CouponingCriterionController"
 msgid "Not authorized to manage coupons"
@@ -4531,6 +4571,10 @@ msgstr "Gli Sku dei prodotti"
 msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterForm"
 msgid "Value cannot be empty."
 msgstr "Il valore non può essere vuoto."
+
+msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterFormValidator"
+msgid "Must select a valid operator."
+msgstr "Devi selezionare un operatore valido."
 
 msgctxt "Nwazet.Commerce.Filters.CouponProductSkuFilterFormValidator"
 msgid "Value cannot be empty."

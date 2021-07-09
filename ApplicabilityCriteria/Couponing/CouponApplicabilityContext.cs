@@ -97,7 +97,9 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             foreach (var lctx in baseCtx.ContextsForLines()) {
                 _lineContexts.Add(
                     lctx.CartLine.GenerateUniqueKey(),
-                    new CouponPostLineApplicabilityContext(lctx));
+                    new CouponPostLineApplicabilityContext(lctx) {
+                        ParentContext = this
+                    });
             }
         }
 
@@ -131,6 +133,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                                     WorkContext = this.WorkContext,
                                     IsApplicable = true, // default to true otherwise no test will be performed
                                     ShouldNotify = this.ShouldNotify,
+                                    ParentContext = this,
                                     // and finally we consider the line
                                     CartLine = line,
                                     BaseLinePrice = baseLinePrice
@@ -149,6 +152,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
 
         public List<CouponValueInfo> CouponValues { get; set; }
         public decimal BaseLinePrice { get; set; }
+        public CouponPostApplicabilityContext ParentContext { get; set; }
 
         public CouponPostLineApplicabilityContext()
             : base() {

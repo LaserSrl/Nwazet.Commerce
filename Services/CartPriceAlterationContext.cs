@@ -55,6 +55,7 @@ namespace Nwazet.Commerce.Services {
                                     Alteration = this.Alteration,
                                     ShoppingCart = this.ShoppingCart,
                                     WorkContext = this.WorkContext,
+                                    ParentContext = this,
                                     // and finally we consider the line
                                     CartLine = line
                                 });
@@ -68,6 +69,7 @@ namespace Nwazet.Commerce.Services {
     public class LinePriceAlterationContext
         : CartPriceAlterationContextBase {
         public ShoppingCartQuantityProduct CartLine { get; set; }
+        public CartPriceAlterationContext ParentContext { get; set; }
 
         public LinePriceAlterationContext() : base() { }
 
