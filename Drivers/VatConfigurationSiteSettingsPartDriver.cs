@@ -5,6 +5,7 @@ using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
+using Orchard.ContentManagement.Handlers;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace Nwazet.Commerce.Drivers {
 
         protected override DriverResult Editor(VatConfigurationSiteSettingsPart part, IUpdateModel updater, dynamic shapeHelper) {
             var model = new VatConfigurationSiteSettingsPartViewModel();
-            if (updater is ECommerceSettingsAdminController 
+            if (updater is ECommerceSettingsAdminController
                 && updater.TryUpdateModel(model, Prefix, null, null)) {
 
                 part.DefaultTerritoryForVatId = model.DefaultTerritoryForVatId;
@@ -66,6 +67,32 @@ namespace Nwazet.Commerce.Drivers {
                     .CreateSafeDuplicate()
                     .ToList()
             };
+        }
+
+
+        protected override void Exporting(VatConfigurationSiteSettingsPart part, ExportContentContext context) {
+            // To export DefaultVatConfigurationId, taking inspiration from 
+            // Laser.Orchard.NwazetIntegration.Drivers.AddressConfigurationSiteSettingsPartDriver
+            var root = context.Element(part.PartDefinition.Name);
+
+            var vat = _contentManager
+                .Get<VatConfigurationPart>(part.DefaultVatConfigurationId);
+            var vatIdentity = _contentManager
+                .GetItemMetadata(vat).Identity;
+            root.SetAttributeValue("DefaultVatConfigurationIdentity", vatIdentity);
+        }
+
+        protected override void Imported(VatConfigurationSiteSettingsPart part, ImportContentContext context) {
+            // To import DefaultVatConfigurationId, taking inspiration from 
+            // Laser.Orchard.NwazetIntegration.Drivers.AddressConfigurationSiteSettingsPartDriver
+            var root = context.Data.Element(part.PartDefinition.Name);
+            if (root == null) return;
+
+            context.ImportAttribute(
+                part.PartDefinition.Name,
+                "DefaultVatConfigurationIdentity",
+                vatId =>
+                    part.DefaultVatConfigurationId = context.GetItemFromSession(vatId).Id);
         }
     }
 }
