@@ -66,6 +66,67 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
             });
             return this;
         }
+
+        public DescribeCouponApplicabilityFor Element(
+            string type,
+            LocalizedString name,
+            LocalizedString description,
+            Action<CouponPostApplicabilityContext> postAdditionCriterion,
+            Action<CouponPostApplicabilityContext> postProcessingCriterion,
+            Func<CouponContext, LocalizedString> display,
+            bool forConfiguration, bool forProcessing,
+            string form = null) {
+
+            if (Types == null) {
+                Types = new List<CouponApplicabilityCriterionDescriptor>();
+            }
+
+            Types.Add(new CouponApplicabilityCriterionDescriptor {
+                Type = type,
+                Name = name,
+                Description = description,
+                Category = _category,
+                PostAdditionCriterion = postAdditionCriterion,
+                PostProcessingCriterion = postProcessingCriterion,
+                Display = display,
+                IsAvailableForConfiguration = forConfiguration,
+                IsAvailableForProcessing = forProcessing,
+                Form = form
+            });
+            return this;
+        }
+        public DescribeCouponApplicabilityFor Element(
+           string type,
+           LocalizedString name,
+           LocalizedString description,
+           Action<CouponApplicabilityCriterionContext> additionCriterion,
+           Action<CouponApplicabilityCriterionContext> processingCriterion,
+           Action<CouponPostApplicabilityContext> postAdditionCriterion,
+           Action<CouponPostApplicabilityContext> postProcessingCriterion,
+           Func<CouponContext, LocalizedString> display,
+           bool forConfiguration, bool forProcessing,
+           string form = null) {
+
+            if (Types == null) {
+                Types = new List<CouponApplicabilityCriterionDescriptor>();
+            }
+
+            Types.Add(new CouponApplicabilityCriterionDescriptor {
+                Type = type,
+                Name = name,
+                Description = description,
+                Category = _category,
+                AdditionCriterion = additionCriterion,
+                ProcessingCriterion = processingCriterion,
+                PostAdditionCriterion = postAdditionCriterion,
+                PostProcessingCriterion = postProcessingCriterion,
+                Display = display,
+                IsAvailableForConfiguration = forConfiguration,
+                IsAvailableForProcessing = forProcessing,
+                Form = form
+            });
+            return this;
+        }
     }
 
     [OrchardFeature("Nwazet.Couponing")]
