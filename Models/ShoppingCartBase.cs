@@ -1,5 +1,6 @@
 ﻿using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels;
+using Orchard;
 using Orchard.Autoroute.Models;
 using Orchard.ContentManagement;
 using Orchard.Core.Title.Models;
@@ -23,6 +24,7 @@ namespace Nwazet.Commerce.Models {
         protected readonly ITaxProviderService _taxProviderService;
         protected readonly IProductPriceService _productPriceService;
         protected readonly IEnumerable<ICartPriceAlterationProcessor> _cartPriceAlterationProcessors;
+        protected readonly IWorkContextAccessor _workContextAccessor;
 
         protected IEnumerable<ShoppingCartQuantityProduct> _products;
 
@@ -37,7 +39,8 @@ namespace Nwazet.Commerce.Models {
             INotifier notifier,
             ITaxProviderService taxProviderService,
             IProductPriceService productPriceService,
-            IEnumerable<ICartPriceAlterationProcessor> cartPriceAlterationProcessors) {
+            IEnumerable<ICartPriceAlterationProcessor> cartPriceAlterationProcessors,
+            IWorkContextAccessor workContextAccessor) {
 
             _contentManager = contentManager;
             _cartStorage = cartStorage;
@@ -48,6 +51,7 @@ namespace Nwazet.Commerce.Models {
             _taxProviderService = taxProviderService;
             _productPriceService = productPriceService;
             _cartPriceAlterationProcessors = cartPriceAlterationProcessors;
+            _workContextAccessor = workContextAccessor;
 
             T = NullLocalizer.Instance;
         }
@@ -85,8 +89,13 @@ namespace Nwazet.Commerce.Models {
             get {
                 // Each alteration may affect the computation for the next.
                 // PriceAlterations is already ordered by descending Weight.
+                var alterationContext = new CartPriceAlterationContext {
+                    ShoppingCart = this,
+                    WorkContext = _workContextAccessor.GetContext()
+                };
                 var amounts = new List<CartPriceAlterationAmount>();
                 foreach (var alteration in PriceAlterations) {
+                    alterationContext.SetAlteration(alteration);
                     // get processors that are able to process the alteration
                     var processors = _cartPriceAlterationProcessors
                         .Where(p => p.CanProcess(alteration));
@@ -94,7 +103,7 @@ namespace Nwazet.Commerce.Models {
                     foreach (var processor in processors) {
                         amounts.Add(new CartPriceAlterationAmount() {
                             Label = processor.AlterationLabel(alteration, this),
-                            Amount = processor.AlterationAmount(alteration, this, amounts),
+                            Amount = processor.AlterationAmount(alterationContext),
                             AlterationType = alteration.AlterationType,
                             Key = alteration.Key,
                             Weight = alteration.Weight,

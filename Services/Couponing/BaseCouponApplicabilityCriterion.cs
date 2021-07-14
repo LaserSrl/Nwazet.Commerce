@@ -49,6 +49,8 @@ namespace Nwazet.Commerce.Services.Couponing {
         // empty implementations to override
         public virtual void CanBeAdded(CouponApplicabilityContext context) { }
         public virtual void CanBeProcessed(CouponApplicabilityContext context) { }
+        public virtual void PostCanBeAdded(CouponPostApplicabilityContext context) { }
+        public virtual void PostCanBeProcessed(CouponPostApplicabilityContext context) { }
 
         protected BasicApplicabilityConfigurationViewModel SettingForProvider() {
             var settings = GetSettings();
