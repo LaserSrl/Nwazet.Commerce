@@ -80,6 +80,11 @@ namespace Nwazet.Commerce.Drivers {
             var vatIdentity = _contentManager
                 .GetItemMetadata(vat).Identity;
             root.SetAttributeValue("DefaultVatConfigurationIdentity", vatIdentity);
+
+            // Since territory Id is the id on the database (it may change from tenant to tenant), 
+            // I need to export the Name of the territory, which is unique.
+            var territory = _territoriesRepositoryService.GetTerritoryInternal(part.DefaultTerritoryForVatId);
+            root.SetAttributeValue("DefaultTerritoryForVatName", territory.Name);
         }
 
         protected override void Imported(VatConfigurationSiteSettingsPart part, ImportContentContext context) {
@@ -93,6 +98,14 @@ namespace Nwazet.Commerce.Drivers {
                 "DefaultVatConfigurationIdentity",
                 vatId =>
                     part.DefaultVatConfigurationId = context.GetItemFromSession(vatId).Id);
+
+            // I get the correct territory id by consulting the repository service with the name I have exported, which should be unique.
+            // The service takes care of hashing it.
+            context.ImportAttribute(
+                part.PartDefinition.Name,
+                "DefaultTerritoryForVatName",
+                territoryName =>
+                    part.DefaultTerritoryForVatId = _territoriesRepositoryService.GetTerritoryInternal(territoryName).Id);
         }
     }
 }
