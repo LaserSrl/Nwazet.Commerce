@@ -282,7 +282,10 @@ namespace Nwazet.Commerce.Tests {
             var currencyProvider = new UseCurrencyFromSiteCultureProvider(workContextAccessor);
             var attributeDriver = new ProductAttributesPartDriver(attributeService, attributeExtensionProviders, contentManager, currencyProvider);
             var cart = new ShoppingCart(
-                contentManager, cartStorage, priceService, new[] { attributeDriver }, null, new Notifier(), null, new ProductPriceService(), Enumerable.Empty<ICartPriceAlterationProcessor>());
+                contentManager, cartStorage, priceService, 
+                new[] { attributeDriver }, null, new Notifier(), 
+                null, new ProductPriceService(), Enumerable.Empty<ICartPriceAlterationProcessor>(),
+                new WorkContextAccessorStub(null));
             FillCart(cart);
 
             return cart;
