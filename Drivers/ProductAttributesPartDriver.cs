@@ -90,7 +90,8 @@ namespace Nwazet.Commerce.Drivers {
                         Prefix = Prefix,
                         Part = part,
                         Attributes = _attributeService.Attributes
-                            .OrderBy(p => p.As<TitlePart>().Title)
+                            .OrderBy(p =>p.SortOrder)
+                            .ThenBy(p=>p.As<TitlePart>().Title)
                             .ToList()
                     }));
         }
