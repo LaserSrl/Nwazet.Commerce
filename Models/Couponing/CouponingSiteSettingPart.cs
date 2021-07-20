@@ -24,7 +24,10 @@ namespace Nwazet.Commerce.Models {
             get { return this.Retrieve(p => p.CouponLineProvidersConfiguration); }
             set { this.Store(p => p.CouponLineProvidersConfiguration, value); }
         }
-
+        public virtual bool CouponFormVisibility {
+            get { return this.Retrieve(p => p.CouponFormVisibility); }
+            set { this.Store(p => p.CouponFormVisibility, value); }
+        }
 
         public IList<BasicApplicabilityConfigurationViewModel> BasicApplicabilityProviders {
             get {
