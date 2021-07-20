@@ -25,8 +25,10 @@ namespace Nwazet.Commerce.Features {
         public void Enabled(Feature feature) {
             if (feature.Descriptor.Id == "Nwazet.InventoryBySKU") {
                 //the feature has just been enabled, so maybe the inventories are not in synch
-                _orchardServices.WorkContext.CurrentSite.As<InventoryBySKUSiteSettingsPart>().InventoriesAreAllInSynch =
-                    !_productInventoryService.GetProductsWithInventoryIssues().Any();
+                if (_orchardServices.WorkContext.CurrentSite.Is<InventoryBySKUSiteSettingsPart>()) {
+                    _orchardServices.WorkContext.CurrentSite.As<InventoryBySKUSiteSettingsPart>().InventoriesAreAllInSynch =
+                        !_productInventoryService.GetProductsWithInventoryIssues().Any();
+                }
             }
         }
 

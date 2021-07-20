@@ -65,6 +65,7 @@ namespace Nwazet.Commerce.Drivers {
                     AvailableForProcessing = provider.IsAvailableForProcessing()
                 });
             }
+            vm.CouponFormVisibility = part.CouponFormVisibility;
             return EditorShape(vm, shapeHelper);
         }
 
@@ -76,6 +77,7 @@ namespace Nwazet.Commerce.Drivers {
                 part.SetBasicApplicabilityConfiguration(vm.BasicApplicabilityProviders);
                 part.SetCouponProvidersConfiguration(vm.ApplicabilityProviders);
                 part.SetCouponLineProvidersConfiguration(vm.LineProviders);
+                part.CouponFormVisibility = vm.CouponFormVisibility;
             }
             return EditorShape(vm, shapeHelper);
         }

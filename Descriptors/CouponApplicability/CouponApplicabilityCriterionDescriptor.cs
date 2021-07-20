@@ -22,14 +22,64 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
         public bool IsAvailableForProcessing { get; set; }
 
         public Func<CouponContext, LocalizedString> Display { get; set; }
+
+ 
     }
-    
+
     [OrchardFeature("Nwazet.Couponing")]
     public class CouponApplicabilityCriterionDescriptor
         : CouponCriterionDescriptor {
 
-        public Action<CouponApplicabilityCriterionContext> AdditionCriterion { get; set; }
-        public Action<CouponApplicabilityCriterionContext> ProcessingCriterion { get; set; }
+        private Action<CouponApplicabilityCriterionContext> _additionCriterion;
+        public Action<CouponApplicabilityCriterionContext> AdditionCriterion {
+            get {
+                if (_additionCriterion != null) {
+                    return _additionCriterion;
+                }
+                return (ctx) => { };
+            }
+            set {
+                _additionCriterion = value;
+            }
+        }
+
+        private Action<CouponApplicabilityCriterionContext> _processingCriterion;
+        public Action<CouponApplicabilityCriterionContext> ProcessingCriterion {
+            get {
+                if (_processingCriterion != null) {
+                    return _processingCriterion;
+                }
+                return (ctx) => { };
+            }
+            set {
+                _processingCriterion = value;
+            }
+        }
+
+        private Action<CouponPostApplicabilityContext> _postAdditionCriterion;
+        public Action<CouponPostApplicabilityContext> PostAdditionCriterion {
+            get {
+                if (_postAdditionCriterion != null) {
+                    return _postAdditionCriterion;
+                }
+                return (ctx) => { };
+            }
+            set {
+                _postAdditionCriterion = value;
+            }
+        }
+        private Action<CouponPostApplicabilityContext> _postProcessingCriterion;
+        public Action<CouponPostApplicabilityContext> PostProcessingCriterion {
+            get {
+                if (_postProcessingCriterion != null) {
+                    return _postProcessingCriterion;
+                }
+                return (ctx) => { };
+            }
+            set {
+                _postProcessingCriterion = value;
+            }
+        }
     }
 
     [OrchardFeature("Nwazet.Couponing")]
@@ -43,4 +93,5 @@ namespace Nwazet.Commerce.Descriptors.CouponApplicability {
         /// </summary>
         public Func<CouponApplicabilityContext, LocalizedString> FailureMessage { get; set; }
     }
+
 }

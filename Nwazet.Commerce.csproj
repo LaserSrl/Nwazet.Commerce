@@ -57,8 +57,8 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\Orchard\src\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <HintPath>..\Orchard\src\packages\NHibernate.4.0.1.4000\lib\net40\NHibernate.dll</HintPath>
+    <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\Orchard\src\packages\NHibernate.4.1.2.4000\lib\net40\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -314,6 +314,7 @@
     <Compile Include="ApplicabilityCriteria\Couponing\CartHasProductBySKUCouponLineApplicabilityCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\MaxUsesCouponApplicabilityCriteria.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\MaxUsesPerUserCouponApplicabilityCriteria.cs" />
+    <Compile Include="ApplicabilityCriteria\Couponing\MinCartTotalCouponApplicabilityCriterion.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\NonCumulativeStateCouponApplicabilityCriterion.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\NonCumulativeCouponApplicabilityCriterion.cs" />
     <Compile Include="ApplicabilityCriteria\Couponing\NoNegativePriceCouponApplicabilityCriterion.cs" />
@@ -403,6 +404,7 @@
     <Compile Include="Filters\BaseDecimalFilterProvider.cs" />
     <Compile Include="Filters\CouponProductSKUFilterForms.cs" />
     <Compile Include="Filters\FilterHelper.cs" />
+    <Compile Include="Filters\MinCartTotalForm.cs" />
     <Compile Include="Filters\PositiveIntegerValueForm.cs" />
     <Compile Include="Filters\ProductDiscountPriceFilter.cs" />
     <Compile Include="Filters\ProductDiscountPriceFilterForm.cs" />

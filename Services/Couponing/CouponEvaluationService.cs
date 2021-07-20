@@ -263,6 +263,25 @@ namespace Nwazet.Commerce.Services.Couponing {
             foreach (var criterion in _applicabilityCriteria) {
                 criterion.PostCanBeAdded(postProcessingContext);
             }
+            // for each criterion in coupons, run their post processing stuff
+            // After those, we check for the criteria that are configured explicitly
+            // for the coupon.
+            // TODO: prepare tokens
+            Dictionary<string, object> tokens = new Dictionary<string, object>();
+            if (context.IsApplicable) {
+                foreach (var criterion in context.Coupon.ApplicabilityCriteria) {
+                    // we are using the post processing context created above
+                    var descriptor = GetCriterion(criterion.Category, criterion.Type);
+                    // descriptor should exist and be enabled
+                    if (descriptor == null || !descriptor.IsAvailableForProcessing) {
+                        continue;
+                    }
+                    var tokenizedState = _tokenizer.Replace(criterion.State, tokens);
+                    postProcessingContext.SetState(FormParametersHelper.ToDynamic(tokenizedState));
+                    descriptor.PostAdditionCriterion(postProcessingContext);
+                }
+            }
+
             context.IsApplicable = postProcessingContext.IsApplicable;
             if (!context.IsApplicable) {
                 context.Message = postProcessingContext.Message;
@@ -275,6 +294,24 @@ namespace Nwazet.Commerce.Services.Couponing {
             var postProcessingContext = PreparePostProcessing(context);
             foreach (var criterion in _applicabilityCriteria) {
                 criterion.PostCanBeProcessed(postProcessingContext);
+            }
+            // for each criterion in coupons, run their post processing stuff
+            // After those, we check for the criteria that are configured explicitly
+            // for the coupon.
+            // TODO: prepare tokens
+            Dictionary<string, object> tokens = new Dictionary<string, object>();
+            if (context.IsApplicable) {
+                foreach (var criterion in context.Coupon.ApplicabilityCriteria) {
+                    // we are using the post processing context created above
+                    var descriptor = GetCriterion(criterion.Category, criterion.Type);
+                    // descriptor should exist and be enabled
+                    if (descriptor == null || !descriptor.IsAvailableForProcessing) {
+                        continue;
+                    }
+                    var tokenizedState = _tokenizer.Replace(criterion.State, tokens);
+                    postProcessingContext.SetState(FormParametersHelper.ToDynamic(tokenizedState));
+                    descriptor.PostProcessingCriterion(postProcessingContext);
+                }
             }
             context.IsApplicable = postProcessingContext.IsApplicable;
             if (!context.IsApplicable) {

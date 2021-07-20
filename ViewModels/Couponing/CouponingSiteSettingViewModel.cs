@@ -20,6 +20,7 @@ namespace Nwazet.Commerce.ViewModels.Couponing {
         public IList<BasicApplicabilityConfigurationViewModel> BasicApplicabilityProviders { get; set; }
         public IList<ProviderConfigurationViewModel> ApplicabilityProviders { get; set; }
         public IList<ProviderConfigurationViewModel> LineProviders { get; set; }
+        public bool CouponFormVisibility { get; set; }
     }
 
     public class BasicApplicabilityConfigurationViewModel {
