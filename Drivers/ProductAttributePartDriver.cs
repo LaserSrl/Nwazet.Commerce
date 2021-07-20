@@ -70,7 +70,8 @@ namespace Nwazet.Commerce.Drivers {
                 }
                 //ensure uniqueness of TechnicalName
                 var tName = part.TechnicalName;
-                if (!_productAttributeNameService.ProcessTechnicalName(part)) {
+                var processTechnicalName = _productAttributeNameService.ProcessTechnicalName(part);
+                if (!processTechnicalName) {
                     Services.Notifier.Warning(
                         T("Attribute technical names in conflict. \"{0}\" is already set for a previously created attribute so now it has been changed to \"{1}\"",
                         tName, part.TechnicalName));
@@ -86,7 +87,7 @@ namespace Nwazet.Commerce.Drivers {
                 }
 
                 // in edit the value of technical name cannot be changed
-                if (!string.IsNullOrEmpty(technicalName) && technicalName != part.TechnicalName) {
+                if (!string.IsNullOrEmpty(technicalName) && technicalName != part.TechnicalName && processTechnicalName) {
                     part.TechnicalName = technicalName;
                 }
             }

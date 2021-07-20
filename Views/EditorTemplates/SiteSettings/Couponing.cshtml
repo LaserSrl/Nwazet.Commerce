@@ -2,6 +2,14 @@
 @model CouponingSiteSettingViewModel
 
 <fieldset>
+    <legend>@T("General settings for coupons")</legend>
+    <label>
+        @Html.CheckBoxFor(m => m.CouponFormVisibility)
+        @T("Hide coupon form at front-end")
+    </label>
+</fieldset>
+
+<fieldset>
     <legend>@T("Enabled providers for couponing criteria.")</legend>
 
     <fieldset>
@@ -39,7 +47,7 @@
                 
                 </tbody>
             </table>
-        } else {
+        }else {
             <span>
                 @T("No provider available for configuration.")
             </span>
@@ -89,7 +97,7 @@
                 
                 </tbody>
             </table>
-        } else {
+        }else {
             <span>
                 @T("No provider available for configuration.")
             </span>
