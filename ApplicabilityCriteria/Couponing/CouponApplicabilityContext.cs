@@ -72,6 +72,8 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
         public List<CouponValueInfo> CouponValues { get; set; }
         public decimal BaseCartSubtotal { get; set; }
 
+        public dynamic State { get; protected set; }
+
         protected Dictionary<string, CouponPostLineApplicabilityContext> _lineContexts;
 
         protected CouponPostApplicabilityContext()
@@ -109,6 +111,10 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
             foreach (var lc in ContextsForLines()) {
                 lc.SetCoupon(coupon);
             }
+        }
+
+        public void SetState(dynamic state) {
+            State = state;
         }
 
         public new IEnumerable<CouponPostLineApplicabilityContext> ContextsForLines() {
