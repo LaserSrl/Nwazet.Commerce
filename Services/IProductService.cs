@@ -26,7 +26,6 @@ namespace Nwazet.Commerce.Services {
         /// <param name="quantity"></param>
         /// <returns></returns>
         bool MayAddToCart(ProductPart product, int quantity);
-
-        IEnumerable<ContentTypeDefinition> GetProductTypes();
+        
     }
 }
