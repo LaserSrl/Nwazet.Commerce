@@ -22,13 +22,19 @@ namespace Nwazet.Commerce.Features {
 
         public void Enabled(Feature feature) {
             if (feature.Descriptor.Id == "Nwazet.CurrencyProviderBySiteSetting") {
-                //initialize the currency code using the site's culture
-                _orchardServices.WorkContext.CurrentSite.As<ECommerceCurrencySiteSettingsPart>().CurrencyCode =
-                    new RegionInfo(
-                        CultureInfo.GetCultureInfo(
-                            _orchardServices.WorkContext.CurrentSite.SiteCulture
-                            ).LCID)
-                        .ISOCurrencySymbol;
+                var site = _orchardServices.WorkContext.CurrentSite;
+                if (site != null) {
+                    var part = site.As<ECommerceCurrencySiteSettingsPart>();
+                    // initialize the currency code using the site's culture
+                    if (part != null) {
+                        part.CurrencyCode =
+                            new RegionInfo(
+                                CultureInfo.GetCultureInfo(
+                                    site.SiteCulture
+                                    ).LCID)
+                                .ISOCurrencySymbol;
+                    }
+                }
             }
         }
 
