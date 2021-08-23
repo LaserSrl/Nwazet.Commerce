@@ -12,6 +12,8 @@ namespace Nwazet.Commerce.ViewModels.Couponing {
         public string Category { get; set; }
         public string Type { get; set; }
         public string DisplayText { get; set; }
+        // We need to carry the state for import/export
+        public string State { get; set; }
 
         public bool IsAvailableForConfiguration { get; set; }
         public bool IsAvailableForProcessing { get; set; }

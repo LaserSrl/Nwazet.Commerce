@@ -2,28 +2,39 @@
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services.Couponing;
 using Nwazet.Commerce.ViewModels.Couponing;
+using Orchard;
 using Orchard.Environment.Extensions;
 using Orchard.Forms.Services;
 using Orchard.Localization;
 using Orchard.Recipes.Services;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Nwazet.Commerce.Recipes.Providers.Builders {
     [OrchardFeature("Nwazet.Couponing")]
     public class CouponStep : RecipeBuilderStep {
         private readonly ICouponRepositoryService _couponRepositoryService;
         private readonly ICouponCriteriaManagementService _couponCriteriaManagementService;
+        private readonly IWorkContextAccessor _workContextAccessor;
+
+        private readonly Lazy<CultureInfo> _cultureInfo;
 
         public CouponStep(
             ICouponRepositoryService couponRepositoryService,
-            ICouponCriteriaManagementService couponCriteriaManagementService) {
+            ICouponCriteriaManagementService couponCriteriaManagementService,
+            IWorkContextAccessor workContextAccessor) {
 
             _couponRepositoryService = couponRepositoryService;
             _couponCriteriaManagementService = couponCriteriaManagementService;
+            _workContextAccessor = workContextAccessor;
+
+            _cultureInfo = new Lazy<CultureInfo>(() =>
+                CultureInfo.GetCultureInfo(_workContextAccessor.GetContext().CurrentCulture));
         }
 
         public override string Name => "Coupons";
@@ -62,7 +73,42 @@ namespace Nwazet.Commerce.Recipes.Providers.Builders {
                     coupons.Add(coupon);
                 }
             }
-            // TODO: create an XML element for the coupons and store each information there
+            // create an XML element for the coupons and store each information there
+            var orchardElement = context.RecipeDocument.Element("Orchard");
+            var couponsRoot = new XElement("Coupons");
+            foreach (var coupon in coupons) {
+                // Value is a string, but it represents a number: we export it
+                // in the invariant culture
+                decimal value = 0.0m;
+                decimal.TryParse(coupon.Value, NumberStyles.Any, _cultureInfo.Value, out value);
+                var couponElement = new XElement("Coupon",
+                    new XAttribute("Name", coupon.Name),
+                    new XAttribute("Code", coupon.Code),
+                    new XAttribute("Priority", coupon.Priority),
+                    new XAttribute("Published", coupon.Published),
+                    new XAttribute("CouponType", coupon.CouponType),
+                    new XAttribute("Value", value.ToString(CultureInfo.InvariantCulture)));
+                // Applicability criteria
+                foreach (var criterion in coupon.ApplicabilityCriteria) {
+                    var criterionElement = new XElement("ApplicabilityCriterion",
+                        new XAttribute("Category", criterion.Category),
+                        new XAttribute("Type", criterion.Type),
+                        new XAttribute("DisplayText", criterion.DisplayText),
+                        new XAttribute("State", criterion.State));
+                    couponElement.Add(criterionElement);
+                }
+                // Line criteria
+                foreach (var criterion in coupon.LineCriteria) {
+                    var criterionElement = new XElement("LineCriterion",
+                        new XAttribute("Category", criterion.Category),
+                        new XAttribute("Type", criterion.Type),
+                        new XAttribute("DisplayText", criterion.DisplayText),
+                        new XAttribute("State", criterion.State));
+                    couponElement.Add(criterionElement);
+                }
+                couponsRoot.Add(couponElement);
+            }
+            orchardElement.Add(couponsRoot);
         }
 
         private CouponApplicabilityCriterionEntry CriterionToEntry(
@@ -71,11 +117,8 @@ namespace Nwazet.Commerce.Recipes.Providers.Builders {
                 Category = descriptor.Category,
                 Type = descriptor.Type,
                 CriterionRecordId = criterion.Id,
-                DisplayText = string.IsNullOrWhiteSpace(criterion.Description)
-                    ? descriptor.Display(new CouponContext {
-                        State = FormParametersHelper.ToDynamic(criterion.State)
-                    }).Text
-                    : criterion.Description,
+                DisplayText = criterion.Description ?? "",
+                State = criterion.State,
                 IsAvailableForConfiguration = descriptor.IsAvailableForConfiguration,
                 IsAvailableForProcessing = descriptor.IsAvailableForProcessing
             };

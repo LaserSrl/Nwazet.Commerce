@@ -19,6 +19,11 @@ namespace Nwazet.Commerce.Models {
         // When properties are added, changed, removed, make sure to
         // also update that method to avoid unexpected behavior.
 
+        public CouponRecord () {
+            ApplicabilityCriteria = new List<CouponApplicabilityCriterionRecord>();
+            LineCriteria = new List<CouponLineCriterionRecord>();
+        }
+
         public virtual int Id { get; set; } //Primary Key
 
         #region Coupon definition
