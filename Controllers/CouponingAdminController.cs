@@ -89,8 +89,7 @@ namespace Nwazet.Commerce.Controllers {
             int specificPriority = 0;
             int fromPriority = 0;
             int toPriority = 0;
-
-
+            
             switch (filterOptions.SelectedPriority) {
                 case TypePriority.Equals:
                 if (!string.IsNullOrWhiteSpace(filterOptions.Priority) && int.TryParse(filterOptions.Priority, out specificPriority)) {

@@ -18,6 +18,9 @@
     var AllowedProductTypes = Model.AllowedProductTypes == null
         ? new List<ContentTypeDefinition>()
         : (List<ContentTypeDefinition>)Model.AllowedProductTypes;
+    var CreatableProductTypes = Model.CreatableProductTypes == null
+        ? new List<ContentTypeDefinition>()
+        : (List<ContentTypeDefinition>)Model.CreatableProductTypes;
 
     IEnumerable<string> cultures = Model.Options.Cultures;
     using (Script.Foot()) {
@@ -43,25 +46,24 @@
         <div class="box-header with-border">
             <h3 class="box-title">@T("Manage content")</h3>
         </div>
-        <div class="box-body">
-            <div class="row">
-                <div class="col-sm-3 control-label">
-                    <label class="align-right gray-label">@T("Content creation")</label>
-                </div>
-                @*@Html.ActionLink(createLinkText.Text, "Create", "Admin", new { Area = "Contents", Id = "Product" }, new { @class = "button primaryAction" })*@
-                @if (AllowedProductTypes.Any()) {
+        @if (CreatableProductTypes.Any()) {
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-sm-3 control-label">
+                        <label class="align-right gray-label">@T("Content creation")</label>
+                    </div>
                     @Html.ActionLink(createLinkText.Text,
-                    "CreateProduct",
-                    "ProductAdmin",
-                    new {
-                        Area = "Nwazet.Commerce",
-                        ReturnUrl = Request.RawUrl,
-                        id = AllowedProductTypes.Count() == 1 ? AllowedProductTypes.FirstOrDefault().Name : ""
-                    },
-                    new { @class = "button primaryAction" })
-                }
+                        "CreateProduct",
+                        "ProductAdmin",
+                        new {
+                            Area = "Nwazet.Commerce",
+                            ReturnUrl = Request.RawUrl,
+                            id = CreatableProductTypes.Count() == 1 ? CreatableProductTypes.FirstOrDefault().Name : ""
+                        },
+                        new { @class = "button primaryAction" })
+                </div>
             </div>
-        </div>
+        }
     </div>
 
     <div class="box">

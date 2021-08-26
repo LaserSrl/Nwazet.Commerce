@@ -594,7 +594,9 @@
     <Compile Include="Permissions\TerritoriesPermissions.cs" />
     <Compile Include="Permissions\WishListPermissions.cs" />
     <Compile Include="Projections\PriceWithVatSortCriterionProvider.cs" />
+    <Compile Include="Recipes\Providers\Builders\CouponStep.cs" />
     <Compile Include="Recipes\Providers\Builders\TerritoriesStep.cs" />
+    <Compile Include="Recipes\Providers\Executors\CouponStep.cs" />
     <Compile Include="Reports\AverageSaleAmountReport.cs" />
     <Compile Include="Reports\BaseSalesReport.cs" />
     <Compile Include="Reports\SalesByBestSellingProductsReport.cs" />
