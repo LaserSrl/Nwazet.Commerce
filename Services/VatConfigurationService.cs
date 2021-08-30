@@ -282,29 +282,50 @@ namespace Nwazet.Commerce.Services {
             if (territoryConfig == null || !territoryConfig.Any()) {
                 // see if the default territory is a child of a territory with a configured
                 // rate
+                // Instead of looking for children (very slow process), I go up in the tree until I find a configured parent.
                 territoryConfig = vatConfig
                     .Territories
                     ?.Where(tup => {
                         var tp = tup.Item1;
-                        var children = tp.Children;
-                        var isChild = false;
-                        while (children != null && children.Any()) {
-                            isChild = children // search through the children
-                                .Any(ci => {
-                                    var territory = ci.As<TerritoryPart>();
-                                    return territory != null //sanity check
-                                        && territory.Record.TerritoryInternalRecord.Id == destination.Id;
-                                });
-                            if (isChild) {
-                                break;
+                        var parent = tp.Parent;
+                        while (parent != null) {
+                            var territory = parent.As<TerritoryPart>();
+                            if (territory != null 
+                                && territory.Record.TerritoryInternalRecord.Id == destination.Id) {
+                                return true;
                             }
-                            // then we search through the children's children
-                            children = children
-                                .Where(ci => ci.As<TerritoryPart>() != null) //sanity chedk
-                                .SelectMany(ci => ci.As<TerritoryPart>().Children);
+
+                            if (territory != null) {
+                                parent = territory.Parent;
+                            }
                         }
-                        return isChild;
+
+                        return false;
                     });
+
+                //territoryConfig = vatConfig
+                //    .Territories
+                //    ?.Where(tup => {
+                //        var tp = tup.Item1;
+                //        var children = tp.Children;
+                //        var isChild = false;
+                //        while (children != null && children.Any()) {
+                //            isChild = children // search through the children
+                //                .Any(ci => {
+                //                    var territory = ci.As<TerritoryPart>();
+                //                    return territory != null //sanity check
+                //                        && territory.Record.TerritoryInternalRecord.Id == destination.Id;
+                //                });
+                //            if (isChild) {
+                //                break;
+                //            }
+                //            // then we search through the children's children
+                //            children = children
+                //                .Where(ci => ci.As<TerritoryPart>() != null) //sanity chedk
+                //                .SelectMany(ci => ci.As<TerritoryPart>().Children);
+                //        }
+                //        return isChild;
+                //    });
             }
             return territoryConfig;
         }
