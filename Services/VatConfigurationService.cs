@@ -283,23 +283,23 @@ namespace Nwazet.Commerce.Services {
                 // see if the default territory is a child of a territory with a configured
                 // rate
                 // Instead of looking for children (very slow process), I go up in the tree until I find a configured parent.
+                // I check if the hierarchy Id of my destination is the same of my VatConfigurationPart.
                 territoryConfig = vatConfig
                     .Territories
                     ?.Where(tup => {
                         var tp = tup.Item1;
-                        var parent = tp.Parent;
-                        while (parent != null) {
-                            var territory = parent.As<TerritoryPart>();
-                            if (territory != null 
-                                && territory.Record.TerritoryInternalRecord.Id == destination.Id) {
-                                return true;
-                            }
+                        var destinationInHierarchy = destination.TerritoryParts.FirstOrDefault(tpr => tpr.Hierarchy.Id == tp.HierarchyPart.Id);
+                        if (destinationInHierarchy != null) {
+                            // Now I need to find my territory in the current hierarchy.
+                            var parent = destinationInHierarchy.ParentTerritory;
+                            while (parent != null) {
+                                if (parent.Id == tp.Record.Id) {
+                                    return true;
+                                }
 
-                            if (territory != null) {
-                                parent = territory.Parent;
+                                parent = parent.ParentTerritory;
                             }
                         }
-
                         return false;
                     });
 
