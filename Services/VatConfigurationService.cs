@@ -282,29 +282,53 @@ namespace Nwazet.Commerce.Services {
             if (territoryConfig == null || !territoryConfig.Any()) {
                 // see if the default territory is a child of a territory with a configured
                 // rate
-                territoryConfig = vatConfig
-                    .Territories
-                    ?.Where(tup => {
-                        var tp = tup.Item1;
-                        var children = tp.Children;
-                        var isChild = false;
-                        while (children != null && children.Any()) {
-                            isChild = children // search through the children
-                                .Any(ci => {
-                                    var territory = ci.As<TerritoryPart>();
-                                    return territory != null //sanity check
-                                        && territory.Record.TerritoryInternalRecord.Id == destination.Id;
-                                });
-                            if (isChild) {
-                                break;
+                // Instead of looking for children (very slow process), I go up in the tree until I find a configured parent.
+                // I check if the hierarchy Id of my destination is the same of my VatConfigurationPart.
+                var ctx = _workContextAccessor.GetContext().HttpContext;
+                if (ctx.Request["version"] == null || ctx.Request["version"] != "old") {
+                    territoryConfig = vatConfig
+                        .Territories
+                        ?.Where(tup => {
+                            var tp = tup.Item1;
+                            var destinationInHierarchy = destination.TerritoryParts.FirstOrDefault(tpr => tpr.Hierarchy.Id == tp.HierarchyPart.Id);
+                            if (destinationInHierarchy != null) {
+                                // Now I need to find my territory in the current hierarchy.
+                                var parent = destinationInHierarchy.ParentTerritory;
+                                while (parent != null) {
+                                    if (parent.Id == tp.Record.Id) {
+                                        return true;
+                                    }
+
+                                    parent = parent.ParentTerritory;
+                                }
                             }
+                            return false;
+                        });
+                } else {
+                    territoryConfig = vatConfig
+                        .Territories
+                        ?.Where(tup => {
+                            var tp = tup.Item1;
+                            var children = tp.Children;
+                            var isChild = false;
+                            while (children != null && children.Any()) {
+                                isChild = children // search through the children
+                                    .Any(ci => {
+                                        var territory = ci.As<TerritoryPart>();
+                                        return territory != null //sanity check
+                                            && territory.Record.TerritoryInternalRecord.Id == destination.Id;
+                                    });
+                                if (isChild) {
+                                    break;
+                                }
                             // then we search through the children's children
                             children = children
-                                .Where(ci => ci.As<TerritoryPart>() != null) //sanity chedk
-                                .SelectMany(ci => ci.As<TerritoryPart>().Children);
-                        }
-                        return isChild;
-                    });
+                                    .Where(ci => ci.As<TerritoryPart>() != null) //sanity chedk
+                                    .SelectMany(ci => ci.As<TerritoryPart>().Children);
+                            }
+                            return isChild;
+                        });
+                }
             }
             return territoryConfig;
         }
