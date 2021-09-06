@@ -36,11 +36,8 @@ namespace Nwazet.Commerce.Recipes.Providers.Executors {
 
             _cultureInfo = new Lazy<CultureInfo>(() =>
                 CultureInfo.GetCultureInfo(_workContextAccessor.GetContext().CurrentCulture));
-
-            T = NullLocalizer.Instance;
         }
 
-        public Localizer T;
         public override string Name => "Coupons";
 
         public override void Execute(RecipeExecutionContext context) {

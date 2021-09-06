@@ -147,7 +147,7 @@ namespace Nwazet.Commerce.Services {
                         // sending the minimum of the rates. If there is only a single configuration for hierarchies
                         // (the correct case) the following instruction will return the only rate.
                         rate = hierarchyConfigs.Select(tup => tup.Item2).Min() / 100.0m;
-                    }else {
+                    } else {
                         // We handle the error case where we have multiple territories satisfying the query by
                         // sending the minimum of the rates. If there is only a single configuration for territories
                         // (the correct case) the following instruction will return the only rate.
@@ -282,28 +282,25 @@ namespace Nwazet.Commerce.Services {
             if (territoryConfig == null || !territoryConfig.Any()) {
                 // see if the default territory is a child of a territory with a configured
                 // rate
+                // Instead of looking for children (very slow process), I go up in the tree until I find a configured parent.
+                // I check if the hierarchy Id of my destination is the same of my VatConfigurationPart.
                 territoryConfig = vatConfig
                     .Territories
                     ?.Where(tup => {
                         var tp = tup.Item1;
-                        var children = tp.Children;
-                        var isChild = false;
-                        while (children != null && children.Any()) {
-                            isChild = children // search through the children
-                                .Any(ci => {
-                                    var territory = ci.As<TerritoryPart>();
-                                    return territory != null //sanity check
-                                        && territory.Record.TerritoryInternalRecord.Id == destination.Id;
-                                });
-                            if (isChild) {
-                                break;
+                        var destinationInHierarchy = destination.TerritoryParts.FirstOrDefault(tpr => tpr.Hierarchy.Id == tp.HierarchyPart.Id);
+                        if (destinationInHierarchy != null) {
+                                // Now I need to find my territory in the current hierarchy.
+                                var parent = destinationInHierarchy.ParentTerritory;
+                            while (parent != null) {
+                                if (parent.Id == tp.Record.Id) {
+                                    return true;
+                                }
+
+                                parent = parent.ParentTerritory;
                             }
-                            // then we search through the children's children
-                            children = children
-                                .Where(ci => ci.As<TerritoryPart>() != null) //sanity chedk
-                                .SelectMany(ci => ci.As<TerritoryPart>().Children);
                         }
-                        return isChild;
+                        return false;
                     });
             }
             return territoryConfig;
