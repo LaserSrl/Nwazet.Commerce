@@ -275,24 +275,29 @@ namespace Nwazet.Commerce.Controllers {
             // This happens when a product is deleted or unpublished after the user adds it to 
             // the shopping cart but before the checkout.
             // This scenario is particularly possible with persistent carts, but may also happen in session carts.
-            int unavailableItems = 0;
+            int unavailableItemsCount = 0;
+            var unavailableItems = new List<Tuple<int, IDictionary<int, ProductAttributeValueExtended>>>();
             foreach (var item in _shoppingCart.Items) {
                 if (!productQuantities.Any(pq => pq.Product.Id == item.ProductId)) {
                     // I need to remove the item from the cart.
-                    _shoppingCart.Remove(item.ProductId, item.AttributeIdsToValues);
-                    unavailableItems++;
+                    unavailableItems.Add(new Tuple<int, IDictionary<int, ProductAttributeValueExtended>>(item.ProductId, item.AttributeIdsToValues));
+                    unavailableItemsCount++;
                 }
+            }
+            // remove unavailable items
+            foreach (var item in unavailableItems) {
+                _shoppingCart.Remove(item.Item1, item.Item2);
             }
 
             var unavailableMessage = T(string.Empty);
 
-            if (unavailableItems == 1) {
+            if (unavailableItemsCount == 1) {
                 unavailableMessage = T("One item in the shopping cart isn't available anymore and has been removed from the cart.");
-            } else if (unavailableItems > 1) {
+            } else if (unavailableItemsCount > 1) {
                 unavailableMessage = T("Several items in the shopping cart aren't available anymore and have been removed from the cart.");
             }
 
-            if (unavailableItems > 0) {
+            if (unavailableItemsCount > 0) {
                 // Adding message to productMessages to show it in the cart shape in every page (e.g. the small cart button on the top right corner of the page) as a dialog.
                 var msgKey = new ShoppingCartItem(0, 0, null).GenerateUniqueKey();
                 if (productMessages == null) productMessages = new Dictionary<string, List<ItemLog>>();
