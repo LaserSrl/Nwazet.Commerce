@@ -36,6 +36,7 @@ using Orchard.Taxonomies.Services;
 using Orchard.Localization.Models;
 using Orchard.Taxonomies.Helpers;
 using Orchard.Taxonomies.Models;
+using CorePermissions = Orchard.Core.Contents.Permissions;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Commerce")]
@@ -97,7 +98,9 @@ namespace Nwazet.Commerce.Controllers {
             _contentDefinitionService = contentDefinitionService;
             _taxonomyService = taxonomyService;
             _localizationService = localizationService;
+
             _allowedProductType = new Lazy<IEnumerable<ContentTypeDefinition>>(GetAllowedProductTypes);
+            _creatableProductType = new Lazy<IEnumerable<ContentTypeDefinition>>(GetCreatableProductTypes);
         }
 
         dynamic Shape { get; set; }
@@ -107,33 +110,33 @@ namespace Nwazet.Commerce.Controllers {
         #region Create
         [HttpGet]
         public ActionResult CreateProduct(string id) {
-            if (AllowedProductTypes == null) {
+            if (CreatableProductTypes == null) {
                 return new HttpUnauthorizedResult(ProductUtilities.Default401ProductMessage);
             }
 
-            if (!AllowedProductTypes.Any()) { //nothing to do
+            if (!CreatableProductTypes.Any()) { //nothing to do
                 return RedirectToAction("List");
             }
 
             if (!string.IsNullOrWhiteSpace(id)) { //specific type requested
-                var typeDefinition = AllowedProductTypes.FirstOrDefault(ctd => ctd.Name == id);
+                var typeDefinition = CreatableProductTypes.FirstOrDefault(ctd => ctd.Name == id);
                 if (typeDefinition != null) {
                     return CreateProduct(typeDefinition);
                 }
             }
 
-            if (AllowedProductTypes.Count() == 1) {
-                return CreateProduct(AllowedProductTypes.FirstOrDefault());
+            if (CreatableProductTypes.Count() == 1) {
+                return CreateProduct(CreatableProductTypes.FirstOrDefault());
             }
             else {
                 return CreatableProductsList();
             }
         }
         private ActionResult CreateProduct(ContentTypeDefinition typeDefinition) {
-            if (AllowedProductTypes == null) {
+            if (CreatableProductTypes == null) {
                 return new HttpUnauthorizedResult(ProductUtilities.Default401ProductMessage);
             }
-            if (!AllowedProductTypes.Any(ty => ty.Name == typeDefinition.Name)) {
+            if (!CreatableProductTypes.Any(ty => ty.Name == typeDefinition.Name)) {
                 return new HttpUnauthorizedResult(ProductUtilities.SpecificProduct401Message(typeDefinition.DisplayName));
             }
             if (!typeDefinition.Parts.Any(pa => pa.PartDefinition.Name == ProductPart.PartName)) {
@@ -146,11 +149,11 @@ namespace Nwazet.Commerce.Controllers {
             return View(model);
         }
         private ActionResult CreatableProductsList() {
-            if (AllowedProductTypes == null) {
+            if (CreatableProductTypes == null) {
                 return new HttpUnauthorizedResult(ProductUtilities.Default401ProductMessage);
             }
             //This will be like the AdminController from Orchard.Core.Contents
-            var viewModel = Shape.ViewModel(ProductTypes: AllowedProductTypes);
+            var viewModel = Shape.ViewModel(ProductTypes: CreatableProductTypes);
 
             return View("CreatableTypeList", viewModel);
         }
@@ -236,6 +239,10 @@ namespace Nwazet.Commerce.Controllers {
         public ActionResult List(ListProductsViewModel model, PagerParameters pagerParameters) {
             if (!_orchardServices.Authorizer.Authorize(CommercePermissions.ManageProducts, null, T("Not authorized to manage products")))
                 return new HttpUnauthorizedResult();
+
+            if (AllowedProductTypes == null) {
+                return new HttpUnauthorizedResult(ProductUtilities.Default401ProductMessage);
+            }
 
             var currentCulture = Services.WorkContext.CurrentCulture;
             var cultureInfo = CultureInfo.GetCultureInfo(currentCulture);
@@ -379,7 +386,8 @@ namespace Nwazet.Commerce.Controllers {
                 .ContentItems(list)
                 .Pager(pagerShape)
                 .Options(model.Options)
-                .AllowedProductTypes(AllowedProductTypes.ToList())
+                .AllowedProductTypes(AllowedProductTypes?.ToList())
+                .CreatableProductTypes(CreatableProductTypes?.ToList())
                 .TaxonomiesOptions(GetTaxonomiesOptions());
 
             // Casting to avoid invalid (under medium trust) reflection over the protected View method and force a static invocation.
@@ -513,6 +521,10 @@ namespace Nwazet.Commerce.Controllers {
         private IEnumerable<ContentTypeDefinition> AllowedProductTypes {
             get { return _allowedProductType.Value; }
         }
+        private Lazy<IEnumerable<ContentTypeDefinition>> _creatableProductType;
+        private IEnumerable<ContentTypeDefinition> CreatableProductTypes {
+            get { return _creatableProductType.Value; }
+        }
 
         /// <summary>
         /// This method gets all the product types the current user is allowed to manage.
@@ -520,15 +532,46 @@ namespace Nwazet.Commerce.Controllers {
         /// <returns>Returns the types the user is allwoed to manage. Returns null if the user lacks the correct 
         /// permissions to be invoking these actions.</returns>
         private IEnumerable<ContentTypeDefinition> GetAllowedProductTypes() {
-            var allowedTypes = _productService.GetProductTypes();
-            if (!allowedTypes.Any() || //no dynamic permissions
-                !_authorizer.Authorize(CommercePermissions.ManageProducts)) {
-
+            if (!_authorizer.Authorize(CommercePermissions.ManageProducts)) {
                 return null;
             }
+            var allowedTypes = _contentDefinitionManager.ListTypeDefinitions()
+                // Type has ProductPart
+                .Where(ctd => ctd.Parts.Any(ctpd => ctpd
+                    .PartDefinition.Name
+                    .Equals(ProductPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
+                // We can edit ContentItems of that type
+                .Where(ctd => {
+                    var dummyContent = _contentManager.New(ctd.Name);
+                    return _authorizer.Authorize(CorePermissions.EditContent, dummyContent);
+                });
+
 
             return allowedTypes;
         }
+        /// <summary>
+        /// This method gets all the product types the current user is allowed to create.
+        /// </summary>
+        /// <returns>Returns the types the user is allwoed to manage. Returns null if the user lacks the correct 
+        /// permissions to be invoking these actions.</returns>
+        private IEnumerable<ContentTypeDefinition> GetCreatableProductTypes() {
+            if (!_authorizer.Authorize(CommercePermissions.ManageProducts)) {
+                return null;
+            }
+            var allowedTypes = _contentDefinitionManager.ListTypeDefinitions()
+                // Type has ProductPart
+                .Where(ctd => ctd.Parts.Any(ctpd => ctpd
+                    .PartDefinition.Name
+                    .Equals(ProductPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
+                // We can create ContentItems of that type
+                .Where(ctd => {
+                    var dummyContent = _contentManager.New(ctd.Name);
+                    return _authorizer.Authorize(CorePermissions.CreateContent, dummyContent);
+                });
+
+            return allowedTypes;
+        }
+
         private IEnumerable<KeyValuePair<int, string>> GetTaxonomiesOptions() {
 
             var termList = new List<KeyValuePair<int, string>>();
