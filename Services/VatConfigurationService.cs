@@ -27,6 +27,7 @@ namespace Nwazet.Commerce.Services {
             _territoryPartRecordService = territoryPartRecordService;
 
             _ratesByTerritoryAndConfig = new Dictionary<int, Dictionary<int, decimal>>();
+            _territoryInternalRecords = new Dictionary<int, TerritoryInternalRecord>();
         }
 
         private VatConfigurationSiteSettingsPart _settings { get; set; }
@@ -103,15 +104,20 @@ namespace Nwazet.Commerce.Services {
             }
             return GetRate(vatConfig, destination);
         }
-
+        // memorize results of _territoriesRepositoryService.GetTerritoryInternal(Settings.DefaultTerritoryForVatId):
+        // this GetRate method enters a few times and performs the same query for the same id
+        private Dictionary<int, TerritoryInternalRecord> _territoryInternalRecords;
         public decimal GetRate(VatConfigurationPart vatConfig) {
             if (Settings.DefaultTerritoryForVatId == 0) {
                 // Do not add tax for front end, i.e. the price shown on front end is "before tax"
                 return 0;
             }
 
-            var defaultTerritory = _territoriesRepositoryService
-                .GetTerritoryInternal(Settings.DefaultTerritoryForVatId);
+            if (!_territoryInternalRecords.ContainsKey(Settings.DefaultTerritoryForVatId)) {
+                _territoryInternalRecords.Add(Settings.DefaultTerritoryForVatId, _territoriesRepositoryService
+                    .GetTerritoryInternal(Settings.DefaultTerritoryForVatId));
+            }
+            var defaultTerritory = _territoryInternalRecords[Settings.DefaultTerritoryForVatId];
 
             if (defaultTerritory == null) {
                 // This is an error condition that may be caused by setting a territory as default, and
@@ -147,7 +153,7 @@ namespace Nwazet.Commerce.Services {
                         // sending the minimum of the rates. If there is only a single configuration for hierarchies
                         // (the correct case) the following instruction will return the only rate.
                         rate = hierarchyConfigs.Select(tup => tup.Item2).Min() / 100.0m;
-                    }else {
+                    } else {
                         // We handle the error case where we have multiple territories satisfying the query by
                         // sending the minimum of the rates. If there is only a single configuration for territories
                         // (the correct case) the following instruction will return the only rate.
