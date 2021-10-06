@@ -1,5 +1,6 @@
 ﻿using Nwazet.Commerce.Models;
 using Orchard.ContentManagement.Drivers;
+using System;
 
 namespace Nwazet.Commerce.Drivers {
     public class ShoppingCartWidgetDriver : ContentPartDriver<ShoppingCartWidgetPart>
@@ -12,10 +13,9 @@ namespace Nwazet.Commerce.Drivers {
 
         protected override DriverResult Display(ShoppingCartWidgetPart part, string displayType, dynamic shapeHelper) 
         {
-
             return ContentShape("ShoppingCartWidget", () => shapeHelper.ShoppingCartWidget(
-                ItemCount: _shoppingCart.ItemCount(),
-                TotalAmount: _shoppingCart.Total(),
+                ItemCount: (Func<double>)_shoppingCart.ItemCount,
+                TotalAmount: (Func<decimal>)(() => _shoppingCart.Total()),
                 ContentItem: part.ContentItem
             ));
         }
