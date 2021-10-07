@@ -585,6 +585,10 @@ msgid "Insert a date"
 msgstr "Inserisci una data"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/BundleProductLocalizationSettings.cshtml"
+msgid "After changing the setting, to make selected actions happen to existing bundles, you have to publish them again. The creation of new bundles will already have the settings selected"
+msgstr "Dopo la modifica delle impostazioni, per fare in modo che le operazioni selezionate si applichino ai bundle esistenti, è necessario pubblicarli nuovamente. I nuovi bundle creati avranno già le impostazioni selezionate."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/BundleProductLocalizationSettings.cshtml"
 msgid "Check to attempt to replace selected products with their translation in the bundle's culture. This only applies if the bundle has a LocalizationPart."
 msgstr "Spunta per provare a sostituire i prodotti selezionati con la loro traduzione nella cultura del pacchetto. Questo accade solo se il prodotto ha una LocalizationPart."
 
@@ -717,16 +721,52 @@ msgid "Publication will fail if attributes have a different culture than that of
 msgstr "La pubblicazione fallirà se gli attributi hanno una cultura diversa da quella del prodotto."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Bundle.cshtml"
+msgid "Not Published"
+msgstr "Non pubblicato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Bundle.cshtml"
 msgid "Products in this bundle"
 msgstr "Prodotti in questo pacchetto"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/BundleAutocomplete.cshtml"
+msgid "Edit Quantity"
+msgstr "Modifica Quantità"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/BundleAutocomplete.cshtml"
+msgid "Not Published"
+msgstr "Non pubblicato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/BundleAutocomplete.cshtml"
+msgid "Product"
+msgstr "Prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/BundleAutocomplete.cshtml"
 msgid "Products in this bundle"
 msgstr "Prodotti in questo pacchetto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/BundleAutocomplete.cshtml"
+msgid "Quantity"
+msgstr "Quantità"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/BundleAutocomplete.cshtml"
+msgid "Remove Product"
+msgstr "Rimuovi Prodotto"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/BundleAutocomplete.cshtml"
 msgid "Search for a product to add , at least 2 characters (title or sku)."
 msgstr "Cerca un prodotto da aggiungere, al meno 2 caratteri (titolo o sku)."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/BundleAutocomplete.cshtml"
+msgid "Select product"
+msgstr "Seleziona prodotto"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/BundleAutocomplete.cshtml"
+msgid "Sku"
+msgstr "Sku"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/BundleAutocomplete.cshtml"
+msgid "You need to save your changes."
+msgstr "È necessario salvare le modifiche."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Discount.cshtml"
 msgid "A short comment that will be displayed next to the discounted price on the front-end."
@@ -2295,6 +2335,14 @@ msgstr "Abilita i provider relativi ai criteri di applicazione dei coupon."
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
 msgid "Evaluate criterion"
 msgstr "Valuta il criterio"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "General settings for coupons"
+msgstr "Impostazioni generali dei coupon"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
+msgid "Hide coupon form at front-end"
+msgstr "Nascondi il form dei coupon nel front-end"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
 msgid "No provider available for configuration."
@@ -3956,6 +4004,22 @@ msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MaxUsesPerUserCouponApp
 msgid "User has used the coupon fewer than '{0}' times"
 msgstr "L'utente ha usato il coupon meno di '{0}' volte"
 
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MinCartTotalCouponApplicabilityCriterion"
+msgid "Criterion on the total price of cart."
+msgstr "Criterio sull'importo complessivo del carrello."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MinCartTotalCouponApplicabilityCriterion"
+msgid "The cart total must be at least {0}"
+msgstr "L'importo complessivo del carrello deve essere almeno {0}"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MinCartTotalCouponApplicabilityCriterion"
+msgid "The cart total must be at least {0} {1}"
+msgstr "L'importo complessivo del carrello deve essere almeno {0} {1}"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.MinCartTotalCouponApplicabilityCriterion"
+msgid "Total Cart"
+msgstr "Totale Carrello"
+
 msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NoDuplicatesCouponApplicabilityCriterion"
 msgid "Coupon code {0} is already in use."
 msgstr "Il codice coupon {0} è già in uso"
@@ -3991,6 +4055,10 @@ msgstr "Stato non cumulativo"
 msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NonCumulativeStateCouponApplicabilityCriterion"
 msgid "You already have an active coupon. {0} cannot be added."
 msgstr "Hai già un coupon attivo. {0} non può essere aggiunto."
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.NoNegativePriceCouponApplicabilityCriterion"
+msgid "Prevent adding and using coupons that would cause negative price for a line or for the whole cart."
+msgstr "Impedisci l'aggiunta e l'utilizzo di coupon che causerebbero un prezzo negativo per una riga o per l'intero carrello."
 
 msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.UserRolesCouponApplicabilityCriterion"
 msgid "Coupon applicability criterion according to user associated role."
@@ -4692,6 +4760,14 @@ msgctxt "Nwazet.Commerce.Filters.MaxPositiveIntegerValueForm"
 msgid "Enter the maximum value."
 msgstr "Inserire il valore massimo."
 
+msgctxt "Nwazet.Commerce.Filters.MinCartTotalForm"
+msgid "Enter the value."
+msgstr "Inserisci il valore."
+
+msgctxt "Nwazet.Commerce.Filters.MinCartTotalForm"
+msgid "Value"
+msgstr "Valore"
+
 msgctxt "Nwazet.Commerce.Filters.PositiveIntegerValueForm"
 msgid "Enter the value."
 msgstr "Inserisci il valore."
@@ -5188,6 +5264,14 @@ msgctxt "Nwazet.Commerce.Handlers.AdvancedSKUManagementHandler"
 msgid "The SKU must be unique."
 msgstr "Lo SKU deve essere unico."
 
+msgctxt "Nwazet.Commerce.Handlers.BundleProcuctsHandler"
+msgid "The product {0} is part of: {1}"
+msgstr "Il prodotto {0} fa parte di : {1}"
+
+msgctxt "Nwazet.Commerce.Handlers.BundleProcuctsHandler"
+msgid "The product {0} is present in some bundles"
+msgstr "Il prodotto {0} è presente in qualche bundle"
+
 msgctxt "Nwazet.Commerce.Handlers.LocalizationAttributePartHandler"
 msgid "Some of the attributes have the wrong culture: {0}"
 msgstr "Alcuni degli attributi hanno la cultura sbagliata: {0}"
@@ -5328,6 +5412,14 @@ msgctxt "Nwazet.Commerce.Projections.PriceWithVatSortCriterionProvider"
 msgid "Sort by price"
 msgstr "Ordinamento per prezzo"
 
+msgctxt "Nwazet.Commerce.Recipes.Providers.Builders.CouponStep"
+msgid "Coupons"
+msgstr "Coupon"
+
+msgctxt "Nwazet.Commerce.Recipes.Providers.Builders.CouponStep"
+msgid "Export configured coupons. This does not export corresponding settings."
+msgstr "Esporta i coupon configurati. Questa operazione non esporta le relative impostazioni."
+
 msgctxt "Nwazet.Commerce.Recipes.Providers.Builders.TerritoriesStep"
 msgid "Exports definitions, items and identity records. This is the recommended way to export territories and hierarchies."
 msgstr "Esporta definizioni, oggetti e records delle identità. Questo è il modo raccomandato per esportare territori e gerarchie."
@@ -5335,6 +5427,10 @@ msgstr "Esporta definizioni, oggetti e records delle identità. Questo è il mod
 msgctxt "Nwazet.Commerce.Recipes.Providers.Builders.TerritoriesStep"
 msgid "Territories and Hierarchies"
 msgstr "Territori e Gerarchie"
+
+msgctxt "Nwazet.Commerce.Recipes.Providers.Executors.CouponStep"
+msgid "Coupon with code {0} was already configured. We imported a new coupon with code {1}"
+msgstr "Il coupon con codice {0} era già configurato. È stato importato un nuovo coupon con codice {1}"
 
 msgctxt "Nwazet.Commerce.Reports.AverageSaleAmountReport"
 msgid "Average amount of one order over the period"
@@ -5431,6 +5527,18 @@ msgstr "Vendite"
 msgctxt "Nwazet.Commerce.Reports.TotalSalesReport"
 msgid "Total sale amount"
 msgstr "Ammontare totale delle vendite"
+
+msgctxt "Nwazet.Commerce.Services.BundleAutocompleteLocalizationService"
+msgid " ({0})"
+msgstr "({0})"
+
+msgctxt "Nwazet.Commerce.Services.BundleAutocompleteLocalizationService"
+msgid " (culture undefined)"
+msgstr "(cultura non definita)"
+
+msgctxt "Nwazet.Commerce.Services.BundleAutocompleteLocalizationService"
+msgid "culture undefined"
+msgstr "cultura non definita"
 
 msgctxt "Nwazet.Commerce.Services.BundleProductLocalizationBundleService"
 msgid " ({0})"
