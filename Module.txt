@@ -134,3 +134,7 @@ Features:
 		Description: Enables the configuration and use of coupons for your e-commerce.
 		Category: Commerce
 		Dependencies: Nwazet.Commerce, Nwazet.Orders
+	Nwazet.ProductCombinations:
+		Name: Nwazet Product Combinations
+		Description: Manage product variants as combinations of their attributes.
+		Dependencies: Nwazet.Commerce, Nwazet.Attributes

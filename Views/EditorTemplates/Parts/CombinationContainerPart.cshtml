@@ -1,0 +1,53 @@
+﻿@using Nwazet.Commerce.ViewModels.Combinations
+@model CombinationContainerPartEditViewModel
+@{ 
+
+}
+<fieldset class="product-combination-container">
+    <legend>
+        @T("Manage product combinations")
+    </legend>
+    <div class="row">
+        <div class="col-lg-8">
+            @* List of existing combinations *@
+            <fieldset>
+                <legend>
+                    @T("Combinations")
+                </legend>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>@T("Title")</th>
+                            <th>@T("Status")</th>
+                            <th>@T("Actions")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </fieldset>
+        </div>
+        <div class="col-lg-4">
+            @* List of attributes *@
+            <fieldset class="product-combination-attributes">
+                <legend>@T("Attributes")</legend>
+                @foreach(var att in Model.AllAttributeParts) {
+                    <fieldset>
+                        <legend>@att.DisplayName</legend>
+                        @foreach(var attVal in att.AttributeValues) {
+                            <div class="form-check">
+                                @Html.CheckBox("attribute." + att.Id + "." + attVal.Text,
+                                    new {
+                                        @id = "attribute_" + att.Id + "_" + attVal.Text
+                                    })
+                                @Html.Label(attVal.Text)
+                            </div>
+                        }
+                    </fieldset>
+                }
+            </fieldset>
+            @* Button that will cause generation of new combinations *@
+        </div>
+    </div>
+</fieldset>
