@@ -257,7 +257,10 @@
     <None Include="Views\CouponingCriterion\Edit.cshtml" />
     <None Include="Views\CouponingLineCriterion\Add.cshtml" />
     <None Include="Views\CouponingLineCriterion\Edit.cshtml" />
+    <None Include="Views\DefinitionTemplates\CombinationContainerPartSettings.cshtml" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\CombinationContainerPart.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\CombinationPart.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Advanced.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />
@@ -366,6 +369,8 @@
     <Compile Include="Drivers\AttributeLocalizationProductAttributesPartDriver.cs" />
     <Compile Include="Drivers\BundleLocalizationPartDriver.cs" />
     <Compile Include="Drivers\BundlePartDriver.cs" />
+    <Compile Include="Drivers\Combinations\CombinationContainerPartDriver.cs" />
+    <Compile Include="Drivers\Combinations\CombinationPartDriver.cs" />
     <Compile Include="Drivers\CouponingSiteSettingPartDriver.cs" />
     <Compile Include="Drivers\ECommerceCurrencySiteSettingsPartDriver.cs" />
     <Compile Include="Drivers\FlexibleShippingMethodPartDriver.cs" />
@@ -435,6 +440,8 @@
     <Compile Include="Handlers\BundlePartHandler.cs" />
     <Compile Include="Handlers\AttributePartHandler.cs" />
     <Compile Include="Handlers\AttributesPartHandler.cs" />
+    <Compile Include="Handlers\Combinations\CombinationContainerPartHandler.cs" />
+    <Compile Include="Handlers\Combinations\CombinationPartHandler.cs" />
     <Compile Include="Handlers\CouponingSiteSettingPartHandler.cs" />
     <Compile Include="Handlers\ECommerceCurrencySiteSettingsPartHandler.cs" />
     <Compile Include="Handlers\FlexibleShippingMethodPartAuthorizationEventHandler.cs" />
@@ -490,6 +497,7 @@
     <Compile Include="Migrations\FlexibleShippingMethodMigrations.cs" />
     <Compile Include="Migrations\OrderMigrations.cs" />
     <Compile Include="Migrations\PersistentCartMigrations.cs" />
+    <Compile Include="Migrations\ProductCombinationsMigrations.cs" />
     <Compile Include="Migrations\TaxMigrations.cs" />
     <Compile Include="Migrations\TerritoriesMigrations.cs" />
     <Compile Include="Migrations\UspsMigrations.cs" />
@@ -502,6 +510,10 @@
     <Compile Include="Models\CartPriceAlteration.cs" />
     <Compile Include="Models\CheckoutError.cs" />
     <Compile Include="Models\CheckoutItem.cs" />
+    <Compile Include="Models\Combinations\CombinationContainerPart.cs" />
+    <Compile Include="Models\Combinations\CombinationContainerPartRecord.cs" />
+    <Compile Include="Models\Combinations\CombinationPart.cs" />
+    <Compile Include="Models\Combinations\CombinationPartRecord.cs" />
     <Compile Include="Models\ConversionUtilities.cs" />
     <Compile Include="Models\Charge.cs" />
     <Compile Include="Models\Couponing\CouponCriterionBaseRecord.cs" />
@@ -798,6 +810,8 @@
     <Compile Include="Settings\BundleProductLocalizationEditorEvents.cs" />
     <Compile Include="Settings\BundleProductLocalizationSettings.cs" />
     <Compile Include="Settings\BundleProductSettings.cs" />
+    <Compile Include="Settings\Combinations\CombinationContainerPartEditorEvents.cs" />
+    <Compile Include="Settings\Combinations\CombinationContainerPartSettings.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationEditorEvents.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationSettings.cs" />
     <Compile Include="Settings\TerritoryHierarchyPartEditorEvents.cs" />
@@ -810,6 +824,7 @@
     <Compile Include="ViewModels\AdvancedSKUProductEditorViewModel.cs" />
     <Compile Include="ViewModels\ApplicabilityCriterionEntry.cs" />
     <Compile Include="ViewModels\CartPriceAlterationAmount.cs" />
+    <Compile Include="ViewModels\Combinations\CombinationContainerPartEditViewModel.cs" />
     <Compile Include="ViewModels\Couponing\Coupon.cs" />
     <Compile Include="ViewModels\Couponing\CouponApplicabilityCriterionEntry.cs" />
     <Compile Include="ViewModels\Couponing\CouponCriteriaAddViewModel.cs" />
