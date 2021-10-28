@@ -1,9 +1,10 @@
 ﻿@using Nwazet.Commerce.ViewModels.Combinations
 @model CombinationContainerPartEditViewModel
 @{ 
-
+    
+    var shortGuid = Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
 }
-<fieldset class="product-combination-container">
+<fieldset class="product-combination-container" id="@shortGuid">
     <legend>
         @T("Manage product combinations")
     </legend>
@@ -30,24 +31,151 @@
         </div>
         <div class="col-lg-4">
             @* List of attributes *@
-            <fieldset class="product-combination-attributes">
-                <legend>@T("Attributes")</legend>
-                @foreach(var att in Model.AllAttributeParts) {
-                    <fieldset>
-                        <legend>@att.DisplayName</legend>
-                        @foreach(var attVal in att.AttributeValues) {
-                            <div class="form-check">
-                                @Html.CheckBox("attribute." + att.Id + "." + attVal.Text,
-                                    new {
-                                        @id = "attribute_" + att.Id + "_" + attVal.Text
-                                    })
-                                @Html.Label(attVal.Text)
+            <div class="product-combination-attributes box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">@T("Attributes")</h3>
+                </div>
+                @if (Model.AllAttributeParts.Any()) {
+                    @* Nested forms are not allowed, so we use the formaction attribute of the submit button *@
+                    <div class="box-body">
+                        @foreach(var att in Model.AllAttributeParts) {
+                            <div class="single-attribute box box-default">
+                                @* TODO: make this card collapsible *@
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">@att.DisplayName</h3>
+                                </div>
+                                <div class="box-body">
+                                    @foreach(var attVal in att.AttributeValues) {
+                                        <div class="form-check attribute-value-checkbox">
+                                            @Html.CheckBox("attribute." + att.Id + "." + attVal.Text,
+                                                new {
+                                                    @id = "attribute_" + att.Id + "_" + attVal.Text,
+                                                    @class = "form-check-input",
+                                                    data_attribute_Name = att.DisplayName,
+                                                    data_attribute_id = att.Id,
+                                                    data_attribute_value = attVal.Text
+                                                })
+                                            @Html.Label(attVal.Text,
+                                                new {
+                                                    @for = "attribute_" + att.Id + "_" + attVal.Text,
+                                                    @class = "form-check-label forcheckbox"
+                                                })
+                                        </div>
+                                    }
+                                </div>
                             </div>
                         }
-                    </fieldset>
+                    </div>
+                    <div class="box-footer">
+                        <fieldset class="form-group selected-attributes"
+                                  id="@(shortGuid+"_selected_attributes_container")">
+                            @* We'll add labels for the selected attributes here *@
+                        </fieldset>
+                        
+                        <div id="@(shortGuid + "generate_results")">
+                            <span></span>
+                        </div>
+                        <button type="button" disabled
+                                class="btn btn-primary"
+                                id="@(shortGuid + "generate_button")">@T("Generate")</button>
+                    </div>
+                } else {
+                    <div class="card-body">
+                        @T("There are no attributes to create new combinations.")
+                    </div>
                 }
-            </fieldset>
+                
+            </div>
             @* Button that will cause generation of new combinations *@
         </div>
     </div>
 </fieldset>
+
+@using(Script.Foot()) {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // when adding a checkbox, add a corresponding thing to the list that
+            // we will send to generate new combinations
+            $('.product-combination-attributes .single-attribute .attribute-value-checkbox input.form-check-input').change(function () {
+                // the html element that contains the selected attributes
+                var attContainer = $('#@(shortGuid+"_selected_attributes_container")');
+                // Id and Value of attribute that was "clicked"
+                var attId = $(this).data('attribute-id');
+                var attVal = $(this).data('attribute-value');
+                var attName = $(this).data('attribute-name');
+                // check whether the attribute value is already selected
+                var already = attContainer.find('.selected-attribute[data-attribute-id=' + attId + '][data-attribute-value=' + attVal + ']');
+                if (this.checked) {
+                    // add to list of attributes to combine
+                    if (already && already.length) {
+                        // nothing to do here
+                    } else {
+                        // add to the list
+                        attContainer
+                            .append('<span data-attribute-id="'+ attId +'" data-attribute-value="' + attVal + '" class="selected-attribute btn-success btn-xs">' + attName + ': ' + attVal +'</span>');
+                    }
+                } else {
+                    // remove from list of attributes to combine
+                    if (already && already.length) {
+                        // remove from list
+                        already.remove();
+                    } else {
+                        // nothing to do here
+                    }
+                }
+                // enable/disable button
+                var selectedAttributes = attContainer.find('.selected-attribute');
+                if (selectedAttributes && selectedAttributes.length) {
+                    $('#@(shortGuid + "generate_button")').prop('disabled', false);
+                } else {
+                    $('#@(shortGuid + "generate_button")').prop('disabled', true);
+                }
+            })
+
+            $('#@(shortGuid + "generate_button")').click(function () {
+                // Preliminary steps
+                $('#@(shortGuid + "generate_results") span')[0].innerHTML = '';
+
+                // Get the selected attribute values
+                var attrElements = $('#@(shortGuid+"_selected_attributes_container") .selected-attribute');
+                var attributes = [];
+                attrElements.each(function (index, element) {
+                    attributes.push({
+                        AttributeId: $(element).data('attribute-id'),
+                        AttributeValue: $(element).data('attribute-value')
+                    });
+                });
+
+                var url = '@Url.Action("GenerateCombinations",
+                    "CombinationsAdmin",
+                    new {
+                        area = "Nwazet.Commerce",
+                        contentId = Model.Part.Id
+                    })';
+                var formData = {
+                    __RequestVerificationToken: '@Html.AntiForgeryTokenValueOrchard()',
+                    selectedAttributes: attributes
+                };
+
+                $.post(url, formData)
+                    .done(function (data, textStatus, jqXHR) {
+                        if (data.ko) {
+                            $('#@(shortGuid + "generate_results") span')[0].innerHTML = data.message;
+                        } else if (data.ok) {
+
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, error) {
+                        // Error.
+                        // Note that the action won't ever return an error status, so being here is something else
+                        $('#@(shortGuid + "generate_results") span')[0].innerHTML = '@T("Unknown error while generating combinations.")';
+                    })
+                    .always(function (dataS, textStatus, dataE) {
+                        // clear the selected attributes
+                        $('#@(shortGuid+"_selected_attributes_container") .selected-attribute').remove('');
+                        $('.product-combination-attributes .single-attribute .attribute-value-checkbox input.form-check-input').prop( "checked", false );
+                    });
+            });
+        });
+    </script>
+}
