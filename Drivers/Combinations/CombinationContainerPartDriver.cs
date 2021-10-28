@@ -45,6 +45,8 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         private DriverResult EditorShape(CombinationContainerPartEditViewModel vm, dynamic shapeHelper) {
             return ContentShape("Parts_CombinationContainerPart_Editor",
                 () => {
+                    // TODO: handle the case where the Part is being created to avoid 
+                    // messing cases with Id == 0
                     // get list of attributes we'll be able to use for combinations
                     var allAttributes = _productAttributeAdminServices
                         .GetAllProductAttributeParts();
