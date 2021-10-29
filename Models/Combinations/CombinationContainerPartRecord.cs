@@ -9,5 +9,7 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.ProductCombinations")]
     public class CombinationContainerPartRecord : ContentPartRecord {
+
+        public virtual IList<CombinationPartRecord> CombinationPartRecords { get; set; }
     }
 }

@@ -134,7 +134,9 @@
 
             $('#@(shortGuid + "generate_button")').click(function () {
                 // Preliminary steps
+                $('#@(shortGuid + "generate_button")').prop('disabled', true);
                 $('#@(shortGuid + "generate_results") span')[0].innerHTML = '';
+                // TODO: prevent all other interactions with the page
 
                 // Get the selected attribute values
                 var attrElements = $('#@(shortGuid+"_selected_attributes_container") .selected-attribute');
