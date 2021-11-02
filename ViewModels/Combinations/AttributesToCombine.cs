@@ -10,5 +10,19 @@ namespace Nwazet.Commerce.ViewModels.Combinations {
     public class AttributesToCombine {
         public int AttributeId { get; set; }
         public string AttributeValue { get; set; }
+
+        public override bool Equals(object obj) {
+            if (!(obj is AttributesToCombine)) {
+                return base.Equals(obj);
+            }
+            var other = (AttributesToCombine)obj;
+            return other.AttributeId == this.AttributeId
+                && ((other.AttributeValue == null && this.AttributeValue == null)
+                    || other.AttributeValue.Equals(this.AttributeValue));
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode();
+        }
     }
 }

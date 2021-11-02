@@ -136,6 +136,8 @@
                 // Preliminary steps
                 $('#@(shortGuid + "generate_button")').prop('disabled', true);
                 $('#@(shortGuid + "generate_results") span')[0].innerHTML = '';
+                $('#@(shortGuid + "generate_results") span').removeClass('error');
+                $('#@(shortGuid + "generate_results") span').removeClass('success');
                 // TODO: prevent all other interactions with the page
 
                 // Get the selected attribute values
@@ -163,8 +165,10 @@
                     .done(function (data, textStatus, jqXHR) {
                         if (data.ko) {
                             $('#@(shortGuid + "generate_results") span')[0].innerHTML = data.message;
+                            $('#@(shortGuid + "generate_results") span').addClass('error');
                         } else if (data.ok) {
-
+                            $('#@(shortGuid + "generate_results") span')[0].innerHTML = data.message;
+                            $('#@(shortGuid + "generate_results") span').addClass('success');
                         }
                     })
                     .fail(function (jqXHR, textStatus, error) {

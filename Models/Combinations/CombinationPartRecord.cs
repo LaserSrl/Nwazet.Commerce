@@ -18,5 +18,8 @@ namespace Nwazet.Commerce.Models {
         public virtual CombinationContainerPartRecord CombinationContainerPartRecord { get; set; }
 
         // Describe "how" this combination is made.
+        public virtual ProductAttributePartRecord ProductAttributePartRecord { get; set; }
+        // This property will be removed when we rework attribute values to be their own records
+        public virtual string ProductAttributeValue { get; set; }
     }
 }

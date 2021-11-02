@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.Attributes")]
     public class ProductAttributePart : ContentPart<ProductAttributePartRecord> {
+        // TODO: attribute values should become their own records
         public IEnumerable<ProductAttributeValue> AttributeValues
         {
             get
