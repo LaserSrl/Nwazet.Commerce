@@ -34,5 +34,16 @@ namespace Nwazet.Commerce.Migrations {
 
             return 2;
         }
+
+        public int UpdateFrom2() {
+            SchemaBuilder.AlterTable("CombinationPartRecord", table => table
+                .AddColumn<int>("ProductAttributePartRecord_Id")
+            );
+            SchemaBuilder.AlterTable("CombinationPartRecord", table => table
+                .AddColumn<string>("ProductAttributeValue")
+            );
+
+            return 3;
+        }
     }
 }

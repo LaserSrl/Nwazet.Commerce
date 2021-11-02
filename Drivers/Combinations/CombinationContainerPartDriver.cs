@@ -47,6 +47,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                 () => {
                     // TODO: handle the case where the Part is being created to avoid 
                     // messing cases with Id == 0
+                    // TODO: check user permissions
                     // get list of attributes we'll be able to use for combinations
                     var allAttributes = _productAttributeAdminServices
                         .GetAllProductAttributeParts();

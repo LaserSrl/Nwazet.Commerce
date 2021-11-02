@@ -653,6 +653,8 @@
     <Compile Include="ApplicabilityCriteria\Couponing\CouponApplicabilityContext.cs" />
     <Compile Include="Descriptors\CouponApplicability\CouponApplicabilityCriterionDescriptor.cs" />
     <Compile Include="Services\CartPriceAlterationContext.cs" />
+    <Compile Include="Services\Combinations\IProductCombinationService.cs" />
+    <Compile Include="Services\Combinations\ProductCombinationService.cs" />
     <Compile Include="Services\Couponing\BaseCouponApplicabilityCriterion.cs" />
     <Compile Include="Services\Couponing\BaseCouponCriterionProvider.cs" />
     <Compile Include="Services\Couponing\CouponCriteriaManagementService.cs" />

@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Services.Combinations;
 using Nwazet.Commerce.ViewModels.Combinations;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
@@ -17,11 +18,14 @@ namespace Nwazet.Commerce.Controllers {
     [Admin]
     public class CombinationsAdminController : Controller {
         private readonly IContentManager _contentManager;
+        private readonly IProductCombinationService _productCombinationService;
 
         public CombinationsAdminController(
-            IContentManager contentManager) {
+            IContentManager contentManager,
+            IProductCombinationService productCombinationService) {
 
             _contentManager = contentManager;
+            _productCombinationService = productCombinationService;
 
             T = NullLocalizer.Instance;
         }
@@ -31,6 +35,7 @@ namespace Nwazet.Commerce.Controllers {
         [HttpPost]
         public JsonResult GenerateCombinations(int contentId, IEnumerable<AttributesToCombine> selectedAttributes) {
             // method called through ajax
+            // TODO check user permissions
             // The content we are editing may not have been published yet.
             var containerContent = _contentManager.Get(contentId, VersionOptions.Latest)
                 ?.As<CombinationContainerPart>();
@@ -68,11 +73,19 @@ namespace Nwazet.Commerce.Controllers {
             }
             // Select the combinations for which there isn't yet a product in the
             // container
+            var currentCombinationRecords = containerContent.Record.CombinationPartRecords;
+            var currentCombinations = currentCombinationRecords
+                .Select(cpr => new AttributesToCombine {
+                    AttributeId = cpr.ProductAttributePartRecord.Id,
+                    AttributeValue = cpr.ProductAttributeValue  });
+            var newCombinations = allCombinations
+                .SelectMany(atc => atc)
+                .Except(currentCombinations);
             // Create the new contents
-            // Invoke something to start synchronizing values from the Container
-            // to the Combinations
+            var created = _productCombinationService
+                .CreateCombinations(containerContent, newCombinations);
 
-            return ErrorJson(T("Unknown error while generating combinations."));
+            return SuccessJson(T("{0} new combinations created.", created.Count()));
         }
 
         class AttributeValues {
@@ -86,13 +99,13 @@ namespace Nwazet.Commerce.Controllers {
                 return Values.Select(v => new AttributesToCombine { AttributeId = Id, AttributeValue = v });
             }
         }
-
-        //private IEnumerable<IEnumerable<AttributesToCombine>> GetAllCombinations() {
-
-        //}
-
+        
         private JsonResult ErrorJson(LocalizedString message) {
             return Json(new { ko = "ko", message = message.Text });
+        }
+
+        private JsonResult SuccessJson(LocalizedString message) {
+            return Json(new { ok = "ok", message = message.Text });
         }
     }
 }
