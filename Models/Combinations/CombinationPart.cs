@@ -1,4 +1,6 @@
-﻿using Orchard.ContentManagement;
+﻿using Nwazet.Commerce.ViewModels.Combinations;
+using Newtonsoft.Json;
+using Orchard.ContentManagement;
 using Orchard.ContentManagement.Utilities;
 using Orchard.Environment.Extensions;
 using System;
@@ -20,17 +22,21 @@ namespace Nwazet.Commerce.Models {
             get { return _combinationContainerPart.Value; }
         }
         // The attributes and attribute values that "make" this Combination
-        private readonly LazyField<ProductAttributePart> _productAttributePart =
-            new LazyField<ProductAttributePart>();
-        public LazyField<ProductAttributePart> ProductAttributePartField {
-            get { return _productAttributePart; }
+        public IEnumerable<AttributesToCombine> ProductAttributeValues {
+            get {
+                var serialized = Retrieve(r => r.ProductAttributeValues) ?? string.Empty;
+                return JsonConvert.DeserializeObject<List<AttributesToCombine>>(serialized);
+            }
+            set {
+                var serialized = JsonConvert.SerializeObject(value);
+                Store(r => r.ProductAttributeValues, serialized);
+            }
         }
-        public ProductAttributePart ProductAttributePart {
-            get { return _productAttributePart.Value; }
-        }
-        public string ProductAttributeValue {
-            get { return Retrieve(r => r.ProductAttributeValue); }
-            set { Store(r => r.ProductAttributeValue, value); }
+
+        public static IEnumerable<AttributesToCombine> DeserializeCombinations(
+            CombinationPartRecord record) {
+            var serialized = record.ProductAttributeValues ?? string.Empty;
+            return JsonConvert.DeserializeObject<List<AttributesToCombine>>(serialized);
         }
     }
 }

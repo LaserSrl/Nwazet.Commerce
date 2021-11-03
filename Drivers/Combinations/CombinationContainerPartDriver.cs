@@ -17,11 +17,14 @@ namespace Nwazet.Commerce.Drivers.Combinations {
     public class CombinationContainerPartDriver : ContentPartDriver<CombinationContainerPart> {
 
         private readonly IProductAttributeAdminServices _productAttributeAdminServices;
+        private readonly IContentManager _contentManager;
 
         public CombinationContainerPartDriver(
-            IProductAttributeAdminServices productAttributeAdminServices) {
+            IProductAttributeAdminServices productAttributeAdminServices,
+            IContentManager contentManager) {
 
             _productAttributeAdminServices = productAttributeAdminServices;
+            _contentManager = contentManager;
 
             T = NullLocalizer.Instance;
         }
@@ -63,8 +66,13 @@ namespace Nwazet.Commerce.Drivers.Combinations {
 
         private CombinationContainerPartEditViewModel CreateVM(CombinationContainerPart part) {
             var partSettings = part.TypePartDefinition.Settings.GetModel<CombinationContainerPartSettings>();
+            // Get existing combinations
+            var currentCombinationRecords = part?.Record?.CombinationPartRecords ?? Enumerable.Empty<CombinationPartRecord>();
+            var combinationContents = _contentManager
+                .GetMany<CombinationPart>(currentCombinationRecords.Select(cpr => cpr.Id), VersionOptions.Latest, QueryHints.Empty);
             return new CombinationContainerPartEditViewModel() {
                 Part = part,
+                CurrentCombinations = combinationContents,
                 CombinationTypeName = partSettings?.CombinationTypeName ?? string.Empty
             };
         }

@@ -545,7 +545,7 @@ namespace Nwazet.Commerce.Controllers {
                     var dummyContent = _contentManager.New(ctd.Name);
                     return _authorizer.Authorize(CorePermissions.EditContent, dummyContent);
                 });
-
+            // TODO: Products with a CombinationPart should not be in this list
 
             return allowedTypes;
         }
@@ -568,6 +568,7 @@ namespace Nwazet.Commerce.Controllers {
                     var dummyContent = _contentManager.New(ctd.Name);
                     return _authorizer.Authorize(CorePermissions.CreateContent, dummyContent);
                 });
+            // TODO: Products with a CombinationPart should not be in this list
 
             return allowedTypes;
         }

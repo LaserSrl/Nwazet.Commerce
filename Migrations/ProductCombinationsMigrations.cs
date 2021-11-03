@@ -15,6 +15,8 @@ namespace Nwazet.Commerce.Migrations {
         public int Create() {
             SchemaBuilder.CreateTable("CombinationPartRecord", table => table
                 .ContentPartRecord()
+                .Column<int>("CombinationContainerPartRecord_Id")
+                .Column<string>("ProductAttributeValues", column => column.Unlimited())
             );
             SchemaBuilder.CreateTable("CombinationContainerPartRecord", table => table
                 .ContentPartRecord()
@@ -22,28 +24,15 @@ namespace Nwazet.Commerce.Migrations {
 
             ContentDefinitionManager.AlterPartDefinition(
                 "CombinationContainerPart", builder => builder
-                 .Attachable());
+                 .Attachable()
+                 .WithDescription("Allows configuring variants of this product based on combinations of attributes."));
+
+            ContentDefinitionManager.AlterPartDefinition(
+                "CombinationPart", builder => builder
+                 .Attachable()
+                 .WithDescription("Represent a variant of a product based on a combination of attributes."));
 
             return 1;
-        }
-
-        public int UpdateFrom1() {
-            SchemaBuilder.AlterTable("CombinationPartRecord", table => table
-                .AddColumn<int>("CombinationContainerPartRecord_Id")
-            );
-
-            return 2;
-        }
-
-        public int UpdateFrom2() {
-            SchemaBuilder.AlterTable("CombinationPartRecord", table => table
-                .AddColumn<int>("ProductAttributePartRecord_Id")
-            );
-            SchemaBuilder.AlterTable("CombinationPartRecord", table => table
-                .AddColumn<string>("ProductAttributeValue")
-            );
-
-            return 3;
         }
     }
 }
