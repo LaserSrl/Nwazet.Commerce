@@ -22,5 +22,8 @@ namespace Nwazet.Commerce.ViewModels.Combinations {
 
         // The attributes we can use to generate combination
         public IEnumerable<ProductAttributePart> AllAttributeParts { get; set; }
+
+        // Current existing combinations
+        public IEnumerable<CombinationPart> CurrentCombinations { get; set; }
     }
 }

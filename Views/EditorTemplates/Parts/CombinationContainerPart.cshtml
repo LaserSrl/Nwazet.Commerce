@@ -1,8 +1,12 @@
 ﻿@using Nwazet.Commerce.ViewModels.Combinations
+@using Orchard;
+@using Orchard.ContentManagement;
 @model CombinationContainerPartEditViewModel
 @{ 
     
     var shortGuid = Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
+    var _contentManager = WorkContext.Resolve<IContentManager>();
+    var currentUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl;
 }
 <fieldset class="product-combination-container" id="@shortGuid">
     <legend>
@@ -15,7 +19,7 @@
                 <legend>
                     @T("Combinations")
                 </legend>
-                <table>
+                <table class="items">
                     <thead>
                         <tr>
                             <th>@T("Title")</th>
@@ -24,7 +28,22 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach (var combination in Model.CurrentCombinations) {
+                            <tr>
+                                <td>
+                                    @Html.ItemEditLinkWithReturnUrl(Html.ItemDisplayText((IContent)(combination.ContentItem)).ToHtmlString(), 
+                                        (IContent)(combination.ContentItem))
+                                </td>
+                                <td>
 
+                                </td>
+                                <td>
+                                    @Html.Link(T("Delete").Text, 
+                                        Url.ItemRemoveUrl(combination.ContentItem, new { currentUrl }), 
+                                        new { itemprop = "RemoveUrl UnsafeUrl" })
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </fieldset>
@@ -39,10 +58,14 @@
                     @* Nested forms are not allowed, so we use the formaction attribute of the submit button *@
                     <div class="box-body">
                         @foreach(var att in Model.AllAttributeParts) {
+                            var attDisplayName = att.DisplayName;
+                            if (string.IsNullOrWhiteSpace(attDisplayName)) {
+                                attDisplayName = _contentManager.GetItemMetadata(att).DisplayText;
+                            }
                             <div class="single-attribute box box-default">
                                 @* TODO: make this card collapsible *@
                                 <div class="box-header with-border">
-                                    <h3 class="box-title">@att.DisplayName</h3>
+                                    <h3 class="box-title">@(attDisplayName)</h3>
                                 </div>
                                 <div class="box-body">
                                     @foreach(var attVal in att.AttributeValues) {

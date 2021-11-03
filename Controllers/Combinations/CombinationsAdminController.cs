@@ -52,6 +52,7 @@ namespace Nwazet.Commerce.Controllers {
                     Id = g.Key,
                     Values = g.Select(atc => atc.AttributeValue).Distinct()
                 });
+            // TODO: validation of attributes and corresponding values
             // recursively build the combinations:
             // We are going to create a collection of combinations. Each combination
             // has a list of <AttributeId, AttributeValue> pairs such that:
@@ -75,12 +76,21 @@ namespace Nwazet.Commerce.Controllers {
             // container
             var currentCombinationRecords = containerContent.Record.CombinationPartRecords;
             var currentCombinations = currentCombinationRecords
-                .Select(cpr => new AttributesToCombine {
-                    AttributeId = cpr.ProductAttributePartRecord.Id,
-                    AttributeValue = cpr.ProductAttributeValue  });
+                .Select(cpr => CombinationPart.DeserializeCombinations(cpr));
             var newCombinations = allCombinations
-                .SelectMany(atc => atc)
-                .Except(currentCombinations);
+                .Where(combo => {
+                    foreach (var current in currentCombinations) {
+                        // combo.Except(current).Any()
+                        if (combo.Count() == current.Count()
+                            && !combo.Any(com => 
+                                !current.Any(cur=> 
+                                    cur.AttributeId == com.AttributeId && cur.AttributeValue.Equals(com.AttributeValue)))) {
+                            // combo and current represent the same combination
+                            return false;
+                        }
+                    }
+                    return true;
+                }).ToList();
             // Create the new contents
             var created = _productCombinationService
                 .CreateCombinations(containerContent, newCombinations);

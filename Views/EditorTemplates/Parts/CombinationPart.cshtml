@@ -1,1 +1,14 @@
-﻿shape della combination
+﻿@using Nwazet.Commerce.ViewModels.Combinations;
+@using Orchard;
+@using Orchard.ContentManagement;
+@model CombinationPartEditViewModel
+
+<fieldset>
+    <legend>
+        @T("This product is a variant of:")
+        <span>
+            @Html.ItemEditLinkWithReturnUrl(Html.ItemDisplayText((IContent)(Model.CombinationContainer)).ToHtmlString(), 
+                (IContent)(Model.CombinationContainer))
+        </span>
+    </legend>
+</fieldset>

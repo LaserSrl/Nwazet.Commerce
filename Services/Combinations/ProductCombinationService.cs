@@ -40,7 +40,7 @@ namespace Nwazet.Commerce.Services.Combinations {
 
         public IEnumerable<CombinationPart> CreateCombinations(
             CombinationContainerPart containerPart,
-            IEnumerable<AttributesToCombine> attributesToCombines) {
+            IEnumerable<IEnumerable<AttributesToCombine>> attributesCombinations) {
             // TODO: parameter validation
             var partSettings = containerPart.TypePartDefinition
                 .Settings.GetModel<CombinationContainerPartSettings>();
@@ -50,49 +50,29 @@ namespace Nwazet.Commerce.Services.Combinations {
                 return Enumerable.Empty<CombinationPart>();
             }
 
-            // Based on their Ids, get the attributes
-            var attributeIds = attributesToCombines
-                    .Select(atc => atc.AttributeId)
-                    .Distinct();
-            var attributeParts = _contentManager
-                .GetMany<ProductAttributePart>(attributeIds, VersionOptions.Latest, QueryHints.Empty);
-            var attributePartRecords = _productAttributesRepository
-                .Table
-                .Where(papr => attributeIds
-                    .Contains(papr.Id))
-                .ToList();
-
             // Create the contents
             var createdItems = new List<CombinationPart>();
-            foreach (var atc in attributesToCombines) {
+            foreach (var combination in attributesCombinations) {
                 var newItem = _contentManager.New(contentType);
                 // We don't publish the item immediately: users that are creating the 
                 // combinations will have the option to do that themselves.
                 _contentManager.Create(newItem, VersionOptions.Draft);
-                // Set the values on the CombinationPartRecord
-                var combinationPart = newItem.As<CombinationPart>();
                 // Simulate an update
                 var context = new UpdateContentContext(newItem);
                 Handlers.Invoke(handler => handler.Updating(context), Logger);
                 // Here the transaction that's creating the contents hasn't been 
                 // committed yet, so we can't interact directly with combinationPart.Record
-                combinationPart.CombinationContainerPartField.Value = containerPart;
-                combinationPart.ProductAttributePartField.Value = attributeParts.FirstOrDefault(p =>p.Id == atc.AttributeId); //TODO
-                combinationPart.ProductAttributeValue = atc.AttributeValue; //TODO
                 Handlers.Invoke(handler => handler.Updated(context), Logger);
 
-                //var combinationRecord = combinationPart.Record;
-                //combinationRecord.CombinationContainerPartRecord = containerPart.Record;
-                //// TODO: use a data structure to avoid doing FirstOrDefault every time
-                //combinationRecord.ProductAttributePartRecord = attributePartRecords
-                //    .FirstOrDefault(papc => papc.Id == atc.AttributeId);
-                //combinationRecord.ProductAttributeValue = atc.AttributeValue;
-
-                createdItems.Add(combinationPart);
+                // Set the values on the CombinationPartRecord
+                var combinationPart = newItem.As<CombinationPart>();
+                combinationPart.CombinationContainerPartField.Value = containerPart;
+                combinationPart.ProductAttributeValues = combination;
 
                 // Sync information from the container to the combination
                 // TODO: providers
 
+                createdItems.Add(combinationPart);
             }
 
             return createdItems;

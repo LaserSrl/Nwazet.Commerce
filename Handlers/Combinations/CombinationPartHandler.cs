@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Handlers.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
-    class CombinationPartHandler : ContentHandler {
+    public class CombinationPartHandler : ContentHandler {
         private readonly IContentManager _contentManager;
 
         public CombinationPartHandler(
@@ -38,18 +38,9 @@ namespace Nwazet.Commerce.Handlers.Combinations {
                 return container;
             });
 
-            part.ProductAttributePartField.Setter(attribute => {
-                part.Record.ProductAttributePartRecord =
-                    attribute.As<ProductAttributePart>().Record;
-                return attribute;
-            });
-
             //call the setters in case a value had already been set
             if (part.CombinationContainerPartField.Value != null) {
                 part.CombinationContainerPartField.Value = part.CombinationContainerPartField.Value;
-            }
-            if (part.ProductAttributePartField.Value != null) {
-                part.ProductAttributePartField.Value = part.ProductAttributePartField.Value;
             }
         }
 
@@ -58,16 +49,6 @@ namespace Nwazet.Commerce.Handlers.Combinations {
                 if (part.Record.CombinationContainerPartRecord != null) {
                     return _contentManager
                         .Get<CombinationContainerPart>(part.Record.CombinationContainerPartRecord.Id,
-                            VersionOptions.Latest, QueryHints.Empty);
-                } else {
-                    return null;
-                }
-
-            });
-            part.ProductAttributePartField.Loader(() => {
-                if (part.Record.ProductAttributePartRecord != null) {
-                    return _contentManager
-                        .Get<ProductAttributePart>(part.Record.ProductAttributePartRecord.Id,
                             VersionOptions.Latest, QueryHints.Empty);
                 } else {
                     return null;

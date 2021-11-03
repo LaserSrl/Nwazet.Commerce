@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.ViewModels.Combinations;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.Environment.Extensions;
@@ -25,19 +26,22 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         }
 
         protected override DriverResult Editor(CombinationPart part, dynamic shapeHelper) {
-            return EditorShape(shapeHelper);
+            return EditorShape(part, shapeHelper);
         }
 
         protected override DriverResult Editor(CombinationPart part, IUpdateModel updater, dynamic shapeHelper) {
-            return EditorShape(shapeHelper);
+            return EditorShape(part, shapeHelper);
         }
 
-        private DriverResult EditorShape(dynamic shapeHelper) {
+        private DriverResult EditorShape(CombinationPart part, dynamic shapeHelper) {
             return ContentShape("Parts_CombinationPart_Editor",
                 () => {
                     return shapeHelper.EditorTemplate(
                         TemplateName: "Parts/CombinationPart",
-                        Model: null,
+                        Model: new CombinationPartEditViewModel {
+                            Part = part,
+                            CombinationContainer = part.CombinationContainerPart
+                        },
                         Prefix: Prefix
                         );
                 });
