@@ -1,4 +1,5 @@
-﻿using Orchard.ContentManagement;
+﻿using Nwazet.Commerce.Services.Combinations;
+using Orchard.ContentManagement;
 using Orchard.ContentManagement.MetaData;
 using Orchard.ContentManagement.MetaData.Builders;
 using Orchard.ContentManagement.MetaData.Models;
@@ -13,12 +14,12 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Settings.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
     public class CombinationContainerPartEditorEvents : ContentDefinitionEditorEventsBase {
-        private readonly IContentDefinitionManager _contentDefinitionManager;
+        private readonly IProductCombinationService _productCombinationService;
 
         public CombinationContainerPartEditorEvents(
-            IContentDefinitionManager contentDefinitionManager) {
+            IProductCombinationService productCombinationService) {
 
-            _contentDefinitionManager = contentDefinitionManager;
+            _productCombinationService = productCombinationService;
         }
 
         private string _oldTypeName;
@@ -45,15 +46,8 @@ namespace Nwazet.Commerce.Settings.Combinations {
                          settings.CombinationTypeName);
                     if (!string.IsNullOrWhiteSpace(settings.CombinationTypeName)) {
                         // Create/update the named content type to make sure it has a CombinationPart
-                        _contentDefinitionManager.AlterTypeDefinition(settings.CombinationTypeName,
-                            cfg => {
-                                cfg
-                                 .WithPart("CombinationPart");
-                                // TODO: have a service add other parts that are related to product
-                                // so we can synchronize values when creating combinations?
-                                // TODO: make sure that Products can't be created directly from 
-                                // "normal" backend controllers
-                            });
+                        _productCombinationService
+                            .CreateCombinationType(builder.TypeName, settings.CombinationTypeName);
                     }
                 }
             }
