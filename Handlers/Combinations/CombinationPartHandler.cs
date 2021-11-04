@@ -38,7 +38,7 @@ namespace Nwazet.Commerce.Handlers.Combinations {
                 return container;
             });
 
-            //call the setters in case a value had already been set
+            // call the setters in case a value had already been set
             if (part.CombinationContainerPartField.Value != null) {
                 part.CombinationContainerPartField.Value = part.CombinationContainerPartField.Value;
             }

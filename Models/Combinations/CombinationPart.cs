@@ -38,5 +38,10 @@ namespace Nwazet.Commerce.Models {
             var serialized = record.ProductAttributeValues ?? string.Empty;
             return JsonConvert.DeserializeObject<List<AttributesToCombine>>(serialized);
         }
+
+        public static IEnumerable<AttributesToCombine> DeserializeCombinations(
+            CombinationPart part) {
+            return DeserializeCombinations(part.Record);
+        }
     }
 }

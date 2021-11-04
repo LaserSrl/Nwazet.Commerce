@@ -1,4 +1,5 @@
 ﻿using Orchard.ContentManagement;
+using Orchard.ContentManagement.Utilities;
 using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,13 @@ namespace Nwazet.Commerce.Models {
         // The collection of Combinations that we have configured so far:
         // Sould this be here directly? 
         // Should we fetch this through a service "on demand"?
+        private readonly LazyField<IList<CombinationPart>> _combinationParts =
+            new LazyField<IList<CombinationPart>>();
+        public LazyField<IList<CombinationPart>> CombinationPartsField {
+            get { return _combinationParts; }
+        }
+        public IList<CombinationPart> CombinationParts {
+            get { return _combinationParts.Value; }
+        }
     }
 }
