@@ -1,5 +1,6 @@
 ﻿using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
+using Nwazet.Commerce.Services.Combinations;
 using Nwazet.Commerce.Settings.Combinations;
 using Nwazet.Commerce.ViewModels.Combinations;
 using Orchard.ContentManagement;
@@ -18,13 +19,16 @@ namespace Nwazet.Commerce.Drivers.Combinations {
 
         private readonly IProductAttributeAdminServices _productAttributeAdminServices;
         private readonly IContentManager _contentManager;
+        private readonly IProductCombinationService _productCombinationService;
 
         public CombinationContainerPartDriver(
             IProductAttributeAdminServices productAttributeAdminServices,
-            IContentManager contentManager) {
+            IContentManager contentManager,
+            IProductCombinationService productCombinationService) {
 
             _productAttributeAdminServices = productAttributeAdminServices;
             _contentManager = contentManager;
+            _productCombinationService = productCombinationService;
 
             T = NullLocalizer.Instance;
         }
@@ -70,9 +74,16 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             var currentCombinationRecords = part?.Record?.CombinationPartRecords ?? Enumerable.Empty<CombinationPartRecord>();
             var combinationContents = _contentManager
                 .GetMany<CombinationPart>(currentCombinationRecords.Select(cpr => cpr.Id), VersionOptions.Latest, QueryHints.Empty);
+            var comboTitles = new Dictionary<int, string>();
+            foreach (var combo in combinationContents) {
+                comboTitles.Add(
+                    combo.Id,
+                    _productCombinationService.AdminDisplayText(combo));
+            }
             return new CombinationContainerPartEditViewModel() {
                 Part = part,
                 CurrentCombinations = combinationContents,
+                CombinationTitles = comboTitles,
                 CombinationTypeName = partSettings?.CombinationTypeName ?? string.Empty
             };
         }

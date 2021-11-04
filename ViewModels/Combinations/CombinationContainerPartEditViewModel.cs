@@ -13,6 +13,9 @@ namespace Nwazet.Commerce.ViewModels.Combinations {
         public CombinationContainerPartEditViewModel() {
 
             AllAttributeParts = new List<ProductAttributePart>();
+
+            CurrentCombinations = new List<CombinationPart>();
+            CombinationTitles = new Dictionary<int, string>();
         }
 
         public CombinationContainerPart Part { get; set; }
@@ -25,5 +28,6 @@ namespace Nwazet.Commerce.ViewModels.Combinations {
 
         // Current existing combinations
         public IEnumerable<CombinationPart> CurrentCombinations { get; set; }
+        public Dictionary<int, string> CombinationTitles { get; set; }
     }
 }
