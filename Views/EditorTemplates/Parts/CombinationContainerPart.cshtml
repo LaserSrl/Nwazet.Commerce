@@ -78,7 +78,7 @@
                                         }
                                         @if (Authorizer.Authorize(Permissions.DeleteContent, combination)) {
                                             @Html.Link(T("Delete").Text, 
-                                                Url.ItemRemoveUrl(combination.ContentItem, new { currentUrl }), 
+                                                Url.ItemRemoveUrl(combination.ContentItem, new { returnUrl = currentUrl }), 
                                                 new { itemprop = "RemoveUrl UnsafeUrl", @class="btn btn-danger btn-xs" })
                                         }
                                     </td>
@@ -115,7 +115,7 @@
                                                 new {
                                                     @id = "attribute_" + att.Id + "_" + attVal.Text,
                                                     @class = "form-check-input",
-                                                    data_attribute_Name = att.DisplayName,
+                                                    data_attribute_Name = attDisplayName,
                                                     data_attribute_id = att.Id,
                                                     data_attribute_value = attVal.Text
                                                 })

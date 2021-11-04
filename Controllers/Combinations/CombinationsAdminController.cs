@@ -75,8 +75,9 @@ namespace Nwazet.Commerce.Controllers {
             // Select the combinations for which there isn't yet a product in the
             // container
             var currentCombinationRecords = containerContent.Record.CombinationPartRecords;
-            var currentCombinations = currentCombinationRecords
-                .Select(cpr => CombinationPart.DeserializeCombinations(cpr));
+            var currentCombinations = containerContent
+                .CombinationParts
+                .Select(cp => CombinationPart.DeserializeCombinations(cp));
             var newCombinations = allCombinations
                 .Where(combo => {
                     foreach (var current in currentCombinations) {
