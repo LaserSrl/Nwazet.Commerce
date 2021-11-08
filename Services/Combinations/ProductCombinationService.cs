@@ -116,7 +116,9 @@ namespace Nwazet.Commerce.Services.Combinations {
             string containerTypeName, string combinationTypeName) {
 
             Func<ContentTypeDefinitionBuilder, ContentTypeDefinitionBuilder> comboDefinition = 
-                cfg => cfg.WithPart("CombinationPart");
+                cfg => cfg
+                    .WithPart("CombinationPart")
+                    .WithPart("CommonPart");
             comboDefinition = cfg => comboDefinition(cfg).Draftable();
             // TODO: handle securable / permissions for the combinations
             // TODO: have a service add other parts that are related to product
