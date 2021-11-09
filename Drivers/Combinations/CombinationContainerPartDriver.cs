@@ -15,7 +15,9 @@ using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Drivers.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
-    public class CombinationContainerPartDriver : ContentPartDriver<CombinationContainerPart> {
+    public class CombinationContainerPartDriver : ContentPartDriver<CombinationContainerPart>,
+        // We to implement this interface to interact with ProductPartDriver and ShoppingCartController
+        IProductAttributesDriver {
 
         private readonly IProductAttributeAdminServices _productAttributeAdminServices;
         private readonly IContentManager _contentManager;
@@ -86,6 +88,31 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                 CombinationTitles = comboTitles,
                 CombinationTypeName = partSettings?.CombinationTypeName ?? string.Empty
             };
+        }
+
+        public dynamic GetAttributeDisplayShape(IContent product, dynamic shapeHelper) {
+            // TODO
+            var combinationContainerPart = product.As<CombinationContainerPart>();
+            if (combinationContainerPart == null) {
+                return null;
+            }
+            // TODO: only get the published ones
+            var allCombinationParts = combinationContainerPart.CombinationParts;
+            // TODO: based on those combinations we'll have to display a shape with
+            // options for the user to choose, as if the attributes used to generate
+            // the combinations were just attributes. The shape will also include a
+            // js library to handle updating informations on screen, such as the Id
+            // of the product that will be actually added to the cart, its availability,
+            // its price and so on.
+            return null;
+        }
+
+        public bool ValidateAttributes(IContent product, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues) {
+            // We aren't really going to do anything about attributes here
+            return true;
+            // TODO: how about the case where combinations have their own attributes?
+            // We aren't displaying the Combinations as products, so those should probably
+            // be either handled here, or prevented somehow.
         }
     }
 }
