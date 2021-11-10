@@ -96,15 +96,24 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             if (combinationContainerPart == null) {
                 return null;
             }
-            // TODO: only get the published ones
+            // TODO: only get the published CombinationParts
             var allCombinationParts = combinationContainerPart.CombinationParts;
+            var publishedCombinationParts = _contentManager
+                .GetMany<CombinationPart>(
+                    allCombinationParts.Select(cp => cp.Id),
+                    VersionOptions.Published,
+                    QueryHints.Empty)
+                .ToList();
             // TODO: based on those combinations we'll have to display a shape with
             // options for the user to choose, as if the attributes used to generate
             // the combinations were just attributes. The shape will also include a
             // js library to handle updating informations on screen, such as the Id
             // of the product that will be actually added to the cart, its availability,
             // its price and so on.
-            return null;
+            return shapeHelper.Parts_CombinationContainer(
+                ContentItem: product,
+                CombinationParts: publishedCombinationParts
+                );
         }
 
         public bool ValidateAttributes(IContent product, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues) {

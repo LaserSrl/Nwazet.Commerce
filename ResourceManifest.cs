@@ -44,6 +44,9 @@ namespace Nwazet.Commerce {
             
             manifest.DefineScript("Nwazet.ProductAvailability")
                 .SetUrl("productsunavailable.min.js?v=1.0", "productsunavailable.js?v=1.0").SetDependencies("jQuery");
+
+            manifest.DefineScript("Nwazet.ProductCombinations")
+                .SetUrl("productcombinations.min.js?v=1.0", "productcombinations.js?v=1.0").SetDependencies("jQuery");
         }
     }
 }
