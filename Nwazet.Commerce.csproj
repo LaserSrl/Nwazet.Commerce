@@ -137,6 +137,10 @@
     <Content Include="Scripts\order-admin.min.js">
       <DependentUpon>order-admin.js</DependentUpon>
     </Content>
+    <Content Include="Scripts\productcombinations.js" />
+    <Content Include="Scripts\productcombinations.min.js">
+      <DependentUpon>productcombinations.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\productsunavailable.js" />
     <Content Include="Scripts\productsunavailable.min.js">
       <DependentUpon>productsunavailable.js</DependentUpon>
@@ -293,6 +297,7 @@
     <None Include="Views\HierarchyTerritoriesAdmin\GetChildNodes.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\Index.cshtml" />
     <None Include="Views\OrderSsl\OrderHistory.cshtml" />
+    <None Include="Views\Parts\CombinationContainer.cshtml" />
     <None Include="Views\Parts\Inventory.cshtml" />
     <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />
     <None Include="Views\Parts\WishListsActions.cshtml" />

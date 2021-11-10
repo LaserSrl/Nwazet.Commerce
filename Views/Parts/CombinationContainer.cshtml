@@ -1,0 +1,48 @@
+﻿@using Nwazet.Commerce.Models;
+@using Nwazet.Commerce.Services.Combinations;
+@using Orchard.ContentManagement;
+@{ 
+    Script.Require("Nwazet.ProductCombinations").AtFoot();
+
+    var shortGuid = "a" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
+
+    var _productCombinationService = WorkContext.Resolve<IProductCombinationService>();
+    var combinations = (IEnumerable<CombinationPart>)Model.CombinationParts;
+    var productCi = (IContent)Model.ContentItem;
+    // TODO: Get from the combinations the collection of all attributes used to generate them
+    var defaultCombination = combinations.FirstOrDefault();
+
+    var comboElementId = "product_combination_id_" + productCi.Id;
+    var radioName = "radio-combination-" + shortGuid;
+}
+@if (combinations.Any()) {
+    <div class="combination-container">
+        <input type="hidden" 
+               name="combination_id" 
+               data-for-product="@productCi.Id"
+               data-input-role="combination_id"
+               value="@(defaultCombination.Id)" 
+               id="@comboElementId" />
+        @foreach (var combo in combinations) {
+            <div class="combination">
+                <input name="@("combination-" + combo.Id)" 
+                       value="@combo.Id" type="hidden" />
+                <input type="radio" name="@radioName" 
+                       id="@("combo" + combo.Id)" 
+                       value="@combo.Id" 
+                       @if (combo.Id == defaultCombination.Id) {<text>checked</text> }/>
+                <label for="@("combo" + combo.Id)">@_productCombinationService.AdminDisplayText(combo)</label>
+            </div>
+        }
+    </div>
+}
+@using (Script.Foot()) {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.combination-container input[type=radio][name=@radioName]').change(function () {
+                $('#@comboElementId').val(this.value);
+                $('#@comboElementId').trigger('change');
+            });
+        });
+    </script>
+}

@@ -69,6 +69,7 @@
     <Place Parts_Product_PriceTiers="-"/>
     <Place Parts_Bundle="Content:3;Alternate=BundleSummaryAdmin"/>
     <Place Parts_ProductAttributes="-"/>
+    <Place Parts_CombinationContainer="-"/>
     <Place Parts_Order="Content:1;Alternate=OrderSummaryAdmin"/>
     <Match ContentType="Order">
       <Place
@@ -91,5 +92,6 @@
     <Place Parts_Product_PriceTiers="-"/>
     <Place Parts_Common_Body_Summary="-"/>
     <Place Parts_ProductAttributes="-"/>
+    <Place Parts_CombinationContainer="-"/>
   </Match>
 </Placement>

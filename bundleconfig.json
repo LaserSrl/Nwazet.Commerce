@@ -108,6 +108,12 @@
     ]
   },
   {
+    "outputFileName": "Scripts/productcombinations.min.js",
+    "inputFiles": [
+      "Scripts/productcombinations.js"
+    ]
+  },
+  {
     "outputFileName": "Styles/attribute.nwazet-commerce-admin.min.css",
     "inputFiles": [
       "Styles/attribute.nwazet-commerce-admin.css"
