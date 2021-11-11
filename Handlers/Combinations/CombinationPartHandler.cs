@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Services.Combinations;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
@@ -13,12 +14,15 @@ namespace Nwazet.Commerce.Handlers.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
     public class CombinationPartHandler : ContentHandler {
         private readonly IContentManager _contentManager;
+        private readonly IProductCombinationService _productCombinationService;
 
         public CombinationPartHandler(
             IRepository<CombinationPartRecord> repository,
-            IContentManager contentManager) {
+            IContentManager contentManager,
+            IProductCombinationService productCombinationService) {
 
             _contentManager = contentManager;
+            _productCombinationService = productCombinationService;
 
             Filters.Add(StorageFilter.For(repository));
 
@@ -27,6 +31,24 @@ namespace Nwazet.Commerce.Handlers.Combinations {
             OnLoading<CombinationPart>((context, part) => LazyLoadHandlers(part));
             OnVersioning<CombinationPart>((context, part, newVersionPart) => LazyLoadHandlers(newVersionPart));
 
+        }
+
+        protected override void GetItemMetadata(GetContentItemMetadataContext context) {
+            var part = context.ContentItem.As<CombinationPart>();
+
+            if (part != null) {
+                if (part.CombinationContainerPart != null) {
+                    var containerMeta = _contentManager.GetItemMetadata(part.CombinationContainerPart);
+                    context.Metadata.DisplayText =
+                        $"{containerMeta.DisplayText} ({_productCombinationService.AdminDisplayText(part)})";
+
+                    context.Metadata.DisplayRouteValues = containerMeta.DisplayRouteValues;
+
+                } else {
+                    context.Metadata.DisplayText =
+                        $"{_productCombinationService.AdminDisplayText(part)}";
+                }
+            }
         }
 
         static void PropertySetHandlers(
