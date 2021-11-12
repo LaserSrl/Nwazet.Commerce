@@ -24,19 +24,22 @@ namespace Nwazet.Commerce.Services.Combinations {
         private readonly Lazy<IEnumerable<IContentHandler>> _handlers;
         private readonly IProductAttributeAdminServices _productAttributeAdminServices;
         private readonly IContentDefinitionManager _contentDefinitionManager;
+        private readonly Lazy<IEnumerable<ICombinationDetailProvider>> _combinationDetailProviders;
 
         public ProductCombinationService(
             IContentManager contentManager,
             IRepository<ProductAttributePartRecord> productAttributesRepository,
             Lazy<IEnumerable<IContentHandler>> handlers,
             IProductAttributeAdminServices productAttributeAdminServices,
-            IContentDefinitionManager contentDefinitionManager) {
+            IContentDefinitionManager contentDefinitionManager,
+            Lazy<IEnumerable<ICombinationDetailProvider>> combinationDetailProviders) {
 
             _contentManager = contentManager;
             _productAttributesRepository = productAttributesRepository;
             _handlers = handlers;
             _productAttributeAdminServices = productAttributeAdminServices;
             _contentDefinitionManager = contentDefinitionManager;
+            _combinationDetailProviders = combinationDetailProviders;
 
             Logger = NullLogger.Instance;
 
@@ -45,8 +48,12 @@ namespace Nwazet.Commerce.Services.Combinations {
 
         public ILogger Logger { get; set; }
 
-        public IEnumerable<IContentHandler> Handlers {
+        private IEnumerable<IContentHandler> Handlers {
             get { return _handlers.Value; }
+        }
+
+        private IEnumerable<ICombinationDetailProvider> DetailProviders {
+            get { return _combinationDetailProviders.Value; }
         }
 
         public IEnumerable<CombinationPart> CreateCombinations(
@@ -118,15 +125,32 @@ namespace Nwazet.Commerce.Services.Combinations {
             Func<ContentTypeDefinitionBuilder, ContentTypeDefinitionBuilder> comboDefinition = 
                 cfg => cfg
                     .WithPart("CombinationPart")
-                    .WithPart("CommonPart");
+                    .WithPart("CommonPart")
+                    .WithIdentity();
             comboDefinition = cfg => comboDefinition(cfg).Draftable();
             // TODO: handle securable / permissions for the combinations
-            // TODO: have a service add other parts that are related to product
-            // so we can synchronize values when creating combinations?
             // TODO: make sure that Products can't be created directly from 
             // "normal" backend controllers
             _contentDefinitionManager.AlterTypeDefinition(combinationTypeName,
-                cfg => comboDefinition(cfg));
+                cfg => {
+                    cfg = comboDefinition(cfg);
+                    // Have a service add other parts that are related to product
+                    // so we can synchronize values when creating combinations
+                    foreach (var provider in DetailProviders) {
+                        cfg = provider.AlterCombinationDefinition(cfg, containerTypeName);
+                    }
+                });
+        }
+
+        public IEnumerable<CombinationDetailShape> GetCombinationDetailShapes(
+            CombinationPart part,
+            dynamic shapeHelper) {
+
+            var result = new List<CombinationDetailShape>();
+            foreach (var provider in DetailProviders) {
+                result.AddRange(provider.GetCombinationDetailShapes(part, shapeHelper));
+            }
+            return result;
         }
     }
 }

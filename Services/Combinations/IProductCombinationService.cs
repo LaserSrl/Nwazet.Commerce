@@ -18,5 +18,9 @@ namespace Nwazet.Commerce.Services.Combinations {
 
         void CreateCombinationType(
             string containerTypeName, string combinationTypeName);
+
+        IEnumerable<CombinationDetailShape> GetCombinationDetailShapes(
+            CombinationPart part,
+            dynamic shapeHelper);
     }
 }

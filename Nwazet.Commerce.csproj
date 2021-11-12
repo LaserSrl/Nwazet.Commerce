@@ -239,6 +239,8 @@
     <None Include="packages.config" />
     <None Include="Styles\coupon-admin.less" />
     <None Include="Styles\product-admin.less" />
+    <None Include="Views\Combinations_ProductDiscountedPrice.cshtml" />
+    <None Include="Views\Combinations_ProductPrice.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsBasicPartial.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsPartial.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsNewPartial.cshtml" />
@@ -647,8 +649,11 @@
     <Compile Include="ApplicabilityCriteria\Couponing\CouponApplicabilityContext.cs" />
     <Compile Include="Descriptors\CouponApplicability\CouponApplicabilityCriterionDescriptor.cs" />
     <Compile Include="Services\CartPriceAlterationContext.cs" />
+    <Compile Include="Services\Combinations\BaseCombinationDetailProvider.cs" />
+    <Compile Include="Services\Combinations\ICombinationDetailProvider.cs" />
     <Compile Include="Services\Combinations\IProductCombinationService.cs" />
     <Compile Include="Services\Combinations\ProductCombinationService.cs" />
+    <Compile Include="Services\Combinations\ProductPartDetailProvider.cs" />
     <Compile Include="Services\Couponing\BaseCouponApplicabilityCriterion.cs" />
     <Compile Include="Services\Couponing\BaseCouponCriterionProvider.cs" />
     <Compile Include="Services\Couponing\CouponCriteriaManagementService.cs" />
@@ -823,6 +828,7 @@
     <Compile Include="ViewModels\CartPriceAlterationAmount.cs" />
     <Compile Include="ViewModels\Combinations\AttributesToCombine.cs" />
     <Compile Include="ViewModels\Combinations\CombinationContainerPartEditViewModel.cs" />
+    <Compile Include="ViewModels\Combinations\CombinationDetailShape.cs" />
     <Compile Include="ViewModels\Combinations\CombinationPartEditViewModel.cs" />
     <Compile Include="ViewModels\Couponing\Coupon.cs" />
     <Compile Include="ViewModels\Couponing\CouponApplicabilityCriterionEntry.cs" />

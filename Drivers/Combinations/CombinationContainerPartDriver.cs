@@ -104,7 +104,17 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                     VersionOptions.Published,
                     QueryHints.Empty)
                 .ToList();
-            // TODO: based on those combinations we'll have to display a shape with
+            // Dictionary of detail information for each combination, that we can use
+            // to dynamically update the UI. The key is the Id of the combination. The
+            // value is the collection of detail elements.
+            var combinationDetails = new Dictionary<int, IEnumerable<CombinationDetailShape>>();
+            foreach (var combo in publishedCombinationParts) {
+                combinationDetails.Add(
+                    combo.Id,
+                    _productCombinationService.GetCombinationDetailShapes(combo, shapeHelper)
+                    );
+            }
+            // Based on those combinations we'll have to display a shape with
             // options for the user to choose, as if the attributes used to generate
             // the combinations were just attributes. The shape will also include a
             // js library to handle updating informations on screen, such as the Id
@@ -112,7 +122,8 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             // its price and so on.
             return shapeHelper.Parts_CombinationContainer(
                 ContentItem: product,
-                CombinationParts: publishedCombinationParts
+                CombinationParts: publishedCombinationParts,
+                CombinationDetails: combinationDetails
                 );
         }
 
