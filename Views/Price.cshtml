@@ -6,8 +6,11 @@
         <b class="discounted-price" title="@T("Now {0}", dPrice)">@dPrice</b>
         <span class="discount-comment">@Model.DiscountComment</span>
     </div>
+    <b data-commerce-role="product-price"></b>
 }
 else {
     string price = Model.CurrencyProvider.GetPriceString(Model.Price);
+    <div data-commerce-role="product-discounted-price">
+    </div>
     <b data-commerce-role="product-price">@price</b>
 }

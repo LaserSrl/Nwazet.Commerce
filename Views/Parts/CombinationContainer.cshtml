@@ -1,5 +1,6 @@
 ﻿@using Nwazet.Commerce.Models;
 @using Nwazet.Commerce.Services.Combinations;
+@using Nwazet.Commerce.ViewModels.Combinations;
 @using Orchard.ContentManagement;
 @{ 
     Script.Require("Nwazet.ProductCombinations").AtFoot();
@@ -9,6 +10,7 @@
     var _productCombinationService = WorkContext.Resolve<IProductCombinationService>();
     var combinations = (IEnumerable<CombinationPart>)Model.CombinationParts;
     var productCi = (IContent)Model.ContentItem;
+    var combinationDetails = (Dictionary<int, IEnumerable<CombinationDetailShape>>)Model.CombinationDetails;
     // TODO: Get from the combinations the collection of all attributes used to generate them
     var defaultCombination = combinations.FirstOrDefault();
 
@@ -35,14 +37,27 @@
             </div>
         }
     </div>
-}
-@using (Script.Foot()) {
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('.combination-container input[type=radio][name=@radioName]').change(function () {
-                $('#@comboElementId').val(this.value);
-                $('#@comboElementId').trigger('change');
+
+    using (Script.Head()) {
+        foreach (var combo in combinations.Where(c => combinationDetails.ContainsKey(c.Id))) {
+            foreach (var detail in combinationDetails[combo.Id]) {
+                <script type="text/html"
+                       data-for-product="@productCi.Id"
+                       data-for-combination="@combo.Id"
+                       data-commerce-role="@detail.RoleKey" >
+                    @Display(detail.Shape)
+                </script>
+            }
+        }
+    }
+    using (Script.Foot()) {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('.combination-container input[type=radio][name=@radioName]').change(function () {
+                    $('#@comboElementId').val(this.value);
+                    $('#@comboElementId').trigger('change');
+                });
             });
-        });
-    </script>
+        </script>
+    }
 }

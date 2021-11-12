@@ -13,6 +13,25 @@
         // set the correct value of the id to add the product to the cart.
         var $prodId = $form.find('[name="id"]');
         $prodId.val(combinationId);
+        // Replace "accessory" information based on the stuff from the
+        // newly selected combination.
+        // Get the "target" elements in which we'll replace information.
+        var allInfoElements =
+            $('body [data-commerce-product="' + productId + '"]');
+        // Get the "source" elements with the information for the combination.
+        var newInfoElements =
+            $('head script[data-for-product="' + productId + '"][data-for-combination="' + combinationId + '"]');
+        // Replace target elements by matching the data-commerce-role attribute.
+        allInfoElements.each(function (index, element) {
+            var $element = $(element);
+            var roleKey = $element.data('commerce-role');
+            if (roleKey) {
+                var $newElement = newInfoElements.filter('[data-commerce-role="' + roleKey + '"]');
+                if ($newElement && $newElement.length) {
+                    $element.html($newElement.html());
+                }
+            }
+        });
     }
 
     $('[data-input-role="combination_id"][data-for-product]').on('change', function () {
