@@ -1,4 +1,5 @@
-﻿using Orchard.DisplayManagement;
+﻿using Orchard;
+using Orchard.DisplayManagement;
 using Orchard.Forms.Services;
 using Orchard.Localization;
 using System;
@@ -19,7 +20,7 @@ namespace Nwazet.Commerce.Filters {
         public MinCartTotalForm(IShapeFactory shapeFactory) {
             Shape = shapeFactory;
             T = NullLocalizer.Instance;
-            _valueLabel = T("Enter the value.");
+            _valueLabel = T("Enter the value. The decimal separator is {0}", CultureInfo.CurrentUICulture.NumberFormat.CurrencyDecimalSeparator);
             _formName = FormName;
         }
 
@@ -47,5 +48,46 @@ namespace Nwazet.Commerce.Filters {
             }
             return -1;
         }
+    }
+
+
+    public class MinCartTotalFormValidator : IFormEventHandler {
+
+        public MinCartTotalFormValidator() {
+            T = NullLocalizer.Instance;
+        }
+        public Localizer T { get; set; }
+
+        public void Validating(ValidatingContext context) {
+            if (context.FormName != MinCartTotalForm.FormName
+                && context.FormName != MinCartTotalForm.FormName) {
+                return;
+            }
+
+            var attemptedValue = context
+                .ValueProvider.GetValue("Value").AttemptedValue
+                .Trim();
+            // name of header to test is required
+            if (string.IsNullOrWhiteSpace(attemptedValue)) {
+                context.ModelState
+                    .AddModelError("Value",
+                        T("Value must be a positive number.").Text);
+            }
+
+            // test the value
+            if (MinCartTotalForm.ParseStateValue(attemptedValue) <= 0) {
+                context.ModelState
+                    .AddModelError("Value",
+                        T("Value must be a positive integer.").Text);
+            } 
+        }
+
+        #region Methods not implemented
+        public void Building(BuildingContext context) { }
+
+        public void Built(BuildingContext context) { }
+
+        public void Validated(ValidatingContext context) { }
+        #endregion
     }
 }
