@@ -12,7 +12,11 @@ using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Services.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
-    public class ProductPartDetailProvider : BaseCombinationDetailProvider {
+    public class ProductPartDetailProvider : 
+        BaseCombinationDetailProvider,
+        // Combinations/Variants may share a "single" SKU
+        ISKUUniquenessHelper {
+
         private readonly ICurrencyProvider _currencyProvider;
         private readonly IProductPriceService _productPriceService;
         private readonly IPriceService _priceService;
@@ -44,6 +48,26 @@ namespace Nwazet.Commerce.Services.Combinations {
             return previous;
         }
 
+        public override void Synchronize(
+            CombinationContainerPart container, CombinationPart combination) {
+
+            var sourceProductPart = container.As<ProductPart>();
+            var targetProductPart = combination.As<ProductPart>();
+            if (sourceProductPart != null && targetProductPart != null) {
+                // Simply copy all properties from the container to the 
+                // combination.
+                targetProductPart.Sku = sourceProductPart.Sku;
+                targetProductPart.Price = sourceProductPart.Price;
+                targetProductPart.DiscountPrice = sourceProductPart.DiscountPrice;
+                targetProductPart.ShippingCost = sourceProductPart.ShippingCost;
+                targetProductPart.Weight = sourceProductPart.Weight;
+                targetProductPart.Size = sourceProductPart.Size;
+                targetProductPart.OverrideTieredPricing = sourceProductPart.OverrideTieredPricing;
+                targetProductPart.PriceTiers = sourceProductPart.PriceTiers;
+                targetProductPart.AuthenticationRequired = sourceProductPart.AuthenticationRequired;
+                targetProductPart.IsDigital = sourceProductPart.IsDigital;
+            }
+        }
 
         public override IEnumerable<CombinationDetailShape> GetCombinationDetailShapes(
             CombinationPart part, 
@@ -87,5 +111,30 @@ namespace Nwazet.Commerce.Services.Combinations {
 
             return Enumerable.Empty<CombinationDetailShape>();
         }
+
+        #region ISKUUniquenessHelper
+        public IEnumerable<int> GetIdsOfValidSKUDuplicates(ProductPart part) {
+            var container = part.As<CombinationContainerPart>();
+            if (container != null) {
+                return GetIdsOfValidSKUDuplicates(container);
+            }
+            var combination = part.As<CombinationPart>();
+            if (combination != null) {
+                return GetIdsOfValidSKUDuplicates(combination);
+            }
+            return Enumerable.Empty<int>();
+        }
+
+        private List<int> GetIdsOfValidSKUDuplicates(CombinationContainerPart part) {
+            return part.CombinationParts.Select(cp => cp.Id).ToList();
+        }
+
+        private List<int> GetIdsOfValidSKUDuplicates(CombinationPart part) {
+            var container = part.CombinationContainerPart;
+            var siblings = GetIdsOfValidSKUDuplicates(container);
+            siblings.Add(container.Id);
+            return siblings;
+        }
+        #endregion
     }
 }

@@ -53,6 +53,10 @@ namespace Nwazet.Commerce.Services.Combinations {
         }
 
         private IEnumerable<ICombinationDetailProvider> DetailProviders {
+            // TODO: Set up an infrastructure like the IContentHandler.Invoke
+            // to safely use these providers? It's probably enough to just do
+            // it as a method here because these providers currently aren't used
+            // elsewhere.
             get { return _combinationDetailProviders.Value; }
         }
 
@@ -75,21 +79,22 @@ namespace Nwazet.Commerce.Services.Combinations {
                 // We don't publish the item immediately: users that are creating the 
                 // combinations will have the option to do that themselves.
                 _contentManager.Create(newItem, VersionOptions.Draft);
-                // Simulate an update
+                // "Simulate" an update as if the user has created a new ContentItem
                 var context = new UpdateContentContext(newItem);
                 Handlers.Invoke(handler => handler.Updating(context), Logger);
-                // Here the transaction that's creating the contents hasn't been 
-                // committed yet, so we can't interact directly with combinationPart.Record
-                Handlers.Invoke(handler => handler.Updated(context), Logger);
-
                 // Set the values on the CombinationPartRecord
                 var combinationPart = newItem.As<CombinationPart>();
                 combinationPart.CombinationContainerPartField.Value = containerPart;
                 combinationPart.ProductAttributeValues = combination;
-
                 // Sync information from the container to the combination
-                // TODO: providers
-
+                foreach (var provider in DetailProviders) {
+                    provider.Synchronize(containerPart, combinationPart);
+                }
+                Handlers.Invoke(handler => handler.Updated(context), Logger);
+                // We are not able to properly validate all the information passed to
+                // the new ContentItem created, because that would entail invoking
+                // all drivers related to it. For this reason we are not publishing
+                // the ContentItem: it will be the user's responsibility to do that.
                 createdItems.Add(combinationPart);
             }
 

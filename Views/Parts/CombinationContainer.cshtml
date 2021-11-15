@@ -11,8 +11,16 @@
     var combinations = (IEnumerable<CombinationPart>)Model.CombinationParts;
     var productCi = (IContent)Model.ContentItem;
     var combinationDetails = (Dictionary<int, IEnumerable<CombinationDetailShape>>)Model.CombinationDetails;
-    // TODO: Get from the combinations the collection of all attributes used to generate them
+
     var defaultCombination = combinations.FirstOrDefault();
+
+    // TODO: Get from the combinations the collection of all attributes used to generate them
+    // For each possible attribute we'll display a list of options corresponding to the possible
+    // values for it.
+    var attributeParts = new List<ProductAttributePart>();
+    foreach (var combo in combinations) {
+        var comboAttributes = combo.ProductAttributeValues;
+    }
 
     var comboElementId = "product_combination_id_" + productCi.Id;
     var radioName = "radio-combination-" + shortGuid;
@@ -35,6 +43,17 @@
                        @if (combo.Id == defaultCombination.Id) {<text>checked</text> }/>
                 <label for="@("combo" + combo.Id)">@_productCombinationService.AdminDisplayText(combo)</label>
             </div>
+        }
+
+        @if (true) {
+            foreach(var attPart in attributeParts) {
+                @* Display each attribute "normally", but with only the options/values
+                    that are used in generating the combinations. *@
+                <div class="@attPart.CssName @("meaning-" + attPart.Meaning)"
+                     data-meaning="@attPart.Meaning">
+
+                </div>
+            }
         }
     </div>
 
