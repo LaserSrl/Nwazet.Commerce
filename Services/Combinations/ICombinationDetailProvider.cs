@@ -15,6 +15,9 @@ namespace Nwazet.Commerce.Services.Combinations {
            ContentTypeDefinitionBuilder previous,
            string containerTypeName);
 
+        void Synchronize(
+            CombinationContainerPart container, CombinationPart combination);
+
         IEnumerable<CombinationDetailShape> GetCombinationDetailShapes(
             CombinationPart part,
             dynamic shapeHelper);

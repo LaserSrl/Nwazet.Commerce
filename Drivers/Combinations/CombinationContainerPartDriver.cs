@@ -96,7 +96,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             if (combinationContainerPart == null) {
                 return null;
             }
-            // TODO: only get the published CombinationParts
+            // Only get the published CombinationParts
             var allCombinationParts = combinationContainerPart.CombinationParts;
             var publishedCombinationParts = _contentManager
                 .GetMany<CombinationPart>(

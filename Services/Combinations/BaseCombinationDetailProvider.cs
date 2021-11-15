@@ -23,14 +23,19 @@ namespace Nwazet.Commerce.Services.Combinations {
         public virtual ContentTypeDefinitionBuilder AlterCombinationDefinition(
             ContentTypeDefinitionBuilder previous,
             string containerTypeName) {
-            // base implementation won't alter the definition
+            // Base implementation won't alter the definition
             return previous;
+        }
+
+        public virtual void Synchronize(
+            CombinationContainerPart container, CombinationPart combination) {
+            // Base implementation empty on purpose
         }
 
         public virtual IEnumerable<CombinationDetailShape> GetCombinationDetailShapes(
             CombinationPart part,
             dynamic shapeHelper) {
-
+            // Base implementation empty on purpose
             return Enumerable.Empty<CombinationDetailShape>();
         }
     }
