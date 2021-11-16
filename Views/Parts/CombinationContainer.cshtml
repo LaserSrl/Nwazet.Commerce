@@ -1,4 +1,5 @@
 ﻿@using Nwazet.Commerce.Models;
+@using Nwazet.Commerce.Services;
 @using Nwazet.Commerce.Services.Combinations;
 @using Nwazet.Commerce.ViewModels.Combinations;
 @using Orchard.ContentManagement;
@@ -8,6 +9,8 @@
     var shortGuid = "a" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
 
     var _productCombinationService = WorkContext.Resolve<IProductCombinationService>();
+    var _productAttributeService = WorkContext.Resolve<IProductAttributeService>();
+
     var combinations = (IEnumerable<CombinationPart>)Model.CombinationParts;
     var productCi = (IContent)Model.ContentItem;
     var combinationDetails = (Dictionary<int, IEnumerable<CombinationDetailShape>>)Model.CombinationDetails;
@@ -17,16 +20,45 @@
     // TODO: Get from the combinations the collection of all attributes used to generate them
     // For each possible attribute we'll display a list of options corresponding to the possible
     // values for it.
-    var attributeParts = new List<ProductAttributePart>();
+    var attributeValues = new Dictionary<int, HashSet<string>>();
     foreach (var combo in combinations) {
         var comboAttributes = combo.ProductAttributeValues;
+        foreach (var attVal in comboAttributes) {
+            if (!attributeValues.ContainsKey(attVal.AttributeId)) {
+                attributeValues.Add(attVal.AttributeId, new HashSet<string>());
+            }
+            attributeValues[attVal.AttributeId].Add(attVal.AttributeValue);
+
+        }
+    }
+    var attributeParts = _productAttributeService.GetAttributes(attributeValues.Keys);
+
+    // Map of the combinations of options that should be enabled at the same time.
+    var enabledCombinations = new List<string>();
+    // Conceptually, this is a table, with column indexes mapping to
+    // the ids of the attributes.
+    var attributeIndexes = new Dictionary<int, int>();
+    // Given a value for the ith attribute, we should look for it in the ith column.
+    // The values in the other columns are the allowed values/options for the other attributes.
+    // The number of rows is the number of valid combinations.
+    var cIndex = 0;
+    foreach (var ap in attributeParts) {
+        attributeIndexes.Add(ap.Id, cIndex++);
+    }
+    // Build the array of enabled combinations
+    foreach (var combo in combinations) {
+        foreach (var ap in attributeParts) {
+            var attValue = combo.ProductAttributeValues.FirstOrDefault(atc => atc.AttributeId == ap.Id)?.AttributeValue ?? string.Empty;
+            enabledCombinations.Add(attValue);
+        }
     }
 
     var comboElementId = "product_combination_id_" + productCi.Id;
     var radioName = "radio-combination-" + shortGuid;
+    var htmlContainerId = "container_" + shortGuid;
 }
 @if (combinations.Any()) {
-    <div class="combination-container">
+    <div class="combination-container" id="@htmlContainerId">
         <input type="hidden" 
                name="combination_id" 
                data-for-product="@productCi.Id"
@@ -45,15 +77,27 @@
             </div>
         }
 
-        @if (true) {
-            foreach(var attPart in attributeParts) {
-                @* Display each attribute "normally", but with only the options/values
-                    that are used in generating the combinations. *@
-                <div class="@attPart.CssName @("meaning-" + attPart.Meaning)"
-                     data-meaning="@attPart.Meaning">
-
-                </div>
-            }
+        @foreach(var attPart in attributeParts) {
+            @* Display each attribute "normally", but with only the options/values
+                that are used in generating the combinations. *@
+            var htmlId = shortGuid + "attr" + attPart.Id;
+            // Get default selection for this attribute:
+            var defaultValue = defaultCombination.ProductAttributeValues.FirstOrDefault(atc => atc.AttributeId == attPart.Id)?.AttributeValue ?? string.Empty;
+            <div class="@attPart.CssName @("meaning-" + attPart.Meaning)"
+                 data-meaning="@attPart.Meaning">
+                @if (!string.IsNullOrEmpty(attPart.DisplayName)) {
+                    <label for="@htmlId" class="product-attribute-label">@attPart.DisplayName</label>
+                }
+                <select id="@htmlId"
+                        class="product-attribute"
+                        data-for-combination-attribute="@attPart.Id">
+                    @foreach (var attVal in attributeValues[attPart.Id]) {
+                        <option value="@attVal" @if (defaultValue.Equals(attVal)) { <text>selected</text> }>
+                            @attVal
+                        </option>
+                    }
+                </select>
+            </div>
         }
     </div>
 
@@ -69,13 +113,99 @@
             }
         }
     }
+
     using (Script.Foot()) {
         <script type="text/javascript">
             $(document).ready(function () {
-                $('.combination-container input[type=radio][name=@radioName]').change(function () {
-                    $('#@comboElementId').val(this.value);
+                @*$('#@(htmlContainerId).combination-container input[type=radio][name=@radioName]').change(function () {
+                    UpdateCombination(this.value);
+                });*@
+
+                const attributeIndexes = { @Html.Raw(string.Join(", ", attributeIndexes.Select(kvp => kvp.Key + ": " + kvp.Value))) };
+                const attributeIds = [ @Html.Raw(string.Join(", ", attributeParts.Select(ap => ap.Id))) ];
+                const combinationsMap = [ @Html.Raw(string.Join(", ", enabledCombinations.Select(v => "\"" + v + "\""))) ];
+                const nAttributes = @(attributeParts.Count());
+                const nCombinations = @(combinations.Count());
+                const combinationIds = [ @(Html.Raw(string.Join(", ", combinations.Select(cp => cp.Id)))) ];
+
+                function UpdateCombination(cId) {
+                    $('#@comboElementId').val(cId);
                     $('#@comboElementId').trigger('change');
+                }
+
+                $('#@(htmlContainerId).combination-container select.product-attribute[data-for-combination-attribute]').change(function () {
+                    // in the other selects, only some options/values should be enabled
+                    var $this = $(this);
+                    var attributeId = $this.data('for-combination-attribute');
+                    var attributeValue = $this.val();
+                    // For each of the other attributes, we need to enable the options that belong
+                    // to valid combinations with the currently selected attribute/value. At the same
+                    // time we will disable the other options.
+                    // Find the "rows" in the combinations' map matching the currently selected
+                    // attribute.
+                    var cIndex = attributeIndexes[attributeId];
+                    var enabledOptions = [];
+                    for (var i = cIndex; i < combinationsMap.length; i += nAttributes) {
+                        if (combinationsMap[i] == attributeValue) {
+                            // We are in a good row
+                            for (var j = i - cIndex; j < (i - cIndex + nAttributes); j++) {
+                                enabledOptions.push(combinationsMap[j]);
+                            }
+                        }
+                    }
+                    // In enabledOptions we have all the rows. Let's enable all corresponding options.
+                    for (var col = 0; col < nAttributes; col++) {
+                        if (col != cIndex) {
+                            var otherAttrId = attributeIds[col];
+                            var $attrSelect = $('#@(htmlContainerId).combination-container select.product-attribute[data-for-combination-attribute="' + otherAttrId + '"]');
+                            // memorize the previous selected value
+                            var selectedValue = $attrSelect.val();
+                            // disable all options for this attribute, then enable only the "good" ones
+                            $attrSelect.find('option').attr('disabled', 'disabled');
+                            for (var row = 0; row * nAttributes < enabledOptions.length; row++) {
+                                var otherAttrValue = enabledOptions[col + row * nAttributes];
+                                $attrSelect.find('option[value="' + otherAttrValue + '"]').removeAttr('disabled');
+                            }
+                            // If the currently selected option for an attribute is not enabled any more,
+                            // we should select the first enabled one.
+                            var selectedOptionDisabled = $attrSelect.find('option[disabled][value="' + selectedValue + '"]');
+                            if (selectedOptionDisabled && selectedOptionDisabled.length) {
+                                var newOption = $attrSelect.find('option:not([disabled])');
+                                $attrSelect.val(newOption.val());
+                            }
+                        }
+                    }
+                    // We should also enable all options for the attribute for which we've just selected
+                    // a value.
+                    $('#@(htmlContainerId).combination-container select.product-attribute[data-for-combination-attribute="' + attributeIds[cIndex] + '"]')
+                        .find('option').removeAttr('disabled');
+                    // Update the selected combination based on the values for each attribute
+                    var $allSelects = $('#@(htmlContainerId).combination-container select.product-attribute[data-for-combination-attribute]');
+                    var selectedValues = [];
+                    for (var i = 0; i < nAttributes; i++) {
+                        var $thisSelect = $allSelects.filter('[data-for-combination-attribute="' + attributeIds[i] + '"]');
+                        selectedValues.push($thisSelect.val());
+                    }
+                    // find the index of selectedValues array as a row in combinationsMap
+                    var rIndex = 0;
+                    for (; rIndex < nCombinations; rIndex++) {
+                        var cIndex = 0;
+                        for (; cIndex < nAttributes; cIndex++) {
+                            if (selectedValues[cIndex] != combinationsMap[rIndex*nAttributes+cIndex]) {
+                                // rows are different
+                                break;
+                            }
+                        }
+                        if (cIndex == nAttributes) {
+                            // found the correct row
+                            break;
+                        }
+                    }
+                    UpdateCombination(combinationIds[rIndex]);
                 });
+
+                // trigger this so the enabled/disabled stuff is ok
+                $('#@(htmlContainerId).combination-container select.product-attribute[data-for-combination-attribute="'+attributeIds[0]+'"]').change();
             });
         </script>
     }
