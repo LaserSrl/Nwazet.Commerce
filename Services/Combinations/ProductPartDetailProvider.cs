@@ -113,6 +113,8 @@ namespace Nwazet.Commerce.Services.Combinations {
         }
 
         #region ISKUUniquenessHelper
+        // TODO: prevent inventories from changing each other
+
         public IEnumerable<int> GetIdsOfValidSKUDuplicates(ProductPart part) {
             var container = part.As<CombinationContainerPart>();
             if (container != null) {

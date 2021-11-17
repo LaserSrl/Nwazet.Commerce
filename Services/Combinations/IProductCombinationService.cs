@@ -16,7 +16,7 @@ namespace Nwazet.Commerce.Services.Combinations {
             CombinationContainerPart containerPart,
             IEnumerable<IEnumerable<AttributesToCombine>> attributesToCombines);
 
-        string AdminDisplayText(CombinationPart cPart);
+        string AdminDisplayText(CombinationPart combinationPart);
 
         void CreateCombinationType(
             string containerTypeName, string combinationTypeName);

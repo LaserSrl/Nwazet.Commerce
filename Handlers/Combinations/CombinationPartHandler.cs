@@ -4,8 +4,10 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
+using Orchard.OutputCache.Services;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,14 +17,17 @@ namespace Nwazet.Commerce.Handlers.Combinations {
     public class CombinationPartHandler : ContentHandler {
         private readonly IContentManager _contentManager;
         private readonly IProductCombinationService _productCombinationService;
+        private readonly ICacheService _cacheService;
 
         public CombinationPartHandler(
             IRepository<CombinationPartRecord> repository,
             IContentManager contentManager,
-            IProductCombinationService productCombinationService) {
+            IProductCombinationService productCombinationService,
+            ICacheService cacheService) {
 
             _contentManager = contentManager;
             _productCombinationService = productCombinationService;
+            _cacheService = cacheService;
 
             Filters.Add(StorageFilter.For(repository));
 
@@ -31,6 +36,23 @@ namespace Nwazet.Commerce.Handlers.Combinations {
             OnLoading<CombinationPart>((context, part) => LazyLoadHandlers(part));
             OnVersioning<CombinationPart>((context, part, newVersionPart) => LazyLoadHandlers(newVersionPart));
 
+            // When combinations get updated, we may wish to have something to evict cached
+            // stuff about their containers
+            OnPublished<CombinationPart>((context, part) => InvalidateParentCache(part));
+            OnUnpublished<CombinationPart>((context, part) => InvalidateParentCache(part));
+            OnRemoved<CombinationPart>((context, part) => InvalidateParentCache(part));
+            OnDestroyed<CombinationPart>((context, part) => InvalidateParentCache(part));
+        }
+
+        void InvalidateParentCache(CombinationPart part) {
+            // Cache items directly marked for this ContentItem are evicted elsewhere
+            // (see Orchard.OutputCache.Handlers.CacheItemInvalidationHandler). Here
+            // we should make sure the container for the CombinationPart is evicted as
+            // well, since that is generally what's used for the frontend.
+            var container = part.CombinationContainerPart;
+            if (container != null) {
+                _cacheService.RemoveByTag(container.Id.ToString(CultureInfo.InvariantCulture));
+            }
         }
 
         protected override void GetItemMetadata(GetContentItemMetadataContext context) {

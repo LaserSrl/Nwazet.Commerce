@@ -83,15 +83,27 @@ namespace Nwazet.Commerce.Services.Combinations {
         public IEnumerable<CombinationPart> CreateCombinations(
             CombinationContainerPart containerPart,
             IEnumerable<IEnumerable<AttributesToCombine>> attributesCombinations) {
-            // TODO: parameter validation
+
+            if (containerPart == null) {
+                throw new ArgumentNullException("containerPart");
+            }
+            if (attributesCombinations == null) {
+                throw new ArgumentNullException("attributesCombinations");
+            }
+
             var contentType = GetCombinationContentType(containerPart);
             if (string.IsNullOrWhiteSpace(contentType)) {
                 return Enumerable.Empty<CombinationPart>();
             }
 
+            var combinations = attributesCombinations.Where(i => i != null && i.Any());
+            if (!combinations.Any()) {
+                return Enumerable.Empty<CombinationPart>();
+            }
+
             // Create the contents
             var createdItems = new List<CombinationPart>();
-            foreach (var combination in attributesCombinations) {
+            foreach (var combination in combinations) {
                 var newItem = _contentManager.New(contentType);
                 // We don't publish the item immediately: users that are creating the 
                 // combinations will have the option to do that themselves.
@@ -119,8 +131,11 @@ namespace Nwazet.Commerce.Services.Combinations {
         }
 
         private Dictionary<int, string> _attributeNames;
-        public string AdminDisplayText(CombinationPart cPart) {
-            var comboValues = cPart.ProductAttributeValues;
+        public string AdminDisplayText(CombinationPart combinationPart) {
+            if (combinationPart == null) {
+                throw new ArgumentNullException("combinationPart");
+            }
+            var comboValues = combinationPart.ProductAttributeValues;
             // get the attributes, because we need the title/displayname
             // Some are memorized:
             var attributeIdsToFetch = comboValues
@@ -148,11 +163,17 @@ namespace Nwazet.Commerce.Services.Combinations {
                 cfg => cfg
                     .WithPart("CombinationPart")
                     .WithPart("CommonPart")
-                    .WithIdentity();
-            comboDefinition = cfg => comboDefinition(cfg).Draftable();
-            // TODO: handle securable / permissions for the combinations
-            // TODO: make sure that Products can't be created directly from 
-            // "normal" backend controllers
+                    .WithIdentity()
+                    // Make the new ContentType Draftable, so when we create new combinations they
+                    // are not automatically published.
+                    .Draftable()
+                    // To make sure that Products can't be created directly from the "normal" backend 
+                    // controller for ContentItems we need it Listable and Createable properties to
+                    // both be false.
+                    .Creatable(false).Listable(false)
+                    // TODO: handle securable / permissions for the combinations
+                    ;
+
             _contentDefinitionManager.AlterTypeDefinition(combinationTypeName,
                 cfg => {
                     cfg = comboDefinition(cfg);
