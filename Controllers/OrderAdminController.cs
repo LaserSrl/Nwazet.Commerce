@@ -131,7 +131,7 @@ namespace Nwazet.Commerce.Controllers {
             var routeValues = ControllerContext.RouteData.Values;
             if (options != null) {
                 routeValues["Options.OrderBy"] = options.OrderBy;
-                // TODO: states come from providers now
+                // States come from providers now
                 if ((_orderStatusProviders
                         .SelectMany(osp => osp.States)
                         .Distinct(StringComparer.InvariantCultureIgnoreCase).Union(new[] {"any", "active"})).Any(

@@ -106,9 +106,6 @@
     using (Script.Foot()) {
         <script type="text/javascript">
             $(document).ready(function () {
-                @*$('#@(htmlContainerId).combination-container input[type=radio][name=@radioName]').change(function () {
-                    UpdateCombination(this.value);
-                });*@
 
                 const attributeIndexes = { @Html.Raw(string.Join(", ", attributeIndexes.Select(kvp => kvp.Key + ": " + kvp.Value))) };
                 const attributeIds = [ @Html.Raw(string.Join(", ", attributeParts.Select(ap => ap.Id))) ];
@@ -118,6 +115,9 @@
                 const combinationIds = [ @(Html.Raw(string.Join(", ", combinations.Select(cp => cp.Id)))) ];
 
                 function UpdateCombination(cId) {
+                    @* The scripts to update information in the UI, as well as actually select
+                        the combination that will be added to the cart, requires a 'change' event
+                        triggered on the element whose value is the combination's Id. *@
                     $('#@comboElementId').val(cId);
                     $('#@comboElementId').trigger('change');
                 }
