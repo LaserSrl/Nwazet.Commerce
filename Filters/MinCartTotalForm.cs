@@ -20,7 +20,10 @@ namespace Nwazet.Commerce.Filters {
         public MinCartTotalForm(IShapeFactory shapeFactory) {
             Shape = shapeFactory;
             T = NullLocalizer.Instance;
-            _valueLabel = T("Enter the value. The decimal separator is {0}", CultureInfo.CurrentUICulture.NumberFormat.CurrencyDecimalSeparator);
+
+            // We are using invariant culture because it has been used all over the orchard.
+            // So we have specified to the user which decimal place to use
+            _valueLabel = T("Enter the value. The decimal separator is {0}", CultureInfo.InvariantCulture.NumberFormat.CurrencyDecimalSeparator);
             _formName = FormName;
         }
 
