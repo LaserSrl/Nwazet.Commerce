@@ -260,8 +260,11 @@
     <None Include="Views\CouponingLineCriterion\Edit.cshtml" />
     <None Include="Views\DefinitionTemplates\CombinationContainerPartSettings.cshtml" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
-    <None Include="Views\EditorTemplates\Parts\CombinationContainerPart.cshtml" />
-    <None Include="Views\EditorTemplates\Parts\CombinationPart.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.Empty.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.Unauthorized.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\CombinationPart.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.New.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Advanced.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />

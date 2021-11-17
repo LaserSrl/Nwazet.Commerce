@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Services.Combinations {
     public interface IProductCombinationService : IDependency {
+        
+        CombinationPart GetDummyCombination(CombinationContainerPart container);
 
         IEnumerable<CombinationPart> CreateCombinations(
             CombinationContainerPart containerPart,

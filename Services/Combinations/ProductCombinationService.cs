@@ -60,14 +60,31 @@ namespace Nwazet.Commerce.Services.Combinations {
             get { return _combinationDetailProviders.Value; }
         }
 
+        private string GetCombinationContentType(
+            CombinationContainerPart containerPart) {
+            var partSettings = containerPart.TypePartDefinition
+                .Settings.GetModel<CombinationContainerPartSettings>();
+
+            return partSettings?.CombinationTypeName ?? string.Empty;
+        }
+
+        public CombinationPart GetDummyCombination(CombinationContainerPart container) {
+            if (container == null) {
+                return null;
+            }
+            // In most cases I could actually use any of the combinations that may
+            // have already been created for container. However:
+            // 1- Something may edit that combination down the line, even if that is a mistake.
+            // 2- The ContentType for combinations may have been changed for container.
+            var ct = GetCombinationContentType(container);
+            return _contentManager.New<CombinationPart>(ct);
+        }
+
         public IEnumerable<CombinationPart> CreateCombinations(
             CombinationContainerPart containerPart,
             IEnumerable<IEnumerable<AttributesToCombine>> attributesCombinations) {
             // TODO: parameter validation
-            var partSettings = containerPart.TypePartDefinition
-                .Settings.GetModel<CombinationContainerPartSettings>();
-
-            var contentType = partSettings?.CombinationTypeName ?? string.Empty;
+            var contentType = GetCombinationContentType(containerPart);
             if (string.IsNullOrWhiteSpace(contentType)) {
                 return Enumerable.Empty<CombinationPart>();
             }

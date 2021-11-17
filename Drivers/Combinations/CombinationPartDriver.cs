@@ -37,7 +37,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             return ContentShape("Parts_CombinationPart_Editor",
                 () => {
                     return shapeHelper.EditorTemplate(
-                        TemplateName: "Parts/CombinationPart",
+                        TemplateName: "Parts/Combinations/CombinationPart",
                         Model: new CombinationPartEditViewModel {
                             Part = part,
                             CombinationContainer = part.CombinationContainerPart

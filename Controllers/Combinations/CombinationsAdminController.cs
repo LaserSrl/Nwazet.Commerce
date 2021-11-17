@@ -2,9 +2,11 @@
 using Nwazet.Commerce.Services.Combinations;
 using Nwazet.Commerce.ViewModels.Combinations;
 using Orchard.ContentManagement;
+using CorePermissions = Orchard.Core.Contents.Permissions;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Mvc.Extensions;
+using Orchard.Security;
 using Orchard.UI.Admin;
 using System;
 using System.Collections.Generic;
@@ -19,13 +21,16 @@ namespace Nwazet.Commerce.Controllers {
     public class CombinationsAdminController : Controller {
         private readonly IContentManager _contentManager;
         private readonly IProductCombinationService _productCombinationService;
+        private readonly IAuthorizer _authorizer;
 
         public CombinationsAdminController(
             IContentManager contentManager,
-            IProductCombinationService productCombinationService) {
+            IProductCombinationService productCombinationService,
+            IAuthorizer authorizer) {
 
             _contentManager = contentManager;
             _productCombinationService = productCombinationService;
+            _authorizer = authorizer;
 
             T = NullLocalizer.Instance;
         }
@@ -33,15 +38,22 @@ namespace Nwazet.Commerce.Controllers {
         public Localizer T { get; set; }
 
         [HttpPost]
+        [Authorize]
         public JsonResult GenerateCombinations(int contentId, IEnumerable<AttributesToCombine> selectedAttributes) {
             // method called through ajax
-            // TODO check user permissions
             // The content we are editing may not have been published yet.
             var containerContent = _contentManager.Get(contentId, VersionOptions.Latest)
                 ?.As<CombinationContainerPart>();
             if (containerContent == null) {
                 // exception
                 return ErrorJson(T("Invalid container."));
+            }
+            // get a Combination to test whether the user is allowed to create new ones
+            var dummyCombination = _productCombinationService.GetDummyCombination(containerContent);
+            if (!_authorizer.Authorize(CorePermissions.EditContent, containerContent)
+                || !_authorizer.Authorize(CorePermissions.CreateContent, dummyCombination)) {
+                // unauthorized
+                return ErrorJson(T("Unauthorized."));
             }
             // group all selected values for each attribute:
             // Each object in this list contains, for a specific Attribute, the values
@@ -53,7 +65,8 @@ namespace Nwazet.Commerce.Controllers {
                     Values = g.Select(atc => atc.AttributeValue).Distinct()
                 });
             // TODO: validation of attributes and corresponding values
-            // recursively build the combinations:
+
+            // Recursively build the combinations:
             // We are going to create a collection of combinations. Each combination
             // has a list of <AttributeId, AttributeValue> pairs such that:
             // - there are no duplicate combinations
@@ -95,7 +108,8 @@ namespace Nwazet.Commerce.Controllers {
             // Create the new contents
             var created = _productCombinationService
                 .CreateCombinations(containerContent, newCombinations);
-
+            // TODO: return the combinations we created to update the UI directly without having
+            // to reload the page.
             return SuccessJson(T("{0} new combinations created.", created.Count()));
         }
 

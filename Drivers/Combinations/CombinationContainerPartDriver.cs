@@ -5,8 +5,10 @@ using Nwazet.Commerce.Settings.Combinations;
 using Nwazet.Commerce.ViewModels.Combinations;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
+using CorePermissions = Orchard.Core.Contents.Permissions;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
+using Orchard.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,15 +24,18 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         private readonly IProductAttributeAdminServices _productAttributeAdminServices;
         private readonly IContentManager _contentManager;
         private readonly IProductCombinationService _productCombinationService;
+        private readonly IAuthorizer _authorizer;
 
         public CombinationContainerPartDriver(
             IProductAttributeAdminServices productAttributeAdminServices,
             IContentManager contentManager,
-            IProductCombinationService productCombinationService) {
+            IProductCombinationService productCombinationService,
+            IAuthorizer authorizer) {
 
             _productAttributeAdminServices = productAttributeAdminServices;
             _contentManager = contentManager;
             _productCombinationService = productCombinationService;
+            _authorizer = authorizer;
 
             T = NullLocalizer.Instance;
         }
@@ -52,22 +57,50 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         }
 
         private DriverResult EditorShape(CombinationContainerPartEditViewModel vm, dynamic shapeHelper) {
-            return ContentShape("Parts_CombinationContainerPart_Editor",
-                () => {
-                    // TODO: handle the case where the Part is being created to avoid 
-                    // messing cases with Id == 0
-                    // TODO: check user permissions
-                    // get list of attributes we'll be able to use for combinations
-                    var allAttributes = _productAttributeAdminServices
-                        .GetAllProductAttributeParts();
-                    vm.AllAttributeParts = allAttributes;
-
+            var shapes = new List<DriverResult>();
+            var dummyCombination = _productCombinationService.GetDummyCombination(vm.Part);
+            Func<dynamic> unauthorizedFactory = () => shapeHelper.EditorTemplate(
+                    TemplateName: "Parts/Combinations/CombinationContainerPart.Empty");
+            Func<dynamic> newFactory = () => shapeHelper.EditorTemplate(
+                    TemplateName: "Parts/Combinations/CombinationContainerPart.Empty");
+            Func<dynamic> editorFactory = () => shapeHelper.EditorTemplate(
+                    TemplateName: "Parts/Combinations/CombinationContainerPart.Empty");
+            if (!_authorizer.Authorize(CorePermissions.CreateContent, dummyCombination)) {
+                unauthorizedFactory = () => {
                     return shapeHelper.EditorTemplate(
-                        TemplateName: "Parts/CombinationContainerPart",
+                        TemplateName: "Parts/Combinations/CombinationContainerPart.Unauthorized",
                         Model: vm,
                         Prefix: Prefix
                         );
-                });
+                };
+            } else {
+                if (vm.Part.Id == 0) {
+                    newFactory = () => {
+                        return shapeHelper.EditorTemplate(
+                            TemplateName: "Parts/Combinations/CombinationContainerPart.New",
+                            Model: vm,
+                            Prefix: Prefix
+                            );
+                    };
+                } else {
+                    editorFactory = () => {
+                        // get list of attributes we'll be able to use for combinations
+                        var allAttributes = _productAttributeAdminServices
+                                .GetAllProductAttributeParts();
+                        vm.AllAttributeParts = allAttributes;
+
+                        return shapeHelper.EditorTemplate(
+                            TemplateName: "Parts/Combinations/CombinationContainerPart",
+                            Model: vm,
+                            Prefix: Prefix
+                            );
+                    };
+                }
+            }
+            shapes.Add(ContentShape("Parts_CombinationContainerPart_Editor_Unauthorized", unauthorizedFactory));
+            shapes.Add(ContentShape("Parts_CombinationContainerPart_Editor_New", newFactory));
+            shapes.Add(ContentShape("Parts_CombinationContainerPart_Editor", editorFactory));
+            return Combined(shapes.ToArray());
         }
 
         private CombinationContainerPartEditViewModel CreateVM(CombinationContainerPart part) {
@@ -91,7 +124,6 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         }
 
         public dynamic GetAttributeDisplayShape(IContent product, dynamic shapeHelper) {
-            // TODO
             var combinationContainerPart = product.As<CombinationContainerPart>();
             if (combinationContainerPart == null) {
                 return null;
