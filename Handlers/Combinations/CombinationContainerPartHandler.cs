@@ -22,11 +22,33 @@ namespace Nwazet.Commerce.Handlers.Combinations {
 
             Filters.Add(StorageFilter.For(repository));
 
-            //Lazyfield setters
+            // Lazyfield setters
             OnInitializing<CombinationContainerPart>(PropertySetHandlers);
             OnLoading<CombinationContainerPart>((context, part) => LazyLoadHandlers(part));
             OnVersioning<CombinationContainerPart>((context, part, newVersionPart) => LazyLoadHandlers(newVersionPart));
 
+            // When we are unpublishing/deleting a container, we should do the same to its combinations
+            OnUnpublishing<CombinationContainerPart>(UnpublishCombinations);
+            OnRemoving<CombinationContainerPart>(RemoveCombinations);
+            OnDestroying<CombinationContainerPart>(DestroyCombinations);
+        }
+
+        void UnpublishCombinations(PublishContentContext context, CombinationContainerPart part) {
+            foreach (var combination in part.CombinationParts) {
+                _contentManager.Unpublish(combination.ContentItem);
+            }
+        }
+
+        void RemoveCombinations(RemoveContentContext context, CombinationContainerPart part) {
+            foreach (var combination in part.CombinationParts) {
+                _contentManager.Remove(combination.ContentItem);
+            }
+        }
+
+        void DestroyCombinations(DestroyContentContext context, CombinationContainerPart part) {
+            foreach (var combination in part.CombinationParts) {
+                _contentManager.Destroy(combination.ContentItem);
+            }
         }
 
         void LazyLoadHandlers(CombinationContainerPart part) {

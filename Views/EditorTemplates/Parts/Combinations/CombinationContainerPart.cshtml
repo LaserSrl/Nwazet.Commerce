@@ -57,13 +57,13 @@
                                     </td>
                                     <td>
                                         @if (combination.HasPublished()) {
-                                            if (combination.HasDraft()) {
+                                            @*if (combination.HasDraft()) {
                                                 if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
                                                     @Html.Link(T("Publish Draft").Text, 
                                                         Url.Action("Publish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}), 
                                                         new {itemprop = "UnsafeUrl", @class="btn btn-success btn-xs"})
                                                 }
-                                            }
+                                            }*@
                                             if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
                                                 @Html.Link(T("Unpublish").Text, 
                                                     Url.Action("Unpublish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}), 

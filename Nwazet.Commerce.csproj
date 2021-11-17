@@ -1068,6 +1068,10 @@
       <Project>{17f86780-9a1f-4aa1-86f1-875eec2730c7}</Project>
       <Name>Orchard.Modules</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Orchard\src\Orchard.Web\Modules\Orchard.OutputCache\Orchard.OutputCache.csproj">
+      <Project>{6E444FF1-A47C-4CF6-BB3F-507C8EBD776D}</Project>
+      <Name>Orchard.OutputCache</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Orchard\src\Orchard.Web\Modules\Orchard.Projections\Orchard.Projections.csproj">
       <Project>{5531e894-d259-45a3-aa61-26dbe720c1ce}</Project>
       <Name>Orchard.Projections</Name>
