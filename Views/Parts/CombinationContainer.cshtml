@@ -65,17 +65,6 @@
                data-input-role="combination_id"
                value="@(defaultCombination.Id)" 
                id="@comboElementId" />
-        @foreach (var combo in combinations) {
-            <div class="combination">
-                <input name="@("combination-" + combo.Id)" 
-                       value="@combo.Id" type="hidden" />
-                <input type="radio" name="@radioName" 
-                       id="@("combo" + combo.Id)" 
-                       value="@combo.Id" 
-                       @if (combo.Id == defaultCombination.Id) {<text>checked</text> }/>
-                <label for="@("combo" + combo.Id)">@_productCombinationService.AdminDisplayText(combo)</label>
-            </div>
-        }
 
         @foreach(var attPart in attributeParts) {
             @* Display each attribute "normally", but with only the options/values
