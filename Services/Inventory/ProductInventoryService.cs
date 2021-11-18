@@ -4,28 +4,38 @@ using Nwazet.Commerce.Models;
 using Orchard;
 using Orchard.ContentManagement;
 
-namespace Nwazet.Commerce.Services {
-    public abstract class ProductInventoryServiceBase : IProductInventoryService {
+namespace Nwazet.Commerce.Services.Inventory {
+    public class ProductInventoryService : IProductInventoryService {
         protected readonly IWorkContextAccessor _workContextAccessor;
         protected readonly IContentManager _contentManager;
+        protected readonly IEnumerable<IProductGroupInventoryProvider> _productGroupInventoryProviders;
 
-        public ProductInventoryServiceBase(
+        public ProductInventoryService(
             IWorkContextAccessor workContextAccessor,
-            IContentManager contentManager) {
+            IContentManager contentManager,
+            IEnumerable<IProductGroupInventoryProvider> productGroupInventoryProviders) {
 
             _workContextAccessor = workContextAccessor;
             _contentManager = contentManager;
+            _productGroupInventoryProviders = productGroupInventoryProviders;
         }
 
-        public virtual IEnumerable<ProductPart> GetProductsWithSameInventory(ProductPart part) {
-            //return Latest and Published versions, unless they coincide or are the same as part
-            var sSet = new ProductPart[] {
-                _contentManager.Query<ProductPart>(VersionOptions.Published, part.ContentItem.ContentType)
-                    .Where<ProductPartVersionRecord>(ppvr => ppvr.ContentItemRecord == part.Record.ContentItemRecord).List().FirstOrDefault(),
-                _contentManager.Query<ProductPart>(VersionOptions.Latest, part.ContentItem.ContentType)
-                    .Where<ProductPartVersionRecord>(ppvr => ppvr.ContentItemRecord == part.Record.ContentItemRecord).List().FirstOrDefault()
-            };
-            return sSet.Distinct().Where(lp => lp != null && lp.Record.Id != part.Record.Id);
+        public IEnumerable<ProductPart> GetProductsWithSameInventory(ProductPart part) {
+
+            var products = new List<ProductPart>();
+            foreach (var provider in _productGroupInventoryProviders) {
+                products.AddRange(provider.AddProductsWithSameInventory(part, products));
+                // TODO: should we handle duplicates?
+            }
+            foreach (var provider in _productGroupInventoryProviders) {
+                var toRemove = provider.FilterProductsWithSameInventory(part, products);
+                products.RemoveAll(p => 
+                    toRemove.Any(pp => 
+                        pp.Id == p.Id 
+                        && pp.ContentItem.VersionRecord.Id == p.ContentItem.VersionRecord.Id));
+            }
+
+            return products;
         }
 
         /// <summary>
@@ -33,8 +43,8 @@ namespace Nwazet.Commerce.Services {
         /// has to be kept in synch with the parameter's.
         /// </summary>
         /// <param name="part">The ProductPart whose inventory will be copied over.</param>
-        public virtual void SynchronizeInventories(ProductPart part) {
-            //Synchronize inventory between Latest and Published versions
+        public void SynchronizeInventories(ProductPart part) {
+            // Synchronize inventory between Latest and Published versions
             int inv = GetInventory(part);
             foreach (var pp in
                GetProductsWithSameInventory(part)
@@ -55,19 +65,19 @@ namespace Nwazet.Commerce.Services {
             }
         }
 
-        public virtual int SetInventory(ProductPart part, int inventoryValue) {
+        public int SetInventory(ProductPart part, int inventoryValue) {
             part.As<InventoryPart>().Inventory = inventoryValue;
             SynchronizeInventories(part);
             return part.Inventory;
         }
 
-        public virtual int UpdateInventory(ProductPart part, int inventoryChange) {
+        public int UpdateInventory(ProductPart part, int inventoryChange) {
             part.As<InventoryPart>().Inventory += inventoryChange;
             SynchronizeInventories(part);
             return part.Inventory;
         }
 
-        public virtual int GetInventory(InventoryPart part) {
+        public int GetInventory(InventoryPart part) {
             IBundleService bundleService;
             var inventory = part.Inventory;
             if (_workContextAccessor.GetContext().TryResolve(out bundleService) && part.Has<BundlePart>()) {
@@ -77,7 +87,7 @@ namespace Nwazet.Commerce.Services {
             return inventory;
         }
 
-        public virtual int GetInventory(ProductPart part) {
+        public int GetInventory(ProductPart part) {
             IBundleService bundleService;
             var inventory = part.As<InventoryPart>()?.Inventory ?? 0;
             if (_workContextAccessor.GetContext().TryResolve(out bundleService) && part.Has<BundlePart>()) {
@@ -100,8 +110,21 @@ namespace Nwazet.Commerce.Services {
                 .Min(p => p.Product.Inventory / p.Quantity);
         }
 
-        public virtual IEnumerable<ProductPart> GetProductsWithInventoryIssues() {
-            return new List<ProductPart>(); //There is no criteria here to find issues
+        public IEnumerable<ProductPart> GetProductsWithInventoryIssues() {
+            var products = new List<ProductPart>();
+            foreach (var provider in _productGroupInventoryProviders) {
+                products.AddRange(provider.AddProductsWithInventoryIssues());
+                // TODO: should we handle duplicates?
+            }
+            foreach (var provider in _productGroupInventoryProviders) {
+                var toRemove = provider.FilterProductsWithInventoryIssues(products);
+                products.RemoveAll(p =>
+                    toRemove.Any(pp =>
+                        pp.Id == p.Id
+                        && pp.ContentItem.VersionRecord.Id == p.ContentItem.VersionRecord.Id));
+            }
+
+            return products;
         }
     }
 }

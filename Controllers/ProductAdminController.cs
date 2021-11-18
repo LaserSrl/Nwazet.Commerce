@@ -37,6 +37,7 @@ using Orchard.Localization.Models;
 using Orchard.Taxonomies.Helpers;
 using Orchard.Taxonomies.Models;
 using CorePermissions = Orchard.Core.Contents.Permissions;
+using Nwazet.Commerce.Services.Inventory;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Commerce")]
