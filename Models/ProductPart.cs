@@ -3,6 +3,7 @@ using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using System.Collections.Generic;
 using Nwazet.Commerce.Services;
+using Nwazet.Commerce.Services.Inventory;
 
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.Commerce")]

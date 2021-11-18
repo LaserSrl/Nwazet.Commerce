@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
+using Nwazet.Commerce.Services.Inventory;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
