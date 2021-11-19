@@ -519,6 +519,7 @@
     <Compile Include="Models\PersistentShoppingCart.cs" />
     <Compile Include="Models\PricePart.cs" />
     <Compile Include="Models\PricePartRecord.cs" />
+    <Compile Include="Models\ProductAttributeValueRecord.cs" />
     <Compile Include="Models\ProductsListPart.cs" />
     <Compile Include="Models\OrderEvent.cs" />
     <Compile Include="Models\OrderPart.cs" />
