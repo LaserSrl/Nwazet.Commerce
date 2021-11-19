@@ -30,16 +30,16 @@ namespace Nwazet.Commerce.Services.Inventory {
             return Enumerable.Empty<ProductPart>();
         }
 
-        public virtual IEnumerable<ProductPart> AddProductsWithInventoryIssues() {
+        public virtual IEnumerable<IEnumerable<ProductPart>> AddProductsWithInventoryIssues() {
             // By default, we are not going to add any product
-            return Enumerable.Empty<ProductPart>();
+            return Enumerable.Empty<IEnumerable<ProductPart>>();
         }
 
 
-        public virtual IEnumerable<ProductPart> FilterProductsWithInventoryIssues(
-            IEnumerable<ProductPart> products) {
+        public virtual IEnumerable<IEnumerable<ProductPart>> FilterProductsWithInventoryIssues(
+            IEnumerable<IEnumerable<ProductPart>> productGroups) {
             // By default, we are not going to remove any product
-            return Enumerable.Empty<ProductPart>();
+            return Enumerable.Empty<IEnumerable<ProductPart>>();
         }
 
 

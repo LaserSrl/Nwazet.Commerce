@@ -111,20 +111,20 @@ namespace Nwazet.Commerce.Services.Inventory {
         }
 
         public IEnumerable<ProductPart> GetProductsWithInventoryIssues() {
-            var products = new List<ProductPart>();
+            var productGroups = new List<IEnumerable<ProductPart>>();
             foreach (var provider in _productGroupInventoryProviders) {
-                products.AddRange(provider.AddProductsWithInventoryIssues());
-                // TODO: should we handle duplicates?
+                productGroups.AddRange(provider.AddProductsWithInventoryIssues());
             }
             foreach (var provider in _productGroupInventoryProviders) {
-                var toRemove = provider.FilterProductsWithInventoryIssues(products);
-                products.RemoveAll(p =>
-                    toRemove.Any(pp =>
-                        pp.Id == p.Id
-                        && pp.ContentItem.VersionRecord.Id == p.ContentItem.VersionRecord.Id));
+                var toRemove = provider.FilterProductsWithInventoryIssues(productGroups);
+                //productGroups.RemoveAll(p =>
+                //    toRemove.Any(pp =>
+                //        pp.Id == p.Id
+                //        && pp.ContentItem.VersionRecord.Id == p.ContentItem.VersionRecord.Id));
             }
 
-            return products;
+            return productGroups
+                .Select(group => group.First()); //get the first ProductPart as representative of each group
         }
     }
 }
