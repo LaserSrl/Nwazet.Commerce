@@ -34,7 +34,7 @@ namespace Nwazet.Commerce.Services.Inventory {
             return sSet;
         }
 
-        public override IEnumerable<ProductPart> AddProductsWithInventoryIssues() {
+        public override IEnumerable<IEnumerable<ProductPart>> AddProductsWithInventoryIssues() {
             var badProducts = _contentManager
                 .Query<ProductPart, ProductPartVersionRecord>(VersionOptions.Latest)
                 .List() //Get all ProductParts
@@ -44,8 +44,8 @@ namespace Nwazet.Commerce.Services.Inventory {
                     .Select(pp => GetInventory(pp))
                     .Distinct()
                     .Count() > 1) //groups where the inventories are not all the same
-                .Select(group => group.First()); //get the first ProductPart as representative of the group
-
+                ;
+                
             return badProducts;
         }
 

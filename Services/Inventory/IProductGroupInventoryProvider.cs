@@ -15,9 +15,9 @@ namespace Nwazet.Commerce.Services.Inventory {
         IEnumerable<ProductPart> FilterProductsWithSameInventory(
             ProductPart part, IEnumerable<ProductPart> products);
 
-        IEnumerable<ProductPart> AddProductsWithInventoryIssues();
+        IEnumerable<IEnumerable<ProductPart>> AddProductsWithInventoryIssues();
 
-        IEnumerable<ProductPart> FilterProductsWithInventoryIssues(
-            IEnumerable<ProductPart> parts);
+        IEnumerable<IEnumerable<ProductPart>> FilterProductsWithInventoryIssues(
+            IEnumerable<IEnumerable<ProductPart>> groups);
     }
 }
