@@ -55,7 +55,8 @@ namespace Nwazet.Commerce.Drivers {
                         AttributeValues = part.AttributeValues,
                         AttributeExtensionProviders = _attributeExtensionProviders,
                         CssName = part.CssName,
-                        Meaning = part.Meaning
+                        Meaning = part.Meaning,
+                        AttributeValueRecords = part.AttributeValueRecords
                     }));
         }
 

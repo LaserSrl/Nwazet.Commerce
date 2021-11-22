@@ -11,5 +11,6 @@ namespace Nwazet.Commerce.ViewModels {
         public IEnumerable<IProductAttributeExtensionProvider> AttributeExtensionProviders { get; set; }
         public string CssName { get; set; }
         public string Meaning { get; set; }
+        public IList<ProductAttributeValueRecord> AttributeValueRecords { get; set; }
     }
 }
