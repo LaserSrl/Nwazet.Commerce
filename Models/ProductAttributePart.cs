@@ -53,6 +53,11 @@ namespace Nwazet.Commerce.Models {
             set { Store(r => r.Meaning, value); }
         }
 
+        public IList<ProductAttributeValueRecord> AttributeValueRecords {
+            get { return Record.AttributeValueRecords; }
+            set { Record.AttributeValueRecords = value; }
+        }
+
         internal string AttributeValuesString
         {
             get

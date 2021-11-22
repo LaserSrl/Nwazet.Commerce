@@ -132,12 +132,12 @@ namespace Nwazet.Commerce.Migrations {
              .Column<bool>("IsLineAdjustment", col => col.WithDefault(false))
              .Column<int>("SortOrder")
              .Column<string>("ExtensionProvider", col => col.WithLength(500))
-             .Column<int>("ProductAttributeId")
+             .Column<int>("AttributePartRecord_Id")
             );
 
             // merged existing values
-            var productAttributeRecords = _contentManager.Query<ProductAttributePart, ProductAttributePartRecord>().List();
-            foreach (var attribute in productAttributeRecords) {
+            var productAttributeParts = _contentManager.Query<ProductAttributePart, ProductAttributePartRecord>().List();
+            foreach (var attribute in productAttributeParts) {
                 string attributeValue = attribute.AttributeValuesString;
                 if (!string.IsNullOrWhiteSpace(attributeValue)) {
                     var itemsAttribute = attributeValue.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
@@ -152,9 +152,9 @@ namespace Nwazet.Commerce.Migrations {
                             SortOrder = attrSettings.Length > 2 ? Convert.ToInt32(attrSettings[2]) : 0,
                             // Check if extension provider value is present, didn't exist in previous versions
                             ExtensionProvider = attrSettings.Length > 3 ? attrSettings[3] : string.Empty,
-                            ProductAttributeId = attribute.Id
+                            AttributePartRecord = attribute.Record
                         });
-                    }    
+                    }
                 }
             }
             return 7;

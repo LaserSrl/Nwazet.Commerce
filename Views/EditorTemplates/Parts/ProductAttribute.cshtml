@@ -39,7 +39,7 @@
     <div class="hint">@T("Sort Order determines the order in which options are displayed relative to each other.")</div>
     <div class="hint">@T(@"Price Adjustment is the amount the price will be adjusted for each item that has the attribute selected. Use negative adjustments to reduce the price.")</div>
     <div class="hint">@T(@"When checked, Apply To Line causes the price adjustment to be applied to the line total. By default, the adjustment is applied to the unit price.")</div>
-    <ul id="NwazetCommerceAttribute_AttributeValues">
+    <ul id="NwazetCommerceAttribute_AttributeValueRecords">
         <li class="header">
             <div class="option-name">@T("Name")</div>
             <div class="price-adj">@T("Price Adjustment")</div>
@@ -49,22 +49,22 @@
             }
         </li>
         @{int i = 0;}
-        @foreach (var value in Model.AttributeValues) {
+        @foreach (var value in Model.AttributeValueRecords) {
             <li class="option">
                 <div class="option-name">
-                    <input type="hidden" name="NwazetCommerceAttribute.AttributeValues.Index" value="@i" />
-                    <input type="hidden" name="NwazetCommerceAttribute.AttributeValues[@i].SortOrder" value="@value.SortOrder" />
-                    <input type="text" class="text" name="NwazetCommerceAttribute.AttributeValues[@i].Text" value="@value.Text" />
+                    <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords.Index" value="@i" />
+                    <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords[@i].SortOrder" value="@value.SortOrder" />
+                    <input type="text" class="text" name="NwazetCommerceAttribute.AttributeValueRecords[@i].Text" value="@value.Text" />
                 </div>
                 <div class="price-adj">
-                    <input type="text" class="text small" name="NwazetCommerceAttribute.AttributeValues[@i].PriceAdjustment" value="@value.PriceAdjustment" />
+                    <input type="text" class="text small" name="NwazetCommerceAttribute.AttributeValueRecords[@i].PriceAdjustment" value="@value.PriceAdjustment" />
                 </div>
                 <div class="apply-line">
-                    <input type="checkbox" name="NwazetCommerceAttribute.AttributeValues[@i].IsLineAdjustment" @(value.IsLineAdjustment ? "checked='checked'" : "") value="True" />
+                    <input type="checkbox" name="NwazetCommerceAttribute.AttributeValueRecords[@i].IsLineAdjustment" @(value.IsLineAdjustment ? "checked='checked'" : "") value="True" />
                 </div>
                 @if (Model.AttributeExtensionProviders.Count() > 0) {
                     <div class="extension">
-                        <select name="NwazetCommerceAttribute.AttributeValues[@i].ExtensionProvider">
+                        <select name="NwazetCommerceAttribute.AttributeValueRecords[@i].ExtensionProvider">
                             <option value="">None</option>
                             @foreach (var provider in Model.AttributeExtensionProviders) {
                                 <option value="@provider.Name" @(value.ExtensionProvider == provider.Name ? "selected" : "")>@provider.DisplayName</option>
@@ -83,19 +83,19 @@
 <script type="x-tmpl-mustache" id="valueTemplate">
     <li class="option">
         <div class="option-name">
-            <input type="hidden" name="NwazetCommerceAttribute.AttributeValues.Index" value="{{ index }}" />
-            <input type="hidden" name="NwazetCommerceAttribute.AttributeValues[{{ index }}].SortOrder" value="{{ sort }}" />
-            <input type="text" class="text" name="NwazetCommerceAttribute.AttributeValues[{{ index }}].Text" />
+            <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords.Index" value="{{ index }}" />
+            <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].SortOrder" value="{{ sort }}" />
+            <input type="text" class="text" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].Text" />
         </div>
         <div class="price-adj">
-            <input type="text" class="text small" name="NwazetCommerceAttribute.AttributeValues[{{ index }}].PriceAdjustment" value="0" />
+            <input type="text" class="text small" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].PriceAdjustment" value="0" />
         </div>
         <div class="apply-line">
-            <input type="checkbox" name="NwazetCommerceAttribute.AttributeValues[{{ index }}].IsLineAdjustment" value="True" />
+            <input type="checkbox" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].IsLineAdjustment" value="True" />
         </div>
         @if (Model.AttributeExtensionProviders.Count() > 0) {
             <div class="extension">
-                <select name="NwazetCommerceAttribute.AttributeValues[{{ index }}].ExtensionProvider">
+                <select name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].ExtensionProvider">
                     <option value="">None</option>
                     @foreach (var provider in Model.AttributeExtensionProviders) {
                         <option value="@provider.Name">@provider.DisplayName</option>
