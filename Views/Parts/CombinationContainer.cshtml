@@ -17,9 +17,19 @@
 
     var defaultCombination = combinations.FirstOrDefault();
 
-    // TODO: Get from the combinations the collection of all attributes used to generate them
+    // Get from the combinations the collection of all attributes used to generate them
     // For each possible attribute we'll display a list of options corresponding to the possible
     // values for it.
+    // There may be a case where some combinations don't have an attribute value for every
+    // possible attribute. This is the same as saying that there may be cases where a
+    // specific attribute only has values for specific combinations of other attributes.
+    // e.g.: 
+    // Attributes:      Att1    Att2    Att3
+    // Combinations:    v11     v12     v13
+    //                  v21     v22     -
+    //                  v31     -       v33
+    // In these conditions we should have the null value added to the options for those
+    // attributes.
     var attributeValues = new Dictionary<int, HashSet<string>>();
     foreach (var combo in combinations) {
         var comboAttributes = combo.ProductAttributeValues;
@@ -32,6 +42,21 @@
         }
     }
     var attributeParts = _productAttributeService.GetAttributes(attributeValues.Keys);
+    // Order the collections of values for each attribute, and remove any that may not
+    // actually exist.
+    foreach (var attributePart in attributeParts) {
+        var values = attributeValues[attributePart.Id];
+
+    }
+    // If any are required, add the null values for the attributes.
+    foreach (var combo in combinations) {
+        var comboAttributes = combo.ProductAttributeValues;
+        foreach (var attrId in attributeValues.Keys) {
+            if (!comboAttributes.Any(atc => atc.AttributeId == attrId)) {
+                attributeValues[attrId].Add("");
+            }
+        }
+    }
 
     // Map of the combinations of options that should be enabled at the same time.
     var enabledCombinations = new List<string>();
@@ -82,7 +107,7 @@
                         data-for-combination-attribute="@attPart.Id">
                     @foreach (var attVal in attributeValues[attPart.Id]) {
                         <option value="@attVal" @if (defaultValue.Equals(attVal)) { <text>selected</text> }>
-                            @attVal
+                            @(string.IsNullOrWhiteSpace(attVal) ? "-" : attVal)
                         </option>
                     }
                 </select>
