@@ -51,13 +51,51 @@ namespace Nwazet.Commerce.Services.Combinations {
 
         public override IEnumerable<IEnumerable<ProductPart>> FilterProductsWithInventoryIssues(
             IEnumerable<IEnumerable<ProductPart>> productGroups) {
+            var results = new List<IEnumerable<ProductPart>>();
             foreach (var group in productGroups) {
                 // If a group consists exclusively of a container and some of its
                 // combinations, or just combinations of the same container, it's
                 // likely not really an issue that their inventories are different.
+
+                // If any product is neither a CombinationContainerPart nor a 
+                // CombinationPart, we cannot say the group doesn't have inventory
+                // issues.
+                if (group.Any(p => !p.Is<CombinationContainerPart>() && !p.Is<CombinationPart>())) {
+                    continue;
+                }
+                var containers = group.Select(p => p.As<CombinationContainerPart>())
+                    .Where(c => c != null);
+                // If there is more than one container, we definitely aren't in a 
+                // condition we can discard.
+                if (containers.Count() > 1) {
+                    continue;
+                }
+                var combinations = group.Select(p => p.As<CombinationPart>())
+                    .Where(c => c != null);
+                // Here we have at most 1 container, and all combinations.
+                // Make sure the combinations are all for the same product.
+                var containerIds = combinations.Select(c => c.CombinationContainerPart.Id).Distinct();
+                // If they belong to different containers, we cannot say the group
+                // doesn't have inventory issues.
+                if (containerIds.Count() > 1) {
+                    continue;
+                }
+                var containerId = containerIds.FirstOrDefault();
+                // If there actually is a Container from the steps above, and it's
+                // not the same as the one for the combinations, we cannot say the
+                // group doesn't have inventory issues.
+                var container = containers.FirstOrDefault();
+                if (container != null && container.Id != containerId) {
+                    continue;
+                }
+                // Here:
+                // The group is all combinations from the same container, and it may
+                // include the container itself, so it's fine if the inventories are
+                // not all equal.
+                results.Add(group);
             }
-            // By default, we are not going to remove any group
-            return Enumerable.Empty<IEnumerable<ProductPart>>();
+            
+            return results.ToList(); // Enumerate just in case.
         }
     }
 }
