@@ -117,14 +117,24 @@ namespace Nwazet.Commerce.Services.Inventory {
             }
             foreach (var provider in _productGroupInventoryProviders) {
                 var toRemove = provider.FilterProductsWithInventoryIssues(productGroups);
-                //productGroups.RemoveAll(p =>
-                //    toRemove.Any(pp =>
-                //        pp.Id == p.Id
-                //        && pp.ContentItem.VersionRecord.Id == p.ContentItem.VersionRecord.Id));
+                productGroups.RemoveAll(group => GroupIsInGroups(toRemove, group));
             }
 
             return productGroups
                 .Select(group => group.First()); //get the first ProductPart as representative of each group
+        }
+
+        private bool GroupIsInGroups(
+            IEnumerable<IEnumerable<ProductPart>> collection, IEnumerable<ProductPart> group) {
+            var groupIds = group.Select(p => p.Id);
+            foreach (var parts in collection) {
+                var pIds = parts.Select(p => p.Id);
+                if (groupIds.All(i => pIds.Contains(i)) && groupIds.Count() == pIds.Count()) {
+                    // the two groups are the same
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
