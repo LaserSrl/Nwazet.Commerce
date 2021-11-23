@@ -56,6 +56,8 @@
                                         }
                                     </td>
                                     <td>
+                                        @* We prevent publication of combinations from here, because there is no easy
+                                            way to properly trigger all required validations. *@
                                         @if (combination.HasPublished()) {
                                             @*if (combination.HasDraft()) {
                                                 if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
@@ -70,11 +72,11 @@
                                                     new {itemprop = "UnsafeUrl", @class="btn btn-warning btn-xs"})
                                             }
                                         } else {
-                                            if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
+                                            @*if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
                                                 @Html.Link(T("Publish").Text, 
                                                     Url.Action("Publish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}), 
                                                     new {itemprop = "UnsafeUrl", @class="btn btn-success btn-xs"})
-                                            }
+                                            }*@
                                         }
                                         @if (Authorizer.Authorize(Permissions.DeleteContent, combination)) {
                                             @Html.Link(T("Delete").Text, 
