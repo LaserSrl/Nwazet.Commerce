@@ -878,6 +878,7 @@
     <Compile Include="ViewModels\ListOrdersViewModel.cs" />
     <Compile Include="ViewModels\OrderEditorViewModel.cs" />
     <Compile Include="ViewModels\PricingSettingsViewModel.cs" />
+    <Compile Include="ViewModels\ProductAttributeValueViewModel.cs" />
     <Compile Include="ViewModels\ProductEditorViewModel.cs" />
     <Compile Include="ViewModels\ProductVatConfigurationPartEditorViewModel.cs" />
     <Compile Include="ViewModels\ReportDataViewModel.cs" />
