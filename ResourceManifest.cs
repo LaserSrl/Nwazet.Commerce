@@ -23,7 +23,6 @@ namespace Nwazet.Commerce {
             manifest.DefineScript("Nwazet.Inventory").SetUrl("inventory.min.js?v=1.0", "inventory.js?v=1.0");
             manifest.DefineScript("Nwazet.Order-Admin").SetUrl("order-admin.min.js", "order-admin.js");
             manifest.DefineScript("Mustache").SetUrl("mustache.min.js", "mustache.js");
-            manifest.DefineScript("Nwazet.Attribute-Admin").SetUrl("attribute-admin.min.js?v=1.1", "attribute-admin.js?v=1.1");
             manifest.DefineScript("Nwazet.Territory-Hierarchies-Admin").SetUrl("territory-hierarchies-admin.min.js", "territory-hierarchies-admin.js");
             manifest.DefineScript("Nwazet.Wishlists").SetUrl("wishlists.min.js", "wishlists.js");
             manifest.DefineScript("Nwazet.ChartJs").SetUrl("chartjs.min.js", "chartjs.js");

@@ -12,6 +12,7 @@ using Orchard.Localization;
 using Orchard.UI.Notify;
 using Orchard.Utility.Extensions;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.Attributes")]
@@ -56,7 +57,7 @@ namespace Nwazet.Commerce.Drivers {
                         AttributeExtensionProviders = _attributeExtensionProviders,
                         CssName = part.CssName,
                         Meaning = part.Meaning,
-                        AttributeValueRecords = part.AttributeValueRecords
+                        AttributeValueRecords = part.AttributeValueRecords.Select(r => new ProductAttributeValueViewModel() { AttributeValueRecord = r }).ToList()
                     }));
         }
 
@@ -64,7 +65,52 @@ namespace Nwazet.Commerce.Drivers {
         protected override DriverResult Editor(ProductAttributePart part, IUpdateModel updater, dynamic shapeHelper) {
             var technicalName = part.TechnicalName;
 
-            if (updater.TryUpdateModel(part, Prefix, null, null)) {
+            var viewModel = new ProductAttributePartEditViewModel {
+                DisplayName = part.DisplayName,
+                TechnicalName = part.TechnicalName,
+                SortOrder = part.SortOrder,
+                AttributeValues = part.AttributeValues,
+                AttributeExtensionProviders = _attributeExtensionProviders,
+                CssName = part.CssName,
+                Meaning = part.Meaning,
+                AttributeValueRecords = part.AttributeValueRecords.Select(r => new ProductAttributeValueViewModel() { AttributeValueRecord = r }).ToList()
+            };
+            if (updater.TryUpdateModel(viewModel, Prefix, null, null)) {
+                part.DisplayName = viewModel.DisplayName;
+                part.TechnicalName = viewModel.TechnicalName;
+                part.SortOrder = viewModel.SortOrder;
+                part.AttributeValues = viewModel.AttributeValues;
+                part.CssName = viewModel.CssName;
+                part.Meaning = viewModel.Meaning;
+                foreach (var rec in viewModel.AttributeValueRecords.Where(vm => !vm.Deleted).Select(vm => vm.AttributeValueRecord)) {
+                    if (rec.Id==-1) {
+                        part.AttributeValueRecords.Add(new ProductAttributeValueRecord {
+                            SortOrder = rec.SortOrder,
+                            Text = rec.Text,
+                            PriceAdjustment = rec.PriceAdjustment,
+                            IsLineAdjustment = rec.IsLineAdjustment,
+                            ExtensionProvider = rec.ExtensionProvider
+                        });
+                    } else {
+                        var valueRecord = part.AttributeValueRecords
+                          .FirstOrDefault(r => r.Id == rec.Id);
+                        if (valueRecord != null) {
+                            valueRecord.SortOrder = rec.SortOrder;
+                            valueRecord.Text = rec.Text;
+                            valueRecord.PriceAdjustment = rec.PriceAdjustment;
+                            valueRecord.IsLineAdjustment = rec.IsLineAdjustment;
+                            valueRecord.ExtensionProvider = rec.ExtensionProvider;
+                        }
+                    }
+                }
+                foreach (var rec in viewModel.AttributeValueRecords.Where(vm => vm.Deleted).Select(vm => vm.AttributeValueRecord)) {
+                    var valueRecord = part.AttributeValueRecords
+                         .FirstOrDefault(r => r.Id == rec.Id);
+                    if (valueRecord != null) {
+                        part.AttributeValueRecords.Remove(valueRecord);
+                    }
+                }
+
                 //check TechnicalName for invalid characters
                 if (!String.Equals(part.TechnicalName, part.TechnicalName.ToSafeName(), StringComparison.OrdinalIgnoreCase)) {
                     updater.AddModelError("Name", T("The technical name contains invalid characters."));

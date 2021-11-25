@@ -1,10 +1,15 @@
-﻿@model Nwazet.Commerce.ViewModels.ProductAttributePartEditViewModel
+﻿@using Nwazet.Commerce.Models;
+
+@model Nwazet.Commerce.ViewModels.ProductAttributePartEditViewModel
 @{
     Style.Require("Nwazet.Attribute-Admin").AtHead();
 
     Script.Require("jQueryUI_Sortable").AtFoot();
     Script.Require("Mustache").AtFoot();
-    Script.Require("Nwazet.Attribute-Admin").AtFoot();
+
+    var idAttribute = Html.IdFor(m => m.AttributeValueRecords);
+    var nameAttribute = Html.FieldNameFor(m => m.AttributeValueRecords);
+    var nameDeletedAttribute = Html.FieldNameFor(m => m.AttributeValueRecords);
 }
 <fieldset>
     <label class="sub" for="@Html.IdFor(m => m.DisplayName)">@T("Display Name")</label><br />
@@ -39,7 +44,7 @@
     <div class="hint">@T("Sort Order determines the order in which options are displayed relative to each other.")</div>
     <div class="hint">@T(@"Price Adjustment is the amount the price will be adjusted for each item that has the attribute selected. Use negative adjustments to reduce the price.")</div>
     <div class="hint">@T(@"When checked, Apply To Line causes the price adjustment to be applied to the line total. By default, the adjustment is applied to the unit price.")</div>
-    <ul id="NwazetCommerceAttribute_AttributeValueRecords">
+    <ul id="@idAttribute">
         <li class="header">
             <div class="option-name">@T("Name")</div>
             <div class="price-adj">@T("Price Adjustment")</div>
@@ -48,26 +53,29 @@
                 <div class="extension">@T("Extension")</div>
             }
         </li>
+
         @{int i = 0;}
         @foreach (var value in Model.AttributeValueRecords) {
             <li class="option">
                 <div class="option-name">
-                    <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords.Index" value="@i" />
-                    <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords[@i].SortOrder" value="@value.SortOrder" />
-                    <input type="text" class="text" name="NwazetCommerceAttribute.AttributeValueRecords[@i].Text" value="@value.Text" />
+                    <input type="hidden" name="@(nameAttribute + ".Index")" value="@i" />
+                    <input type="hidden" name="@Html.FieldNameFor(m => m.AttributeValueRecords[i].AttributeValueRecord.SortOrder)" value="@value.AttributeValueRecord.SortOrder" />
+                    <input type="hidden" name="@Html.FieldNameFor(m => m.AttributeValueRecords[i].AttributeValueRecord.Id)" value="@value.AttributeValueRecord.Id" />
+                    <input type="hidden" class="attribute-record-deleted" name="@Html.FieldNameFor(m => m.AttributeValueRecords[i].Deleted)" value="@value.Deleted.ToString()" />
+                    <input type="text" class="text" name="@Html.FieldNameFor(m => m.AttributeValueRecords[i].AttributeValueRecord.Text)" value="@value.AttributeValueRecord.Text" />
                 </div>
                 <div class="price-adj">
-                    <input type="text" class="text small" name="NwazetCommerceAttribute.AttributeValueRecords[@i].PriceAdjustment" value="@value.PriceAdjustment" />
+                    <input type="text" class="text small" name="@Html.FieldNameFor(m => m.AttributeValueRecords[i].AttributeValueRecord.PriceAdjustment)" value="@value.AttributeValueRecord.PriceAdjustment" />
                 </div>
                 <div class="apply-line">
-                    <input type="checkbox" name="NwazetCommerceAttribute.AttributeValueRecords[@i].IsLineAdjustment" @(value.IsLineAdjustment ? "checked='checked'" : "") value="True" />
+                    <input type="checkbox" name="@Html.FieldNameFor(m => m.AttributeValueRecords[i].AttributeValueRecord.IsLineAdjustment)" @(value.AttributeValueRecord.IsLineAdjustment ? "checked='checked'" : "") value="True" />
                 </div>
                 @if (Model.AttributeExtensionProviders.Count() > 0) {
                     <div class="extension">
-                        <select name="NwazetCommerceAttribute.AttributeValueRecords[@i].ExtensionProvider">
+                        <select name="@Html.FieldNameFor(m => m.AttributeValueRecords[i].AttributeValueRecord.ExtensionProvider)">
                             <option value="">None</option>
                             @foreach (var provider in Model.AttributeExtensionProviders) {
-                                <option value="@provider.Name" @(value.ExtensionProvider == provider.Name ? "selected" : "")>@provider.DisplayName</option>
+                                <option value="@provider.Name" @(value.AttributeValueRecord.ExtensionProvider == provider.Name ? "selected" : "")>@provider.DisplayName</option>
                             }
                         </select>
                     </div>
@@ -77,25 +85,27 @@
             i++;
         }
     </ul>
-    <button id="NwazetCommerceAttribute_AddAttributeValue">@T("Add Attribute Value")</button>
+    <button id="@(idAttribute+"_AddAttributeValue")">@T("Add Attribute Value")</button>
 </fieldset>
 
 <script type="x-tmpl-mustache" id="valueTemplate">
     <li class="option">
         <div class="option-name">
             <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords.Index" value="{{ index }}" />
-            <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].SortOrder" value="{{ sort }}" />
-            <input type="text" class="text" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].Text" />
+            <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.SortOrder" value="{{ sort }}" />
+            <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.Id" value="-1" />
+            <input type="hidden" class="attribute-record-deleted" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.Deleted" value="false" />
+            <input type="text" class="text" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.Text" />
         </div>
         <div class="price-adj">
-            <input type="text" class="text small" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].PriceAdjustment" value="0" />
+            <input type="text" class="text small" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.PriceAdjustment" value="0" />
         </div>
         <div class="apply-line">
-            <input type="checkbox" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].IsLineAdjustment" value="True" />
+            <input type="checkbox" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.IsLineAdjustment" value="True" />
         </div>
         @if (Model.AttributeExtensionProviders.Count() > 0) {
             <div class="extension">
-                <select name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].ExtensionProvider">
+                <select name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.ExtensionProvider">
                     <option value="">None</option>
                     @foreach (var provider in Model.AttributeExtensionProviders) {
                         <option value="@provider.Name">@provider.DisplayName</option>
@@ -151,5 +161,36 @@
             })
         </text>
         }
+
+        $(function () {
+
+            var i = $("#@idAttribute > li.option").length; // indexer for mvc model binding new tiers
+
+            $("#@(idAttribute + "_AddAttributeValue")").click(function (event) {
+                event.preventDefault();
+                var valueTemplate = $("#valueTemplate").html();
+                $("#@idAttribute")
+                    .append(Mustache.render(valueTemplate, { index: i, sort: i + 1 }))
+                    .last()
+                    .find(".option-name input[type=text]")
+                    .focus();
+                i++;
+            });
+
+            $("#@idAttribute").on("click", ".nwazet-remove-attribute-value", function (event) {
+                event.preventDefault();
+                $(this).parents("li").hide();
+                $(this).parents("li").find("input.attribute-record-deleted").val('True');
+            });
+
+            $("#@idAttribute").sortable({
+                update: function () {
+                    $.each($(this).children("li"), function () {
+                        var $row = $(this);
+                        $row.find("input[name$=SortOrder]").val($row.index());
+                    });
+                }
+            });
+        });
     </script>
 }
