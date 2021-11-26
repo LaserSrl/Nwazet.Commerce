@@ -541,12 +541,15 @@ namespace Nwazet.Commerce.Controllers {
                 .Where(ctd => ctd.Parts.Any(ctpd => ctpd
                     .PartDefinition.Name
                     .Equals(ProductPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
+                // Products with a CombinationPart should not be in this list
+                .Where(ctd => !ctd.Parts.Any(ctpd => ctpd
+                    .PartDefinition.Name
+                    .Equals("CombinationPart", StringComparison.InvariantCultureIgnoreCase)))
                 // We can edit ContentItems of that type
                 .Where(ctd => {
                     var dummyContent = _contentManager.New(ctd.Name);
                     return _authorizer.Authorize(CorePermissions.EditContent, dummyContent);
                 });
-            // TODO: Products with a CombinationPart should not be in this list
 
             return allowedTypes;
         }
@@ -564,12 +567,15 @@ namespace Nwazet.Commerce.Controllers {
                 .Where(ctd => ctd.Parts.Any(ctpd => ctpd
                     .PartDefinition.Name
                     .Equals(ProductPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
+                // Products with a CombinationPart should not be in this list
+                .Where(ctd => !ctd.Parts.Any(ctpd => ctpd
+                    .PartDefinition.Name
+                    .Equals("CombinationPart", StringComparison.InvariantCultureIgnoreCase)))
                 // We can create ContentItems of that type
                 .Where(ctd => {
                     var dummyContent = _contentManager.New(ctd.Name);
                     return _authorizer.Authorize(CorePermissions.CreateContent, dummyContent);
                 });
-            // TODO: Products with a CombinationPart should not be in this list
 
             return allowedTypes;
         }
