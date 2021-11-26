@@ -38,7 +38,7 @@ msgstr "Azienda"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CommerceAddressForm.cshtml"
 msgid "Country"
-msgstr "Stato"
+msgstr "Nazione"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CommerceAddressForm.cshtml"
 msgid "First Name"
@@ -62,7 +62,7 @@ msgstr "Codice postale o ZIP"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CommerceAddressForm.cshtml"
 msgid "State, province, prefecture, republic or region"
-msgstr "Stato, provincia, prefettura, repubblica o regione"
+msgstr "Provincia"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/CommerceAddressForm.cshtml"
 msgid "Title"
@@ -1042,7 +1042,7 @@ msgstr "Azienda"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
 msgid "Country"
-msgstr "Stato"
+msgstr "Nazione"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
 msgid "E-mail:"
@@ -1286,7 +1286,7 @@ msgstr "Azienda"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "Country"
-msgstr "Stato"
+msgstr "Nazione"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "Edit"
@@ -1406,7 +1406,7 @@ msgstr "Transazione <a href=\"{1}\">{0}</a>."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.cshtml"
 msgid "You may view this order at a later time by going to this address: <a href=\"{0}\">{0}</a>, using this password: \"{1}\"."
-msgstr "Potrai visualizzare i dettagli del tuo ordine a questo indirizzo: <a href=\"{0}\">{0}</a>, usando queta password: \"{1}\"."
+msgstr "Potrai visualizzare i dettagli del tuo ordine a questo indirizzo: <a href=\"{0}\">{0}</a>, usando questa password: \"{1}\"."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Metadata.cshtml"
 msgid "Associate this order with a purchase order, invoice or other order."
@@ -1802,7 +1802,7 @@ msgstr "Usa questo per limitare le aree in cui quest metodo sia disponibile. Per
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/StateOrCountryTax.cshtml"
 msgid "Country"
-msgstr "Stato"
+msgstr "Nazione"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/StateOrCountryTax.cshtml"
 msgid "Priority"
@@ -2278,7 +2278,7 @@ msgstr "Aliquote per codice Zip"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/AdvancedSKUs.cshtml"
 msgid "Allow custom patterns"
-msgstr "Permetti schemi personalizzati"
+msgstr "Consenti modelli personalizzati"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/AdvancedSKUs.cshtml"
 msgid "Allow the user to change the pattern on each item."
@@ -2298,7 +2298,7 @@ msgstr "Forza l'unicità degli SKU"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/AdvancedSKUs.cshtml"
 msgid "Pattern"
-msgstr "Pattern"
+msgstr "Modello"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/AdvancedSKUs.cshtml"
 msgid "The automatic generation of SKUs happens with a process similar to the one used for AutoRoute."
@@ -2306,7 +2306,7 @@ msgstr "La generazione automatica degli SKU avviene con una procedura simile a q
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/AdvancedSKUs.cshtml"
 msgid "The definition of the pattern"
-msgstr "La definizione del pattern"
+msgstr "La defizione del modello"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Couponing.cshtml"
 msgid "Allow configuration"
@@ -2626,7 +2626,7 @@ msgstr "URL del tracciamento: <a href=\"{0}\">{0}</a>"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/Order_Confirmation.cshtml"
 msgid "You may view this order at a later time by going to this address: <a href=\"{0}\">{0}</a>, using this password: \"{1}\"."
-msgstr "Potrai visualizzare i dettagli del tuo ordine a questo indirizzo: <a href=\"{0}\">{0}</a>, usando queta password: \"{1}\"."
+msgstr "Potrai visualizzare i dettagli del tuo ordine a questo indirizzo: <a href=\"{0}\">{0}</a>, usando questa password: \"{1}\"."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Actions"
@@ -2654,7 +2654,7 @@ msgstr "Archivia"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Choose action..."
-msgstr "Scegliere l'azione..."
+msgstr "Scegli un'azione..."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Content filtering"
@@ -2666,7 +2666,7 @@ msgstr "Ordinamento contenuti"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Manage content"
-msgstr "Gestire contenuto"
+msgstr "Gestione contenuto"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Manage Orders"
@@ -2686,7 +2686,7 @@ msgstr "Chiave dell'ordine"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "Ordered by"
-msgstr "Ordinato da"
+msgstr "Ordinato per"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/OrderAdmin/List.cshtml"
 msgid "recently created"
@@ -2866,7 +2866,7 @@ msgstr "Tutte le versioni"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Any (show all)"
-msgstr "Qualsiasi (visualizza tutti)"
+msgstr "qualsiasi (visualizza tutti)"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "any (show all)"
@@ -2898,7 +2898,7 @@ msgstr "Crea Nuovo Prodotto"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Culture"
-msgstr "Cultura"
+msgstr "Lingua"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Discount"
@@ -2930,7 +2930,7 @@ msgstr "Inventario"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Latest"
-msgstr "Ultimo"
+msgstr "più recente"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Lowest price"
@@ -2942,7 +2942,7 @@ msgstr "Quantità prodotto minimo"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Manage content"
-msgstr "Gestire contenuto"
+msgstr "Gestione contenuto"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Manage Products"
@@ -2954,7 +2954,7 @@ msgstr "Nessuno Sconto"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Ordered by"
-msgstr "Ordinato da"
+msgstr "Ordinato per"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/ProductAdmin/List.cshtml"
 msgid "Price"
@@ -3690,7 +3690,7 @@ msgstr "Tipo di Territorio"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/TerritoryHierarchiesAdmin/HierarchiesListPartial.cshtml"
 msgid "This is a table of the taxonomies in your application"
-msgstr "Questa è una tabella delle tassonomie nella tua applicazione"
+msgstr "Questa è la tabella delle tassonomie dell'applicazione"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/TerritoryHierarchiesAdmin/Index.cshtml"
 msgid "Add a Hierarchy"
@@ -3814,7 +3814,7 @@ msgstr "E-Commerce"
 
 msgctxt "Nwazet.Commerce.Activities.CommerceActivity"
 msgid "Done"
-msgstr "Fatto"
+msgstr "Completato"
 
 msgctxt "Nwazet.Commerce.Activities.CommerceActivity"
 msgid "The shopping cart has been finalized (e.g. by completing an order)."
@@ -3850,7 +3850,7 @@ msgstr "E-Commerce"
 
 msgctxt "Nwazet.Commerce.Activities.OrderActivity"
 msgid "Done"
-msgstr "Fatto"
+msgstr "Completato"
 
 msgctxt "Nwazet.Commerce.Activities.OrderActivity"
 msgid "The status of an order has changed."
@@ -4142,11 +4142,11 @@ msgstr "(identità richiesta)"
 
 msgctxt "Nwazet.Commerce.Controllers.HierarchyTerritoriesAdminController"
 msgid "That {0} has been removed."
-msgstr "Il {0} è stato rimosso."
+msgstr "Questo {0} è stato eliminato."
 
 msgctxt "Nwazet.Commerce.Controllers.HierarchyTerritoriesAdminController"
 msgid "That content has been removed."
-msgstr "Il contenuto è stato rimosso."
+msgstr "Questo contenuto è stato eliminato."
 
 msgctxt "Nwazet.Commerce.Controllers.HierarchyTerritoriesAdminController"
 msgid "The requested type \"{0}\" does not match the expected TerritoryType for hierarchy \"{1}\"."
@@ -4166,7 +4166,7 @@ msgstr "Non ci sono territori che possano essere aggiunti alla gerarchia \"{1}\"
 
 msgctxt "Nwazet.Commerce.Controllers.HierarchyTerritoriesAdminController"
 msgid "Your {0} has been created."
-msgstr "Il {0} è stato creato."
+msgstr "Il tuo {0} è stato creato."
 
 msgctxt "Nwazet.Commerce.Controllers.HierarchyTerritoriesAdminController"
 msgid "Your {0} has been updated."
@@ -4174,7 +4174,7 @@ msgstr "Il tuo {0} è stato aggiornato."
 
 msgctxt "Nwazet.Commerce.Controllers.HierarchyTerritoriesAdminController"
 msgid "Your content has been created."
-msgstr "Il contenuto è stato creato."
+msgstr "Il tuo contenuto è stato creato."
 
 msgctxt "Nwazet.Commerce.Controllers.HierarchyTerritoriesAdminController"
 msgid "Your content has been updated."
@@ -4230,11 +4230,11 @@ msgstr "Il tipo \"{0}\" richiesto non è un tipo di Prodotto."
 
 msgctxt "Nwazet.Commerce.Controllers.ProductAdminController"
 msgid "Your {0} has been created."
-msgstr "Il {0} è stato creato."
+msgstr "Il tuo {0} è stato creato."
 
 msgctxt "Nwazet.Commerce.Controllers.ProductAdminController"
 msgid "Your content has been created."
-msgstr "Il contenuto è stato creato."
+msgstr "Il tuo contenuto è stato creato."
 
 msgctxt "Nwazet.Commerce.Controllers.ProductSettingsAdminController"
 msgid "Not authorized to manage price settings"
@@ -4258,7 +4258,7 @@ msgstr "Controlla il formato delle date"
 
 msgctxt "Nwazet.Commerce.Controllers.ReportController"
 msgid "Country"
-msgstr "Stato"
+msgstr "Nazione"
 
 msgctxt "Nwazet.Commerce.Controllers.ReportController"
 msgid "Date"
@@ -4366,11 +4366,11 @@ msgstr "ERRORE: impossibile trovare il tipo del territorio."
 
 msgctxt "Nwazet.Commerce.Controllers.TerritoryHierarchiesAdminController"
 msgid "That {0} has been removed."
-msgstr "Il {0} è stato rimosso."
+msgstr "Questo {0} è stato eliminato."
 
 msgctxt "Nwazet.Commerce.Controllers.TerritoryHierarchiesAdminController"
 msgid "That content has been removed."
-msgstr "Il contenuto è stato rimosso."
+msgstr "Questo contenuto è stato eliminato."
 
 msgctxt "Nwazet.Commerce.Controllers.TerritoryHierarchiesAdminController"
 msgid "The requested type \"{0}\" is not a Hierarchy type."
@@ -4382,7 +4382,7 @@ msgstr "L'utente non ha il permesso di gestire alcun Tipo di Gerarchia."
 
 msgctxt "Nwazet.Commerce.Controllers.TerritoryHierarchiesAdminController"
 msgid "Your {0} has been created."
-msgstr "Il {0} è stato creato."
+msgstr "Il tuo {0} è stato creato."
 
 msgctxt "Nwazet.Commerce.Controllers.TerritoryHierarchiesAdminController"
 msgid "Your {0} has been saved."
@@ -4390,11 +4390,11 @@ msgstr "Il tuo {0} è stato salvato."
 
 msgctxt "Nwazet.Commerce.Controllers.TerritoryHierarchiesAdminController"
 msgid "Your content has been created."
-msgstr "Il contenuto è stato creato."
+msgstr "Il tuo contenuto è stato creato."
 
 msgctxt "Nwazet.Commerce.Controllers.TerritoryHierarchiesAdminController"
 msgid "Your content has been saved."
-msgstr "Il contenuto è stato salvato."
+msgstr "Il tuo contenuto è stato salvato."
 
 msgctxt "Nwazet.Commerce.Drivers.HierarchyVatConfigurationPartDriver"
 msgid "{0} Is not a valid value for rate."
@@ -4446,7 +4446,7 @@ msgstr "Il nome tecnico contiene dei caratteri non validi."
 
 msgctxt "Nwazet.Commerce.Drivers.ProductVatConfigurationPartDriver"
 msgid "Default"
-msgstr "Default"
+msgstr "Predefinito"
 
 msgctxt "Nwazet.Commerce.Drivers.TerritoryHierarchyPartDriver"
 msgid "It became impossible to change the Type of the territories in this hierarchy."
@@ -4826,7 +4826,7 @@ msgstr "Non è compreso"
 
 msgctxt "Nwazet.Commerce.Filters.ProductDiscountPriceFilterForm"
 msgid "Is not equal to"
-msgstr "NON è uguale"
+msgstr "Non è uguale a"
 
 msgctxt "Nwazet.Commerce.Filters.ProductDiscountPriceFilterForm"
 msgid "Max"
@@ -4890,7 +4890,7 @@ msgstr "Non è compreso"
 
 msgctxt "Nwazet.Commerce.Filters.ProductInventoryFilterForm"
 msgid "Is not equal to"
-msgstr "NON è uguale"
+msgstr "Non è uguale a"
 
 msgctxt "Nwazet.Commerce.Filters.ProductInventoryFilterForm"
 msgid "Max"
@@ -4950,7 +4950,7 @@ msgstr "Non è compreso"
 
 msgctxt "Nwazet.Commerce.Filters.ProductPriceFilterForm"
 msgid "Is not equal to"
-msgstr "NON è uguale"
+msgstr "Non è uguale a"
 
 msgctxt "Nwazet.Commerce.Filters.ProductPriceFilterForm"
 msgid "Max"
@@ -5014,7 +5014,7 @@ msgstr "Non è compreso"
 
 msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
 msgid "Is not equal to"
-msgstr "NON è uguale"
+msgstr "Non è uguale a"
 
 msgctxt "Nwazet.Commerce.Filters.ProductPriceWithVatFilterForm"
 msgid "Max"
@@ -5066,7 +5066,7 @@ msgstr "NON termina con"
 
 msgctxt "Nwazet.Commerce.Filters.ProductSizeFilterForm"
 msgid "Does not start with"
-msgstr "NON inizia con"
+msgstr "Non inizia con"
 
 msgctxt "Nwazet.Commerce.Filters.ProductSizeFilterForm"
 msgid "Ends with"
@@ -5078,7 +5078,7 @@ msgstr "È uguale a"
 
 msgctxt "Nwazet.Commerce.Filters.ProductSizeFilterForm"
 msgid "Is not equal to"
-msgstr "NON è uguale"
+msgstr "Non è uguale a"
 
 msgctxt "Nwazet.Commerce.Filters.ProductSizeFilterForm"
 msgid "Operator"
@@ -5130,7 +5130,7 @@ msgstr "NON termina con"
 
 msgctxt "Nwazet.Commerce.Filters.ProductSkuFilterForm"
 msgid "Does not start with"
-msgstr "NON inizia con"
+msgstr "Non inizia con"
 
 msgctxt "Nwazet.Commerce.Filters.ProductSkuFilterForm"
 msgid "Ends with"
@@ -5142,7 +5142,7 @@ msgstr "È uguale a"
 
 msgctxt "Nwazet.Commerce.Filters.ProductSkuFilterForm"
 msgid "Is not equal to"
-msgstr "NON è uguale"
+msgstr "Non è uguale a"
 
 msgctxt "Nwazet.Commerce.Filters.ProductSkuFilterForm"
 msgid "Operator"
@@ -5202,7 +5202,7 @@ msgstr "Non è compreso"
 
 msgctxt "Nwazet.Commerce.Filters.ProductWeightFilterForm"
 msgid "Is not equal to"
-msgstr "NON è uguale"
+msgstr "Non è uguale a"
 
 msgctxt "Nwazet.Commerce.Filters.ProductWeightFilterForm"
 msgid "Max"
@@ -5346,7 +5346,7 @@ msgstr "E-Commerce"
 
 msgctxt "Nwazet.Commerce.Menus.ReportsAdminMenu"
 msgid "Reports"
-msgstr "Reportistica"
+msgstr "Rapporti"
 
 msgctxt "Nwazet.Commerce.Menus.ShippingAdminMenu"
 msgid "Commerce"
@@ -5786,7 +5786,7 @@ msgstr "Azienda"
 
 msgctxt "Nwazet.Commerce.Tokens.CartTokens"
 msgid "Country"
-msgstr "Stato"
+msgstr "Nazione"
 
 msgctxt "Nwazet.Commerce.Tokens.CartTokens"
 msgid "Description"
@@ -5822,7 +5822,7 @@ msgstr "Oggetto per aggiornamento"
 
 msgctxt "Nwazet.Commerce.Tokens.CartTokens"
 msgid "Items"
-msgstr "Oggetti"
+msgstr "Elementi"
 
 msgctxt "Nwazet.Commerce.Tokens.CartTokens"
 msgid "Name"
@@ -5974,7 +5974,7 @@ msgstr "Azienda"
 
 msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
 msgid "Country"
-msgstr "Stato"
+msgstr "Nazione"
 
 msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
 msgid "Customer Email"
@@ -6042,7 +6042,7 @@ msgstr "ID"
 
 msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
 msgid "Items"
-msgstr "Oggetti"
+msgstr "Elementi"
 
 msgctxt "Nwazet.Commerce.Tokens.OrderTokens"
 msgid "Key string used to represent the order in all connected systems."
@@ -6182,7 +6182,7 @@ msgstr "Richiede Autenticazione."
 
 msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
 msgid "Content Items"
-msgstr "Contenuti"
+msgstr "Elementi di Contenuto"
 
 msgctxt "Nwazet.Commerce.Tokens.ProductTokens"
 msgid "Frontend Price as String"
