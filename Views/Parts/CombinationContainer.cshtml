@@ -46,7 +46,11 @@
     // actually exist.
     foreach (var attributePart in attributeParts) {
         var values = attributeValues[attributePart.Id];
-
+        attributeValues[attributePart.Id] = new HashSet<string>(
+            attributePart.AttributeValues
+                .Select(pav => pav.Text)
+                .Where(s => values.Any(v => v.Equals(s, StringComparison.InvariantCultureIgnoreCase)))
+                .Reverse());
     }
     // If any are required, add the null values for the attributes.
     foreach (var combo in combinations) {
@@ -105,7 +109,7 @@
                 <select id="@htmlId"
                         class="product-attribute"
                         data-for-combination-attribute="@attPart.Id">
-                    @foreach (var attVal in attributeValues[attPart.Id]) {
+                    @foreach (var attVal in attributeValues[attPart.Id].Reverse()) {
                         <option value="@attVal" @if (defaultValue.Equals(attVal)) { <text>selected</text> }>
                             @(string.IsNullOrWhiteSpace(attVal) ? "-" : attVal)
                         </option>
