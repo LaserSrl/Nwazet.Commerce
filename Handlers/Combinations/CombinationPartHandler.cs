@@ -62,13 +62,13 @@ namespace Nwazet.Commerce.Handlers.Combinations {
                 if (part.CombinationContainerPart != null) {
                     var containerMeta = _contentManager.GetItemMetadata(part.CombinationContainerPart);
                     context.Metadata.DisplayText =
-                        $"{containerMeta.DisplayText} ({_productCombinationService.AdminDisplayText(part)})";
+                        $"{containerMeta.DisplayText} ({_productCombinationService.CombinationDisplayText(part)})";
 
                     context.Metadata.DisplayRouteValues = containerMeta.DisplayRouteValues;
 
                 } else {
                     context.Metadata.DisplayText =
-                        $"{_productCombinationService.AdminDisplayText(part)}";
+                        $"{_productCombinationService.CombinationDisplayText(part)}";
                 }
             }
         }

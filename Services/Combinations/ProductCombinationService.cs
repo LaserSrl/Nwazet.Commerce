@@ -53,8 +53,8 @@ namespace Nwazet.Commerce.Services.Combinations {
         }
 
         private IEnumerable<ICombinationDetailProvider> DetailProviders {
-            // TODO: Set up an infrastructure like the IContentHandler.Invoke
-            // to safely use these providers? It's probably enough to just do
+            // We don't set up an infrastructure like the IContentHandler.Invoke
+            // to safely use these providers because it's probably enough to just do
             // it as a method here because these providers currently aren't used
             // elsewhere.
             get { return _combinationDetailProviders.Value; }
@@ -76,6 +76,7 @@ namespace Nwazet.Commerce.Services.Combinations {
             // have already been created for container. However:
             // 1- Something may edit that combination down the line, even if that is a mistake.
             // 2- The ContentType for combinations may have been changed for container.
+            // TODO: should we do something special for 2?
             var ct = GetCombinationContentType(container);
             return _contentManager.New<CombinationPart>(ct);
         }
@@ -131,10 +132,11 @@ namespace Nwazet.Commerce.Services.Combinations {
         }
 
         private Dictionary<int, string> _attributeNames;
-        public string AdminDisplayText(CombinationPart combinationPart) {
+        public string CombinationDisplayText(CombinationPart combinationPart) {
             if (combinationPart == null) {
                 throw new ArgumentNullException("combinationPart");
             }
+            // TODO: Use AdminFilter to prepare a different text for backoffice vs frontend
             var comboValues = combinationPart.ProductAttributeValues;
             // get the attributes, because we need the title/displayname
             // Some are memorized:
