@@ -72,7 +72,7 @@ namespace Nwazet.Commerce.Services.Combinations {
         public override IEnumerable<CombinationDetailShape> GetCombinationDetailShapes(
             CombinationPart part, 
             dynamic shapeHelper) {
-
+            // TODO: what if the product isn't available to be added to the cart?
             var productPart = part.As<ProductPart>();
             if (productPart != null) {
                 var details = new List<CombinationDetailShape>();
@@ -113,8 +113,11 @@ namespace Nwazet.Commerce.Services.Combinations {
         }
 
         #region ISKUUniquenessHelper
-        // TODO: prevent inventories from changing each other
-
+        // While the implementation here makes the relationship among inventories
+        // explicit, ProductCombinationsGroupInventoryProvider prevents inventories from 
+        // changing each other when they shouldn't. The result is that the system
+        // allows combinations and their corresponding container to have the same SKU,
+        // while at the same time allowing the management of inventory in each.
         public IEnumerable<int> GetIdsOfValidSKUDuplicates(ProductPart part) {
             var container = part.As<CombinationContainerPart>();
             if (container != null) {

@@ -25,17 +25,20 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         private readonly IContentManager _contentManager;
         private readonly IProductCombinationService _productCombinationService;
         private readonly IAuthorizer _authorizer;
+        private readonly IProductService _productService;
 
         public CombinationContainerPartDriver(
             IProductAttributeAdminServices productAttributeAdminServices,
             IContentManager contentManager,
             IProductCombinationService productCombinationService,
-            IAuthorizer authorizer) {
+            IAuthorizer authorizer,
+            IProductService productService) {
 
             _productAttributeAdminServices = productAttributeAdminServices;
             _contentManager = contentManager;
             _productCombinationService = productCombinationService;
             _authorizer = authorizer;
+            _productService = productService;
 
             T = NullLocalizer.Instance;
         }
@@ -113,7 +116,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             foreach (var combo in combinationContents) {
                 comboTitles.Add(
                     combo.Id,
-                    _productCombinationService.AdminDisplayText(combo));
+                    _productCombinationService.CombinationDisplayText(combo));
             }
             return new CombinationContainerPartEditViewModel() {
                 Part = part,
@@ -136,9 +139,15 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                     VersionOptions.Published,
                     QueryHints.Empty)
                 .ToList();
+            // TODO: handle availability of the products for those CombinationParts
+            var availableCombinationParts = publishedCombinationParts
+                .Where(cp => MayAddToCart(cp));
+            var unavailableCombinationParts = publishedCombinationParts
+                .Where(cp => !MayAddToCart(cp));
             // Dictionary of detail information for each combination, that we can use
             // to dynamically update the UI. The key is the Id of the combination. The
             // value is the collection of detail elements.
+            // TODO: should we prep this only for available combinations?
             var combinationDetails = new Dictionary<int, IEnumerable<CombinationDetailShape>>();
             foreach (var combo in publishedCombinationParts) {
                 combinationDetails.Add(
@@ -154,17 +163,33 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             // its price and so on.
             return shapeHelper.Parts_CombinationContainer(
                 ContentItem: product,
-                CombinationParts: publishedCombinationParts,
+                AllCombinationParts: publishedCombinationParts,
+                AvailableCombinationParts: availableCombinationParts,
+                UnavailableCombinationParts: unavailableCombinationParts,
                 CombinationDetails: combinationDetails
                 );
         }
 
-        public bool ValidateAttributes(IContent product, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues) {
+        public bool ValidateAttributes(
+            IContent product, IDictionary<int, ProductAttributeValueExtended> attributeIdsToValues) {
             // We aren't really going to do anything about attributes here
             return true;
             // TODO: how about the case where combinations have their own attributes?
             // We aren't displaying the Combinations as products, so those should probably
             // be either handled here, or prevented somehow.
         }
+
+        private bool MayAddToCart(CombinationPart combination) {
+            var productPart = combination.As<ProductPart>();
+            if (productPart == null) {
+                // TODO: is this right?
+                // Combinations without a ProductPart shouldn't be added to the cart anyway, 
+                // because they can't work as "independent" products.
+                return false;
+            }
+            return _productService.MayAddToCart(productPart);
+        }
+
+        // TODO: Import/Export
     }
 }

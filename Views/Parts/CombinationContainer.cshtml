@@ -11,13 +11,15 @@
     var _productCombinationService = WorkContext.Resolve<IProductCombinationService>();
     var _productAttributeService = WorkContext.Resolve<IProductAttributeService>();
 
-    var combinations = (IEnumerable<CombinationPart>)Model.CombinationParts;
+    var allCombinations = (IEnumerable<CombinationPart>)Model.AllCombinationParts;
+    var availableCombinations = (IEnumerable<CombinationPart>)Model.AvailableCombinationParts;
+    var unavailableCombinations = (IEnumerable<CombinationPart>)Model.UnavailableCombinationParts;
     var productCi = (IContent)Model.ContentItem;
     var combinationDetails = (Dictionary<int, IEnumerable<CombinationDetailShape>>)Model.CombinationDetails;
 
-    var defaultCombination = combinations.FirstOrDefault();
+    var defaultCombination = allCombinations.FirstOrDefault();
 
-    // Get from the combinations the collection of all attributes used to generate them
+    // Get from the combinations the collection of all attributes used to generate them.
     // For each possible attribute we'll display a list of options corresponding to the possible
     // values for it.
     // There may be a case where some combinations don't have an attribute value for every
@@ -31,14 +33,13 @@
     // In these conditions we should have the null value added to the options for those
     // attributes.
     var attributeValues = new Dictionary<int, HashSet<string>>();
-    foreach (var combo in combinations) {
+    foreach (var combo in allCombinations) {
         var comboAttributes = combo.ProductAttributeValues;
         foreach (var attVal in comboAttributes) {
             if (!attributeValues.ContainsKey(attVal.AttributeId)) {
                 attributeValues.Add(attVal.AttributeId, new HashSet<string>());
             }
             attributeValues[attVal.AttributeId].Add(attVal.AttributeValue);
-
         }
     }
     var attributeParts = _productAttributeService.GetAttributes(attributeValues.Keys);
@@ -53,7 +54,7 @@
                 .Reverse());
     }
     // If any are required, add the null values for the attributes.
-    foreach (var combo in combinations) {
+    foreach (var combo in allCombinations) {
         var comboAttributes = combo.ProductAttributeValues;
         foreach (var attrId in attributeValues.Keys) {
             if (!comboAttributes.Any(atc => atc.AttributeId == attrId)) {
@@ -75,7 +76,7 @@
         attributeIndexes.Add(ap.Id, cIndex++);
     }
     // Build the array of enabled combinations
-    foreach (var combo in combinations) {
+    foreach (var combo in availableCombinations) {
         foreach (var ap in attributeParts) {
             var attValue = combo.ProductAttributeValues.FirstOrDefault(atc => atc.AttributeId == ap.Id)?.AttributeValue ?? string.Empty;
             enabledCombinations.Add(attValue);
@@ -86,7 +87,7 @@
     var radioName = "radio-combination-" + shortGuid;
     var htmlContainerId = "container_" + shortGuid;
 }
-@if (combinations.Any()) {
+@if (allCombinations.Any()) {
     <div class="combination-container" id="@htmlContainerId">
         <input type="hidden" 
                name="combination_id" 
@@ -120,7 +121,7 @@
     </div>
 
     using (Script.Head()) {
-        foreach (var combo in combinations.Where(c => combinationDetails.ContainsKey(c.Id))) {
+        foreach (var combo in allCombinations.Where(c => combinationDetails.ContainsKey(c.Id))) {
             foreach (var detail in combinationDetails[combo.Id]) {
                 <script type="text/html"
                        data-for-product="@productCi.Id"
@@ -140,8 +141,8 @@
                 const attributeIds = [ @Html.Raw(string.Join(", ", attributeParts.Select(ap => ap.Id))) ];
                 const combinationsMap = [ @Html.Raw(string.Join(", ", enabledCombinations.Select(v => "\"" + v + "\""))) ];
                 const nAttributes = @(attributeParts.Count());
-                const nCombinations = @(combinations.Count());
-                const combinationIds = [ @(Html.Raw(string.Join(", ", combinations.Select(cp => cp.Id)))) ];
+                const nCombinations = @(allCombinations.Count());
+                const combinationIds = [ @(Html.Raw(string.Join(", ", allCombinations.Select(cp => cp.Id)))) ];
 
                 function UpdateCombination(cId) {
                     @* The scripts to update information in the UI, as well as actually select
