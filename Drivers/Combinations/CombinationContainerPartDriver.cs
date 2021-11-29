@@ -139,7 +139,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                     VersionOptions.Published,
                     QueryHints.Empty)
                 .ToList();
-            // TODO: handle availability of the products for those CombinationParts
+            // Handle availability of the products for those CombinationParts
             var availableCombinationParts = publishedCombinationParts
                 .Where(cp => MayAddToCart(cp));
             var unavailableCombinationParts = publishedCombinationParts

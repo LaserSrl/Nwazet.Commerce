@@ -72,7 +72,8 @@ namespace Nwazet.Commerce.Services.Combinations {
         public override IEnumerable<CombinationDetailShape> GetCombinationDetailShapes(
             CombinationPart part, 
             dynamic shapeHelper) {
-            // TODO: what if the product isn't available to be added to the cart?
+            // What if the product isn't available to be added to the cart?
+            // That is handled elsewhere already. Here we prepare shapes anyway.
             var productPart = part.As<ProductPart>();
             if (productPart != null) {
                 var details = new List<CombinationDetailShape>();
