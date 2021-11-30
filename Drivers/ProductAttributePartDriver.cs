@@ -53,11 +53,13 @@ namespace Nwazet.Commerce.Drivers {
                         DisplayName = part.DisplayName,
                         TechnicalName = part.TechnicalName,
                         SortOrder = part.SortOrder,
-                        AttributeValues = part.AttributeValues,
                         AttributeExtensionProviders = _attributeExtensionProviders,
                         CssName = part.CssName,
                         Meaning = part.Meaning,
-                        AttributeValueRecords = part.AttributeValueRecords.Select(r => new ProductAttributeValueViewModel() { AttributeValueRecord = r }).ToList()
+                        AttributeValueRecords = part.Record.AttributeValueRecords
+                            .OrderBy(r => r.SortOrder)
+                            .Select(r => new ProductAttributeValueViewModel() { AttributeValueRecord = r })
+                            .ToList()                            
                     }));
         }
 
@@ -69,22 +71,25 @@ namespace Nwazet.Commerce.Drivers {
                 DisplayName = part.DisplayName,
                 TechnicalName = part.TechnicalName,
                 SortOrder = part.SortOrder,
-                AttributeValues = part.AttributeValues,
                 AttributeExtensionProviders = _attributeExtensionProviders,
                 CssName = part.CssName,
                 Meaning = part.Meaning,
-                AttributeValueRecords = part.AttributeValueRecords.Select(r => new ProductAttributeValueViewModel() { AttributeValueRecord = r }).ToList()
+                AttributeValueRecords = part.Record.AttributeValueRecords
+                    .OrderBy(r => r.SortOrder)
+                    .Select(r => new ProductAttributeValueViewModel() { AttributeValueRecord = r })
+                    .ToList()
             };
             if (updater.TryUpdateModel(viewModel, Prefix, null, null)) {
                 part.DisplayName = viewModel.DisplayName;
                 part.TechnicalName = viewModel.TechnicalName;
                 part.SortOrder = viewModel.SortOrder;
-                part.AttributeValues = viewModel.AttributeValues;
                 part.CssName = viewModel.CssName;
                 part.Meaning = viewModel.Meaning;
                 foreach (var rec in viewModel.AttributeValueRecords.Where(vm => !vm.Deleted).Select(vm => vm.AttributeValueRecord)) {
                     if (rec.Id==-1) {
-                        part.AttributeValueRecords.Add(new ProductAttributeValueRecord {
+                        // added new product attribute value record
+                        part.Record.AttributeValueRecords.Add(new ProductAttributeValueRecord {
+                            GUIdentifier = rec.GUIdentifier,
                             SortOrder = rec.SortOrder,
                             Text = rec.Text,
                             PriceAdjustment = rec.PriceAdjustment,
@@ -92,9 +97,11 @@ namespace Nwazet.Commerce.Drivers {
                             ExtensionProvider = rec.ExtensionProvider
                         });
                     } else {
-                        var valueRecord = part.AttributeValueRecords
+                        // updated product attribute value record
+                        var valueRecord = part.Record.AttributeValueRecords
                           .FirstOrDefault(r => r.Id == rec.Id);
                         if (valueRecord != null) {
+                            valueRecord.GUIdentifier = rec.GUIdentifier;
                             valueRecord.SortOrder = rec.SortOrder;
                             valueRecord.Text = rec.Text;
                             valueRecord.PriceAdjustment = rec.PriceAdjustment;
@@ -104,10 +111,10 @@ namespace Nwazet.Commerce.Drivers {
                     }
                 }
                 foreach (var rec in viewModel.AttributeValueRecords.Where(vm => vm.Deleted).Select(vm => vm.AttributeValueRecord)) {
-                    var valueRecord = part.AttributeValueRecords
+                    var valueRecord = part.Record.AttributeValueRecords
                          .FirstOrDefault(r => r.Id == rec.Id);
                     if (valueRecord != null) {
-                        part.AttributeValueRecords.Remove(valueRecord);
+                        part.Record.AttributeValueRecords.Remove(valueRecord);
                     }
                 }
 
@@ -144,13 +151,28 @@ namespace Nwazet.Commerce.Drivers {
         protected override void Importing(ProductAttributePart part, ImportContentContext context) {
             var values = context.Attribute(part.PartDefinition.Name, "Values");
             if (!String.IsNullOrWhiteSpace(values)) {
-                //part.Record.AttributeValues = values;
-                try {
-                    part.AttributeValues = ProductAttributeValue.DeserializeAttributeValues(values);
-                } catch (Exception) {
-
+                var attributeValueRecords = ProductAttributeValueRecord.DeserializeAttributeValues(values).ToList();
+                foreach (var rec in attributeValueRecords) {
+                    var attributeRecord = part.Record.AttributeValueRecords.FirstOrDefault(r => r.GUIdentifier == rec.GUIdentifier);
+                    if (attributeRecord != null) {
+                        attributeRecord.GUIdentifier = rec.GUIdentifier;
+                        attributeRecord.Text = rec.Text;
+                        attributeRecord.SortOrder = rec.SortOrder;
+                        attributeRecord.PriceAdjustment = rec.PriceAdjustment;
+                        attributeRecord.IsLineAdjustment = rec.IsLineAdjustment;
+                        attributeRecord.ExtensionProvider = rec.ExtensionProvider;
+                    } else {
+                        part.Record.AttributeValueRecords.Add(new ProductAttributeValueRecord {
+                            GUIdentifier = rec.GUIdentifier,
+                            Text = rec.Text,
+                            SortOrder = rec.SortOrder,
+                            PriceAdjustment = rec.PriceAdjustment,
+                            IsLineAdjustment = rec.IsLineAdjustment,
+                            ExtensionProvider = rec.ExtensionProvider
+                        });
+                    }
                 }
-            }
+            } 
             part.DisplayName = context.Attribute(part.PartDefinition.Name, "DisplayName");
             part.TechnicalName = context.Attribute(part.PartDefinition.Name, "TechnicalName");
             part.CssName = context.Attribute(part.PartDefinition.Name, "CssName");
@@ -166,7 +188,8 @@ namespace Nwazet.Commerce.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("TechnicalName", part.TechnicalName);
             context.Element(part.PartDefinition.Name).SetAttributeValue("CssName", part.CssName);
             context.Element(part.PartDefinition.Name).SetAttributeValue("Meaning", part.Meaning);
-            context.Element(part.PartDefinition.Name).SetAttributeValue("Values", part.Record.AttributeValues);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("Values", ProductAttributeValueRecord.SerializeAttributeValues(part.Record.AttributeValueRecords));
         }
+
     }
 }

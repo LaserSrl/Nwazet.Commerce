@@ -61,6 +61,7 @@
                     <input type="hidden" name="@(nameAttribute + ".Index")" value="@i" />
                     <input type="hidden" name="@Html.FieldNameFor(m => m.AttributeValueRecords[i].AttributeValueRecord.SortOrder)" value="@value.AttributeValueRecord.SortOrder" />
                     <input type="hidden" name="@Html.FieldNameFor(m => m.AttributeValueRecords[i].AttributeValueRecord.Id)" value="@value.AttributeValueRecord.Id" />
+                    <input type="hidden" name="@Html.FieldNameFor(m => m.AttributeValueRecords[i].AttributeValueRecord.GUIdentifier)" value="@value.AttributeValueRecord.GUIdentifier" />
                     <input type="hidden" class="attribute-record-deleted" name="@Html.FieldNameFor(m => m.AttributeValueRecords[i].Deleted)" value="@value.Deleted.ToString()" />
                     <input type="text" class="text" name="@Html.FieldNameFor(m => m.AttributeValueRecords[i].AttributeValueRecord.Text)" value="@value.AttributeValueRecord.Text" />
                 </div>
@@ -94,6 +95,7 @@
             <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords.Index" value="{{ index }}" />
             <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.SortOrder" value="{{ sort }}" />
             <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.Id" value="-1" />
+            <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.GUIdentifier" value="@Guid.NewGuid().ToString()" />
             <input type="hidden" class="attribute-record-deleted" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.Deleted" value="false" />
             <input type="text" class="text" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.Text" />
         </div>

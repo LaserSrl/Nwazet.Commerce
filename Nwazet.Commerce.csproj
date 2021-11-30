@@ -98,10 +98,6 @@
     <Content Include="Content\move.gif" />
     <Content Include="LICENSE.txt" />
     <Content Include="Recipes\World.recipe.xml" />
-    <Content Include="Scripts\attribute-admin.js" />
-    <Content Include="Scripts\attribute-admin.min.js">
-      <DependentUpon>attribute-admin.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\attribute-extensions.min.js">
       <DependentUpon>attribute-extensions.js</DependentUpon>
     </Content>

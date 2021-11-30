@@ -127,6 +127,7 @@ namespace Nwazet.Commerce.Migrations {
         public int UpdateFrom6() {
             SchemaBuilder.CreateTable("ProductAttributeValueRecord", table => table
              .Column<int>("Id", col => col.PrimaryKey().Identity())
+             .Column<string>("GUIdentifier", col => col.WithLength(255).NotNull())
              .Column<string>("Text", col => col.WithLength(500))
              .Column<decimal>("PriceAdjustment")
              .Column<bool>("IsLineAdjustment", col => col.WithDefault(false))
@@ -145,6 +146,7 @@ namespace Nwazet.Commerce.Migrations {
                     foreach (var attr in itemsAttribute) {
                         var attrSettings = attr[1].Split(',');
                         _productAttributeValueRepository.Create(new ProductAttributeValueRecord {
+                            GUIdentifier = Guid.NewGuid().ToString(),
                             Text = attr[0],
                             PriceAdjustment = Convert.ToDecimal(attrSettings[0]),
                             IsLineAdjustment = Convert.ToBoolean(attrSettings[1]),
