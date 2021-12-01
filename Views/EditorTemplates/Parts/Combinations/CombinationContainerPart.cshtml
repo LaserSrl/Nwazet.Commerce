@@ -119,6 +119,7 @@
                                                     @class = "form-check-input",
                                                     data_attribute_Name = attDisplayName,
                                                     data_attribute_id = att.Id,
+                                                    data_attribute_value_id = attVal.Id,
                                                     data_attribute_value = attVal.Text
                                                 })
                                             @Html.Label(attVal.Text,
@@ -167,10 +168,11 @@
                 var attContainer = $('#@(shortGuid+"_selected_attributes_container")');
                 // Id and Value of attribute that was "clicked"
                 var attId = $(this).data('attribute-id');
-                var attVal = $(this).data('attribute-value');
+                var attVal = $(this).data('attribute-value-id');
+                var attText = $(this).data('attribute-value');
                 var attName = $(this).data('attribute-name');
                 // check whether the attribute value is already selected
-                var already = attContainer.find('.selected-attribute[data-attribute-id=' + attId + '][data-attribute-value=' + attVal + ']');
+                var already = attContainer.find('.selected-attribute[data-attribute-id=' + attId + '][data-attribute-value-id=' + attVal + ']');
                 if (this.checked) {
                     // add to list of attributes to combine
                     if (already && already.length) {
@@ -178,7 +180,7 @@
                     } else {
                         // add to the list
                         attContainer
-                            .append('<span data-attribute-id="'+ attId +'" data-attribute-value="' + attVal + '" class="selected-attribute btn-success btn-xs">' + attName + ': ' + attVal +'</span>');
+                            .append('<span data-attribute-id="'+ attId +'" data-attribute-value-id="' + attVal + '" class="selected-attribute btn-success btn-xs">' + attName + ': ' + attText +'</span>');
                     }
                 } else {
                     // remove from list of attributes to combine
@@ -212,7 +214,7 @@
                 attrElements.each(function (index, element) {
                     attributes.push({
                         AttributeId: $(element).data('attribute-id'),
-                        AttributeValue: $(element).data('attribute-value')
+                        AttributeValue: $(element).data('attribute-value-id')
                     });
                 });
 

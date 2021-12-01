@@ -14,11 +14,28 @@ namespace Nwazet.Commerce.Models {
         {
             get
             {
-                return ProductAttributeValue.DeserializeAttributeValues(AttributeValuesString);
+                return this.Record?.AttributeValueRecords
+                    .Select(r => new ProductAttributeValue {
+                        Id = r.Id,
+                        Text = r.Text,
+                        ExtensionProvider = r.ExtensionProvider,
+                        IsLineAdjustment = r.IsLineAdjustment,
+                        PriceAdjustment = r.PriceAdjustment,
+                        SortOrder = r.SortOrder
+                    }) ?? Enumerable.Empty<ProductAttributeValue>();
             }
             set
             {
-                AttributeValuesString = ProductAttributeValue.SerializeAttributeValues(value);
+                Record.AttributeValueRecords = value
+                    .Select(r => new ProductAttributeValueRecord {
+                        Id = r.Id,
+                        Text = r.Text,
+                        ExtensionProvider = r.ExtensionProvider,
+                        IsLineAdjustment = r.IsLineAdjustment,
+                        PriceAdjustment = r.PriceAdjustment,
+                        SortOrder = r.SortOrder,
+                        AttributePartRecord = Record
+                    }).ToList();
             }
         }
 
@@ -53,6 +70,11 @@ namespace Nwazet.Commerce.Models {
             get { return Retrieve(r => r.Meaning); }
             set { Store(r => r.Meaning, value); }
         }
+
+        //public IList<ProductAttributeValueRecord> AttributeValueRecords {
+        //    get { return Retrieve(r => r.AttributeValueRecords); }
+        //    set { Store(r => r.AttributeValueRecords, value); }
+        //}
 
         internal string AttributeValuesString
         {

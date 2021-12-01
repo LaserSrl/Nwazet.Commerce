@@ -115,10 +115,10 @@ namespace Nwazet.Commerce.Controllers {
 
         class AttributeValues {
             public AttributeValues() {
-                Values = new List<string>();
+                Values = new List<int>();
             }
             public int Id { get; set; }
-            public IEnumerable<string> Values { get; set; }
+            public IEnumerable<int> Values { get; set; }
 
             public IEnumerable<AttributesToCombine> GetElements() {
                 return Values.Select(v => new AttributesToCombine { AttributeId = Id, AttributeValue = v });

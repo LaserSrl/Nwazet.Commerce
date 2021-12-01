@@ -32,12 +32,12 @@
     //                  v31     -       v33
     // In these conditions we should have the null value added to the options for those
     // attributes.
-    var attributeValues = new Dictionary<int, HashSet<string>>();
+    var attributeValues = new Dictionary<int, HashSet<int>>();
     foreach (var combo in allCombinations) {
         var comboAttributes = combo.ProductAttributeValues;
         foreach (var attVal in comboAttributes) {
             if (!attributeValues.ContainsKey(attVal.AttributeId)) {
-                attributeValues.Add(attVal.AttributeId, new HashSet<string>());
+                attributeValues.Add(attVal.AttributeId, new HashSet<int>());
             }
             attributeValues[attVal.AttributeId].Add(attVal.AttributeValue);
         }
@@ -47,10 +47,10 @@
     // actually exist.
     foreach (var attributePart in attributeParts) {
         var values = attributeValues[attributePart.Id];
-        attributeValues[attributePart.Id] = new HashSet<string>(
+        attributeValues[attributePart.Id] = new HashSet<int>(
             attributePart.AttributeValues
-                .Select(pav => pav.Text)
-                .Where(s => values.Any(v => v.Equals(s, StringComparison.InvariantCultureIgnoreCase)))
+                .Select(pav => pav.Id)
+                .Where(s => values.Any(v => v == s))
                 .Reverse());
     }
     // If any are required, add the null values for the attributes.
@@ -58,13 +58,13 @@
         var comboAttributes = combo.ProductAttributeValues;
         foreach (var attrId in attributeValues.Keys) {
             if (!comboAttributes.Any(atc => atc.AttributeId == attrId)) {
-                attributeValues[attrId].Add("");
+                attributeValues[attrId].Add(-1);
             }
         }
     }
 
     // Map of the combinations of options that should be enabled at the same time.
-    var enabledCombinations = new List<string>();
+    var enabledCombinations = new List<int>();
     // Conceptually, this is a table, with column indexes mapping to
     // the ids of the attributes.
     var attributeIndexes = new Dictionary<int, int>();
@@ -78,7 +78,8 @@
     // Build the array of enabled combinations
     foreach (var combo in availableCombinations) {
         foreach (var ap in attributeParts) {
-            var attValue = combo.ProductAttributeValues.FirstOrDefault(atc => atc.AttributeId == ap.Id)?.AttributeValue ?? string.Empty;
+            var attValue = combo.ProductAttributeValues
+                .FirstOrDefault(atc => atc.AttributeId == ap.Id)?.AttributeValue ?? -1;
             enabledCombinations.Add(attValue);
         }
     }
@@ -101,7 +102,8 @@
                 that are used in generating the combinations. *@
             var htmlId = shortGuid + "attr" + attPart.Id;
             // Get default selection for this attribute:
-            var defaultValue = defaultCombination.ProductAttributeValues.FirstOrDefault(atc => atc.AttributeId == attPart.Id)?.AttributeValue ?? string.Empty;
+            var defaultValue = defaultCombination.ProductAttributeValues
+                .FirstOrDefault(atc => atc.AttributeId == attPart.Id)?.AttributeValue ?? -1;
             <div class="@attPart.CssName @("meaning-" + attPart.Meaning)"
                  data-meaning="@attPart.Meaning">
                 @if (!string.IsNullOrEmpty(attPart.DisplayName)) {
@@ -111,8 +113,12 @@
                         class="product-attribute"
                         data-for-combination-attribute="@attPart.Id">
                     @foreach (var attVal in attributeValues[attPart.Id].Reverse()) {
+                        // from the Id corresponding to an attribute value, we need the corresponding text
+                        var attText = attVal <= 0
+                            ? "-"
+                            : attPart.AttributeValues.FirstOrDefault(av => av.Id == attVal).Text;
                         <option value="@attVal" @if (defaultValue.Equals(attVal)) { <text>selected</text> }>
-                            @(string.IsNullOrWhiteSpace(attVal) ? "-" : attVal)
+                            @(attText)
                         </option>
                     }
                 </select>

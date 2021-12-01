@@ -98,10 +98,6 @@
     <Content Include="Content\move.gif" />
     <Content Include="LICENSE.txt" />
     <Content Include="Recipes\World.recipe.xml" />
-    <Content Include="Scripts\attribute-admin.js" />
-    <Content Include="Scripts\attribute-admin.min.js">
-      <DependentUpon>attribute-admin.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\attribute-extensions.min.js">
       <DependentUpon>attribute-extensions.js</DependentUpon>
     </Content>
@@ -543,6 +539,7 @@
     <Compile Include="Models\PersistentShoppingCart.cs" />
     <Compile Include="Models\PricePart.cs" />
     <Compile Include="Models\PricePartRecord.cs" />
+    <Compile Include="Models\ProductAttributeValueRecord.cs" />
     <Compile Include="Models\ProductsListPart.cs" />
     <Compile Include="Models\OrderEvent.cs" />
     <Compile Include="Models\OrderPart.cs" />
@@ -865,6 +862,7 @@
     <Compile Include="ViewModels\ListOrdersViewModel.cs" />
     <Compile Include="ViewModels\OrderEditorViewModel.cs" />
     <Compile Include="ViewModels\PricingSettingsViewModel.cs" />
+    <Compile Include="ViewModels\ProductAttributeValueViewModel.cs" />
     <Compile Include="ViewModels\ProductEditorViewModel.cs" />
     <Compile Include="ViewModels\ProductVatConfigurationPartEditorViewModel.cs" />
     <Compile Include="ViewModels\ReportDataViewModel.cs" />
