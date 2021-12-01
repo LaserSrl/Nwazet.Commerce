@@ -55,13 +55,14 @@ namespace Nwazet.Commerce.Services.Combinations {
             if (inventoryPart != null) {
                 var details = new List<CombinationDetailShape>();
                 // We need to update the minimum and maximum order quantities.
-                //details.Add(new CombinationDetailShape {
-                //    RoleKey = "product-inventory-quantities",
-                //    Shape = shapeHelper.Combinations_ProductInventoryQuantities(
-                //        ContentItem: inventoryPart.ContentItem,
-                //        InventoryPart: inventoryPart,
-                //        CombinationPart: part)
-                //});
+                details.Add(new CombinationDetailShape {
+                    RoleKey = "product-inventory-quantities",
+                    Shape = shapeHelper.Combinations_ProductInventoryQuantities(
+                        ContentItem: inventoryPart.ContentItem,
+                        ProductPart: inventoryPart.As<ProductPart>(),
+                        InventoryPart: inventoryPart,
+                        CombinationPart: part)
+                });
                 // Do we need to update the out of stock message?
                 return details;
             }
