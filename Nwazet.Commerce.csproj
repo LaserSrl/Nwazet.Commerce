@@ -245,7 +245,7 @@
     <None Include="Styles\product-admin.less" />
     <None Include="Views\BankTransferOrderAdditionalFrontEndData.cshtml" />
     <None Include="Views\Combinations_ProductDiscountedPrice.cshtml" />
-    <Content Include="Views\Combinations_ProductInventoryQuantities.cshtml" />
+    <None Include="Views\Combinations_ProductInventoryQuantities.cshtml" />
     <None Include="Views\Combinations_ProductPrice.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsBasicPartial.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsPartial.cshtml" />
