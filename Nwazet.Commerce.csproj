@@ -237,6 +237,8 @@
     <None Include="Styles\product-admin.less" />
     <None Include="Views\Combinations_ProductDiscountedPrice.cshtml" />
     <None Include="Views\Combinations_ProductInventoryQuantities.cshtml" />
+    <None Include="Views\Combinations_ProductVatConfiguration.cshtml" />
+    <None Include="Views\Combinations_ProductPriceDetail.cshtml" />
     <None Include="Views\Combinations_ProductPrice.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsBasicPartial.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsPartial.cshtml" />
@@ -654,6 +656,7 @@
     <Compile Include="Services\Combinations\ICombinationDetailProvider.cs" />
     <Compile Include="Services\Combinations\InventoryPartDetailProvider.cs" />
     <Compile Include="Services\Combinations\IProductCombinationService.cs" />
+    <Compile Include="Services\Combinations\LocalizationPartDetailProvider.cs" />
     <Compile Include="Services\Combinations\PricePartDetailProvider.cs" />
     <Compile Include="Services\Combinations\ProductCombinationService.cs" />
     <Compile Include="Services\Combinations\ProductCombinationsGroupInventoryProvider.cs" />

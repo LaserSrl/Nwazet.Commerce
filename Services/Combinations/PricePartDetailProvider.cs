@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.ViewModels.Combinations;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.MetaData;
 using Orchard.ContentManagement.MetaData.Builders;
@@ -41,6 +42,29 @@ namespace Nwazet.Commerce.Services.Combinations {
                 // Copy properties from the contaoiner to the combination.
                 targetPart.EffectiveUnitPrice = sourcePart.EffectiveUnitPrice;
             }
+        }
+
+        public override IEnumerable<CombinationDetailShape> GetCombinationDetailShapes(
+           CombinationPart part, dynamic shapeHelper) {
+
+            // add a base shape if needed
+            var pricePart = part.As<PricePart>();
+            if (pricePart != null) {
+                var details = new List<CombinationDetailShape>();
+                // We need to update the minimum and maximum order quantities.
+                details.Add(new CombinationDetailShape {
+                    RoleKey = "product-price-detail",
+                    Shape = shapeHelper.Combinations_ProductPriceDetail(
+                        ContentItem: pricePart.ContentItem,
+                        ProductPart: pricePart.As<ProductPart>(),
+                        PricePart: pricePart,
+                        CombinationPart: part)
+                });
+                // Do we need to update the out of stock message?
+                return details;
+            }
+
+            return Enumerable.Empty<CombinationDetailShape>();
         }
     }
 }
