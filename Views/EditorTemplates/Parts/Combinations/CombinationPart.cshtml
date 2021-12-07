@@ -10,12 +10,13 @@
 }
 
 <div class="callout callout-info" id="@shortGuid">
-    <h4>
-        @T("This product is a variant of: {0}", 
-            Html.ItemEditLinkWithReturnUrl(Html.ItemDisplayText((IContent)(Model.CombinationContainer)).ToHtmlString(), 
-                (IContent)(Model.CombinationContainer)))
-    </h4>
-
+    @if (Model.CombinationContainer!=null) { 
+        <h4>
+            @T("This product is a variant of: {0}",
+                Html.ItemEditLinkWithReturnUrl(Html.ItemDisplayText((IContent)(Model.CombinationContainer)).ToHtmlString(),
+                    (IContent)(Model.CombinationContainer)))
+        </h4>
+    }
     <p>
         @T("It maps the following combination of attributes: {0}",
             _productCombinationService.CombinationDisplayText(Model.Part))
