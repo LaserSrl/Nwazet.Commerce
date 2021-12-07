@@ -12,8 +12,8 @@ using Orchard.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Orchard.Localization.Models;
+using Orchard.Localization.Services;
 
 namespace Nwazet.Commerce.Drivers.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
@@ -26,19 +26,22 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         private readonly IProductCombinationService _productCombinationService;
         private readonly IAuthorizer _authorizer;
         private readonly IProductService _productService;
+        private readonly ILocalizationService _localizationService;
 
         public CombinationContainerPartDriver(
             IProductAttributeAdminServices productAttributeAdminServices,
             IContentManager contentManager,
             IProductCombinationService productCombinationService,
             IAuthorizer authorizer,
-            IProductService productService) {
+            IProductService productService,
+            ILocalizationService localizationService) {
 
             _productAttributeAdminServices = productAttributeAdminServices;
             _contentManager = contentManager;
             _productCombinationService = productCombinationService;
             _authorizer = authorizer;
             _productService = productService;
+            _localizationService = localizationService;
 
             T = NullLocalizer.Instance;
         }
@@ -87,9 +90,13 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                     };
                 } else {
                     editorFactory = () => {
+                        string culture = _localizationService.GetContentCulture(vm.Part.ContentItem);
+
                         // get list of attributes we'll be able to use for combinations
                         var allAttributes = _productAttributeAdminServices
-                                .GetAllProductAttributeParts();
+                                .GetAllProductAttributeParts()
+                                .Where(a=> _localizationService.GetContentCulture(a.ContentItem) == culture);
+
                         vm.AllAttributeParts = allAttributes;
 
                         return shapeHelper.EditorTemplate(

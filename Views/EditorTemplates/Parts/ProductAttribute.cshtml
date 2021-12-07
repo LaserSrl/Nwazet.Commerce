@@ -95,7 +95,7 @@
             <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords.Index" value="{{ index }}" />
             <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.SortOrder" value="{{ sort }}" />
             <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.Id" value="-1" />
-            <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.GUIdentifier" value="@Guid.NewGuid().ToString()" />
+            <input type="hidden" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.GUIdentifier" value="{{guidIdentifier}}" />
             <input type="hidden" class="attribute-record-deleted" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.Deleted" value="false" />
             <input type="text" class="text" name="NwazetCommerceAttribute.AttributeValueRecords[{{ index }}].AttributeValueRecord.Text" />
         </div>
@@ -172,7 +172,7 @@
                 event.preventDefault();
                 var valueTemplate = $("#valueTemplate").html();
                 $("#@idAttribute")
-                    .append(Mustache.render(valueTemplate, { index: i, sort: i + 1 }))
+                    .append(Mustache.render(valueTemplate, { index: i, sort: i + 1, guidIdentifier: GenerateGuid() }))
                     .last()
                     .find(".option-name input[type=text]")
                     .focus();
@@ -194,5 +194,13 @@
                 }
             });
         });
+
+
+        function GenerateGuid() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
     </script>
 }

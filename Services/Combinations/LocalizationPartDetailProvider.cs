@@ -37,12 +37,7 @@ namespace Nwazet.Commerce.Services.Combinations {
                 // Copy properties from the contaoiner to the combination.
                 targetPart.Culture = sourcePart.Culture;
 
-                //??
-                if (sourcePart.MasterContentItem == null) {
-                    targetPart.MasterContentItem = container.ContentItem;
-                } else {
-                    targetPart.MasterContentItem = sourcePart.MasterContentItem;
-                }
+                //targetPart.MasterContentItem
             }
         }
     }

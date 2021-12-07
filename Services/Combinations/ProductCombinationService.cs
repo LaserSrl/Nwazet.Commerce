@@ -142,7 +142,7 @@ namespace Nwazet.Commerce.Services.Combinations {
             var comboValues = combinationPart.ProductAttributeValues;
             // get the attributes, because we need the title/displayname
             // Some are memorized:
-            var attributeIdsToFetch = comboValues
+            var attributeIdsToFetch = comboValues == null ? new List<int>() : comboValues
                 .Select(cv => cv.AttributeId)
                 .Except(_attributeNames.Keys);
             // fetch
@@ -160,7 +160,7 @@ namespace Nwazet.Commerce.Services.Combinations {
                     }
                 }
             }
-            var textElements = comboValues
+            var textElements = comboValues == null ? new List<string>() : comboValues
                 .Select(cv => _attributeNames[cv.AttributeId] + " " + _attributeValueText[cv.AttributeValue]);
             // TODO: when Attributes get their own records for values, handle them here properly
             return string.Join(", ", textElements);
