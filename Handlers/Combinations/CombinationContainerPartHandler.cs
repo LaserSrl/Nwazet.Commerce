@@ -20,23 +20,14 @@ namespace Nwazet.Commerce.Handlers.Combinations {
     public class CombinationContainerPartHandler : ContentHandler {
         private readonly IContentManager _contentManager;
         private readonly ILocalizationService _localizationService;
-        private readonly ICultureManager _cultureManager;
-        private readonly IProductAttributeAdminServices _productAttributeAdminServices;
-        private readonly IProductCombinationService _productCombinationService;
 
         public CombinationContainerPartHandler(
             IRepository<CombinationContainerPartRecord> repository,
             IContentManager contentManager,
-            ILocalizationService localizationService,
-            ICultureManager cultureManager,
-            IProductAttributeAdminServices productAttributeAdminServices,
-            IProductCombinationService productCombinationService) {
+            ILocalizationService localizationService) {
 
             _contentManager = contentManager;
             _localizationService = localizationService;
-            _cultureManager = cultureManager;
-            _productAttributeAdminServices = productAttributeAdminServices;
-            _productCombinationService = productCombinationService;
 
             Filters.Add(StorageFilter.For(repository));
 
@@ -105,79 +96,5 @@ namespace Nwazet.Commerce.Handlers.Combinations {
                 context.Metadata.Identity.Add("AttributeName", part.TechnicalName);
             }
         }
-
-        private IEnumerable<LocalizationPart> GetEditorLocalizations(LocalizationPart part) {
-            return _localizationService.GetLocalizations(part.ContentItem, VersionOptions.Latest)
-                .Where(c => c.Culture != null)
-                .ToList();
-        }
-        private List<string> RetrieveMissingCultures(LocalizationPart part, bool excludePartCulture) {
-            var editorLocalizations = GetEditorLocalizations(part);
-            var cultures = _cultureManager
-                .ListCultures()
-                .Where(s => editorLocalizations.All(l => l.Culture.Culture != s))
-                .ToList();
-            if (excludePartCulture) {
-                cultures.Remove(part.Culture.Culture);
-            }
-            return cultures;
-        }
-
-        // is correct?
-        protected override void BuildEditorShape(BuildEditorContext context) {
-            // case new translation of contentitem
-            var localizationPart = context.ContentItem.As<LocalizationPart>();
-            if (localizationPart == null || localizationPart.Culture != null || context.ContentItem.As<LocalizationPart>().MasterContentItem == null || context.ContentItem.As<LocalizationPart>().MasterContentItem.Id == 0) {
-                return;
-            }
-            var part = context.ContentItem.Parts.Where(p => p.PartDefinition.Name == "CombinationContainerPart");
-            if (part == null)
-                return; // contentitem without taxonomy
-            base.BuildEditorShape(context);
-            var missingCultures = RetrieveMissingCultures(localizationPart, localizationPart.Culture != null);
-
-            var vm = CreateVM(context.ContentItem.As<CombinationContainerPart>());
-            var Prefix = "CombinationContainerPart";
-
-            foreach (var missingCulture in missingCultures) {
-                // get list of attributes we'll be able to use for combinations
-                var allAttributes = _productAttributeAdminServices
-                        .GetAllProductAttributeParts()
-                        .Where(a => _localizationService.GetContentCulture(a.ContentItem) == missingCulture);
-
-                vm.AllAttributeParts = allAttributes;
-
-                var templateShape = context.New.EditorTemplate(
-                    TemplateName: "Parts/Combinations/CombinationContainerPart",
-                    Model: vm,
-                    Prefix: Prefix
-                );
-
-                context.Shape.Parts_CombinationContainerPart_Editor = templateShape;
-            }           
-        }
-
-
-        private CombinationContainerPartEditViewModel CreateVM(CombinationContainerPart part) {
-            var partSettings = part.TypePartDefinition.Settings.GetModel<CombinationContainerPartSettings>();
-            // Get existing combinations
-            var currentCombinationRecords = part?.Record?.CombinationPartRecords ?? Enumerable.Empty<CombinationPartRecord>();
-            var combinationContents = _contentManager
-                .GetMany<CombinationPart>(currentCombinationRecords.Select(cpr => cpr.Id), VersionOptions.Latest, QueryHints.Empty);
-            var comboTitles = new Dictionary<int, string>();
-            foreach (var combo in combinationContents) {
-                comboTitles.Add(
-                    combo.Id,
-                    _productCombinationService.CombinationDisplayText(combo));
-            }
-            return new CombinationContainerPartEditViewModel() {
-                Part = part,
-                CurrentCombinations = combinationContents,
-                CombinationTitles = comboTitles,
-                CombinationTypeName = partSettings?.CombinationTypeName ?? string.Empty
-            };
-        }
-
-
     }
 }

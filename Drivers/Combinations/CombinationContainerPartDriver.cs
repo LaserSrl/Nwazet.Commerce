@@ -80,7 +80,8 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                         );
                 };
             } else {
-                if (vm.Part.Id == 0) {
+                if (vm.Part.Id == 0 ||
+                    (vm.Part.ContentItem.As<LocalizationPart>() != null && vm.Part.ContentItem.As<LocalizationPart>().Culture == null)) {
                     newFactory = () => {
                         return shapeHelper.EditorTemplate(
                             TemplateName: "Parts/Combinations/CombinationContainerPart.New",
@@ -88,9 +89,10 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                             Prefix: Prefix
                             );
                     };
-                } else {
+                }
+                else {
                     editorFactory = () => {
-                        string culture = _localizationService.GetContentCulture(vm.Part.ContentItem);
+                        string culture = vm.Part.ContentItem.As<LocalizationPart>().Culture.Culture;
 
                         // get list of attributes we'll be able to use for combinations
                         var allAttributes = _productAttributeAdminServices
