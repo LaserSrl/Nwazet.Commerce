@@ -72,12 +72,7 @@ namespace Nwazet.Commerce.Services {
             var inventory = part.Inventory;
             if (_workContextAccessor.GetContext().TryResolve(out bundleService) && part.Has<BundlePart>()) {
                 var bundlePart = part.As<BundlePart>();
-                var ids = bundlePart.ProductIds.ToList();
-                if (!ids.Any()) return 0;
-                inventory =
-                    bundleService
-                        .GetProductQuantitiesFor(bundlePart)
-                        .Min(p => p.Product.Inventory / p.Quantity);
+                inventory = GetInventoryForBundle(bundlePart, bundleService);
             }
             return inventory;
         }
@@ -87,18 +82,22 @@ namespace Nwazet.Commerce.Services {
             var inventory = part.As<InventoryPart>()?.Inventory ?? 0;
             if (_workContextAccessor.GetContext().TryResolve(out bundleService) && part.Has<BundlePart>()) {
                 var bundlePart = part.As<BundlePart>();
-                var ids = bundlePart.ProductIds.ToList();
-                if (!ids.Any()) return 0;
-
-                var productQuantitiesFor =
-                    bundleService
-                        .GetProductQuantitiesFor(bundlePart);
-                if (!productQuantitiesFor.Any()) return 0;
-
-                inventory = productQuantitiesFor
-                    .Min(p => p.Product.Inventory / p.Quantity);
+                inventory = GetInventoryForBundle(bundlePart, bundleService);
             }
             return inventory;
+        }
+        
+        private int GetInventoryForBundle(BundlePart bundlePart, IBundleService bundleService) {
+            var ids = bundlePart.ProductIds.ToList();
+            if (!ids.Any()) return 0;
+
+            var productQuantitiesFor =
+                bundleService
+                    .GetProductQuantitiesFor(bundlePart);
+            if (!productQuantitiesFor.Any()) return 0;
+
+            return productQuantitiesFor
+                .Min(p => p.Product.Inventory / p.Quantity);
         }
 
         public virtual IEnumerable<ProductPart> GetProductsWithInventoryIssues() {
