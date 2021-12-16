@@ -1,9 +1,12 @@
 ﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels.Combinations;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
+using Orchard.Localization.Models;
+using Orchard.Localization.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +26,10 @@ namespace Nwazet.Commerce.Drivers.Combinations {
 
         protected override string Prefix {
             get { return "CombinationPart"; }
+        }
+
+        protected override DriverResult Display(CombinationPart part, string displayType, dynamic shapeHelper) {
+            return null;
         }
 
         protected override DriverResult Editor(CombinationPart part, dynamic shapeHelper) {
