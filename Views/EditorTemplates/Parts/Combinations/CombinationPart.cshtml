@@ -4,21 +4,27 @@
 @using Orchard;
 @using Orchard.ContentManagement;
 @model CombinationPartEditViewModel
-@{ 
+@{
     var shortGuid = "c" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
     var _productCombinationService = WorkContext.Resolve<IProductCombinationService>();
+
+    var displayCombinations = _productCombinationService.CombinationDisplayText(Model.Part);
 }
 
-<div class="callout callout-info" id="@shortGuid">
-    @if (Model.CombinationContainer!=null) { 
-        <h4>
-            @T("This product is a variant of: {0}",
-                Html.ItemEditLinkWithReturnUrl(Html.ItemDisplayText((IContent)(Model.CombinationContainer)).ToHtmlString(),
-                    (IContent)(Model.CombinationContainer)))
-        </h4>
-    }
-    <p>
-        @T("It maps the following combination of attributes: {0}",
-            _productCombinationService.CombinationDisplayText(Model.Part))
-    </p>
-</div>
+@if (Model.CombinationContainer != null || !string.IsNullOrEmpty(displayCombinations)) {
+    <div class="callout callout-info" id="@shortGuid">
+        @if (Model.CombinationContainer != null) {
+            <h4>
+                @T("This product is a variant of: {0}",
+                    Html.ItemEditLinkWithReturnUrl(Html.ItemDisplayText((IContent)(Model.CombinationContainer)).ToHtmlString(),
+                        (IContent)(Model.CombinationContainer)))
+            </h4>
+        }
+        @if (!string.IsNullOrEmpty(displayCombinations)) {
+            <p>
+                @T("It maps the following combination of attributes: {0}",
+                    displayCombinations)
+            </p>
+        }
+    </div>
+}

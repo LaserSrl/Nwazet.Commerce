@@ -138,14 +138,19 @@
                                   id="@(shortGuid+"_selected_attributes_container")">
                             @* We'll add labels for the selected attributes here *@
                         </fieldset>
-                        
+
                         <div id="@(shortGuid + "generate_results")">
                             <span></span>
                         </div>
                         <button type="button" disabled
                                 class="btn btn-primary"
-                                id="@(shortGuid + "generate_button")">@T("Generate")</button>
-                    </div>
+                                id="@(shortGuid + "generate_button")">
+                            @T("Generate")
+                            </button>
+                            @Html.Link(T("Create combination").Text,
+                                    Url.Action("Create", "CombinationConfigurationAdmin", new { area = "Nwazet.Commerce", id = Model.Part.Id }),
+                                    new { @class = "button primaryAction" })
+                        </div>
                 } else {
                     <div class="box-body">
                         @T("There are no attributes to create new combinations.")
