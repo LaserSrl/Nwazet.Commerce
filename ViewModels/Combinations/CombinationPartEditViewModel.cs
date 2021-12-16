@@ -10,5 +10,7 @@ namespace Nwazet.Commerce.ViewModels.Combinations {
 
         public CombinationPart Part { get; set; }
         public CombinationContainerPart CombinationContainer { get; set; }
+        // The attributes we can use to generate combination
+        public IEnumerable<ProductAttributePart> AllAttributeParts { get; set; }
     }
 }

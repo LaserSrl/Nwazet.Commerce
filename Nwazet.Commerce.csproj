@@ -263,6 +263,8 @@
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.Empty.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.Unauthorized.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\AttributesCombinationPart.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\LocalizedCombinationPart.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationPart.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.New.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Advanced.cshtml" />
@@ -337,6 +339,7 @@
     <Compile Include="Commands\TerritoriesCommands.cs" />
     <Compile Include="Controllers\Combinations\CombinationConfigurationAdminController.cs" />
     <Compile Include="Controllers\Combinations\CombinationsAdminController.cs" />
+    <Compile Include="Controllers\Combinations\LocalizedCombinationController.cs" />
     <Compile Include="Controllers\CouponController.cs" />
     <Compile Include="Controllers\CouponingAdminController.cs" />
     <Compile Include="Controllers\CouponingLineCriterionController.cs" />
@@ -377,6 +380,7 @@
     <Compile Include="Drivers\BundlePartDriver.cs" />
     <Compile Include="Drivers\Combinations\CombinationContainerPartDriver.cs" />
     <Compile Include="Drivers\Combinations\CombinationPartDriver.cs" />
+    <Compile Include="Drivers\Combinations\LocalizedCombinationPartDriver.cs" />
     <Compile Include="Drivers\CouponingSiteSettingPartDriver.cs" />
     <Compile Include="Drivers\ECommerceCurrencySiteSettingsPartDriver.cs" />
     <Compile Include="Drivers\FlexibleShippingMethodPartDriver.cs" />

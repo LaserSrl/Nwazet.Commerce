@@ -1,0 +1,54 @@
+﻿@using Nwazet.Commerce.Models;
+@using Nwazet.Commerce.Services.Combinations;
+@using Nwazet.Commerce.ViewModels.Combinations;
+@using Orchard;
+@using Orchard.ContentManagement;
+@model CombinationPartEditViewModel
+@{
+    var shortGuid = "c" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
+    var _productCombinationService = WorkContext.Resolve<IProductCombinationService>();
+
+    var _contentManager = WorkContext.Resolve<IContentManager>();
+}
+
+@if (Model.AllAttributeParts.Any()) {
+    <fieldset class="attributes-combination-wrapper">
+        @foreach (var att in Model.AllAttributeParts) {
+            var attDisplayName = att.DisplayName;
+            if (string.IsNullOrWhiteSpace(attDisplayName)) {
+                attDisplayName = _contentManager.GetItemMetadata(att).DisplayText;
+            }
+            <div class="single-attribute">
+                @* TODO: make this card collapsible *@
+                <div class="">
+                    <h3 class="">@(attDisplayName)</h3>
+                </div>
+                <div class="">
+                    @foreach (var attVal in att.AttributeValues) {
+                        <div class="form-check attribute-value-radiobutton">
+                            @Html.RadioButton(att.TechnicalName, att.DisplayName,
+                                new {
+                                    @id = "attribute_" + att.Id + "_" + attVal.Text,
+                                    @class = "form-check-input",
+                                    data_attribute_Name = attDisplayName,
+                                    data_attribute_id = att.Id,
+                                    data_attribute_value_id = attVal.Id,
+                                    data_attribute_value = attVal.Text
+                                })
+                            @Html.Label(attVal.Text,
+                                new {
+                                    @for = "attribute_" + att.Id + "_" + attVal.Text,
+                                    @class = "form-check-label forcheckbox",
+                                    @id = "attribute_" + att.Id + "_" + attVal.Text
+                                })
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </fieldset>
+} else {
+    <div class="">
+        @T("There are no attributes to create new combinations.")
+    </div>
+}

@@ -9,6 +9,8 @@
     var _productCombinationService = WorkContext.Resolve<IProductCombinationService>();
 
     var displayCombinations = _productCombinationService.CombinationDisplayText(Model.Part);
+
+    var _contentManager = WorkContext.Resolve<IContentManager>();
 }
 
 @if (Model.CombinationContainer != null || !string.IsNullOrEmpty(displayCombinations)) {
