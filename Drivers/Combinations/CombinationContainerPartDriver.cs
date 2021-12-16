@@ -80,7 +80,9 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                         );
                 };
             } else {
+                // check if you are creating
                 if (vm.Part.Id == 0 ||
+                // check if the content item has a translation associated with it
                     (vm.Part.ContentItem.As<LocalizationPart>() != null && vm.Part.ContentItem.As<LocalizationPart>().Culture == null)) {
                     newFactory = () => {
                         return shapeHelper.EditorTemplate(

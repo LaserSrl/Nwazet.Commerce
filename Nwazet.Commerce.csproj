@@ -240,6 +240,7 @@
     <None Include="Styles\coupon-admin.less" />
     <None Include="Styles\product-admin.less" />
     <None Include="Views\BankTransferOrderAdditionalFrontEndData.cshtml" />
+    <None Include="Views\CombinationConfigurationAdmin\Create.cshtml" />
     <None Include="Views\Combinations_ProductDiscountedPrice.cshtml" />
     <None Include="Views\Combinations_ProductInventoryQuantities.cshtml" />
     <None Include="Views\Combinations_ProductVatConfiguration.cshtml" />
@@ -340,6 +341,7 @@
     <Compile Include="ApplicabilityCriteria\NumericCriterionBase.cs" />
     <Compile Include="Aspects\ITerritoryAddressAspect.cs" />
     <Compile Include="Commands\TerritoriesCommands.cs" />
+    <Compile Include="Controllers\Combinations\CombinationConfigurationAdminController.cs" />
     <Compile Include="Controllers\Combinations\CombinationsAdminController.cs" />
     <Compile Include="Controllers\CouponController.cs" />
     <Compile Include="Controllers\CouponingAdminController.cs" />
