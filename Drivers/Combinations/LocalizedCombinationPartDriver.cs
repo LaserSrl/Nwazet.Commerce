@@ -42,39 +42,45 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         }
 
         private DriverResult EditorShape(CombinationPart part, dynamic shapeHelper) {
-            var allAttributes = _productAttributeAdminServices
-               .GetAllProductAttributeParts();
-            var vm = new CombinationPartEditViewModel {
-                Part = part,
-                CombinationContainer = part.CombinationContainerPart,
-                AllAttributeParts = allAttributes
-            };
-
-            // get list of attributes we'll be able to use for combinations
-            if (vm.Part.ContentItem.As<LocalizationPart>() != null && vm.Part.ContentItem.As<LocalizationPart>().Culture != null) {
-                string culture = vm.Part.ContentItem.As<LocalizationPart>().Culture.Culture;
-                vm.AllAttributeParts = allAttributes
-                    .Where(a => _localizationService.GetContentCulture(a.ContentItem) == culture);
-            }
-
             var shapes = new List<DriverResult>();
-            Func<dynamic> localizedFactory = () => {
-                return shapeHelper.EditorTemplate(
-                    TemplateName: "Parts/Combinations/LocalizedCombinationPart",
-                    Model: vm,
-                    Prefix: Prefix
-                    );
-            };
-            Func<dynamic> attributesFactory = () => {
-                return shapeHelper.EditorTemplate(
-                    TemplateName: "Parts/Combinations/AttributesCombinationPart",
-                    Model: vm,
-                    Prefix: Prefix
-                    );
-            };
-            shapes.Add(ContentShape("Parts_LocalizedCombinationPart_Editor", localizedFactory));
-            shapes.Add(ContentShape("Parts_AttributesCombinationPart_Editor", attributesFactory));
+            // if the combinations are present I don't have to add them again
+            if (part.Id == 0) {
+                // get list of attributes we'll be able to use for combinations
+                var allAttributes = _productAttributeAdminServices
+                    .GetAllProductAttributeParts();
+                var vm = new CombinationPartEditViewModel {
+                    Part = part,
+                    CombinationContainer = part.CombinationContainerPart,
+                    AllAttributeParts = allAttributes
+                };
 
+                // if the localization part is present, we select the attributes by culture
+                if (vm.Part.ContentItem.As<LocalizationPart>() != null && vm.Part.ContentItem.As<LocalizationPart>().Culture != null) {
+                    string culture = vm.Part.ContentItem.As<LocalizationPart>().Culture.Culture;
+                    vm.AllAttributeParts = allAttributes
+                        .Where(a => _localizationService.GetContentCulture(a.ContentItem) == culture);
+                }
+
+                // shape which has a javascript inside that reads the localization from the dropdown 
+                // and calls a controller to look for the attributes
+                Func<dynamic> localizedFactory = () => {
+                    return shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Combinations/LocalizedCombinationPart",
+                        Model: vm,
+                        Prefix: Prefix
+                        );
+                };
+                // shape showing the attributes
+                Func<dynamic> attributesFactory = () => {
+                    return shapeHelper.EditorTemplate(
+                        TemplateName: "Parts/Combinations/AttributesCombinationPart",
+                        Model: vm,
+                        Prefix: Prefix
+                        );
+                };
+                shapes.Add(ContentShape("Parts_LocalizedCombinationPart_Editor", localizedFactory));
+                shapes.Add(ContentShape("Parts_AttributesCombinationPart_Editor", attributesFactory));
+            }
             return Combined(shapes.ToArray());
         }
     }

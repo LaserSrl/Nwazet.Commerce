@@ -60,7 +60,7 @@ namespace Nwazet.Commerce.Services.Combinations {
             get { return _combinationDetailProviders.Value; }
         }
 
-        private string GetCombinationContentType(
+        public string GetCombinationContentType(
             CombinationContainerPart containerPart) {
             var partSettings = containerPart.TypePartDefinition
                 .Settings.GetModel<CombinationContainerPartSettings>();

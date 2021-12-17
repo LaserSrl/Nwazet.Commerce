@@ -9,10 +9,13 @@
     var _productCombinationService = WorkContext.Resolve<IProductCombinationService>();
 
     var _contentManager = WorkContext.Resolve<IContentManager>();
+
+    var contentType = _productCombinationService.GetCombinationContentType(Model.CombinationContainer);
 }
 
 @if (Model.AllAttributeParts.Any()) {
-    <fieldset class="attributes-combination-wrapper">
+    <input type="hidden" name="ContentType" value="@contentType" />
+    <div class="attributes-combination-wrapper">
         @foreach (var att in Model.AllAttributeParts) {
             var attDisplayName = att.DisplayName;
             if (string.IsNullOrWhiteSpace(attDisplayName)) {
@@ -46,9 +49,11 @@
                 </div>
             </div>
         }
-    </fieldset>
+    </div>
 } else {
     <div class="">
         @T("There are no attributes to create new combinations.")
     </div>
 }
+
+
