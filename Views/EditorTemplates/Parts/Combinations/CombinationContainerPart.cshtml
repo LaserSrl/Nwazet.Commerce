@@ -148,7 +148,7 @@
                             @T("Generate")
                             </button>
                             @Html.Link(T("Create combination").Text,
-                                    Url.Action("Create", "CombinationConfigurationAdmin", new { area = "Nwazet.Commerce", id = Model.Part.Id }),
+                                    Url.Action("Create", "CombinationConfigurationAdmin", new { area = "Nwazet.Commerce", id = Model.Part.Id, returnUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl }),
                                     new { @class = "button primaryAction" })
                         </div>
                 } else {
