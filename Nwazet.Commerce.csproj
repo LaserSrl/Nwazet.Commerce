@@ -843,6 +843,7 @@
     <Compile Include="ViewModels\ApplicabilityCriterionEntry.cs" />
     <Compile Include="ViewModels\CartPriceAlterationAmount.cs" />
     <Compile Include="ViewModels\Combinations\AttributesToCombine.cs" />
+    <Compile Include="ViewModels\Combinations\CombinationAttribute.cs" />
     <Compile Include="ViewModels\Combinations\CombinationContainerPartEditViewModel.cs" />
     <Compile Include="ViewModels\Combinations\CombinationDetailShape.cs" />
     <Compile Include="ViewModels\Combinations\CombinationPartEditViewModel.cs" />

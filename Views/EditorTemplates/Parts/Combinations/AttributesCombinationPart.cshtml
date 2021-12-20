@@ -11,44 +11,35 @@
     var _contentManager = WorkContext.Resolve<IContentManager>();
 
     var contentType = _productCombinationService.GetCombinationContentType(Model.CombinationContainer);
+
+    var allAttributes = Model.AllAttributes;
 }
 
-@if (Model.AllAttributeParts.Any()) {
+@if (Model.Part.Id == 0 && Model.AllAttributes.Any()) {
     <input type="hidden" name="ContentType" value="@contentType" />
-    <div class="attributes-combination-wrapper">
-        @foreach (var att in Model.AllAttributeParts) {
-            var attDisplayName = att.DisplayName;
-            if (string.IsNullOrWhiteSpace(attDisplayName)) {
-                attDisplayName = _contentManager.GetItemMetadata(att).DisplayText;
+    <div class="product-combination-attributes box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">@T("Attributes")</h3>
+        </div>
+        <div class="box-body attributes-combination-wrapper">
+            @for (int i = 0; i < allAttributes.Count(); i++) {
+                <fieldset>
+                    <legend>@allAttributes[i].AttributeDisplayName</legend>
+                    <div class="form-check attribute-values">
+                        <input type="hidden"
+                               name="@Html.FieldNameFor(m => m.AllAttributes[i].AttributeId)"
+                               value="@Model.AllAttributes.ToList()[i].AttributeId" />
+                        <select id="@Html.FieldIdFor(m => m.AllAttributes[i].SelectedAttributeValue)"
+                                name="@Html.FieldNameFor(m => m.AllAttributes[i].SelectedAttributeValue)">
+                            @Html.SelectOption(-1, false, T("- None -").ToString())
+                            @foreach (var attVal in allAttributes[i].Values) {
+                                <option @if (attVal.Id == allAttributes[i].SelectedAttributeValue) { <text> selected="selected" </text> } value="@attVal.Id"> @attVal.Text </option>
+                            }
+                        </select>
+                    </div>
+                </fieldset>
             }
-            <div class="single-attribute">
-                @* TODO: make this card collapsible *@
-                <div class="">
-                    <h3 class="">@(attDisplayName)</h3>
-                </div>
-                <div class="">
-                    @foreach (var attVal in att.AttributeValues) {
-                        <div class="form-check attribute-value-radiobutton">
-                            @Html.RadioButton(att.TechnicalName, att.DisplayName,
-                                new {
-                                    @id = "attribute_" + att.Id + "_" + attVal.Text,
-                                    @class = "form-check-input",
-                                    data_attribute_Name = attDisplayName,
-                                    data_attribute_id = att.Id,
-                                    data_attribute_value_id = attVal.Id,
-                                    data_attribute_value = attVal.Text
-                                })
-                            @Html.Label(attVal.Text,
-                                new {
-                                    @for = "attribute_" + att.Id + "_" + attVal.Text,
-                                    @class = "form-check-label forcheckbox",
-                                    @id = "attribute_" + att.Id + "_" + attVal.Text
-                                })
-                        </div>
-                    }
-                </div>
-            </div>
-        }
+        </div>
     </div>
 } else {
     <div class="">

@@ -9,7 +9,7 @@
 
     var displayCombinations = _productCombinationService.CombinationDisplayText(Model.Part);
 
-    if (string.IsNullOrEmpty(displayCombinations)) {
+    if (Model.Part.Id == 0 && string.IsNullOrEmpty(displayCombinations)) {
         using (Script.Foot()) {
             <script type="text/javascript">
             $(document).ready(function () {

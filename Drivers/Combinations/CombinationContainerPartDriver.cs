@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Orchard.Localization.Models;
 using Orchard.Localization.Services;
+using Orchard;
 
 namespace Nwazet.Commerce.Drivers.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
@@ -27,6 +28,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         private readonly IAuthorizer _authorizer;
         private readonly IProductService _productService;
         private readonly ILocalizationService _localizationService;
+        private readonly IWorkContextAccessor _workContextAccessor;
 
         public CombinationContainerPartDriver(
             IProductAttributeAdminServices productAttributeAdminServices,
@@ -34,7 +36,8 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             IProductCombinationService productCombinationService,
             IAuthorizer authorizer,
             IProductService productService,
-            ILocalizationService localizationService) {
+            ILocalizationService localizationService,
+            IWorkContextAccessor workContextAccessor) {
 
             _productAttributeAdminServices = productAttributeAdminServices;
             _contentManager = contentManager;
@@ -42,6 +45,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             _authorizer = authorizer;
             _productService = productService;
             _localizationService = localizationService;
+            _workContextAccessor = workContextAccessor;
 
             T = NullLocalizer.Instance;
         }
@@ -94,12 +98,16 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                 }
                 else {
                     editorFactory = () => {
-                        string culture = vm.Part.ContentItem.As<LocalizationPart>().Culture.Culture;
-
                         // get list of attributes we'll be able to use for combinations
                         var allAttributes = _productAttributeAdminServices
-                                .GetAllProductAttributeParts()
-                                .Where(a=> _localizationService.GetContentCulture(a.ContentItem) == culture);
+                                .GetAllProductAttributeParts();
+
+                        var culture = _workContextAccessor.GetContext().CurrentCulture;
+                        if (vm.Part.ContentItem.As<LocalizationPart>() != null && vm.Part.ContentItem.As<LocalizationPart>().Culture != null) {
+                            culture = vm.Part.ContentItem.As<LocalizationPart>().Culture.Culture;
+                        }
+                        allAttributes = allAttributes
+                               .Where(a => _localizationService.GetContentCulture(a.ContentItem) == culture);
 
                         vm.AllAttributeParts = allAttributes;
 

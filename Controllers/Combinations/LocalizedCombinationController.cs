@@ -43,7 +43,13 @@ namespace Nwazet.Commerce.Controllers.Combinations {
                 }
                 vm = new CombinationPartEditViewModel {
                     CombinationContainer = combinationContainerPart,
-                    AllAttributeParts = allAttributes
+                    AllAttributes = allAttributes.Select(a =>
+                    new CombinationAttribute {
+                        AttributeId = a.Id,
+                        AttributeDisplayName = string.IsNullOrWhiteSpace(a.DisplayName) ? _contentManager.GetItemMetadata(a).DisplayText : a.DisplayName,
+                        Values = a.AttributeValues.Select(v => new AttributeValue { Id = v.Id, Text = v.Text }).ToList(),
+                        SelectedAttributeValue = -1
+                    }).ToList()
                 };
             }
             var templateName = "../EditorTemplates/Parts/Combinations/AttributesCombinationPart";
