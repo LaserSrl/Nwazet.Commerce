@@ -11,6 +11,8 @@
     CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
 
     var _attributeExtensionProviders = WorkContext.Resolve<IEnumerable<IProductAttributeExtensionProvider>>();
+
+    var _frontEndAdditionalInformationProviders = WorkContext.Resolve<IEnumerable<IOrderFrontEndAdditionalInformationProvider>>();
 }
 <h1>@title</h1>
 <p class="order-status">@T("Status: {0}", Model.Status)</p>
