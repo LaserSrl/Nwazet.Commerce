@@ -15,7 +15,7 @@ namespace Nwazet.Commerce.Services.Combinations {
         IEnumerable<CombinationPart> CreateCombinations(
             CombinationContainerPart containerPart,
             IEnumerable<IEnumerable<AttributesToCombine>> attributesToCombines);
-
+        
         string CombinationDisplayText(CombinationPart combinationPart);
 
         void CreateCombinationType(

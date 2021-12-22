@@ -4,37 +4,29 @@
 @using Orchard;
 @using Orchard.ContentManagement;
 @model CombinationPartEditViewModel
-@{
-    var _productCombinationService = WorkContext.Resolve<IProductCombinationService>();
-
-    var displayCombinations = _productCombinationService.CombinationDisplayText(Model.Part);
-
-    if (Model.Part.Id == 0 && string.IsNullOrEmpty(displayCombinations)) {
-        using (Script.Foot()) {
-            <script type="text/javascript">
-            $(document).ready(function () {
-                var pageurl = '@Url.Action("GetCombination", "LocalizedCombination", new { area = "Nwazet.Commerce" })';
-                function filterCombinationCulture(culture) {
-                    $.ajax({
-                        url: pageurl,
-                        data: { containerId: '@Model.CombinationContainer.Id', culture: culture },
-                        success: function (html) {
-                            $(".attributes-combination-wrapper").replaceWith(html);
-                        },
-                        error: function (request, status, error) {
-                            alert(request.responseText);
-                        }
-                    });
-                }
-
-                $("#Localization_SelectedCulture").on('change', function () {
-                    var optionSelected = $("option:selected", this);
-                    filterCombinationCulture($("#Localization_SelectedCulture").val());
+@using (Script.Foot()) {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var pageurl = '@Url.Action("GetCombination", "LocalizedCombination", new { area = "Nwazet.Commerce" })';
+            function filterCombinationCulture(culture) {
+                $.ajax({
+                    url: pageurl,
+                    data: { containerId: '@Model.CombinationContainer.Id', culture: culture },
+                    success: function (html) {
+                        $(".attributes-combination-wrapper").replaceWith(html);
+                    },
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
                 });
-                $("#Localization_SelectedCulture").trigger("change");
+            }
 
+            $("#Localization_SelectedCulture").on('change', function () {
+                var optionSelected = $("option:selected", this);
+                filterCombinationCulture($("#Localization_SelectedCulture").val());
             });
-            </script>
-        }
-    }
+            $("#Localization_SelectedCulture").trigger("change");
+
+        });
+    </script>
 }
