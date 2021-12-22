@@ -32,6 +32,7 @@ namespace Nwazet.Commerce.Controllers {
         private readonly ICurrencyProvider _currencyProvider;
         private readonly IEnumerable<ICartLifeCycleEventHandler> _cartLifeCycleEventHandlers;
         private readonly ISiteService _siteService;
+        private readonly IEnumerable<IOrderFrontEndAdditionalInformationProvider> _orderFrontEndAdditionalInformationProviders;
 
         public OrderSslController(
             IOrderService orderService,
@@ -44,7 +45,8 @@ namespace Nwazet.Commerce.Controllers {
             IOrchardServices orchardServices,
             ICurrencyProvider currencyProvider,
             IEnumerable<ICartLifeCycleEventHandler> cartLifeCycleEventHandlers,
-            ISiteService siteService) {
+            ISiteService siteService,
+            IEnumerable<IOrderFrontEndAdditionalInformationProvider> orderFrontEndAdditionalInformationProviders) {
 
             _orderService = orderService;
             _contentManager = contentManager;
@@ -59,6 +61,7 @@ namespace Nwazet.Commerce.Controllers {
             _currencyProvider = currencyProvider;
             _cartLifeCycleEventHandlers = cartLifeCycleEventHandlers;
             _siteService = siteService;
+            _orderFrontEndAdditionalInformationProviders = orderFrontEndAdditionalInformationProviders;
         }
 
         public Localizer T { get; set; }
@@ -83,6 +86,8 @@ namespace Nwazet.Commerce.Controllers {
                 .FirstOrDefault(s => s.StatusName.Equals(order.Status));
             var statusLabel = labelsKey != null
                 ? _orderService.StatusLabels[labelsKey] : null;
+            var additionalShapes = _orderFrontEndAdditionalInformationProviders
+                    .SelectMany(ofeaip => ofeaip.GetAdditionalOrderMetadataShapes(order));
             var shape = _shapeFactory.Order_Confirmation(
                 Order: order,
                 OrderId: order.Id,
@@ -104,7 +109,8 @@ namespace Nwazet.Commerce.Controllers {
                 Password: order.Password,
                 CurrencyCode: string.IsNullOrWhiteSpace(order.CurrencyCode) 
                     ? _currencyProvider.CurrencyCode : order.CurrencyCode,
-                OrderKey: order.OrderKey);
+                OrderKey: order.OrderKey,
+                AdditionalMetadataShapes: additionalShapes);
             
             return new ShapeResult(this, shape);
         }
