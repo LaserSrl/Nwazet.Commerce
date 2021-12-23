@@ -5,7 +5,6 @@
 @using Orchard.Utility.Extensions;
 @model CombinationContainerPartEditViewModel
 @{ 
-    
     var shortGuid = "c" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
     var _contentManager = WorkContext.Resolve<IContentManager>();
     var currentUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl;
@@ -22,7 +21,7 @@
                     <h3 class="box-title">@T("Combinations")</h3>
                 </div>
                 <div class="box-body table-responsive no-padding">
-                    <table class="table table-hover">
+                    <table id="table-@shortGuid" class="table table-hover">
                         <thead>
                             <tr>
                                 <th>@T("Title")</th>
@@ -31,6 +30,14 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <tr id="template-tr-@shortGuid" style="display:none">
+                                <td>
+                                    <a href="{{EditUrl}}">{{Title}}</a>
+                                </td>
+                                <td>{{Status}}</td>
+                                <td><a class="btn btn-danger btn-xs text-white" href="{{DeleteUrl}}" itemprop="RemoveUrl UnsafeUrl">@T("Delete")</a></td>
+                            </tr>
+
                             @foreach (var combination in Model.CurrentCombinations) {
                                 <tr>
                                     <td>
@@ -62,26 +69,26 @@
                                             @*if (combination.HasDraft()) {
                                                 if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
                                                     @Html.Link(T("Publish Draft").Text, 
-                                                        Url.Action("Publish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}), 
+                                                        Url.Action("Publish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}),
                                                         new {itemprop = "UnsafeUrl", @class="btn btn-success btn-xs"})
-                                                }
+                                                  }
                                             }*@
                                             if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
                                                 @Html.Link(T("Unpublish").Text, 
-                                                    Url.Action("Unpublish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}), 
-                                                    new {itemprop = "UnsafeUrl", @class="btn btn-warning btn-xs"})
+                                                    Url.Action("Unpublish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}),
+                                                    new {itemprop = "UnsafeUrl", @class= "btn btn-warning btn-xs text-white" })
                                             }
                                         } else {
                                             @*if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
                                                 @Html.Link(T("Publish").Text, 
-                                                    Url.Action("Publish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}), 
+                                                    Url.Action("Publish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}),
                                                     new {itemprop = "UnsafeUrl", @class="btn btn-success btn-xs"})
                                             }*@
                                         }
                                         @if (Authorizer.Authorize(Permissions.DeleteContent, combination)) {
                                             @Html.Link(T("Delete").Text, 
                                                 Url.ItemRemoveUrl(combination.ContentItem, new { returnUrl = currentUrl }), 
-                                                new { itemprop = "RemoveUrl UnsafeUrl", @class="btn btn-danger btn-xs" })
+                                                new { itemprop = "RemoveUrl UnsafeUrl", @class="btn btn-danger btn-xs text-white" })
                                         }
                                     </td>
                                 </tr>
@@ -146,17 +153,16 @@
                                 class="btn btn-primary"
                                 id="@(shortGuid + "generate_button")">
                             @T("Generate")
-                            </button>
-                            @Html.Link(T("Create combination").Text,
-                                    Url.Action("Create", "CombinationConfigurationAdmin", new { area = "Nwazet.Commerce", id = Model.Part.Id, returnUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl }),
-                                    new { @class = "button primaryAction" })
-                        </div>
+                        </button>
+                        @Html.Link(T("Create combination").Text,
+                                Url.Action("Create", "CombinationConfigurationAdmin", new { area = "Nwazet.Commerce", id = Model.Part.Id, returnUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl }),
+                                new { @class = "button primaryAction" })
+                    </div>
                 } else {
                     <div class="box-body">
                         @T("There are no attributes to create new combinations.")
                     </div>
                 }
-                
             </div>
             @* Button that will cause generation of new combinations *@
         </div>
@@ -242,6 +248,38 @@
                         } else if (data.ok) {
                             $('#@(shortGuid + "generate_results") span')[0].innerHTML = data.message;
                             $('#@(shortGuid + "generate_results") span').addClass('success');
+
+                            for (let i = 0; i < data.newCombinations.length; i++) {
+                                var status = "";
+                                if (data.newCombinations[i].HasPublished) {
+                                    status += "@T("(Published)")";
+                                } else {
+                                    status += "@T("(Not Published)")";
+                                }
+                                status += " ";
+                                if (data.newCombinations[i].HasDraft) {
+                                    status += "@T("(Draft)")";
+                                } else {
+                                    status += "@T("(No Draft)")";
+                                }
+
+                                // get the row with id
+                                var templateRow = $("#template-tr-@shortGuid");
+                                // duplicate it, remove id
+                                var newRow = templateRow.clone();
+
+                                var stringNewRow = newRow.html();
+                                stringNewRow = stringNewRow.replaceAll("{{Title}}", data.newCombinations[i].Title);
+                                stringNewRow = stringNewRow.replaceAll("{{EditUrl}}", data.newCombinations[i].EditUrl);
+                                stringNewRow = stringNewRow.replaceAll("{{Status}}", status);
+                                stringNewRow = stringNewRow.replaceAll("{{DeleteUrl}}", data.newCombinations[i].DeleteUrl);
+
+                                newRow.html(stringNewRow);
+                                newRow.removeAttr('id');
+
+                                $('#table-@shortGuid tbody').append(newRow);
+                                newRow.toggle();
+                            }
                         }
                     })
                     .fail(function (jqXHR, textStatus, error) {

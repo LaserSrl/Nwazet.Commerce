@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Orchard.Mvc.Html;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.ProductCombinations")]
@@ -22,16 +23,19 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IContentManager _contentManager;
         private readonly IProductCombinationService _productCombinationService;
         private readonly IAuthorizer _authorizer;
+        protected UrlHelper _url;
 
         public CombinationsAdminController(
             IContentManager contentManager,
             IProductCombinationService productCombinationService,
-            IAuthorizer authorizer) {
+            IAuthorizer authorizer,
+            UrlHelper url) {
 
             _contentManager = contentManager;
             _productCombinationService = productCombinationService;
             _authorizer = authorizer;
-
+            _url = url;
+            
             T = NullLocalizer.Instance;
         }
 
@@ -108,9 +112,9 @@ namespace Nwazet.Commerce.Controllers {
             // Create the new contents
             var created = _productCombinationService
                 .CreateCombinations(containerContent, newCombinations);
-            // TODO: return the combinations we created to update the UI directly without having
+            // return the combinations we created to update the UI directly without having
             // to reload the page.
-            return SuccessJson(T("{0} new combinations created.", created.Count()));
+            return SuccessJson(T("{0} new combinations created.", created.Count()),created);
         }
 
         class AttributeValues {
@@ -129,8 +133,33 @@ namespace Nwazet.Commerce.Controllers {
             return Json(new { ko = "ko", message = message.Text });
         }
 
-        private JsonResult SuccessJson(LocalizedString message) {
-            return Json(new { ok = "ok", message = message.Text });
+        private JsonResult SuccessJson(LocalizedString message, IEnumerable<CombinationPart> created) {
+            // return the combinations we created to update the UI directly without having
+            // to reload the page.
+            var combinationsCreated = new List<JsonCombination>();
+            foreach (var combination in created) {
+                combinationsCreated.Add(new JsonCombination {
+                    Title = _productCombinationService.CombinationDisplayText(combination),
+                    EditUrl= _url.ItemEditUrl((IContent)combination.ContentItem, new { returnUrl = Url.ItemEditUrl(combination.CombinationContainerPart.ContentItem) }),
+                    DeleteUrl= _url.ItemRemoveUrl(combination.ContentItem, new { returnUrl = Url.ItemEditUrl(combination.CombinationContainerPart.ContentItem) }),
+                    HasPublished = combination.HasPublished(),
+                    HasDraft = combination.HasDraft()
+                });
+            }
+
+            return Json(new {
+                ok = "ok",
+                message = message.Text,
+                newCombinations = combinationsCreated
+            });
+        }
+
+        class JsonCombination {
+            public string Title { get; set; }
+            public string EditUrl { get; set; }
+            public string DeleteUrl { get; set; }
+            public bool HasPublished { get; set; }
+            public bool HasDraft { get; set; }
         }
     }
 }
