@@ -1,6 +1,8 @@
-﻿<fieldset>
-    <legend>@T("Bank Transfer payment")</legend>
-    <p>@T("You need to send the money at the following account number: {0}", Model.Iban)</p>
-    <p>@T("Payment reason: {0}", Model.Reason)</p>
-    <p>@T("Please send the transfer code via email at <a href='mailto:{0}'>{0}</a> in order to confirm your payment.", Model.Email)</p>
-</fieldset>
+﻿@if (Model.Status.Equals("Payment Pending", StringComparison.InvariantCultureIgnoreCase)) {
+    <fieldset>
+        <legend>@T("Bank Transfer payment")</legend>
+        <p>@T("You need to send the money at the following account number: {0}", Model.Iban)</p>
+        <p>@T("Payment reason: {0}", Model.Reason)</p>
+        <p>@T("Please send the transfer code via email at <a href='mailto:{0}'>{0}</a> in order to confirm your payment.", Model.Email)</p>
+    </fieldset>
+}
