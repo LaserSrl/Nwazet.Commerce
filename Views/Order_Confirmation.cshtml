@@ -4,6 +4,7 @@
 @using Orchard.Mvc.Html
 @using System.Globalization
 @using Nwazet.Commerce.Extensions;
+@using System.Linq;
 @{
     var title = Layout.Title = T("Order #{0}", Model.OrderId);
     var items = (Model.CheckoutItems as IEnumerable<CheckoutItem> ?? new CheckoutItem[] { }).ToList();
@@ -118,8 +119,7 @@
             });
         </script>
     }
-}
-else {
+} else {
     <p class="total">@T("Total: {0}", currencyInUse.PriceAsString(Model.Total, cultureInUse)) </p>
     Script.Require("jQuery");
     using (Script.Foot()) {
@@ -158,8 +158,7 @@ else {
         if (!String.IsNullOrWhiteSpace(Model.TrackingUrl)) {
             <p>@T("Tracking URL: <a href=\"{0}\">{0}</a>", Model.TrackingUrl)</p>
         }
-    }
-    else {
+    } else {
         @T("There is no shipment for this order.")
     }
 </fieldset>
@@ -171,6 +170,14 @@ else {
         <legend>@T("Special instructions:")</legend>
         @Model.SpecialInstructions
     </fieldset>
+}
+
+@if (Model.AdditionalMetadataShapes != null) {
+    foreach (var shape in Model.AdditionalMetadataShapes) {
+        if (((string)shape.GetType().Name).Equals("Shape", StringComparison.InvariantCultureIgnoreCase)) {
+            @Display(shape)
+        }
+    }
 }
 
 <div class="order-link">
