@@ -8,6 +8,11 @@
     var shortGuid = "c" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
     var _contentManager = WorkContext.Resolve<IContentManager>();
     var currentUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl;
+
+    var titleParameter = "__COMBINATION__TITLE__";
+    var editUrlParameter = "__COMBINATION__EDITURL__";
+    var statusParameter = "__COMBINATION__STATUS__";
+    var deleteUrlParameter = "__COMBINATION__DELETEURL__";
 }
 <fieldset class="product-combination-container" id="@shortGuid">
     <legend>
@@ -32,10 +37,10 @@
                         <tbody>
                             <tr id="template-tr-@shortGuid" style="display:none">
                                 <td>
-                                    <a href="{{EditUrl}}">{{Title}}</a>
+                                    <a href="@editUrlParameter">@titleParameter</a>
                                 </td>
-                                <td>{{Status}}</td>
-                                <td><a class="btn btn-danger btn-xs text-white" href="{{DeleteUrl}}" itemprop="RemoveUrl UnsafeUrl">@T("Delete")</a></td>
+                                <td>@statusParameter</td>
+                                <td><a class="btn btn-danger btn-xs text-white" href="@deleteUrlParameter" itemprop="RemoveUrl UnsafeUrl">@T("Delete")</a></td>
                             </tr>
 
                             @foreach (var combination in Model.CurrentCombinations) {
@@ -269,10 +274,10 @@
                                 var newRow = templateRow.clone();
 
                                 var stringNewRow = newRow.html();
-                                stringNewRow = stringNewRow.replaceAll("{{Title}}", data.newCombinations[i].Title);
-                                stringNewRow = stringNewRow.replaceAll("{{EditUrl}}", data.newCombinations[i].EditUrl);
-                                stringNewRow = stringNewRow.replaceAll("{{Status}}", status);
-                                stringNewRow = stringNewRow.replaceAll("{{DeleteUrl}}", data.newCombinations[i].DeleteUrl);
+                                stringNewRow = stringNewRow.replaceAll("@titleParameter", data.newCombinations[i].Title);
+                                stringNewRow = stringNewRow.replaceAll("@editUrlParameter", data.newCombinations[i].EditUrl);
+                                stringNewRow = stringNewRow.replaceAll("@statusParameter", status);
+                                stringNewRow = stringNewRow.replaceAll("@deleteUrlParameter", data.newCombinations[i].DeleteUrl);
 
                                 newRow.html(stringNewRow);
                                 newRow.removeAttr('id');
