@@ -47,6 +47,9 @@ namespace Nwazet.Commerce.Controllers.Combinations {
         public Localizer T { get; set; }
         public IOrchardServices Services { get; private set; }
 
+        // Create GET
+        // the content is created in this controller 
+        // and the LocalizedCombinationPartDriver.cs driver associates the combination
         public ActionResult Create(int id) {
             if (!Services.Authorizer.Authorize(CorePermissions.CreateContent, T("Cannot create content")))
                 return new HttpUnauthorizedResult();
@@ -88,7 +91,7 @@ namespace Nwazet.Commerce.Controllers.Combinations {
                     Services.ContentManager.Publish(contentItem);
             });
         }
-
+        // Create POST
         private ActionResult CreateCombinationPost(string id, string contentType, string returnUrl, Action<ContentItem> conditionallyPublish) {
             int contentId;
             if (!int.TryParse(id, out contentId)) {
@@ -126,6 +129,7 @@ namespace Nwazet.Commerce.Controllers.Combinations {
                 return View(model);
             }
 
+            // determines whether to publish or save
             conditionallyPublish(contentItem);
 
             Services.Notifier.Information(string.IsNullOrWhiteSpace(contentItem.TypeDefinition.DisplayName)
