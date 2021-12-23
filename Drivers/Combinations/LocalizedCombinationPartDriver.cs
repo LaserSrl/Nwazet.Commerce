@@ -54,6 +54,8 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         }
 
         protected override DriverResult Editor(CombinationPart part, IUpdateModel updater, dynamic shapeHelper) {
+            // CombinationConfigurationAdminController.cs Create(), Creates the content of the element
+            // in the driver takes care of assigning the created combination
             var vm = CreateVM(part);
 
             // the driver does not have to do anything 
