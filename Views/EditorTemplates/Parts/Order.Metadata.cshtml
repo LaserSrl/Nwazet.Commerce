@@ -26,9 +26,7 @@
             <span class="hint">@T("Associate this order with a purchase order, invoice or other order.")</span>
         </div>
         @foreach (var additionalShape in Model.AdditionalMetadataShapes) {
-            if (((string)additionalShape.GetType().Name).Equals("Shape", StringComparison.InvariantCultureIgnoreCase)) {
-                @Display(additionalShape)
-            }
+            @Display(additionalShape)
         }
     </fieldset>
 </div>
