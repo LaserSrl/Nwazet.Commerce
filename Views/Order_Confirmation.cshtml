@@ -174,9 +174,7 @@
 
 @if (Model.AdditionalMetadataShapes != null) {
     foreach (var shape in Model.AdditionalMetadataShapes) {
-        if (((string)shape.GetType().Name).Equals("Shape", StringComparison.InvariantCultureIgnoreCase)) {
-            @Display(shape)
-        }
+        @Display(shape)
     }
 }
 
