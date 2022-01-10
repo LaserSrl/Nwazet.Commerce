@@ -43,7 +43,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
                     (ctx) => PostCanBeProcessed(ctx),
                     (ctx) => T("The cart total must be at least {0} {1}",
                         symbolCurrecy,
-                        (decimal)ctx.State.Value),
+                        MinCartTotalForm.ParseStateValue(ctx.State.Value.ToString())),
                     isAvailableForConfiguration, isAvailableForProcessing,
                     MinCartTotalForm.FormName);
         }
@@ -71,7 +71,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria.Couponing {
         private void Evaluate(
             CouponPostApplicabilityContext context) {
 
-            var minSubtotal = (decimal)context.State.Value;
+            var minSubtotal = MinCartTotalForm.ParseStateValue(context.State.Value.ToString());
             context.IsApplicable &= (context.BaseCartSubtotal
                 // Values are negative already
                 + context.CouponValues
