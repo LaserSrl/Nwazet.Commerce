@@ -14,6 +14,8 @@ using System.Web.Mvc;
 namespace Nwazet.Commerce.Controllers.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
     public class LocalizedCombinationController : Controller {
+        private string prefix = "LocalizedCombinationPart";
+
         private readonly IProductAttributeAdminServices _productAttributeAdminServices;
         private readonly ILocalizationService _localizationService;
         private readonly IContentManager _contentManager;
@@ -32,6 +34,7 @@ namespace Nwazet.Commerce.Controllers.Combinations {
             var vm = new CombinationPartEditViewModel();
             int id;
             if(!string.IsNullOrWhiteSpace(containerId) && int.TryParse(containerId, out id)) {
+                ViewData.TemplateInfo.HtmlFieldPrefix = prefix;
                 var combinationContainerPart = _contentManager.Get(id, VersionOptions.Latest)
                     ?.As<CombinationContainerPart>();
 

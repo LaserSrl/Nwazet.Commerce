@@ -14,8 +14,8 @@
 }
 
 @if (Model.AllAttributes.Any()) {
-    <input type="hidden" name="ContentType" value="@contentType" />
     <div class="product-combination-attributes box box-primary">
+        <input type="hidden" name="ContentType" value="@contentType" />
         <div class="box-header with-border">
             <h3 class="box-title">@T("Attributes")</h3>
         </div>
