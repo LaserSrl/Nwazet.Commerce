@@ -103,7 +103,8 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                                 .GetAllProductAttributeParts();
 
                         var culture = _workContextAccessor.GetContext().CurrentCulture;
-                        if (vm.Part.ContentItem.As<LocalizationPart>() != null && vm.Part.ContentItem.As<LocalizationPart>().Culture != null) {
+                        if (vm.Part.ContentItem.As<LocalizationPart>() != null && 
+                            vm.Part.ContentItem.As<LocalizationPart>().Culture != null) {
                             culture = vm.Part.ContentItem.As<LocalizationPart>().Culture.Culture;
                         }
                         allAttributes = allAttributes

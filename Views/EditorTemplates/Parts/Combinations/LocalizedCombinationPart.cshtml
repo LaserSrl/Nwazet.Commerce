@@ -13,7 +13,7 @@
                     url: pageurl,
                     data: { containerId: '@Model.CombinationContainer.Id', culture: culture },
                     success: function (html) {
-                        $(".attributes-combination-wrapper").replaceWith(html);
+                        $(".product-combination-attributes").replaceWith(html);
                     },
                     error: function (request, status, error) {
                         alert(request.responseText);
