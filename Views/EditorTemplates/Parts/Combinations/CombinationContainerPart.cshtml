@@ -3,6 +3,7 @@
 @using Orchard.ContentManagement;
 @using Orchard.Core.Contents;
 @using Orchard.Utility.Extensions;
+@using Orchard.Localization.Models;
 @model CombinationContainerPartEditViewModel
 @{ 
     var shortGuid = "c" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
@@ -56,6 +57,9 @@
                                         }
                                     </td>
                                     <td>
+                                        @if (combination.ContentItem.As<LocalizationPart>() != null && combination.ContentItem.As<LocalizationPart>().Culture == null) {
+                                            @T("(Missing culture)")
+                                        }
                                         @if (combination.HasPublished()) {
                                             @T("(Published)")
                                         } else {

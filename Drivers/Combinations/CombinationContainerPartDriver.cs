@@ -15,10 +15,11 @@ using System.Linq;
 using Orchard.Localization.Models;
 using Orchard.Localization.Services;
 using Orchard;
+using Orchard.ContentManagement.Handlers;
 
 namespace Nwazet.Commerce.Drivers.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
-    public class CombinationContainerPartDriver : ContentPartDriver<CombinationContainerPart>,
+    public class CombinationContainerPartDriver : ContentPartCloningDriver<CombinationContainerPart>,
         // We to implement this interface to interact with ProductPartDriver and ShoppingCartController
         IProductAttributesDriver {
 
@@ -85,9 +86,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                 };
             } else {
                 // check if you are creating
-                if (vm.Part.Id == 0 ||
-                // check if the content item has a translation associated with it
-                    (vm.Part.ContentItem.As<LocalizationPart>() != null && vm.Part.ContentItem.As<LocalizationPart>().Culture == null)) {
+                if (vm.Part.Id == 0) {
                     newFactory = () => {
                         return shapeHelper.EditorTemplate(
                             TemplateName: "Parts/Combinations/CombinationContainerPart.New",
@@ -96,14 +95,40 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                             );
                     };
                 }
-                else {
+                // check if the content item has a translation associated with it
+                else if (vm.Part.ContentItem.As<LocalizationPart>() != null && vm.Part.ContentItem.As<LocalizationPart>().Culture == null) {
+                    // if the container that doesn't have the translation has combinations I show it
+                    // the status will show "missing culture"
+                    if (vm.CurrentCombinations.Any()) {
+                        editorFactory = () => {
+                            var allAttributes = _productAttributeAdminServices
+                                .GetAllProductAttributeParts();
+                            // get list of attributes we'll be able to use for combinations
+                            vm.AllAttributeParts = allAttributes;
+
+                            return shapeHelper.EditorTemplate(
+                                TemplateName: "Parts/Combinations/CombinationContainerPart",
+                                Model: vm,
+                                Prefix: Prefix
+                                );
+                        };
+                    } else {
+                        newFactory = () => {
+                            return shapeHelper.EditorTemplate(
+                                TemplateName: "Parts/Combinations/CombinationContainerPart.New",
+                                Model: vm,
+                                Prefix: Prefix
+                                );
+                        };
+                    }
+                } else {
                     editorFactory = () => {
                         // get list of attributes we'll be able to use for combinations
                         var allAttributes = _productAttributeAdminServices
                                 .GetAllProductAttributeParts();
 
                         var culture = _workContextAccessor.GetContext().CurrentCulture;
-                        if (vm.Part.ContentItem.As<LocalizationPart>() != null && 
+                        if (vm.Part.ContentItem.As<LocalizationPart>() != null &&
                             vm.Part.ContentItem.As<LocalizationPart>().Culture != null) {
                             culture = vm.Part.ContentItem.As<LocalizationPart>().Culture.Culture;
                         }
@@ -210,6 +235,32 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             return _productService.MayAddToCart(productPart);
         }
 
-        // TODO: Import/Export
+        //// TODO Import/Export
+        //protected override void Importing(CombinationContainerPart part, ImportContentContext context) {
+        //    if (context.Data.Element(part.PartDefinition.Name) == null) {
+        //        return;
+        //    }
+
+        //    var CombinationParts = context.Attribute(part.PartDefinition.Name, "CombinationParts");
+        //    foreach (var comb in CombinationParts.Split(';')) {
+        //        if (!string.IsNullOrEmpty(comb)) {
+        //            part.CombinationParts.Add(context.GetItemFromSession(comb).As<CombinationPart>());
+        //        }
+        //    }
+        //}
+
+        //protected override void Exporting(CombinationContainerPart part, ExportContentContext context) {
+        //    var root = context.Element(part.PartDefinition.Name);
+
+        //    var combinationParts = "";
+        //    foreach (var combinationPart in part.CombinationParts) {
+        //        combinationParts+=_contentManager.GetItemMetadata(combinationPart).Identity+";";
+        //    }
+        //    root.SetAttributeValue("CombinationParts", combinationParts);
+        //}
+
+        //protected override void Cloning(CombinationContainerPart originalPart, CombinationContainerPart clonePart, CloneContentContext context) {
+        //    clonePart.Record.Id = originalPart.Record.Id;
+        //}
     }
 }
