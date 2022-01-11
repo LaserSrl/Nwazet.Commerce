@@ -4,6 +4,8 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
+using Orchard.Localization.Models;
+using Orchard.Localization.Services;
 using Orchard.OutputCache.Services;
 using System;
 using System.Collections.Generic;
@@ -18,16 +20,19 @@ namespace Nwazet.Commerce.Handlers.Combinations {
         private readonly IContentManager _contentManager;
         private readonly IProductCombinationService _productCombinationService;
         private readonly ICacheService _cacheService;
+        private readonly ILocalizationService _localizationService;
 
         public CombinationPartHandler(
             IRepository<CombinationPartRecord> repository,
             IContentManager contentManager,
             IProductCombinationService productCombinationService,
-            ICacheService cacheService) {
+            ICacheService cacheService,
+            ILocalizationService localizationService) {
 
             _contentManager = contentManager;
             _productCombinationService = productCombinationService;
             _cacheService = cacheService;
+            _localizationService = localizationService;
 
             Filters.Add(StorageFilter.For(repository));
 
@@ -35,6 +40,8 @@ namespace Nwazet.Commerce.Handlers.Combinations {
             OnInitializing<CombinationPart>(PropertySetHandlers);
             OnLoading<CombinationPart>((context, part) => LazyLoadHandlers(part));
             OnVersioning<CombinationPart>((context, part, newVersionPart) => LazyLoadHandlers(newVersionPart));
+
+            OnUpdated<CombinationPart>((context, part) => CheckCombinationContainer(context,part));
 
             // When combinations get updated, we may wish to have something to evict cached
             // stuff about their containers
@@ -99,6 +106,25 @@ namespace Nwazet.Commerce.Handlers.Combinations {
                 }
 
             });
+        }
+
+        void CheckCombinationContainer(
+            UpdateContentContext context, CombinationPart part) {
+
+            var container = part.CombinationContainerPart;
+            var ci = container.ContentItem;
+            if (ci.Has<LocalizationPart>() && ci.As<LocalizationPart>().Culture != null) {
+                var contentCulture = context.ContentItem.As<LocalizationPart>().Culture != null ? context.ContentItem.As<LocalizationPart>().Culture : null;
+                if(contentCulture != container.ContentItem.As<LocalizationPart>().Culture) {
+                    // check translation of CombinationContainerPart
+                    var realCombinationContainerPart = _localizationService.GetLocalizations(ci)
+                        .FirstOrDefault(l => l.As<LocalizationPart>().Culture == contentCulture);
+                    if (realCombinationContainerPart != null && 
+                        realCombinationContainerPart.ContentItem.As<CombinationContainerPart>() != null) {
+                        part.CombinationContainerPartField.Value = realCombinationContainerPart.ContentItem.As<CombinationContainerPart>();
+                    }
+                }
+            }
         }
     }
 }

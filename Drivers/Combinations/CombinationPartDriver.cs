@@ -3,6 +3,7 @@ using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels.Combinations;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
+using Orchard.ContentManagement.Handlers;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Localization.Models;
@@ -15,10 +16,8 @@ using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Drivers.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
-    public class CombinationPartDriver : ContentPartDriver<CombinationPart> {
-
+    public class CombinationPartDriver : ContentPartCloningDriver<CombinationPart> {
         public CombinationPartDriver() {
-
             T = NullLocalizer.Instance;
         }
 
@@ -52,6 +51,22 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                         Prefix: Prefix
                         );
                 });
+        }
+
+        //// TODO Import/Export only AttributeValues
+        //protected override void Importing(CombinationPart part, ImportContentContext context) {
+        //    if (context.Data.Element(part.PartDefinition.Name) == null) {
+        //        return;
+        //    }
+        //}
+
+        //protected override void Exporting(CombinationPart part, ExportContentContext context) {      
+        //    var root = context.Element(part.PartDefinition.Name);
+        //}
+
+        protected override void Cloning(CombinationPart originalPart, CombinationPart clonePart, CloneContentContext context) {
+            // clone the combination container part id
+            clonePart.CombinationContainerPartField.Value = originalPart.CombinationContainerPartField.Value;
         }
     }
 }
