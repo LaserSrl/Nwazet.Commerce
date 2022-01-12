@@ -14,7 +14,7 @@ using System.Web.Mvc;
 namespace Nwazet.Commerce.Controllers.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
     public class LocalizedCombinationController : Controller {
-        private string prefix = "LocalizedCombinationPart";
+        private string prefix = "CombinationPart";
 
         private readonly IProductAttributeAdminServices _productAttributeAdminServices;
         private readonly ILocalizationService _localizationService;
