@@ -163,11 +163,24 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                     combo.Id,
                     _productCombinationService.CombinationDisplayText(combo));
             }
+
+            // check for duplicate titles
+            // and saved combo.Id in new List
+            var comboDuplicated = new Dictionary<int, bool>();
+            var duplicated = comboTitles.Values
+                .GroupBy(c=>c)
+                .Where(g => g.Count() > 1)
+                .Select(a => a.Key);
+            foreach (var c in comboTitles.Where(t=>duplicated.Contains(t.Value))) {
+                comboDuplicated.Add(c.Key,true);
+            }
+
             return new CombinationContainerPartEditViewModel() {
                 Part = part,
                 CurrentCombinations = combinationContents,
                 CombinationTitles = comboTitles,
-                CombinationTypeName = partSettings?.CombinationTypeName ?? string.Empty
+                CombinationTypeName = partSettings?.CombinationTypeName ?? string.Empty,
+                CombinationsIdDuplicated = comboDuplicated
             };
         }
 

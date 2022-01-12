@@ -57,6 +57,10 @@
                                         }
                                     </td>
                                     <td>
+                                        @if (Model.CombinationsIdDuplicated.ContainsKey(combination.Id) &&
+                                            Model.CombinationsIdDuplicated[combination.Id]) {
+                                            @T("(Combination Duplicated)")
+                                        }
                                         @if (combination.ContentItem.As<LocalizationPart>() != null && combination.ContentItem.As<LocalizationPart>().Culture == null) {
                                             @T("(Missing culture)")
                                         }

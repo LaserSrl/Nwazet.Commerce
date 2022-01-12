@@ -49,7 +49,7 @@ namespace Nwazet.Commerce.Controllers.Combinations {
 
         // Create GET
         // the content is created in this controller 
-        // and the LocalizedCombinationPartDriver.cs driver associates the combination
+        // and the CombinationPartDriver.cs driver associates the combination
         public ActionResult Create(int id) {
             if (!Services.Authorizer.Authorize(CorePermissions.CreateContent, T("Cannot create content")))
                 return new HttpUnauthorizedResult();
