@@ -40,6 +40,7 @@ namespace Nwazet.Commerce {
             manifest.DefineStyle("Nwazet.Report-Admin").SetUrl("reports-admin.min.css", "reports-admin.css");
             manifest.DefineStyle("Nwazet.Territory-Hierarchies-Admin").SetUrl("territory-hierarchies-admin.min.css", "territory-hierarchies-admin.css");
             manifest.DefineStyle("Nwazet.WishLists").SetUrl("wishlists.nwazet-commerce.min.css", "wishlists.nwazet-commerce.css");
+            manifest.DefineStyle("Nwazet.ProductCombinations").SetUrl("product-combinations.nwazet-commerce.min.css", "product-combinations.nwazet-commerce.css");
             
             manifest.DefineScript("Nwazet.ProductAvailability")
                 .SetUrl("productsunavailable.min.js?v=1.0", "productsunavailable.js?v=1.0").SetDependencies("jQuery");
