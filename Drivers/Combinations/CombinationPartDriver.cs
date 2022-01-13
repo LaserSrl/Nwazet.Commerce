@@ -65,14 +65,14 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             // in the driver takes care of assigning the created combination
             var vm = CreateVM(part);
 
+            updater.TryUpdateModel(vm, Prefix, null, null);
+            
             // the driver does not have to do anything 
             // if there are already assigned combinations
-            if (vm.Part.ProductAttributeValues != null && !part.ProductAttributeValues.Any()) {
+            if (vm.Part.ProductAttributeValues != null && part.ProductAttributeValues.Any()) {
                 return EditorShape(vm, shapeHelper);
             }
-
-            updater.TryUpdateModel(vm, Prefix, null, null);
-
+            
             // after tyyupdatemodel missing the values of attributes
             // populate missing property
             var allAttributes = GetAllAttributes(vm.Part);
