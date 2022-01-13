@@ -5,7 +5,9 @@
 @using Orchard.Utility.Extensions;
 @using Orchard.Localization.Models;
 @model CombinationContainerPartEditViewModel
-@{ 
+@{
+    Style.Require("Nwazet.ProductCombinations");
+
     var shortGuid = "c" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
     var _contentManager = WorkContext.Resolve<IContentManager>();
     var currentUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl;
@@ -25,6 +27,13 @@
             <div class="product-combinations-list box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">@T("Combinations")</h3>
+                    <br />
+                    <span class="title-status-legend">@T("Status legend"):</span>
+                    @foreach (Severity severity in (Severity[])Enum.GetValues(typeof(Severity))) {
+                        <span class="legend-status severity-message severity-@severity.ToString().ToLower()">
+                            @severity
+                        </span>
+                    }
                 </div>
                 <div class="box-body table-responsive no-padding">
                     <table id="table-@shortGuid" class="table table-hover">
@@ -49,7 +58,7 @@
                                     <td>
                                         @if (Authorizer.Authorize(Permissions.EditContent, combination)) {
                                             @Html.ItemEditLinkWithReturnUrl(
-                                                //Html.ItemDisplayText((IContent)(combination.ContentItem)).ToHtmlString(), 
+                                                //Html.ItemDisplayText((IContent)(combination.ContentItem)).ToHtmlString(),
                                                 Model.CombinationTitles[combination.Id],
                                                 (IContent)(combination.ContentItem))
                                         } else {
@@ -57,50 +66,41 @@
                                         }
                                     </td>
                                     <td>
-                                        @if (Model.CombinationsIdDuplicated.ContainsKey(combination.Id) &&
-                                            Model.CombinationsIdDuplicated[combination.Id]) {
-                                            @T("(Combination Duplicated)")
-                                        }
-                                        @if (combination.ContentItem.As<LocalizationPart>() != null && combination.ContentItem.As<LocalizationPart>().Culture == null) {
-                                            @T("(Missing culture)")
-                                        }
-                                        @if (combination.HasPublished()) {
-                                            @T("(Published)")
-                                        } else {
-                                            @T("(Not Published)")
-                                        }
-                                        @if (combination.HasDraft()) {
-                                            @T("(Draft)")
-                                        } else {
-                                            @T("(No Draft)")
+                                        @foreach (Severity severity in (Severity[])Enum.GetValues(typeof(Severity))) {
+                                            var messages = Model.CombinationStatusMessages[combination.Id].Where(m => m.Severity == severity);
+                                            foreach (var mess in messages) {
+                                                <span class="severity-message severity-@severity.ToString().ToLower()">
+                                                    @mess.Message
+                                                </span>
+                                            }
                                         }
                                     </td>
                                     <td>
                                         @* We prevent publication of combinations from here, because there is no easy
-                                            way to properly trigger all required validations. *@
+                            way to properly trigger all required validations. *@
                                         @if (combination.HasPublished()) {
                                             @*if (combination.HasDraft()) {
-                                                if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
-                                                    @Html.Link(T("Publish Draft").Text, 
-                                                        Url.Action("Publish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}),
-                                                        new {itemprop = "UnsafeUrl", @class="btn btn-success btn-xs"})
-                                                  }
-                                            }*@
+                                    if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
+                                        @Html.Link(T("Publish Draft").Text,
+                                            Url.Action("Publish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}),
+                                            new {itemprop = "UnsafeUrl", @class="btn btn-success btn-xs"})
+                                      }
+                                }*@
                                             if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
-                                                @Html.Link(T("Unpublish").Text, 
+                                                @Html.Link(T("Unpublish").Text,
                                                     Url.Action("Unpublish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}),
                                                     new {itemprop = "UnsafeUrl", @class= "btn btn-warning btn-xs text-white" })
                                             }
                                         } else {
                                             @*if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
-                                                @Html.Link(T("Publish").Text, 
-                                                    Url.Action("Publish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}),
-                                                    new {itemprop = "UnsafeUrl", @class="btn btn-success btn-xs"})
-                                            }*@
+                                    @Html.Link(T("Publish").Text,
+                                        Url.Action("Publish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}),
+                                        new {itemprop = "UnsafeUrl", @class="btn btn-success btn-xs"})
+                                }*@
                                         }
                                         @if (Authorizer.Authorize(Permissions.DeleteContent, combination)) {
-                                            @Html.Link(T("Delete").Text, 
-                                                Url.ItemRemoveUrl(combination.ContentItem, new { returnUrl = currentUrl }), 
+                                            @Html.Link(T("Delete").Text,
+                                                Url.ItemRemoveUrl(combination.ContentItem, new { returnUrl = currentUrl }),
                                                 new { itemprop = "RemoveUrl UnsafeUrl", @class="btn btn-danger btn-xs text-white" })
                                         }
                                     </td>

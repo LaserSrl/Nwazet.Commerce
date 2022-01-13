@@ -9,6 +9,7 @@ using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Localization.Models;
 using Orchard.Localization.Services;
+using Orchard.Mvc.Html;
 using Orchard.OutputCache.Services;
 using Orchard.UI.Notify;
 using System;
@@ -17,6 +18,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Handlers.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
@@ -25,6 +27,7 @@ namespace Nwazet.Commerce.Handlers.Combinations {
         private readonly IProductCombinationService _productCombinationService;
         private readonly ICacheService _cacheService;
         private readonly ILocalizationService _localizationService;
+        protected UrlHelper _url;
 
         // populated in case of duplicates
         private bool combinationIsDuplicated = false;
@@ -35,13 +38,15 @@ namespace Nwazet.Commerce.Handlers.Combinations {
             IContentManager contentManager,
             IProductCombinationService productCombinationService,
             ICacheService cacheService,
-            ILocalizationService localizationService) {
+            ILocalizationService localizationService,
+            UrlHelper url) {
 
             Services = orchardServices;
             _contentManager = contentManager;
             _productCombinationService = productCombinationService;
             _cacheService = cacheService;
             _localizationService = localizationService;
+            _url = url;
 
             T = NullLocalizer.Instance;
 
@@ -153,9 +158,9 @@ namespace Nwazet.Commerce.Handlers.Combinations {
                                 Services.Notifier.Error(T("The selected combination already exists."));
                             }
                         }
-                        var productPart = part.ContentItem.As<ProductPart>();
-                        Services.Notifier.Information(T("Your combination has been moved under the \"{0}\"",
-                            _contentManager.GetItemMetadata(productPart).DisplayText));
+                        Services.Notifier.Information(T("Your combination has been moved under the <a href=\"{0}\">{1}</a",
+                            _url.ItemEditUrl(part.CombinationContainerPart),
+                            _contentManager.GetItemMetadata(part.CombinationContainerPart).DisplayText));
                     }
                 }
             }

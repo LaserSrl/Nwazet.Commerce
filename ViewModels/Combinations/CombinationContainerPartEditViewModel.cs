@@ -16,7 +16,7 @@ namespace Nwazet.Commerce.ViewModels.Combinations {
 
             CurrentCombinations = new List<CombinationPart>();
             CombinationTitles = new Dictionary<int, string>();
-            CombinationsIdDuplicated = new Dictionary<int, bool>();
+            CombinationStatusMessages = new Dictionary<int, List<CombinationStatusMessage>>();
         }
 
         public CombinationContainerPart Part { get; set; }
@@ -31,7 +31,7 @@ namespace Nwazet.Commerce.ViewModels.Combinations {
         public IEnumerable<CombinationPart> CurrentCombinations { get; set; }
         public Dictionary<int, string> CombinationTitles { get; set; }
 
-        // CombinationDuplicated id
-        public Dictionary<int,bool> CombinationsIdDuplicated { get; set; }
+        // Combination status messagges
+        public Dictionary<int, List<CombinationStatusMessage>> CombinationStatusMessages { get; set; }
     }
 }

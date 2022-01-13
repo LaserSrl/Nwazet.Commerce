@@ -30,6 +30,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         private readonly IProductService _productService;
         private readonly ILocalizationService _localizationService;
         private readonly IWorkContextAccessor _workContextAccessor;
+        private readonly Lazy<IEnumerable<ICombinationStatusProvider>> _combinationStatusProvider;
 
         public CombinationContainerPartDriver(
             IProductAttributeAdminServices productAttributeAdminServices,
@@ -38,7 +39,8 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             IAuthorizer authorizer,
             IProductService productService,
             ILocalizationService localizationService,
-            IWorkContextAccessor workContextAccessor) {
+            IWorkContextAccessor workContextAccessor,
+            Lazy<IEnumerable<ICombinationStatusProvider>> combinationStatusProvider) {
 
             _productAttributeAdminServices = productAttributeAdminServices;
             _contentManager = contentManager;
@@ -47,6 +49,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             _productService = productService;
             _localizationService = localizationService;
             _workContextAccessor = workContextAccessor;
+            _combinationStatusProvider = combinationStatusProvider;
 
             T = NullLocalizer.Instance;
         }
@@ -157,22 +160,23 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             var currentCombinationRecords = part?.Record?.CombinationPartRecords ?? Enumerable.Empty<CombinationPartRecord>();
             var combinationContents = _contentManager
                 .GetMany<CombinationPart>(currentCombinationRecords.Select(cpr => cpr.Id), VersionOptions.Latest, QueryHints.Empty);
+
             var comboTitles = new Dictionary<int, string>();
+            var comboMessageStatus = new Dictionary<int, List<CombinationStatusMessage>>();
             foreach (var combo in combinationContents) {
                 comboTitles.Add(
                     combo.Id,
                     _productCombinationService.CombinationDisplayText(combo));
-            }
 
-            // check for duplicate titles
-            // and saved combo.Id in new List
-            var comboDuplicated = new Dictionary<int, bool>();
-            var duplicated = comboTitles.Values
-                .GroupBy(c=>c)
-                .Where(g => g.Count() > 1)
-                .Select(a => a.Key);
-            foreach (var c in comboTitles.Where(t=>duplicated.Contains(t.Value))) {
-                comboDuplicated.Add(c.Key,true);
+                var comboStatus = new List<CombinationStatusMessage>();
+                // status messages for each combination
+                foreach (var provider in CombinationStatusProviders) {
+                    comboStatus.AddRange(provider.CombinationStatus(part,combo));
+                }
+                comboMessageStatus.Add(
+                    combo.Id,
+                    comboStatus
+                );
             }
 
             return new CombinationContainerPartEditViewModel() {
@@ -180,7 +184,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                 CurrentCombinations = combinationContents,
                 CombinationTitles = comboTitles,
                 CombinationTypeName = partSettings?.CombinationTypeName ?? string.Empty,
-                CombinationsIdDuplicated = comboDuplicated
+                CombinationStatusMessages = comboMessageStatus
             };
         }
 
@@ -211,7 +215,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                 combinationDetails.Add(
                     combo.Id,
                     _productCombinationService.GetCombinationDetailShapes(combo, shapeHelper)
-                    );
+                );
             }
             // Based on those combinations we'll have to display a shape with
             // options for the user to choose, as if the attributes used to generate
@@ -226,6 +230,16 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                 UnavailableCombinationParts: unavailableCombinationParts,
                 CombinationDetails: combinationDetails
                 );
+        }
+
+        private IEnumerable<ICombinationStatusProvider> CombinationStatusProviders {
+            // provider used for status messages of a combination
+            // is checked for each combination: 
+            // the status if published or draft
+            // the culture
+            // if it is a duplicate
+            // returning for each provider a message and a severity
+            get { return _combinationStatusProvider.Value; }
         }
 
         public bool ValidateAttributes(
