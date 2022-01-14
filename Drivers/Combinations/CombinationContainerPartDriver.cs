@@ -188,6 +188,16 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             };
         }
 
+        private IEnumerable<ICombinationStatusProvider> CombinationStatusProviders {
+            // provider used for status messages of a combination
+            // is checked for each combination: 
+            // the status if published or draft
+            // the culture
+            // if it is a duplicate
+            // returning for each provider a message and a severity
+            get { return _combinationStatusProvider.Value; }
+        }
+
         public dynamic GetAttributeDisplayShape(IContent product, dynamic shapeHelper) {
             var combinationContainerPart = product.As<CombinationContainerPart>();
             if (combinationContainerPart == null) {
@@ -230,16 +240,6 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                 UnavailableCombinationParts: unavailableCombinationParts,
                 CombinationDetails: combinationDetails
                 );
-        }
-
-        private IEnumerable<ICombinationStatusProvider> CombinationStatusProviders {
-            // provider used for status messages of a combination
-            // is checked for each combination: 
-            // the status if published or draft
-            // the culture
-            // if it is a duplicate
-            // returning for each provider a message and a severity
-            get { return _combinationStatusProvider.Value; }
         }
 
         public bool ValidateAttributes(

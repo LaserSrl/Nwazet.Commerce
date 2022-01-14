@@ -66,9 +66,10 @@
                                         }
                                     </td>
                                     <td>
-                                        @foreach (Severity severity in (Severity[])Enum.GetValues(typeof(Severity))) {
-                                            var messages = Model.CombinationStatusMessages[combination.Id].Where(m => m.Severity == severity);
+                                        @{
+                                            var messages = Model.CombinationStatusMessages[combination.Id].OrderBy(m => m.Severity);
                                             foreach (var mess in messages) {
+                                                var severity = (Severity)Enum.Parse(typeof(Severity), Convert.ToString(mess.Severity));
                                                 <span class="severity-message severity-@severity.ToString().ToLower()">
                                                     @mess.Message
                                                 </span>
@@ -77,7 +78,7 @@
                                     </td>
                                     <td>
                                         @* We prevent publication of combinations from here, because there is no easy
-                            way to properly trigger all required validations. *@
+                                           way to properly trigger all required validations. *@
                                         @if (combination.HasPublished()) {
                                             @*if (combination.HasDraft()) {
                                     if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
@@ -263,17 +264,13 @@
                             $('#@(shortGuid + "generate_results") span').addClass('success');
 
                             for (let i = 0; i < data.newCombinations.length; i++) {
-                                var status = "";
-                                if (data.newCombinations[i].HasPublished) {
-                                    status += "@T("(Published)")";
-                                } else {
-                                    status += "@T("(Not Published)")";
-                                }
-                                status += " ";
-                                if (data.newCombinations[i].HasDraft) {
-                                    status += "@T("(Draft)")";
-                                } else {
-                                    status += "@T("(No Draft)")";
+                                // the status of the combination is generated with a severity message list
+                                // each message is in a span
+                                var statusHtml = "";
+                                for (let m = 0; m < data.newCombinations[i].CombinationStatus.length; m++) {
+                                    statusHtml += " <span class=\"severity-message severity-" + data.newCombinations[i].CombinationStatus[m].Severity+"\"> ";
+                                    statusHtml += data.newCombinations[i].CombinationStatus[m].Message;
+                                    statusHtml += " </span> ";
                                 }
 
                                 // get the row with id
@@ -284,7 +281,7 @@
                                 var stringNewRow = newRow.html();
                                 stringNewRow = stringNewRow.replaceAll("@titleParameter", data.newCombinations[i].Title);
                                 stringNewRow = stringNewRow.replaceAll("@editUrlParameter", data.newCombinations[i].EditUrl);
-                                stringNewRow = stringNewRow.replaceAll("@statusParameter", status);
+                                stringNewRow = stringNewRow.replaceAll("@statusParameter", statusHtml);
                                 stringNewRow = stringNewRow.replaceAll("@deleteUrlParameter", data.newCombinations[i].DeleteUrl);
 
                                 newRow.html(stringNewRow);

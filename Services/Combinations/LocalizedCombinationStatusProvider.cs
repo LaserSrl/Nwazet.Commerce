@@ -56,10 +56,9 @@ namespace Nwazet.Commerce.Services.Combinations {
                         Severity = Severity.Error,
                         Message = T("(Missing culture)").Text
                     });
-                }
-                // check if the combination has the same culture as the container
-                if (localizationContainer != null) {
-                    if(localizationCombination.Culture != localizationContainer.Culture) {
+                }else if (localizationContainer != null) {
+                    // check if the combination has the same culture as the container
+                    if (localizationCombination.Culture != localizationContainer.Culture) {
                         status.Add(new CombinationStatusMessage {
                             Severity = Severity.Warning,
                             Message = T("(Different culture. Combination: {0} - Container: {1})",
