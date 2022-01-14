@@ -23,23 +23,36 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IContentManager _contentManager;
         private readonly IProductCombinationService _productCombinationService;
         private readonly IAuthorizer _authorizer;
+        private readonly Lazy<IEnumerable<ICombinationStatusProvider>> _combinationStatusProvider;
         protected UrlHelper _url;
 
         public CombinationsAdminController(
             IContentManager contentManager,
             IProductCombinationService productCombinationService,
             IAuthorizer authorizer,
+            Lazy<IEnumerable<ICombinationStatusProvider>> combinationStatusProvider,
             UrlHelper url) {
 
             _contentManager = contentManager;
             _productCombinationService = productCombinationService;
             _authorizer = authorizer;
+            _combinationStatusProvider = combinationStatusProvider;
             _url = url;
             
             T = NullLocalizer.Instance;
         }
 
         public Localizer T { get; set; }
+
+        private IEnumerable<ICombinationStatusProvider> CombinationStatusProviders {
+            // provider used for status messages of a combination
+            // is checked for each combination: 
+            // the status if published or draft
+            // the culture
+            // if it is a duplicate
+            // returning for each provider a message and a severity
+            get { return _combinationStatusProvider.Value; }
+        }
 
         [HttpPost]
         [Authorize]
@@ -114,7 +127,7 @@ namespace Nwazet.Commerce.Controllers {
                 .CreateCombinations(containerContent, newCombinations);
             // return the combinations we created to update the UI directly without having
             // to reload the page.
-            return SuccessJson(T("{0} new combinations created.", created.Count()),created);
+            return SuccessJson(T("{0} new combinations created.", created.Count()), containerContent, created);
         }
 
         class AttributeValues {
@@ -133,33 +146,48 @@ namespace Nwazet.Commerce.Controllers {
             return Json(new { ko = "ko", message = message.Text });
         }
 
-        private JsonResult SuccessJson(LocalizedString message, IEnumerable<CombinationPart> created) {
+        private JsonResult SuccessJson(
+            LocalizedString message, 
+            CombinationContainerPart container, 
+            IEnumerable<CombinationPart> combinationsCreated) {
             // return the combinations we created to update the UI directly without having
             // to reload the page.
-            var combinationsCreated = new List<JsonCombination>();
-            foreach (var combination in created) {
-                combinationsCreated.Add(new JsonCombination {
+            var combinations = new List<JsonCombination>();
+            foreach (var combination in combinationsCreated) {
+                var comboStatus = new List<CombinationStatusMessage>();
+                // status messages for each combination
+                foreach (var provider in CombinationStatusProviders) {
+                    comboStatus.AddRange(provider.CombinationStatus(container, combination));
+                }
+                combinations.Add(new JsonCombination {
                     Title = _productCombinationService.CombinationDisplayText(combination),
                     EditUrl= _url.ItemEditUrl((IContent)combination.ContentItem, new { returnUrl = Url.ItemEditUrl(combination.CombinationContainerPart.ContentItem) }),
                     DeleteUrl= _url.ItemRemoveUrl(combination.ContentItem, new { returnUrl = Url.ItemEditUrl(combination.CombinationContainerPart.ContentItem) }),
-                    HasPublished = combination.HasPublished(),
-                    HasDraft = combination.HasDraft()
+                    // created a viewmodel for ease of reading in the javascript script
+                    // this way read only the severity string and not the bolean
+                    CombinationStatus = comboStatus
+                        .OrderBy(s => s.Severity)
+                        .Select(c=> new CombinationStatusMessageVM { Message = c.Message, Severity = c.Severity.ToString().ToLower() }).ToList()
                 });
             }
 
             return Json(new {
                 ok = "ok",
                 message = message.Text,
-                newCombinations = combinationsCreated
+                newCombinations = combinations
             });
         }
 
+        private class CombinationStatusMessageVM {
+            public string Message { get; set; }
+            public string Severity { get; set; }
+        }
+        
         class JsonCombination {
             public string Title { get; set; }
             public string EditUrl { get; set; }
             public string DeleteUrl { get; set; }
-            public bool HasPublished { get; set; }
-            public bool HasDraft { get; set; }
+            public List<CombinationStatusMessageVM> CombinationStatus { get; set; }
         }
     }
 }
