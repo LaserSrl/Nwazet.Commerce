@@ -9,6 +9,7 @@ using Orchard.ContentManagement.MetaData.Builders;
 using Orchard.Core.Contents.Extensions;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
+using Orchard.Localization;
 using Orchard.Logging;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,8 @@ namespace Nwazet.Commerce.Services.Combinations {
             _contentDefinitionManager = contentDefinitionManager;
             _combinationDetailProviders = combinationDetailProviders;
 
+            T = NullLocalizer.Instance;
+
             Logger = NullLogger.Instance;
 
             _attributeNames = new Dictionary<int, string>();
@@ -48,6 +51,8 @@ namespace Nwazet.Commerce.Services.Combinations {
 
         public ILogger Logger { get; set; }
 
+        public Localizer T { get; set; }
+        
         private IEnumerable<IContentHandler> Handlers {
             get { return _handlers.Value; }
         }
@@ -138,6 +143,10 @@ namespace Nwazet.Commerce.Services.Combinations {
             }
             // TODO: Use AdminFilter to prepare a different text for backoffice vs frontend
             var comboValues = combinationPart.ProductAttributeValues;
+            if (comboValues == null) {
+                return T("Undefined").Text;
+            }
+
             // get the attributes, because we need the title/displayname
             // Some are memorized:
             var attributeIdsToFetch = comboValues == null ? new List<int>() : comboValues
