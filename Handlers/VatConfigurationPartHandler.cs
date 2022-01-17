@@ -1,5 +1,6 @@
 ﻿using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
+using Orchard.Caching;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
@@ -15,16 +16,19 @@ namespace Nwazet.Commerce.Handlers {
         private readonly IContentManager _contentManager;
         private readonly ISiteService _siteService;
         private readonly IVatConfigurationProvider _vatConfigurationProvider;
+        private readonly ISignals _signals;
 
         public VatConfigurationPartHandler(
             IRepository<VatConfigurationPartRecord> repository,
             IContentManager contentManager,
             ISiteService siteService,
-            IVatConfigurationProvider vatConfigurationProvider) {
+            IVatConfigurationProvider vatConfigurationProvider,
+            ISignals signals) {
 
             _contentManager = contentManager;
             _siteService = siteService;
             _vatConfigurationProvider = vatConfigurationProvider;
+            _signals = signals;
 
             Filters.Add(StorageFilter.For(repository));
             Filters.Add(new ActivatingFilter<VatConfigurationSiteSettingsPart>("Site"));
@@ -128,6 +132,9 @@ namespace Nwazet.Commerce.Handlers {
             var settings = _siteService.GetSiteSettings().As<VatConfigurationSiteSettingsPart>();
             if (settings.DefaultVatConfigurationId == part.ContentItem.Id) {
                 settings.DefaultVatConfigurationId = 0;
+
+                // Cache evict
+                _signals.Trigger(VatConfigurationSiteSettingsPart.CacheKey);
             }
         }
 

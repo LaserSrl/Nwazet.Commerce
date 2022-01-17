@@ -1,11 +1,8 @@
-﻿using Orchard.Caching;
+﻿using Nwazet.Commerce.Models;
+using Orchard.Caching;
 using Orchard.ContentManagement.Handlers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nwazet.Commerce.Models;
+using Orchard.Localization;
+using Orchard.Logging;
 
 namespace Nwazet.Commerce.Handlers {
     class VatConfigurationSiteSettingsHandler : ContentHandler {
@@ -13,6 +10,10 @@ namespace Nwazet.Commerce.Handlers {
 
         public VatConfigurationSiteSettingsHandler(ISignals signals) {
             _signals = signals;
+
+            T = NullLocalizer.Instance;
+            Logger = NullLogger.Instance;
+            Filters.Add(new ActivatingFilter<VatConfigurationSiteSettingsPart>("Site"));
 
             // Evict cached content when updated, removed or destroyed.
             OnUpdated<VatConfigurationSiteSettingsPart>(
@@ -25,6 +26,16 @@ namespace Nwazet.Commerce.Handlers {
                 (context, part) => Invalidate());
             OnDestroyed<VatConfigurationSiteSettingsPart>(
                 (context, part) => Invalidate());
+        }
+
+        public Localizer T { get; set; }
+
+        protected override void GetItemMetadata(GetContentItemMetadataContext context) {
+            if (context.ContentItem.ContentType != "Site")
+            {
+                return;
+            }
+            base.GetItemMetadata(context);
         }
 
         private void Invalidate() {
