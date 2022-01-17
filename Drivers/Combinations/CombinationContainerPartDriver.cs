@@ -49,12 +49,8 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             _productService = productService;
             _localizationService = localizationService;
             _workContextAccessor = workContextAccessor;
-            _combinationStatusProvider = combinationStatusProvider;
-
-            T = NullLocalizer.Instance;
+            _combinationStatusProvider = combinationStatusProvider;          
         }
-
-        public Localizer T;
 
         protected override string Prefix {
             get { return "CombinationContainerPart"; }
@@ -166,7 +162,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             foreach (var combo in combinationContents) {
                 comboTitles.Add(
                     combo.Id,
-                    _productCombinationService.CombinationDisplayText(combo));
+                   _productCombinationService.CombinationDisplayText(combo));
 
                 var comboStatus = new List<CombinationStatusMessage>();
                 // status messages for each combination
@@ -210,6 +206,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                     allCombinationParts.Select(cp => cp.Id),
                     VersionOptions.Published,
                     QueryHints.Empty)
+                /////add condition/////.Where()
                 .ToList();
             // Handle availability of the products for those CombinationParts
             var availableCombinationParts = publishedCombinationParts
