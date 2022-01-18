@@ -61,8 +61,6 @@ namespace Nwazet.Commerce.Services {
             if (part.ContentItem.Id != GetDefaultCategoryId()) {
                 // the part is not the default yet
                 Settings.DefaultVatConfigurationId = part.ContentItem.Id;
-                // Cache evict
-                _signals.Trigger(VatConfigurationSiteSettingsPart.CacheKey);
             }
         }
 

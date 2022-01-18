@@ -454,7 +454,6 @@
     <Compile Include="Handlers\SizeBasedShippingMethodPartHandler.cs" />
     <Compile Include="Handlers\VatConfigurationPartAuthorizationEventHandler.cs" />
     <Compile Include="Handlers\VatConfigurationPartHandler.cs" />
-    <Compile Include="Handlers\VatConfigurationSiteSettingsHandler.cs" />
     <Compile Include="Handlers\WeightBasedShippingMethodPartHandler.cs" />
     <Compile Include="Handlers\ProductPartHandler.cs" />
     <Compile Include="Handlers\WishListItemPartHandler.cs" />
