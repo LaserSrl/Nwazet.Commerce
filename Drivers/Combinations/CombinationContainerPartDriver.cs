@@ -32,6 +32,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         private readonly IWorkContextAccessor _workContextAccessor;
         private readonly Lazy<IEnumerable<ICombinationStatusProvider>> _combinationStatusProvider;
 
+
         public CombinationContainerPartDriver(
             IProductAttributeAdminServices productAttributeAdminServices,
             IContentManager contentManager,
@@ -206,7 +207,13 @@ namespace Nwazet.Commerce.Drivers.Combinations {
                     allCombinationParts.Select(cp => cp.Id),
                     VersionOptions.Published,
                     QueryHints.Empty)
-                /////add condition/////.Where()
+                .Where(c => {
+                    if (c.As<LocalizationPart>()==null) {
+                        return true;
+                    }
+                    var cult = c.As<LocalizationPart>().Culture;
+                    return cult != null && cult.Culture == _workContextAccessor.GetContext().CurrentCulture;
+                })
                 .ToList();
             // Handle availability of the products for those CombinationParts
             var availableCombinationParts = publishedCombinationParts

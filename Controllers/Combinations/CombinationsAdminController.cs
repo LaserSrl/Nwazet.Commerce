@@ -112,12 +112,14 @@ namespace Nwazet.Commerce.Controllers {
                 .Where(combo => {
                     foreach (var current in currentCombinations) {
                         // combo.Except(current).Any()
-                        if (combo.Count() == current.Count()
-                            && !combo.Any(com => 
-                                !current.Any(cur=> 
-                                    cur.AttributeId == com.AttributeId && cur.AttributeValue.Equals(com.AttributeValue)))) {
-                            // combo and current represent the same combination
-                            return false;
+                        if(current != null) {
+                            if (combo.Count() == current.Count()
+                                && !combo.Any(com => 
+                                    !current.Any(cur=> 
+                                        cur.AttributeId == com.AttributeId && cur.AttributeValue.Equals(com.AttributeValue)))) {
+                                // combo and current represent the same combination
+                                return false;
+                            }
                         }
                     }
                     return true;

@@ -14,19 +14,19 @@ namespace Nwazet.Commerce.Services.Combinations {
            IContentDefinitionManager contentDefinitionManager)
            : base(contentDefinitionManager) {
         }
-        public override ContentTypeDefinitionBuilder AlterCombinationDefinition(
-           ContentTypeDefinitionBuilder previous,
-           string containerTypeName) {
+        //public override ContentTypeDefinitionBuilder AlterCombinationDefinition(
+        //   ContentTypeDefinitionBuilder previous,
+        //   string containerTypeName) {
 
-            var containerDefinition = _contentDefinitionManager.GetTypeDefinition(containerTypeName);
+        //    var containerDefinition = _contentDefinitionManager.GetTypeDefinition(containerTypeName);
 
-            if (containerDefinition != null
-                && containerDefinition.Parts.Any(ctpd => ctpd.PartDefinition.Name == "LocalizationPart")) {
-                // alter the definition
-                return previous.WithPart("LocalizationPart");
-            }
-            return previous;
-        }
+        //    if (containerDefinition != null
+        //        && containerDefinition.Parts.Any(ctpd => ctpd.PartDefinition.Name == "LocalizationPart")) {
+        //        // alter the definition
+        //        return previous.WithPart("LocalizationPart");
+        //    }
+        //    return previous;
+        //}
 
         public override void Synchronize(
            CombinationContainerPart container, CombinationPart combination) {
