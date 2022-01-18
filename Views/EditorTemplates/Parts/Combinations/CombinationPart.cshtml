@@ -8,21 +8,23 @@
     var shortGuid = "c" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
     var _productCombinationService = WorkContext.Resolve<IProductCombinationService>();
 
-    var displayCombinations = _productCombinationService.CombinationDisplayText(Model.Part);
 
     var _contentManager = WorkContext.Resolve<IContentManager>();
 }
 
-@if (Model.CombinationContainer != null || !string.IsNullOrEmpty(displayCombinations)) {
+@if (Model.CombinationContainer != null || Model.Part.ProductAttributeValues != null) {
     <div class="callout callout-info" id="@shortGuid">
         @if (Model.CombinationContainer != null) {
-            <h4>
-                @T("This product is a variant of: {0}",
-                    Html.ItemEditLinkWithReturnUrl(Html.ItemDisplayText((IContent)(Model.CombinationContainer)).ToHtmlString(),
-                        (IContent)(Model.CombinationContainer)))
-            </h4>
+        <h4>
+            @T("This product is a variant of: ")
+            <a href="@Url.ItemEditUrl((IContent)(Model.CombinationContainer))">
+                @Html.ItemDisplayText((IContent)(Model.CombinationContainer))
+            </a>
+        </h4>
         }
-        @if (!string.IsNullOrEmpty(displayCombinations)) {
+        @if (Model.Part.ProductAttributeValues != null) {
+            var displayCombinations = _productCombinationService.CombinationDisplayText(Model.Part);
+
             <p>
                 @T("It maps the following combination of attributes: {0}",
                     displayCombinations)

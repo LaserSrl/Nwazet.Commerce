@@ -71,7 +71,7 @@ namespace Nwazet.Commerce.Services.Combinations {
                 // if the combination does not have the culture and the container does, whatever, message
                 if (localizationContainer != null) {
                     status.Add(new CombinationStatusMessage {
-                        Severity = Severity.Warning,
+                        Severity = Severity.Information,
                         Message = T("(The combination has no localization)").Text
                     });
                 }
