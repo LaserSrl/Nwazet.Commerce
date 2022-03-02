@@ -12,7 +12,8 @@ namespace Nwazet.Commerce.Models {
         public virtual string IncludedShippingAreas { get; set; }
         public virtual string ExcludedShippingAreas { get; set; }
         public virtual decimal DefaultPrice { get; set; }
-
+        public virtual string PriceTiersTable { get; set; }
+        public virtual string TierTarget { get; set; }
         // Since this is a ContentPartRecord it does not get deleted from the db when the
         // ContentItem it belongs to is deleted. Thus, the CascadeAllDeleteOrphan attribute
         // will not cause child criteria to be deleted there. They would have to be deleted

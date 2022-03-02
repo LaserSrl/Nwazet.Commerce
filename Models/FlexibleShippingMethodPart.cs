@@ -36,6 +36,16 @@ namespace Nwazet.Commerce.Models {
             set { Store(r => r.DefaultPrice, value); }
         }
 
+        public string PriceTiersTable {
+            get { return Retrieve(r => r.PriceTiersTable); }
+            set { Store(r => r.PriceTiersTable, value); }
+        }
+
+        public string TierTarget {
+            get { return Retrieve(r => r.TierTarget); }
+            set { Store(r => r.TierTarget, value); }
+        }
+
         public IList<ApplicabilityCriterionRecord> ApplicabilityCriteria {
             get { return Record.ApplicabilityCriteria; }
             set { Record.ApplicabilityCriteria = value; }
