@@ -277,6 +277,7 @@
     <None Include="Views\EditorTemplates\Parts\TerritoryVatConfigurationPartNotAllowed.cshtml" />
     <None Include="Views\EditorTemplates\Parts\VatConfiguration.cshtml" />
     <None Include="Views\EditorTemplates\SiteSettings\Couponing.cshtml" />
+    <None Include="Views\EditorTemplates\SiteSettings\FlexibleShipping.cshtml" />
     <None Include="Views\EditorTemplates\SiteSettings\VatConfiguration.cshtml" />
     <None Include="Views\FlexibleShippingCriterion\Add.cshtml" />
     <None Include="Views\FlexibleShippingCriterion\Edit.cshtml" />
@@ -364,6 +365,7 @@
     <Compile Include="Drivers\CouponingSiteSettingPartDriver.cs" />
     <Compile Include="Drivers\ECommerceCurrencySiteSettingsPartDriver.cs" />
     <Compile Include="Drivers\FlexibleShippingMethodPartDriver.cs" />
+    <Compile Include="Drivers\FlexibleShippingSiteSettingDriver.cs" />
     <Compile Include="Drivers\HierarchyVatConfigurationPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUProductPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUSiteSettingsPartDriver.cs" />
@@ -432,6 +434,7 @@
     <Compile Include="Handlers\ECommerceCurrencySiteSettingsPartHandler.cs" />
     <Compile Include="Handlers\FlexibleShippingMethodPartAuthorizationEventHandler.cs" />
     <Compile Include="Handlers\FlexibleShippingMethodPartHandler.cs" />
+    <Compile Include="Handlers\FlexibleShippingSiteSettingPartHandler.cs" />
     <Compile Include="Handlers\HierarchyVatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\InventoryBySKUSiteSettingsPartHandler.cs" />
     <Compile Include="Handlers\InventoryPartHandler.cs" />
@@ -506,6 +509,7 @@
     <Compile Include="Models\ECommerceCurrencySiteSettingsPart.cs" />
     <Compile Include="Models\FlexibleShippingMethodPart.cs" />
     <Compile Include="Models\FlexibleShippingMethodRecord.cs" />
+    <Compile Include="Models\FlexibleShippingSiteSettingPart.cs" />
     <Compile Include="Models\HierarchyVatConfigurationIntersectionRecord.cs" />
     <Compile Include="Models\HierarchyVatConfigurationPart.cs" />
     <Compile Include="Models\HierarchyVatConfigurationPartRecord.cs" />
@@ -812,6 +816,7 @@
     <Compile Include="ViewModels\ECommerceCurrencySiteSettingsViewModel.cs" />
     <Compile Include="ViewModels\ECommerceSettingsViewModel.cs" />
     <Compile Include="ViewModels\AttributeLocalizationProductAttributesPartEditViewModel.cs" />
+    <Compile Include="ViewModels\FlexibleShippingSiteSettingViewModel.cs" />
     <Compile Include="ViewModels\HierarchyAdminIndexViewModel.cs" />
     <Compile Include="ViewModels\HierarchyIndexEntry.cs" />
     <Compile Include="ViewModels\HierarchyVatConfigurationPartViewModel.cs" />

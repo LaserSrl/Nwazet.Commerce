@@ -12,6 +12,7 @@ namespace Nwazet.Commerce.Models {
         public virtual string IncludedShippingAreas { get; set; }
         public virtual string ExcludedShippingAreas { get; set; }
         public virtual decimal DefaultPrice { get; set; }
+        [StringLengthMax]
         public virtual string PriceTiersTable { get; set; }
         public virtual string TierTarget { get; set; }
         // Since this is a ContentPartRecord it does not get deleted from the db when the

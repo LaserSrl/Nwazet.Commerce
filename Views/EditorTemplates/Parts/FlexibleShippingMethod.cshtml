@@ -1,9 +1,37 @@
 ﻿@using Nwazet.Commerce.Models
+@using Orchard.ContentManagement
+
 @{
+    var fsssPart = WorkContext.CurrentSite.As<FlexibleShippingSiteSettingPart>();
+    var showPriceTiers = false;
+    if (fsssPart != null && fsssPart.EnablePriceTiers) {
+        showPriceTiers = true;
+    }
     var method = (FlexibleShippingMethodPart)Model.ShippingMethod;
     var shippingAreas = (IEnumerable<ShippingArea>)Model.ShippingAreas;
     var includedAreas = new HashSet<string>((method.IncludedShippingAreas ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
     var excludedAreas = new HashSet<string>((method.ExcludedShippingAreas ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+
+    var tierTargets = new List<SelectListItem>();
+    var currentTierTarget = "weight";
+    if (!string.IsNullOrWhiteSpace(method.TierTarget)) {
+        currentTierTarget = method.TierTarget;
+    }
+    tierTargets.Add(new SelectListItem {
+        Selected = currentTierTarget.Equals("weight", StringComparison.OrdinalIgnoreCase),
+        Text = T("Weight").Text,
+        Value = "weight"
+    });
+    tierTargets.Add(new SelectListItem {
+        Selected = currentTierTarget.Equals("cartamount", StringComparison.OrdinalIgnoreCase),
+        Text = T("Cart amount").Text,
+        Value = "cartamount"
+    });
+    tierTargets.Add(new SelectListItem {
+        Selected = currentTierTarget.Equals("quantity", StringComparison.OrdinalIgnoreCase),
+        Text = T("Item quantity").Text,
+        Value = "quantity"
+    });
 }
 <fieldset>
     <label class="sub" for="@Html.Id("Name")">@T("Method Name")</label><br />
@@ -14,4 +42,12 @@
     <label class="sub" for="@Html.Id("DefaultPrice")">@T("Price")</label><br />
     @Html.TextBox("DefaultPrice", method.DefaultPrice, new { @class = "text" })<br />
     <span class="hint" for="@Html.Id("DefaultPrice")">@T("The base price for shipping. In cases where VAT or similar taxes are applied on shipping, this is the price before tax.")</span><br />
+    @if (showPriceTiers) {
+        <label class="sub" for="@Html.Id("TierTarget")">@T("Tier Target")</label><br />
+        @Html.DropDownList("TierTarget", tierTargets)<br />
+        <span class="hint" for="@Html.Id("TierTarget")">@T("The criteria to compute tiers with in Price Tiers Table")</span><br />
+        <label class="sub" for="@Html.Id("PriceTiersTable")">@T("Price Tiers Table")</label><br />
+        @Html.TextArea("PriceTiersTable", method.PriceTiersTable, new { @class = "text medium", rows = 20 })<br />
+        <span class="hint" for="@Html.Id("PriceTiersTable")">@T("The CSV table containing the price tiers (based on the field 'Tier Target') and the price formula to execute when computing shipping price, before taxes are applied.")</span><br />
+    }
 </fieldset>
