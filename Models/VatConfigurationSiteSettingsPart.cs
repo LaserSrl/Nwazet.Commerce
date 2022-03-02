@@ -5,6 +5,8 @@ namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.AdvancedVAT")]
     public class VatConfigurationSiteSettingsPart : ContentPart {
 
+        public const string CacheKey = "DefaultVatConfigurationId";
+
         /// <summary>
         /// This value being 0 means no default has been selected. That is a configuration error
         /// for the teneat, that will be signaled with an error notification until fixed.

@@ -1,5 +1,6 @@
 ﻿using Nwazet.Commerce.Models;
 using Orchard;
+using Orchard.Caching;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using System;
@@ -14,17 +15,20 @@ namespace Nwazet.Commerce.Services {
         private readonly IWorkContextAccessor _workContextAccessor;
         private readonly ITerritoriesRepositoryService _territoriesRepositoryService;
         private readonly ITerritoryPartRecordService _territoryPartRecordService;
+        private readonly ISignals _signals;
 
         public VatConfigurationService(
             IContentManager contentManager,
             IWorkContextAccessor workContextAccessor,
             ITerritoriesRepositoryService territoriesRepositoryService,
-            ITerritoryPartRecordService territoryPartRecordService) {
+            ITerritoryPartRecordService territoryPartRecordService,
+            ISignals signals) {
 
             _contentManager = contentManager;
             _workContextAccessor = workContextAccessor;
             _territoriesRepositoryService = territoriesRepositoryService;
             _territoryPartRecordService = territoryPartRecordService;
+            _signals = signals;
 
             _ratesByTerritoryAndConfig = new Dictionary<int, Dictionary<int, decimal>>();
             _territoryInternalRecords = new Dictionary<int, TerritoryInternalRecord>();
