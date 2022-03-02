@@ -235,6 +235,7 @@
     <None Include="packages.config" />
     <None Include="Styles\coupon-admin.less" />
     <None Include="Styles\product-admin.less" />
+    <None Include="Views\BankTransferOrderAdditionalFrontEndData.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsBasicPartial.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsPartial.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsNewPartial.cshtml" />
