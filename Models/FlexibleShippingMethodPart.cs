@@ -5,6 +5,8 @@ using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using org.mariuszgromada.math.mxparser;
 
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.FlexibleShippingImplementations")]
@@ -63,15 +65,14 @@ namespace Nwazet.Commerce.Models {
             if (workContext != null
                 && workContext.TryResolve(out flexibleShippingManager)) {
                 // we have a usable IFlexibleShippingManager here
-                if (flexibleShippingManager.TestCriteria(
-                    Id, new ApplicabilityContext(
-                        productQuantities,
-                        shippingMethods,
-                        country,
-                        zipCode
-                    ))) {
+                var ac = new ApplicabilityContext(productQuantities, shippingMethods, country, zipCode);
+                if (flexibleShippingManager.TestCriteria(Id, ac)) {
                     var price = DefaultPrice;
-                    // TODO: make price the result of something?
+                    // Verify if Price Tiers are enabled via site settings.
+                    var tiersSettings = workContext.CurrentSite.As<FlexibleShippingSiteSettingPart>();
+                    if (tiersSettings != null && tiersSettings.EnablePriceTiers) {
+                        price = ComputeTiers(ac, price);
+                    }
                     var baseVatConfig = this.As<ProductVatConfigurationPart>();
                     IVatConfigurationService vatConfigurationService;
                     if (baseVatConfig != null
@@ -93,6 +94,73 @@ namespace Nwazet.Commerce.Models {
             }
 
             yield break;
+        }
+
+        private decimal ComputeTiers(ApplicabilityContext applicabilityContext, decimal defaultPrice) {
+            if (string.IsNullOrWhiteSpace(TierTarget) || string.IsNullOrWhiteSpace(PriceTiersTable)) {
+                return defaultPrice;
+            }
+            // Loads the tiers table in a PriceTiersContext object.
+            var tiers = new PriceTiersContext();
+            tiers.FromCSV(PriceTiersTable);
+
+            switch (TierTarget.ToLowerInvariant()) {
+                case "weight":
+                    // I need to search for the correct tier, ordering my list of tiers.
+                    // First, I need to compute the total weight of the cart.
+                    double totalWeight = applicabilityContext.ProductQuantities
+                        .Sum(pc => pc.Product.Weight * pc.Quantity);
+                    var correctTier = tiers.Tiers
+                        .Where(t => t.Valid && t.LowBound <= (decimal)totalWeight)
+                        .OrderByDescending(t => t.LowBound)
+                        .FirstOrDefault();
+                    if (correctTier != null) {
+                        decimal result;
+                        if (ComputeFormula(correctTier.Formula, applicabilityContext, out result)) {
+                            return result;
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+            return defaultPrice;
+        }
+
+        private bool ComputeFormula(string formula, ApplicabilityContext applicabilityContext, out decimal result) {
+            if (decimal.TryParse(formula, out result)) {
+                return true;
+            }
+
+            // Substitute parameters like they were tokens.
+            // {w} is total weight.
+            if (formula.Contains("{w}")) {
+                var w = applicabilityContext.ProductQuantities
+                    .Sum(pc => pc.Product.Weight * pc.Quantity);
+                formula = formula.Replace("{w}", w.ToString());
+            }
+            // {q} is the product quantity.
+            if (formula.Contains("{q}")) {
+                var q = applicabilityContext.ProductQuantities
+                    .Sum(pc => pc.Quantity);
+                formula = formula.Replace("{q}", q.ToString());
+            }
+            // {p} is the cart amount.
+            if (formula.Contains("{p}")) {
+                var p = applicabilityContext.ProductQuantities
+                    .Sum(pc => pc.Price * pc.Quantity);
+                formula = formula.Replace("{p}", p.ToString());
+            }
+
+            // Use mxparser Expression to compute the formula.
+            Expression expr = new Expression(formula);
+            if (decimal.TryParse(expr.calculate().ToString(), out result)) {
+                return true;
+            }
+
+            return false;
         }
 
         private ShippingOption GetOption(decimal price) {

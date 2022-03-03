@@ -50,6 +50,9 @@
     <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\Orchard\src\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
     </Reference>
+    <Reference Include="MathParser.org-mXparser, Version=4.4.2.0, Culture=neutral, PublicKeyToken=0fbab7add73ed6e2, processorArchitecture=MSIL">
+      <HintPath>..\Orchard\src\packages\MathParser.org-mXparser.4.4.2\lib\net48\MathParser.org-mXparser.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\Orchard\src\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -524,6 +527,7 @@
     <Compile Include="Models\PersistentShoppingCart.cs" />
     <Compile Include="Models\PricePart.cs" />
     <Compile Include="Models\PricePartRecord.cs" />
+    <Compile Include="Models\PriceTiersContext.cs" />
     <Compile Include="Models\ProductsListPart.cs" />
     <Compile Include="Models\OrderEvent.cs" />
     <Compile Include="Models\OrderPart.cs" />
