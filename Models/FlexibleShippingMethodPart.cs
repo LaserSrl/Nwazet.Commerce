@@ -3,10 +3,10 @@ using Nwazet.Commerce.Services;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
+using org.mariuszgromada.math.mxparser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using org.mariuszgromada.math.mxparser;
 
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.FlexibleShippingImplementations")]
@@ -110,13 +110,43 @@ namespace Nwazet.Commerce.Models {
                     // First, I need to compute the total weight of the cart.
                     double totalWeight = applicabilityContext.ProductQuantities
                         .Sum(pc => pc.Product.Weight * pc.Quantity);
-                    var correctTier = tiers.Tiers
+                    var correctWeightTier = tiers.Tiers
                         .Where(t => t.Valid && t.LowBound <= (decimal)totalWeight)
                         .OrderByDescending(t => t.LowBound)
                         .FirstOrDefault();
-                    if (correctTier != null) {
+                    if (correctWeightTier != null) {
                         decimal result;
-                        if (ComputeFormula(correctTier.Formula, applicabilityContext, out result)) {
+                        if (ComputeFormula(correctWeightTier.Formula, applicabilityContext, out result)) {
+                            return result;
+                        }
+                    }
+                    break;
+
+                case "quantity":
+                    int totalQuantity = applicabilityContext.ProductQuantities
+                        .Sum(pc => pc.Quantity);
+                    var correctQuantityTier = tiers.Tiers
+                        .Where(t => t.Valid && t.LowBound <= (decimal)totalQuantity)
+                        .OrderByDescending(t => t.LowBound)
+                        .FirstOrDefault();
+                    if (correctQuantityTier != null) {
+                        decimal result;
+                        if (ComputeFormula(correctQuantityTier.Formula, applicabilityContext, out result)) {
+                            return result;
+                        }
+                    }
+                    break;
+
+                case "cartamount":
+                    decimal totalAmount = applicabilityContext.ProductQuantities
+                        .Sum(pc => pc.Price * pc.Quantity);
+                    var correctAmountTier = tiers.Tiers
+                        .Where(t => t.Valid && t.LowBound <= totalAmount)
+                        .OrderByDescending(t => t.LowBound)
+                        .FirstOrDefault();
+                    if (correctAmountTier != null) {
+                        decimal result;
+                        if (ComputeFormula(correctAmountTier.Formula, applicabilityContext, out result)) {
                             return result;
                         }
                     }
