@@ -17,7 +17,7 @@ namespace Nwazet.Commerce.Models {
         public virtual decimal DiscountPrice { get; set; }
         public virtual bool IsDigital { get; set; }
         public virtual decimal? ShippingCost { get; set; }
-        public virtual double Weight { get; set; }
+        public virtual decimal Weight { get; set; }
         public virtual string Size { get; set; }
         public virtual bool OverrideTieredPricing { get; set; }
         public virtual string PriceTiers { get; set; }

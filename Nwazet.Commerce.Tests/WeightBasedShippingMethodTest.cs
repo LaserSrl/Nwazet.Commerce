@@ -79,7 +79,7 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void ComplexOrderGivesRightShippingCost() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 1.5}),
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)1.5}),
                 new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 1, ShippingCost = 4}),
                 new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 1, IsDigital = true}),
                 new ShoppingCartQuantityProduct(3, new ProductStub {Weight = 3})
@@ -93,7 +93,7 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void FlatRateIsFlat() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 1.5}),
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)1.5}),
                 new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 1}),
                 new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 1, IsDigital = true}),
                 new ShoppingCartQuantityProduct(3, new ProductStub {Weight = 3})

@@ -38,7 +38,7 @@ namespace Nwazet.Commerce.Tests.Stubs {
             return settings;
         }
 
-        public IEnumerable<ShippingOption> Prices(string userId, double weightInOunces, decimal valueOfContents, string container,
+        public IEnumerable<ShippingOption> Prices(string userId, decimal weightInOunces, decimal valueOfContents, string container,
                                   string serviceNameValidationExpression, string serviceNameExclusionExpression, string country,
                                   int lengthInInches, int widthInInches, int heightInInches, string originZip, string destinationZip,
                                   bool commercialPrices, bool commercialPlusPrices, bool registeredMail, bool insurance,
