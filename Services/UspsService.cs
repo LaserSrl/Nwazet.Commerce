@@ -60,7 +60,7 @@ namespace Nwazet.Commerce.Services {
 
         public static XElement BuildDomesticShippingRequestDocument(
             string userId,
-            double weightInOunces,
+            decimal weightInOunces,
             decimal valueOfContents,
             string container,
             int lengthInInches,
@@ -134,7 +134,7 @@ namespace Nwazet.Commerce.Services {
 
         public static XElement BuildInternationalShippingRequestDocument(
             string userId,
-            double weightInOunces,
+            decimal weightInOunces,
             decimal valueOfContents,
             string container,
             string country,
@@ -200,11 +200,11 @@ namespace Nwazet.Commerce.Services {
                                 package);
         }
 
-        private static int OuncesToPounds(double weightInOunces) {
+        private static int OuncesToPounds(decimal weightInOunces) {
             return (int) Math.Truncate(weightInOunces/16);
         }
 
-        private static double RemainderOunces(double weightInOunces, int pounds) {
+        private static decimal RemainderOunces(decimal weightInOunces, int pounds) {
             return Math.Ceiling(weightInOunces - 16 * pounds);
         }
 
@@ -217,7 +217,7 @@ namespace Nwazet.Commerce.Services {
             return lengthInInches > 12 || widthInInches > 12 || heightInInches > 12;
         }
 
-        private static bool IsMachinable(double weightInOunces, int lengthInInches, int widthInInches,
+        private static bool IsMachinable(decimal weightInOunces, int lengthInInches, int widthInInches,
                                          int heightInInches) {
             return lengthInInches >= 6 && heightInInches >= 3 && widthInInches >= 1
                    && lengthInInches <= 27 && heightInInches <= 17 && widthInInches <= 17
@@ -226,7 +226,7 @@ namespace Nwazet.Commerce.Services {
 
         public IEnumerable<ShippingOption> Prices(
             string userId,
-            double weightInOunces,
+            decimal weightInOunces,
             decimal valueOfContents,
             string container,
             string serviceNameValidationExpression,

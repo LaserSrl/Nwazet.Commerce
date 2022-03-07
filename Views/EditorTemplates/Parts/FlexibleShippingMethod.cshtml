@@ -46,7 +46,7 @@
         <span class="hint" for="@Html.Id("DefaultPrice")">@T("The base price for shipping. In cases where VAT or similar taxes are applied on shipping, this is the price before tax.")&nbsp;@T("If no valid tier is found for the requested shipping, this is the price payed by the customer.")</span><br />
         <label class="sub" for="@Html.Id("TierTarget")">@T("Tier Target")</label><br />
         @Html.DropDownList("TierTarget", tierTargets)<br />
-        <span class="hint" for="@Html.Id("TierTarget")">@T("The criteria to compute tiers with in Price Tiers Table")</span><br />
+        <span class="hint" for="@Html.Id("TierTarget")">@T("The criteria to compute tiers with in Price Tiers Table. Please note that weight must always be expressed in grams.")</span><br />
         <label class="sub" for="@Html.Id("PriceTiersTable")">@T("Price Tiers Table")</label><br />
         @Html.TextArea("PriceTiersTable", method.PriceTiersTable, new { @class = "text medium", rows = 20 })<br />
         <span class="hint" for="@Html.Id("PriceTiersTable")">@T("The CSV table containing the price tiers (based on the field 'Tier Target') and the price formula to execute when computing shipping price, before taxes are applied.")</span><br />

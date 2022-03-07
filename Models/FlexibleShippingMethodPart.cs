@@ -108,10 +108,10 @@ namespace Nwazet.Commerce.Models {
                 case "weight":
                     // I need to search for the correct tier, ordering my list of tiers.
                     // First, I need to compute the total weight of the cart.
-                    double totalWeight = applicabilityContext.ProductQuantities
+                    decimal totalWeight = applicabilityContext.ProductQuantities
                         .Sum(pc => pc.Product.Weight * pc.Quantity);
                     var correctWeightTier = tiers.Tiers
-                        .Where(t => t.Valid && t.LowBound <= (decimal)totalWeight)
+                        .Where(t => t.Valid && t.LowBound <= totalWeight)
                         .OrderByDescending(t => t.LowBound)
                         .FirstOrDefault();
                     if (correctWeightTier != null) {

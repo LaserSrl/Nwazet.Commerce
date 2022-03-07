@@ -324,5 +324,13 @@ namespace Nwazet.Commerce.Migrations {
                 .AddColumn<int>("MaximumOrderQuantity"));
             return 16;
         }
+
+        public int UpdateFrom16 () {
+            // As part of an expanded management of shipping prices, we consider default product weights expressed in grams.
+            // For this reason, the Weight column must now be a decimal instead of a double.
+            SchemaBuilder.AlterTable("ProductPartVersionRecord", table =>
+                table.AlterColumn("Weight", column => column.WithType(DbType.Decimal)));
+            return 17;
+        }
     }
 }

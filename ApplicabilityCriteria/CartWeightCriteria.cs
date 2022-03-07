@@ -18,9 +18,9 @@ namespace Nwazet.Commerce.ApplicabilityCriteria {
         public Localizer T { get; set; }
 
         public override void Describe(DescribeCriterionContext describe) {
-            describe.For("Cart", T("Cart Weight"), T("Cart Weight"))
+            describe.For("Cart", T("Cart Weight in grams"), T("Cart Weight"))
                 .Element("Cart Weight",
-                    T("Cart Weight"),
+                    T("Cart Weight in grams"),
                     T("Cart Weight Criterion"),
                     ApplyCriteria,
                     DisplayCriteria,
@@ -43,7 +43,7 @@ namespace Nwazet.Commerce.ApplicabilityCriteria {
         }
 
         public LocalizedString DisplayCriteria(CriterionContext context) {
-            return NumericFilterForm.DisplayFilter(T("Cart Weight").Text, context.State, T);
+            return NumericFilterForm.DisplayFilter(T("Cart Weight in grams").Text, context.State, T);
         }
     }
 }
