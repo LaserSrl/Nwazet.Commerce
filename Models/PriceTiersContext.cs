@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 
 namespace Nwazet.Commerce.Models {
     public class PriceTiersContext {
@@ -30,7 +28,7 @@ namespace Nwazet.Commerce.Models {
             var cols = csvLine.Split(',');
             if (cols.Length == 2) {
                 decimal bound;
-                if (!decimal.TryParse(cols[0], out bound) || string.IsNullOrWhiteSpace(cols[1])) {
+                if (!decimal.TryParse(cols[0], NumberStyles.Any, CultureInfo.InvariantCulture, out bound) || string.IsNullOrWhiteSpace(cols[1])) {
                     Valid = false;
                 } else {
                     LowBound = bound;
