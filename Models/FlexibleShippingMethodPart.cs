@@ -6,6 +6,7 @@ using Orchard.Environment.Extensions;
 using org.mariuszgromada.math.mxparser;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Nwazet.Commerce.Models {
@@ -160,7 +161,7 @@ namespace Nwazet.Commerce.Models {
         }
 
         private bool ComputeFormula(string formula, ApplicabilityContext applicabilityContext, out decimal result) {
-            if (decimal.TryParse(formula, out result)) {
+            if (decimal.TryParse(formula, NumberStyles.Any, CultureInfo.InvariantCulture, out result)) {
                 return true;
             }
 
@@ -186,7 +187,7 @@ namespace Nwazet.Commerce.Models {
 
             // Use mxparser Expression to compute the formula.
             Expression expr = new Expression(formula);
-            if (decimal.TryParse(expr.calculate().ToString(), out result)) {
+            if (decimal.TryParse(expr.calculate().ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out result)) {
                 return true;
             }
 
