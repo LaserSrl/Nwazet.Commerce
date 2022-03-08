@@ -184,12 +184,16 @@ namespace Nwazet.Commerce.Models {
                     .Sum(pc => pc.Price * pc.Quantity);
                 formula = formula.Replace("{p}", p.ToString());
             }
-
-            // Use mxparser Expression to compute the formula.
-            Expression expr = new Expression(formula);
-            if (decimal.TryParse(expr.calculate().ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out result)) {
+            
+            try {
+                // Use mxparser Expression to compute the formula.
+                Expression expr = new Expression(formula);
+                var computed = expr.calculate();
+                result = (decimal)computed;
                 return true;
-            }
+            } catch {
+
+            }            
 
             return false;
         }
