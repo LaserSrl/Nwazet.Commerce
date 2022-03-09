@@ -1,5 +1,5 @@
 ﻿# Orchard resource strings - it-IT
-# Copyright (c) 2021 Laser s.r.l.
+# Copyright (c) 2022 Laser s.r.l.
 
 
 # > #: msgctxt { contesto del messaggio - Originale }
@@ -15,6 +15,22 @@ msgstr "Aggiungi un nuovo attributo di prodotto"
 msgctxt "~/Modules/Nwazet.Commerce/Views/AttributesAdmin/Index.cshtml"
 msgid "Manage Attributes"
 msgstr "Gestisci Attributi"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/BankTransferOrderAdditionalFrontEndData.cshtml"
+msgid "Bank Transfer payment"
+msgstr "Pagamento tramite Bonifico Bancario"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/BankTransferOrderAdditionalFrontEndData.cshtml"
+msgid "Payment reason: {0}"
+msgstr "Causale pagamento: {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/BankTransferOrderAdditionalFrontEndData.cshtml"
+msgid "Please send the transfer code via email at <a href='mailto:{0}'>{0}</a> in order to confirm your payment."
+msgstr "Per favore invia il codice del bonifico via email a <a href='mailto:{0}'>{0}</a> in modo da confermare il tuo pagamento."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/BankTransferOrderAdditionalFrontEndData.cshtml"
+msgid "You need to send the money at the following account number: {0}"
+msgstr "Devi inviare il denaro al seguente iban: {0}"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/BundleSummaryAdmin.cshtml"
 msgid "Inventory:"
@@ -4765,8 +4781,20 @@ msgid "Enter the value."
 msgstr "Inserisci il valore."
 
 msgctxt "Nwazet.Commerce.Filters.MinCartTotalForm"
+msgid "Enter the value. The decimal separator is {0}"
+msgstr "Inserisci il valore. Il separatore decimale è {0}"
+
+msgctxt "Nwazet.Commerce.Filters.MinCartTotalForm"
 msgid "Value"
 msgstr "Valore"
+
+msgctxt "Nwazet.Commerce.Filters.MinCartTotalFormValidator"
+msgid "Value must be a positive integer."
+msgstr "Il valore deve essere un numero intero positivo."
+
+msgctxt "Nwazet.Commerce.Filters.MinCartTotalFormValidator"
+msgid "Value must be a positive number."
+msgstr "Il valore deve essere un numero positivo."
 
 msgctxt "Nwazet.Commerce.Filters.PositiveIntegerValueForm"
 msgid "Enter the value."

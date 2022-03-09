@@ -1,5 +1,7 @@
 ﻿using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
+using Orchard;
+using Orchard.Caching;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
@@ -15,16 +17,25 @@ namespace Nwazet.Commerce.Handlers {
         private readonly IContentManager _contentManager;
         private readonly ISiteService _siteService;
         private readonly IVatConfigurationProvider _vatConfigurationProvider;
+        private readonly ISignals _signals;
+        private readonly ICacheManager _cacheManager;
+        private readonly IOrchardServices _orchardServices;
 
         public VatConfigurationPartHandler(
             IRepository<VatConfigurationPartRecord> repository,
             IContentManager contentManager,
             ISiteService siteService,
-            IVatConfigurationProvider vatConfigurationProvider) {
+            IVatConfigurationProvider vatConfigurationProvider,
+            ISignals signals,
+            ICacheManager cacheManager,
+            IOrchardServices orchardServices) {
 
             _contentManager = contentManager;
             _siteService = siteService;
             _vatConfigurationProvider = vatConfigurationProvider;
+            _signals = signals;
+            _cacheManager = cacheManager;
+            _orchardServices = orchardServices;
 
             Filters.Add(StorageFilter.For(repository));
             Filters.Add(new ActivatingFilter<VatConfigurationSiteSettingsPart>("Site"));
@@ -33,7 +44,7 @@ namespace Nwazet.Commerce.Handlers {
             OnInitializing<VatConfigurationPart>(PropertySetHandlers);
             OnLoading<VatConfigurationPart>((context, part) => LazyLoadHandlers(part));
             OnVersioning<VatConfigurationPart>((context, part, newVersionPart) => LazyLoadHandlers(newVersionPart));
-            
+
             // manage the case where the default configuration is deleted
             OnRemoved<VatConfigurationPart>((context, part) => ResetDefaultVatConfigurationPart(part));
             OnDestroyed<VatConfigurationPart>((context, part) => ResetDefaultVatConfigurationPart(part));
@@ -41,22 +52,33 @@ namespace Nwazet.Commerce.Handlers {
             // Clean up
             OnRemoving<VatConfigurationPart>(CleanupRecords);
             OnDestroying<VatConfigurationPart>((context, part) => CleanupRecords(null, part));
+
+            // Handlers added to manage cache evict on the following events
+            OnUpdated<VatConfigurationPart>(
+                (context, part) => Invalidate(part));
+            OnImported<VatConfigurationPart>(
+                (context, part) => Invalidate(part));
+            OnPublished<VatConfigurationPart>(
+                (context, part) => Invalidate(part));
         }
 
 
         protected override void GetItemMetadata(GetContentItemMetadataContext context) {
             var part = context.ContentItem.As<VatConfigurationPart>();
 
-            if (part != null) {
+            if (part != null)
+            {
                 context.Metadata.DisplayText = $"{part.Name} {part.TaxProductCategory}";
             }
         }
         static void PropertySetHandlers(
             InitializingContentContext context, VatConfigurationPart part) {
-            
-            part.HierarchiesField.Setter(value => {
+
+            part.HierarchiesField.Setter(value =>
+            {
                 return value
-                    .Where(tup => {
+                    .Where(tup =>
+                    {
                         var hvcp = tup.Item1 // Item1 is the TerritoryHierarchyPart
                             .As<HierarchyVatConfigurationPart>();
                         return hvcp != null
@@ -66,9 +88,11 @@ namespace Nwazet.Commerce.Handlers {
                     .ToList();
             });
 
-            part.TerritoriesField.Setter(value => {
+            part.TerritoriesField.Setter(value =>
+            {
                 return value
-                    .Where(tup => {
+                    .Where(tup =>
+                    {
                         var tvcp = tup.Item1 // Item1 is the TerritoryPart
                             .As<TerritoryVatConfigurationPart>();
                         return tvcp != null
@@ -79,16 +103,19 @@ namespace Nwazet.Commerce.Handlers {
             });
 
             // call the setters in case a value had already been set
-            if (part.HierarchiesField.Value != null) {
+            if (part.HierarchiesField.Value != null)
+            {
                 part.HierarchiesField.Value = part.HierarchiesField.Value;
             }
         }
 
         void LazyLoadHandlers(VatConfigurationPart part) {
-            
-            part.HierarchiesField.Loader(() => {
+
+            part.HierarchiesField.Loader(() =>
+            {
                 if (part.Record.HierarchyConfigurationIntersections != null
-                    && part.Record.HierarchyConfigurationIntersections.Any()) {
+                    && part.Record.HierarchyConfigurationIntersections.Any())
+                {
                     // IEnumerable<Tuple<A, B>> pairs = listA.Zip(listB, (a, b) => Tuple.Create(a, b));
                     var listB = _contentManager
                         .GetMany<TerritoryHierarchyPart>(part.Record.HierarchyConfigurationIntersections
@@ -97,14 +124,17 @@ namespace Nwazet.Commerce.Handlers {
                     return part.Record.HierarchyConfigurationIntersections
                         .Zip(listB,
                             (a, b) => Tuple.Create(b, a.Rate));
-                } else {
+                } else
+                {
                     return Enumerable.Empty<Tuple<TerritoryHierarchyPart, decimal>>();
                 }
             });
 
-            part.TerritoriesField.Loader(() => {
+            part.TerritoriesField.Loader(() =>
+            {
                 if (part.Record.TerritoryConfigurationIntersections != null
-                    && part.Record.TerritoryConfigurationIntersections.Any()) {
+                    && part.Record.TerritoryConfigurationIntersections.Any())
+                {
                     // IEnumerable<Tuple<A, B>> pairs = listA.Zip(listB, (a, b) => Tuple.Create(a, b));
                     var listB = _contentManager
                         .GetMany<TerritoryPart>(part.Record.TerritoryConfigurationIntersections
@@ -114,7 +144,8 @@ namespace Nwazet.Commerce.Handlers {
                         .Zip(listB,
                             (a, b) => Tuple.Create(b, a.Rate));
 
-                } else {
+                } else
+                {
                     return Enumerable.Empty<Tuple<TerritoryPart, decimal>>();
                 }
             });
@@ -125,14 +156,41 @@ namespace Nwazet.Commerce.Handlers {
             // here we still manage the case where that part is removed, in order to have a
             // further layer of data consistency. We may end up here if a delete/remove is invoked
             // without going through a permission check.
-            var settings = _siteService.GetSiteSettings().As<VatConfigurationSiteSettingsPart>();
-            if (settings.DefaultVatConfigurationId == part.ContentItem.Id) {
+            var settings = GetDefaultVatConfiguration();
+            if (settings.DefaultVatConfigurationId == part.ContentItem.Id)
+            {
                 settings.DefaultVatConfigurationId = 0;
+
+                // Cache evict
+                Invalidate();
             }
+        }
+
+        private VatConfigurationSiteSettingsPart GetDefaultVatConfiguration() {
+            return _cacheManager.Get(VatConfigurationSiteSettingsPart.CacheKey,
+                ctx =>
+                {
+                    ctx.Monitor(_signals.When(VatConfigurationSiteSettingsPart.CacheKey));
+                    var settingsPart = _orchardServices.WorkContext
+                        .CurrentSite.As<VatConfigurationSiteSettingsPart>();
+                    return settingsPart;
+                });
         }
 
         void CleanupRecords(RemoveContentContext context, VatConfigurationPart part) {
             _vatConfigurationProvider.ClearIntersectionRecords(part);
+        }
+
+        private void Invalidate() {
+            _signals.Trigger(VatConfigurationSiteSettingsPart.CacheKey);
+        }
+
+        private void Invalidate(VatConfigurationPart part) {
+            var settings = GetDefaultVatConfiguration();
+            if (settings.DefaultVatConfigurationId == part.ContentItem.Id) {
+                // Cache evict
+                Invalidate();
+            }
         }
     }
 }
