@@ -26,6 +26,7 @@
   <Place SiteSettings_InventoryBySKU="Content:5"/>
   <Place SiteSettings_VatConfiguration="Content:4.5" />
   <Place SiteSettings_Couponing="Content:6" />
+  <Place SiteSettings_FlexibleShipping="Content:7" />
   <Place Parts_UspsShippingMethod_Edit="Content:2"/>
   <Place UspsShippingTestForm="Content:6"/>
   <Place Parts_WeightBasedShippingMethod_Edit="Content:2"/>

@@ -23,8 +23,8 @@ namespace Nwazet.Commerce.Controllers {
         [OutputCache(Duration = 0)]
         public ActionResult Price(
             string userId,
-            double weightInOunces,
-            double paddingWeight,
+            decimal weightInOunces,
+            decimal paddingWeight,
             decimal valueOfContents,
             string container,
             string serviceNameValidationExpression,

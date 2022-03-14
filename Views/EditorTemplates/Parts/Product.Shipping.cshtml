@@ -6,7 +6,7 @@
 
 <fieldset class="product-part-edit product-part-shipping">
     <legend>@T("Shipping")</legend>
-    <label class="sub" for="@Html.IdFor(m => m.Product.Weight)">@T("Weight")</label><br />
+    <label class="sub" for="@Html.IdFor(m => m.Product.Weight)">@T("Weight in grams")</label><br />
     @Html.TextBoxFor(m => m.Product.Weight, new { @class = "text" })<br />
     <label class="sub" for="@Html.IdFor(m => m.Product.Size)">@T("Size")</label><br />
     @{

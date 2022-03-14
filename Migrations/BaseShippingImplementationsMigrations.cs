@@ -55,5 +55,16 @@ namespace Nwazet.Commerce.Migrations {
 
             return 1;
         }
+
+        public int UpdateFrom1() {
+            // As part of an expanded management of shipping prices, we consider default product weights expressed in grams.
+            // For this reason, the Weight column must now be a decimal instead of a double.
+            SchemaBuilder.AlterTable("WeightBasedShippingMethodPartRecord", table =>
+                table.AlterColumn("MinimumWeight", column => column.WithType(DbType.Decimal)));
+            SchemaBuilder.AlterTable("WeightBasedShippingMethodPartRecord", table =>
+                table.AlterColumn("MaximumWeight", column => column.WithType(DbType.Decimal)));
+
+            return 2;
+        }
     }
 }
