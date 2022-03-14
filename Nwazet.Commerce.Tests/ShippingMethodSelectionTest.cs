@@ -14,8 +14,8 @@ namespace Nwazet.Commerce.Tests {
                 new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 1})
             };
             var shippingMethods = new[] {
-                ShippingHelpers.BuildWeightBasedShippingMethod(price: 3, minimumWeight: 0.4, maximumWeight: 0.6),
-                ShippingHelpers.BuildWeightBasedShippingMethod(price: 7, minimumWeight: 1.1)
+                ShippingHelpers.BuildWeightBasedShippingMethod(price: 3, minimumWeight: (decimal)0.4, maximumWeight: (decimal)0.6),
+                ShippingHelpers.BuildWeightBasedShippingMethod(price: 7, minimumWeight: (decimal)1.1)
             };
             Assert.IsFalse(ShippingService.GetShippingOptions(shippingMethods, cart, null, null, null).Any());
         }
@@ -42,7 +42,7 @@ namespace Nwazet.Commerce.Tests {
             };
             var shippingMethods = new[] {
                 ShippingHelpers.BuildWeightBasedShippingMethod(price: 3, minimumWeight: 0, maximumWeight: 1),
-                ShippingHelpers.BuildWeightBasedShippingMethod(price: 4, minimumWeight: 0.5, maximumWeight: 1.5),
+                ShippingHelpers.BuildWeightBasedShippingMethod(price: 4, minimumWeight: (decimal)0.5, maximumWeight: (decimal)1.5),
                 ShippingHelpers.BuildWeightBasedShippingMethod(price: 7, minimumWeight: 1, maximumWeight: 5),
                 ShippingHelpers.BuildWeightBasedShippingMethod(price: 11, minimumWeight: 5)
             };

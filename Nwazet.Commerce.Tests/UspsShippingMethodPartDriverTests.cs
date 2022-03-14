@@ -69,7 +69,7 @@ namespace Nwazet.Commerce.Tests
             part.WidthInInches = 10;
             part.LengthInInches = 11;
             part.HeightInInches = 12;
-            part.MaximumWeightInOunces = 1.3;
+            part.MaximumWeightInOunces = (decimal)1.3;
             part.MinimumQuantity = 3;
             part.MaximumQuantity = 7;
             part.CountDistinct = true;
