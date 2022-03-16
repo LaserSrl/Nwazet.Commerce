@@ -869,12 +869,28 @@ msgid "Areas for which this method is valid:"
 msgstr "Aree per cui questo metodo è valido:"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethod.cshtml"
+msgid "Cart amount"
+msgstr "Importo del carrello"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethod.cshtml"
+msgid "If no valid tier is found for the requested shipping, this is the price payed by the customer."
+msgstr "Se non viene individuata nessuna fascia per la spedizione richiesta, questo è il prezzo pagato dal cliente."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethod.cshtml"
+msgid "Item quantity"
+msgstr "Quantità di oggetti"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethod.cshtml"
 msgid "Method Name"
 msgstr "Nome del Metodo"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethod.cshtml"
 msgid "Price"
 msgstr "Prezzo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethod.cshtml"
+msgid "Price Tiers Table"
+msgstr "Tabella Fasce di Prezzo"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethod.cshtml"
 msgid "Shipping Company"
@@ -885,12 +901,28 @@ msgid "The base price for shipping. In cases where VAT or similar taxes are appl
 msgstr "Il prezzo base per la spedizione. Nel caso in cui l'IVA o tasse simili siano applicate sulla spedizione, questo è il prezzo imponibile."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethod.cshtml"
+msgid "The criteria to compute tiers with in Price Tiers Table. Please note that weight must always be expressed in grams."
+msgstr "Il criterio in base al quale calcolare le fasce nella Tabella delle Fasce di Prezzo. Ricorda che il peso deve sempre essere espresso in grammi."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethod.cshtml"
+msgid "The CSV table containing the price tiers (based on the field 'Tier Target') and the price formula to execute when computing shipping price, before taxes are applied."
+msgstr "La tabella CSV che contiene le fasce di prezzo (basate sul campo 'Target Fascia') e la formula da eseguire nel calcolo del prezzo di trasporto, prima di applicare le tasse."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethod.cshtml"
 msgid "The technical name of the shipping method (this is different from the title, which is the method's friendly name that will be displayed to end-users)."
 msgstr "Il nome tecnico del metodo di spedizione (è distinto dal titolo, che è il nome del metodo mostrato agli utenti)."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethod.cshtml"
+msgid "Tier Target"
+msgstr "Target Fascia"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethod.cshtml"
 msgid "Use this to restrict what areas this method is available from. For example, an international shipping method would have World included, but US excluded, so that it can't be selected for domestic shipping."
 msgstr "Usa questo per limitare le aree in cui quest metodo sia disponibile. Per esempio, un metodo di spedizione internazionale includerebbe il Mondo, ma escluderebbe gli USA, in modo da non potere essere selzionato per spedizioni sul territorio statunitense."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethod.cshtml"
+msgid "Weight"
+msgstr "Peso"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/FlexibleShippingMethodCriteria.cshtml"
 msgid "+ Add a new Criterion"
@@ -1620,6 +1652,10 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Shipping.
 msgid "Weight"
 msgstr "Peso"
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Product.Shipping.cshtml"
+msgid "Weight in grams"
+msgstr "Peso in grammi"
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/ProductAttribute.cshtml"
 msgid "Add Attribute Value"
 msgstr "Aggiungi un Valore di Attributo"
@@ -2261,6 +2297,10 @@ msgid "Specify the weight interval for which this shipping price is valid. Leave
 msgstr "Specifica l'intervallo di pesi in cui è valido questo costo di spedizione. Lascia vuoto il campo per il massimo per usare un massimo illimitato. Il peso sarà considerato per tutti i prodotti non digitali che non abbiano un loro prezzo di spedizione specificato."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/WeightBasedShippingMethod.cshtml"
+msgid "Specify the weight interval for which this shipping price is valid. Leave the maximum weight field empty for unlimited weight. The weight will be computed for all non-digital products that don't have a shipping price overload specified. Please note that weight must always be expressed in grams."
+msgstr "Specifica l'intervallo di pesi in cui è valido questo costo di spedizione. Lascia vuoto il campo per il massimo per usare un massimo illimitato. Il peso sarà considerato per tutti i prodotti non digitali che non abbiano un loro prezzo di spedizione specificato. Ricorda che il peso deve sempre essere espresso in grammi."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/WeightBasedShippingMethod.cshtml"
 msgid "The technical name of the shipping method (this is different from the title, which is the method's friendly name that will be displayed to end-users)."
 msgstr "Il nome tecnico del metodo di spedizione (è distinto dal titolo, che è il nome del metodo mostrato agli utenti)."
 
@@ -2387,6 +2427,14 @@ msgstr "Definisci una valuta che sarà usata per i prezzi sul sito."
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/Currency.cshtml"
 msgid "Set site-wide default currency."
 msgstr "Imposta la valuta di default per il sito."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/FlexibleShipping.cshtml"
+msgid "Settings for flexible shipping"
+msgstr "Impostazioni per i metodi di spedizione flessibili"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/FlexibleShipping.cshtml"
+msgid "Show price tiers feature when creating or editing a shipping method."
+msgstr "Visualizza la funzionalità per le fasce di prezzo alla creazione o modifica di un metodo di spedizione."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/SiteSettings/InventoryBySKU.cshtml"
 msgid "Issues in inventory synchronization were found. Please, verify the following items then run the analysis again."
@@ -3911,6 +3959,10 @@ msgstr "Peso del Carrello"
 msgctxt "Nwazet.Commerce.ApplicabilityCriteria.CartWeightCriteria"
 msgid "Cart Weight Criterion"
 msgstr "Criterio sul peso del Carrello"
+
+msgctxt "Nwazet.Commerce.ApplicabilityCriteria.CartWeightCriteria"
+msgid "Cart Weight in grams"
+msgstr "Peso del Carrello in grammi"
 
 msgctxt "Nwazet.Commerce.ApplicabilityCriteria.Couponing.AuthenticationStateCouponApplicabilityCriterion"
 msgid "Authentication State"
