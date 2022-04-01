@@ -129,6 +129,8 @@ namespace Nwazet.Commerce.Drivers {
                 .ToAttr(p => p.IncludedShippingAreas)
                 .ToAttr(p => p.ExcludedShippingAreas)
                 .ToAttr(p => p.DefaultPrice)
+                .ToAttr(p => p.TierTarget)
+                .ToAttr(p => p.PriceTiersTable)
                 .Element
                 // ApplicabilityCriteria
                 .AddEl(new XElement("ApplicabilityCriteria", (part.ApplicabilityCriteria != null && part.ApplicabilityCriteria.Any()) ? 
@@ -155,7 +157,9 @@ namespace Nwazet.Commerce.Drivers {
                .FromAttr(p => p.ShippingCompany)
                .FromAttr(p => p.IncludedShippingAreas)
                .FromAttr(p => p.ExcludedShippingAreas)
-               .FromAttr(p => p.DefaultPrice);
+               .FromAttr(p => p.DefaultPrice)
+               .FromAttr(p => p.TierTarget)
+               .FromAttr(p => p.PriceTiersTable);
 
             // ApplicabilityCriteria
             if (part.ApplicabilityCriteria != null) { 

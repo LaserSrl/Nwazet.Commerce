@@ -18,7 +18,7 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void InternationalRequestDocumentIsCorrectlyBuilt() {
             var requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220", false, false,
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220", false, false,
                 false, false, false, false, false);
 
             Assert.That(requestDocument.Name.LocalName, Is.EqualTo("IntlRateV2Request"));
@@ -49,19 +49,19 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void InternationalRequestSmallPackageIsNotMachinable() {
             var requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220");
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220");
 
             var package = requestDocument.Element("Package");
             Assert.That(package.Element("Machinable").Value, Is.EqualTo("false"));
 
             requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 6, 1, 2, "90220",
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 6, 1, 2, "90220",
                 false, false, false, false, false);
             package = requestDocument.Element("Package");
             Assert.That(package.Element("Machinable").Value, Is.EqualTo("false"));
 
             requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 6, 0, 3, "90220",
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 6, 0, 3, "90220",
                 false, false, false, false, false);
             package = requestDocument.Element("Package");
             Assert.That(package.Element("Machinable").Value, Is.EqualTo("false"));
@@ -70,17 +70,17 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void InternationalRequestLargePackageIsNotMachinable() {
             var requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 28, 17, 17, "90220");
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 28, 17, 17, "90220");
             var package = requestDocument.Element("Package");
             Assert.That(package.Element("Machinable").Value, Is.EqualTo("false"));
 
             requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 27, 18, 17, "90220");
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 27, 18, 17, "90220");
             package = requestDocument.Element("Package");
             Assert.That(package.Element("Machinable").Value, Is.EqualTo("false"));
 
             requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 27, 17, 18, "90220");
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 27, 17, 18, "90220");
             package = requestDocument.Element("Package");
             Assert.That(package.Element("Machinable").Value, Is.EqualTo("false"));
         }
@@ -104,17 +104,17 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void InternationalRequestMachinablePackageIsMachinable() {
             var requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 27, 17, 17, "90220");
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 27, 17, 17, "90220");
             var package = requestDocument.Element("Package");
             Assert.That(package.Element("Machinable").Value, Is.EqualTo("true"));
 
             requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 6, 1, 3, "90220");
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 6, 1, 3, "90220");
             package = requestDocument.Element("Package");
             Assert.That(package.Element("Machinable").Value, Is.EqualTo("true"));
 
             requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 10, 10, 10, "90220");
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 10, 10, 10, "90220");
             package = requestDocument.Element("Package");
             Assert.That(package.Element("Machinable").Value, Is.EqualTo("true"));
 
@@ -163,7 +163,7 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void InternationalRegisteredMailIsExpressed() {
             var requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220",
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220",
                 false, false, true, false, false, false, false);
 
             var package = requestDocument.Element("Package");
@@ -175,7 +175,7 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void InternationalInsuranceIsExpressed() {
             var requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220",
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220",
                 false, false, false, true, false, false, false);
 
             var package = requestDocument.Element("Package");
@@ -187,7 +187,7 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void InternationalReturnReceiptIsExpressed() {
             var requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220",
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220",
                 false, false, false, false, true, false, false);
 
             var package = requestDocument.Element("Package");
@@ -199,7 +199,7 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void InternationalCertificateOfMailingIsExpressed() {
             var requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220",
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220",
                 false, false, false, false, false, true, false);
 
             var package = requestDocument.Element("Package");
@@ -211,7 +211,7 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void InternationalElectronicConfirmationIsExpressed() {
             var requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220",
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220",
                 false, false, false, false, false, false, true);
 
             var package = requestDocument.Element("Package");
@@ -223,7 +223,7 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void InternationalServicesAreExpressed() {
             var requestDocument = UspsService.BuildInternationalShippingRequestDocument(
-                "Joe User", 45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220",
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "France", 5, 3, 2, "90220",
                 false, false, true, true, true, true, true);
 
             var package = requestDocument.Element("Package");
@@ -241,7 +241,7 @@ namespace Nwazet.Commerce.Tests {
         public void InternationalServicePricesReturnsInternationalPrices() {
             var uspsService = BuildFakeUspsService();
             var prices = uspsService.Prices(
-                "Joe User", 45.3, 1030.54M, "Big Box", null, null,
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", null, null,
                 "France", 5, 3, 2, "98052", null, false, false,
                 false, false, false, false, false).ToList();
             Assert.That(prices.Count, Is.EqualTo(17));
@@ -270,7 +270,7 @@ namespace Nwazet.Commerce.Tests {
         public void InternationalServicePricesWithValidationExpressionSelectsMatchingMethods() {
             var uspsService = BuildFakeUspsService();
             var prices = uspsService.Prices(
-                "Joe User", 45.3, 1030.54M, "Big Box", "GXG", null,
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "GXG", null,
                 "France", 5, 3, 2, "98052", null, false, false,
                 false, false, false, false, false).ToList();
             Assert.That(prices.Count, Is.EqualTo(3));
@@ -285,7 +285,7 @@ namespace Nwazet.Commerce.Tests {
         public void InternationalServicePricesWithExclusionExpressionExcludesMatchingMethods() {
             var uspsService = BuildFakeUspsService();
             var prices = uspsService.Prices(
-                "Joe User", 45.3, 1030.54M, "Big Box", null, "Mail",
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", null, "Mail",
                 "France", 5, 3, 2, "98052", null, false, false,
                 false, false, false, false, false).ToList();
             Assert.That(prices.Count, Is.EqualTo(3));
@@ -300,7 +300,7 @@ namespace Nwazet.Commerce.Tests {
         public void InternationalServicePricesWithExclusionAndValidationExpressionsYieldsTheRightMethods() {
             var uspsService = BuildFakeUspsService();
             var prices = uspsService.Prices(
-                "Joe User", 45.3, 1030.54M, "Big Box", "USPS", "Mail",
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", "USPS", "Mail",
                 "France", 5, 3, 2, "98052", null, false, false,
                 false, false, false, false, false).ToList();
             Assert.That(prices.Count, Is.EqualTo(2));
@@ -314,7 +314,7 @@ namespace Nwazet.Commerce.Tests {
         public void InternationalServicePricesWithRegisteredMailYieldsBumpedPrice() {
             var uspsService = BuildFakeUspsService();
             var price = uspsService.Prices(
-                "Joe User", 45.3, 1030.54M, "Big Box", null, null,
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", null, null,
                 "France", 5, 3, 2, "98052", null, false, false,
                 true, false, false, false, false).First();
             Assert.That(price.Price, Is.EqualTo(117.05 + 1.50));
@@ -325,7 +325,7 @@ namespace Nwazet.Commerce.Tests {
         public void InternationalServicePricesWithInsuranceYieldsBumpedPrice() {
             var uspsService = BuildFakeUspsService();
             var price = uspsService.Prices(
-                "Joe User", 45.3, 1030.54M, "Big Box", null, null,
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", null, null,
                 "France", 5, 3, 2, "98052", null, false, false,
                 false, true, false, false, false).First();
             Assert.That(price.Price, Is.EqualTo(117.05 + 1.00));
@@ -336,7 +336,7 @@ namespace Nwazet.Commerce.Tests {
         public void InternationalServicePricesWithReturnReceiptYieldsBumpedPrice() {
             var uspsService = BuildFakeUspsService();
             var price = uspsService.Prices(
-                "Joe User", 45.3, 1030.54M, "Big Box", null, null,
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", null, null,
                 "France", 5, 3, 2, "98052", null, false, false,
                 false, false, true, false, false).First();
             Assert.That(price.Price, Is.EqualTo(117.05 + 1.70));
@@ -347,7 +347,7 @@ namespace Nwazet.Commerce.Tests {
         public void InternationalServicePricesWithCertificateOfMailingYieldsBumpedPrice() {
             var uspsService = BuildFakeUspsService();
             var price = uspsService.Prices(
-                "Joe User", 45.3, 1030.54M, "Big Box", null, null,
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", null, null,
                 "France", 5, 3, 2, "98052", null, false, false,
                 false, false, false, true, false).First();
             Assert.That(price.Price, Is.EqualTo(117.05 + 1.18));
@@ -358,7 +358,7 @@ namespace Nwazet.Commerce.Tests {
         public void InternationalServicePricesWithConfirmationYieldsBumpedPrice() {
             var uspsService = BuildFakeUspsService();
             var price = uspsService.Prices(
-                "Joe User", 45.3, 1030.54M, "Big Box", null, null,
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", null, null,
                 "France", 5, 3, 2, "98052", null, false, false,
                 false, false, false, false, true).First();
             Assert.That(price.Price, Is.EqualTo(117.05 + 1.04));
@@ -369,7 +369,7 @@ namespace Nwazet.Commerce.Tests {
         public void InternationalServicePricesWithSeveralOptionsYieldsCombinedPrice() {
             var uspsService = BuildFakeUspsService();
             var price = uspsService.Prices(
-                "Joe User", 45.3, 1030.54M, "Big Box", null, null,
+                "Joe User", (decimal)45.3, 1030.54M, "Big Box", null, null,
                 "France", 5, 3, 2, "98052", null, false, false,
                 true, true, false, true, false).First();
             Assert.That(price.Price, Is.EqualTo(117.05 + 1.50 + 1.00 + 1.18));

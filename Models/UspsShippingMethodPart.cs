@@ -48,12 +48,12 @@ namespace Nwazet.Commerce.Models {
             set { Store(r => r.HeightInInches, value); }
         }
 
-        public double MaximumWeightInOunces {
+        public decimal MaximumWeightInOunces {
             get { return Retrieve(r => r.MaximumWeightInOunces); }
             set { Store(r => r.MaximumWeightInOunces, value); }
         }
 
-        public double WeightPaddingInOunces {
+        public decimal WeightPaddingInOunces {
             get { return Retrieve(r => r.WeightPaddingInOunces); }
             set { Store(r => r.WeightPaddingInOunces, value); }
         }

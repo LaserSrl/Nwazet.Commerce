@@ -10,7 +10,7 @@
 @if (attributes != null && attributes.Any()) {
     foreach (ProductAttributePartDisplayViewModel attributeModel in attributes) {
         var attribute = attributeModel.Part;
-        <div class="@dateAttributePart.CssName @("meaning-"+dateAttributePart.Meaning)" data-meaning="@dateAttributePart.Meaning">
+        <div class="@attribute.CssName @("meaning-"+attribute.Meaning)" data-meaning="@attribute.Meaning">
             @if (!string.IsNullOrEmpty(attribute.DisplayName)) {
                 <label for="@attribute.Id" class="product-attribute-label">@attribute.DisplayName</label>
             }

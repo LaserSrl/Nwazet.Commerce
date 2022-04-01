@@ -35,12 +35,12 @@ namespace Nwazet.Commerce.Models {
             set { Store(r => r.ExcludedShippingAreas, value); }
         }
 
-        public double? MinimumWeight {
+        public decimal? MinimumWeight {
             get { return Retrieve(r => r.MinimumWeight); }
             set { Store(r => r.MinimumWeight, value); }
         }
 
-        public double? MaximumWeight {
+        public decimal? MaximumWeight {
             get { return Retrieve(r => r.MaximumWeight); }
             set { Store(r => r.MaximumWeight, value); }
         } // Set to double.PositiveInfinity (the default) for unlimited weight ranges
@@ -55,9 +55,9 @@ namespace Nwazet.Commerce.Models {
             var quantities = productQuantities.ToList();
             var fixedCost = quantities
                 .Where(pq => pq.Product.ShippingCost != null && pq.Product.ShippingCost >= 0 && !pq.Product.IsDigital)
-// ReSharper disable PossibleInvalidOperationException
+                // ReSharper disable PossibleInvalidOperationException
                 .Sum(pq => pq.Quantity*(decimal) pq.Product.ShippingCost);
-// ReSharper restore PossibleInvalidOperationException
+                // ReSharper restore PossibleInvalidOperationException
             var weight = quantities
                 .Where(pq => (pq.Product.ShippingCost == null || pq.Product.ShippingCost < 0) && !pq.Product.IsDigital)
                 .Sum(pq => pq.Quantity*pq.Product.Weight);
