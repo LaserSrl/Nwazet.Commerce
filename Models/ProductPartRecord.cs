@@ -13,7 +13,7 @@ namespace Nwazet.Commerce.Models {
         public virtual bool IsDigital { get; set; }
         public virtual bool ConsiderInventory { get; set; } //applies for digital products,m telling whether to consider a limited inventory
         public virtual decimal? ShippingCost { get; set; }
-        public virtual double Weight { get; set; }
+        public virtual decimal Weight { get; set; }
         public virtual string Size { get; set; }
         public virtual int Inventory { get; set; }
         public virtual string OutOfStockMessage { get; set; }

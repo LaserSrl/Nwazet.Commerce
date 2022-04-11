@@ -9,8 +9,8 @@ namespace Nwazet.Commerce.Tests.Helpers {
     public class ShippingHelpers {
         public static WeightBasedShippingMethodPart BuildWeightBasedShippingMethod(
             decimal price,
-            double minimumWeight = 0,
-            double maximumWeight = double.PositiveInfinity) {
+            decimal minimumWeight = 0,
+            decimal maximumWeight = decimal.MaxValue) {
 
             var result = new WeightBasedShippingMethodPart();
             ContentHelpers.PreparePart<WeightBasedShippingMethodPart, WeightBasedShippingMethodPartRecord>(result,

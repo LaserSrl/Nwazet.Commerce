@@ -12,7 +12,7 @@ namespace Nwazet.Commerce.Services {
 
         IEnumerable<ShippingOption> Prices(
             string userId,
-            double weightInOunces,
+            decimal weightInOunces,
             decimal valueOfContents,
             string container,
             string serviceNameValidationExpression,

@@ -189,8 +189,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void WeightAtMaximumWeightPasses() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}), // For the moment, weight is in pounds here
-                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}), // For the moment, weight is in pounds here
+                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod();
             defaultShippingMethod.WeightPaddingInOunces = 1;
@@ -204,8 +204,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void WeightBelowMaximumWeightPasses() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod();
             defaultShippingMethod.WeightPaddingInOunces = 1;
@@ -219,12 +219,12 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void WeightAboveMaximumWeightFails() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod();
             defaultShippingMethod.WeightPaddingInOunces = 1;
-            defaultShippingMethod.MaximumWeightInOunces = 6.9;
+            defaultShippingMethod.MaximumWeightInOunces = (decimal)6.9;
             var shippingMethods = new IShippingMethod[] {defaultShippingMethod};
             var wca = ShippingHelpers.GetUspsWorkContextAccessor("foo", false, false, 3);
             var prices = defaultShippingMethod.ComputePrice(cart, shippingMethods, Country.UnitedStates, "90220", wca);
@@ -234,8 +234,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void WithNoMaximumWeightAnythingGoes() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 30.0/16}),
-                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 20.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)30.0/16}),
+                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = (decimal)20.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod();
             defaultShippingMethod.WeightPaddingInOunces = 10;
@@ -280,8 +280,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void LessThanMinimumDistinctQuantityMisses() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod(
                 minimumQuantity: 3,
@@ -295,8 +295,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void MoreThanMaximumDistinctQuantityMisses() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod(
                 maximumQuantity: 1,
@@ -310,8 +310,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void LessThanMinimumTotalQuantityMisses() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod(
                 minimumQuantity: 4);
@@ -324,8 +324,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void MoreThanMaximumTotalQuantityMisses() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod(
                 maximumQuantity: 2);
@@ -338,8 +338,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void AtMaximumTotalQuantityHits() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod(
                 maximumQuantity: 3);
@@ -352,8 +352,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void BelowMaximumTotalQuantityHits() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod(
                 maximumQuantity: 4);
@@ -366,8 +366,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void AtMinimumTotalQuantityHits() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod(
                 minimumQuantity: 3);
@@ -380,8 +380,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void AboveMinimumTotalQuantityHits() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(2, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod(
                 minimumQuantity: 2);
@@ -394,8 +394,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void InIntervalTotalQuantityHits() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(3, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(3, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod(
                 minimumQuantity: 3,
@@ -409,8 +409,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void InIntervalDistinctQuantityHits() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(3, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(3, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod(
                 minimumQuantity: 1,
@@ -425,8 +425,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void BadIntervalMisses() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(3, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(3, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod(
                 minimumQuantity: 3,
@@ -441,8 +441,8 @@ namespace Nwazet.Commerce.Tests {
         [Test]
         public void NarrowIntervalHits() {
             var cart = new[] {
-                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = 3.0/16}),
-                new ShoppingCartQuantityProduct(3, new ProductStub {Weight = 2.0/16})
+                new ShoppingCartQuantityProduct(1, new ProductStub {Weight = (decimal)3.0/16}),
+                new ShoppingCartQuantityProduct(3, new ProductStub {Weight = (decimal)2.0/16})
             };
             var defaultShippingMethod = ShippingHelpers.BuildUspsShippingMethod(
                 minimumQuantity: 2,

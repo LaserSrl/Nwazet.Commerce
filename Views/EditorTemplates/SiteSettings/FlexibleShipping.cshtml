@@ -1,0 +1,10 @@
+﻿@using Nwazet.Commerce.ViewModels;
+@model FlexibleShippingSiteSettingViewModel
+
+<fieldset>
+    <legend>@T("Settings for flexible shipping")</legend>
+    <label>
+        @Html.CheckBoxFor(m => m.EnablePriceTiers)
+        @T("Show price tiers feature when creating or editing a shipping method.")
+    </label>
+</fieldset>

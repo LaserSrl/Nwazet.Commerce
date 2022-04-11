@@ -34,7 +34,7 @@ namespace Nwazet.Commerce.Models {
             set { Store(r => r.ShippingCost, value); }
         }
 
-        public double Weight
+        public decimal Weight
         {
             get { return Retrieve(r => r.Weight); }
             set { Store(r => r.Weight, value); }

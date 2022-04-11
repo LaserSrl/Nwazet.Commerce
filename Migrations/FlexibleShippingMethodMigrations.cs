@@ -49,5 +49,14 @@ namespace Nwazet.Commerce.Migrations {
                 .WithIdentity());
             return 3;
         }
+
+        public int UpdateFrom3() {
+            SchemaBuilder.AlterTable("FlexibleShippingMethodRecord", table => table
+                .AddColumn<string>("PriceTiersTable", col => col.Unlimited()));
+            SchemaBuilder.AlterTable("FlexibleShippingMethodRecord", table => table
+                .AddColumn<string>("TierTarget"));
+
+            return 4;
+        }
     }
 }

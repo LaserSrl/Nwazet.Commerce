@@ -1,4 +1,6 @@
 ﻿using Nwazet.Commerce.Models;
+using Orchard;
+using Orchard.Caching;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using Orchard.Security;
@@ -26,11 +28,20 @@ namespace Nwazet.Commerce.Security {
         */
 
         private readonly ISiteService _siteService;
+        private readonly ICacheManager _cacheManager;
+        private readonly ISignals _signals;
+        private readonly IOrchardServices _orchardServices;
         
         public PreventDeletingDefaultVatConfigurationEventHandler(
-            ISiteService siteService) {
+            ISiteService siteService,
+            ICacheManager cacheManager,
+            ISignals signals,
+            IOrchardServices orchard) {
 
             _siteService = siteService;
+            _cacheManager = cacheManager;
+            _signals = signals;
+            _orchardServices = orchard;
         }
 
         public void Checking(CheckAccessContext context) {
@@ -47,9 +58,20 @@ namespace Nwazet.Commerce.Security {
         }
 
         private bool IsDefaultVatConfigurationPart(CheckAccessContext context) {
-            var settings = _siteService.GetSiteSettings().As<VatConfigurationSiteSettingsPart>();
+            var settings = GetDefaultVatConfiguration();
             return (context.Content?.Is<VatConfigurationPart>() == true) &&
                 settings.DefaultVatConfigurationId == context.Content.ContentItem.Id;
+        }
+
+        private VatConfigurationSiteSettingsPart GetDefaultVatConfiguration() {
+            return _cacheManager.Get(VatConfigurationSiteSettingsPart.CacheKey,
+                ctx =>
+                {
+                    ctx.Monitor(_signals.When(VatConfigurationSiteSettingsPart.CacheKey));
+                    var settingsPart = _orchardServices.WorkContext
+                        .CurrentSite.As<VatConfigurationSiteSettingsPart>();
+                    return settingsPart;
+                });
         }
 
         #region Not implemented IAuthorizationServiceEventHandler methods

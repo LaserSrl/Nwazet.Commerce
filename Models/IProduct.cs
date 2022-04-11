@@ -5,6 +5,6 @@
         decimal Price { get; set; }
         bool IsDigital { get; set; }
         decimal? ShippingCost { get; set; }
-        double Weight { get; set; }
+        decimal Weight { get; set; }
     }
 }

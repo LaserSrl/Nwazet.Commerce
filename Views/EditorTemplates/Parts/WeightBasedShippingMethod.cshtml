@@ -17,5 +17,5 @@
     @Html.TextBox("MinimumWeight", method.MinimumWeight, new { @class = "text" })<br />
     <label class="sub" for="@Html.Id("MaximumWeight")">@T("Maximum Weight")</label><br />
     @Html.TextBox("MaximumWeight", method.MaximumWeight, new { @class = "text" })<br />
-    <span class="hint">@T("Specify the weight interval for which this shipping price is valid. Leave the maximum weight field empty for unlimited weight. The weight will be computed for all non-digital products that don't have a shipping price overload specified.")</span><br/>
+    <span class="hint">@T("Specify the weight interval for which this shipping price is valid. Leave the maximum weight field empty for unlimited weight. The weight will be computed for all non-digital products that don't have a shipping price overload specified. Please note that weight must always be expressed in grams.")</span><br/>
 </fieldset>

@@ -11,8 +11,8 @@ namespace Nwazet.Commerce.Models {
         public virtual int WidthInInches { get; set; }
         public virtual int LengthInInches { get; set; }
         public virtual int HeightInInches { get; set; }
-        public virtual double MaximumWeightInOunces { get; set; }
-        public virtual double WeightPaddingInOunces { get; set; }
+        public virtual decimal MaximumWeightInOunces { get; set; }
+        public virtual decimal WeightPaddingInOunces { get; set; }
         public virtual int MinimumQuantity { get; set; }
         public virtual int MaximumQuantity { get; set; }
         public virtual bool CountDistinct { get; set; }
