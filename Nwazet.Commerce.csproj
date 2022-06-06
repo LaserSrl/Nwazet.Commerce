@@ -429,6 +429,7 @@
     <Compile Include="Filters\ProductWeightFilterForm.cs" />
     <Compile Include="Filters\ReferrerFilter.cs" />
     <Compile Include="Filters\UserRolesFilterForm.cs" />
+    <Compile Include="Forms\OrderStatusForm.cs" />
     <Compile Include="Handlers\AdvancedSKUManagementHandler.cs" />
     <Compile Include="Handlers\AdvancedSKUsSiteSettingPartHandler.cs" />
     <Compile Include="Handlers\BundlePartHandler.cs" />
