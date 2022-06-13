@@ -4494,7 +4494,7 @@ msgstr "L'URL del tracciamento è cambiato da {0} a {1}."
 
 msgctxt "Nwazet.Commerce.Drivers.OrderPartDriver"
 msgid "Tracking URL changed to {0}. "
-msgstr "L'URL del tracciamento è cambiato a {1}."
+msgstr "L'URL del tracciamento è cambiato a {0}."
 
 msgctxt "Nwazet.Commerce.Drivers.ProductAttributePartDriver"
 msgid "Attribute technical names in conflict. \"{0}\" is already set for a previously created attribute so now it has been changed to \"{1}\""
