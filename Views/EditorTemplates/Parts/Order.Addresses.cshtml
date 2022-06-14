@@ -71,8 +71,13 @@
         </fieldset>
 
         <p>@T("E-mail:") <a href="@("mailto:" + Model.Order.CustomerEmail)">@Model.Order.CustomerEmail</a></p>
-        <p>@T("Phone:") <a href="@("tel:" + Model.Order.CustomerPhone)">@Model.Order.CustomerPhone</a></p>
-
+        <p>
+            @T("Phone:") <a id="customerPhoneAnchor" href="@("tel:" + Model.Order.CustomerPhone)">@Model.Order.CustomerPhone</a>
+            @Html.TextBoxFor(m => m.Order.CustomerPhone, new { @class = "text", title = T("Phone"), style = "display: none;" })
+            <button id="enable-customerphone-edit" name="enableEdit" class="edit-button link">
+                @T("Edit")
+            </button>
+        </p>
         @foreach (var additionalShape in Model.AdditionalAddressesShapes) {
             @Display(additionalShape)
         }
@@ -86,3 +91,16 @@
     }
 
 </div>
+
+@using (Script.Foot()) {
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#enable-customerphone-edit').click(function (e) {
+            e.preventDefault();
+            $('#customerPhoneAnchor').hide();
+            $('#enable-customerphone-edit').hide();
+            $("#@Html.FieldIdFor(m => m.Order.CustomerPhone)").show();
+        });
+    });
+    </script>
+}
