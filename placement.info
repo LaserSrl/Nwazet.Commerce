@@ -72,9 +72,13 @@
       <Place
         Parts_Contents_Publish_SummaryAdmin="-"
         Parts_Contents_Clone_SummaryAdmin="-"
-        Parts_Common_Metadata_SummaryAdmin="-"/>
+        Parts_Common_Metadata_SummaryAdmin="-"
+        Content_DeleteButton="-" />
     </Match>
     <Place Parts_TerritoryHierarchy_SummaryAdmin="Content:2"/>
+  </Match>
+  <Match ContentType="Order">
+    <Place Content_DeleteButton="-" />
   </Match>
   <Match DisplayType="Thumbnail">
     <Place Parts_Title="Content:2;Alternate=TitleWithLink"/>
