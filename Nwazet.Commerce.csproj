@@ -740,6 +740,7 @@
     <Compile Include="Services\ProductAttributeService.cs" />
     <Compile Include="Services\ProductDiscountPriceProvider.cs" />
     <Compile Include="Services\ProductService.cs" />
+    <Compile Include="Services\ShippingOptionComputeContext.cs" />
     <Compile Include="Services\ShippingService.cs" />
     <Compile Include="Services\ShoppingCartInfosetPartStorage.cs" />
     <Compile Include="Services\SKUGenerationServices.cs" />

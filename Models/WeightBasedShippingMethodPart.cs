@@ -45,26 +45,22 @@ namespace Nwazet.Commerce.Models {
             set { Store(r => r.MaximumWeight, value); }
         } // Set to double.PositiveInfinity (the default) for unlimited weight ranges
 
-        public IEnumerable<ShippingOption> ComputePrice(
-            IEnumerable<ShoppingCartQuantityProduct> productQuantities,
-            IEnumerable<IShippingMethod> shippingMethods,
-            string country,
-            string zipCode,
-            IWorkContextAccessor workContextAccessor) {
 
-            var quantities = productQuantities.ToList();
+        public IEnumerable<ShippingOption> ComputePrice(
+            ShippingOptionComputeContext context) {
+
+            var quantities = context.ProductQuantities.ToList();
             var fixedCost = quantities
                 .Where(pq => pq.Product.ShippingCost != null && pq.Product.ShippingCost >= 0 && !pq.Product.IsDigital)
                 // ReSharper disable PossibleInvalidOperationException
-                .Sum(pq => pq.Quantity*(decimal) pq.Product.ShippingCost);
-                // ReSharper restore PossibleInvalidOperationException
+                .Sum(pq => pq.Quantity * (decimal)pq.Product.ShippingCost);
+            // ReSharper restore PossibleInvalidOperationException
             var weight = quantities
                 .Where(pq => (pq.Product.ShippingCost == null || pq.Product.ShippingCost < 0) && !pq.Product.IsDigital)
-                .Sum(pq => pq.Quantity*pq.Product.Weight);
+                .Sum(pq => pq.Quantity * pq.Product.Weight);
             if (weight.CompareTo(0) == 0) {
                 yield return GetOption(fixedCost);
-            }
-            else if (weight >= MinimumWeight && (!MaximumWeight.HasValue || weight <= MaximumWeight)) {
+            } else if (weight >= MinimumWeight && (!MaximumWeight.HasValue || weight <= MaximumWeight)) {
                 yield return GetOption(fixedCost + Price);
             }
         }

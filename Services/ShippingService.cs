@@ -17,13 +17,24 @@ namespace Nwazet.Commerce.Services {
             string zipCode,
             IWorkContextAccessor workContextAccessor) {
 
-            var methods = shippingMethods.ToList();
-            var quantities = productQuantities.ToList();
+            return GetShippingOptions(new ShippingOptionComputeContext {
+                ProductQuantities = productQuantities,
+                ShippingMethods = shippingMethods,
+                Country = country,
+                PostalCode = zipCode,
+                WorkContextAccessor = workContextAccessor
+            });
+        }
+
+        public static IEnumerable<ShippingOption> GetShippingOptions(
+            ShippingOptionComputeContext context) {
+
+            var methods = context.ShippingMethods.ToList();
+            var quantities = context.ProductQuantities.ToList();
             var alreadyFound = new HashSet<ShippingOption>(new ShippingOption.ShippingOptionComparer());
 
             foreach (var method in methods) {
-                var shippingOptions = method.ComputePrice(
-                    quantities, methods, country, zipCode, workContextAccessor);
+                var shippingOptions = method.ComputePrice(context);
                 foreach (var shippingOption in shippingOptions) {
                     shippingOption.ShippingCompany = method.ShippingCompany;
                     FillFormValue(shippingOption);
