@@ -1093,6 +1093,10 @@ msgid "Country"
 msgstr "Nazione"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Edit"
+msgstr "Modifica"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
 msgid "E-mail:"
 msgstr "E-mail:"
 
@@ -1111,6 +1115,10 @@ msgstr "Cognome"
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
 msgid "Order Username:"
 msgstr "Nome Utente dell'Ordine:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
+msgid "Phone"
+msgstr "Telefono"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Order.Addresses.cshtml"
 msgid "Phone:"
