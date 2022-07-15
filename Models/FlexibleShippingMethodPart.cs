@@ -55,18 +55,15 @@ namespace Nwazet.Commerce.Models {
         }
 
         public IEnumerable<ShippingOption> ComputePrice(
-            IEnumerable<ShoppingCartQuantityProduct> productQuantities,
-            IEnumerable<IShippingMethod> shippingMethods,
-            string country,
-            string zipCode,
-            IWorkContextAccessor workContextAccessor) {
+            ShippingOptionComputeContext context) {
 
-            var workContext = workContextAccessor.GetContext();
+            var workContext = context.WorkContextAccessor.GetContext();
             IFlexibleShippingManager flexibleShippingManager;
             if (workContext != null
                 && workContext.TryResolve(out flexibleShippingManager)) {
                 // we have a usable IFlexibleShippingManager here
-                var ac = new ApplicabilityContext(productQuantities, shippingMethods, country, zipCode);
+                var ac = new ApplicabilityContext(
+                    context.ProductQuantities, context.ShippingMethods, context.Country, context.PostalCode);
                 if (flexibleShippingManager.TestCriteria(Id, ac)) {
                     var price = DefaultPrice;
                     // Verify if Price Tiers are enabled via site settings.

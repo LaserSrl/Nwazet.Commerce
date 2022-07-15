@@ -45,6 +45,22 @@ namespace Nwazet.Commerce.Models {
         }
 
         public IEnumerable<ShippingOption> ComputePrice(
+            IEnumerable<ShoppingCartQuantityProduct> productQuantities,
+            IEnumerable<IShippingMethod> shippingMethods,
+            string country,
+            string zipCode,
+            IWorkContextAccessor workContextAccessor) {
+            // this method kept to avoid rewriting all tests
+            return ComputePrice(new ShippingOptionComputeContext {
+                ProductQuantities = productQuantities,
+                ShippingMethods = shippingMethods,
+                Country = country,
+                PostalCode = zipCode,
+                WorkContextAccessor = workContextAccessor
+            });
+        }
+
+        public IEnumerable<ShippingOption> ComputePrice(
             ShippingOptionComputeContext context) {
 
             // Get all size-based shipping methods
