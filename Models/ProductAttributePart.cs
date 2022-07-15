@@ -16,6 +16,7 @@ namespace Nwazet.Commerce.Models {
             {
                 return this.Record?.AttributeValueRecords
                     .Select(r => new ProductAttributeValue {
+                        Id = r.Id,
                         Text = r.Text,
                         ExtensionProvider = r.ExtensionProvider,
                         IsLineAdjustment = r.IsLineAdjustment,
@@ -27,6 +28,7 @@ namespace Nwazet.Commerce.Models {
             {
                 Record.AttributeValueRecords = value
                     .Select(r => new ProductAttributeValueRecord {
+                        Id = r.Id,
                         Text = r.Text,
                         ExtensionProvider = r.ExtensionProvider,
                         IsLineAdjustment = r.IsLineAdjustment,

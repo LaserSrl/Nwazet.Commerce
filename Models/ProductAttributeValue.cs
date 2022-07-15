@@ -8,6 +8,7 @@ using System.ComponentModel;
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.Attributes")]
     public class ProductAttributeValue {
+        public int Id { get; set; }
         [Required, DisplayName("Value Name")]
         public string Text { get; set; }
         [Required, DisplayName("Price Adjustment")]

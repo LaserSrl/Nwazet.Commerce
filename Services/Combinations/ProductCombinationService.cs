@@ -47,6 +47,7 @@ namespace Nwazet.Commerce.Services.Combinations {
             Logger = NullLogger.Instance;
 
             _attributeNames = new Dictionary<int, string>();
+            _attributeValueText = new Dictionary<int, string>();
         }
 
         public ILogger Logger { get; set; }
@@ -137,6 +138,7 @@ namespace Nwazet.Commerce.Services.Combinations {
         }
 
         private Dictionary<int, string> _attributeNames;
+        private Dictionary<int, string> _attributeValueText;
         public string CombinationDisplayText(CombinationPart combinationPart) {
             if (combinationPart == null) {
                 throw new ArgumentNullException("combinationPart");
@@ -160,9 +162,15 @@ namespace Nwazet.Commerce.Services.Combinations {
                 var attDisplayText = _contentManager.GetItemMetadata(newAttribute).DisplayText;
                 // TODO: fallbacks for the displaytext
                 _attributeNames.Add(newAttribute.Id, attDisplayText);
+                // Memorize the text for the attribute values
+                foreach (var attVal in newAttribute.AttributeValues) {
+                    if (!_attributeValueText.ContainsKey(attVal.Id)) {
+                        _attributeValueText.Add(attVal.Id, attVal.Text);
                     }
+                }
+            }
             var textElements = comboValues == null ? new List<string>() : comboValues
-                .Select(cv => _attributeNames[cv.AttributeId] + " " + cv.AttributeValue);
+                .Select(cv => _attributeNames[cv.AttributeId] + " " + _attributeValueText[cv.AttributeValue]);
             // TODO: when Attributes get their own records for values, handle them here properly
             return string.Join(", ", textElements);
         }
