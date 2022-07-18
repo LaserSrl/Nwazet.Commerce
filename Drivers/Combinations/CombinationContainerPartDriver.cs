@@ -19,8 +19,9 @@ using Orchard.ContentManagement.Handlers;
 
 namespace Nwazet.Commerce.Drivers.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
-    public class CombinationContainerPartDriver : ContentPartCloningDriver<CombinationContainerPart>,
-        // We to implement this interface to interact with ProductPartDriver and ShoppingCartController
+    public class CombinationContainerPartDriver 
+        : ContentPartCloningDriver<CombinationContainerPart>,
+        // We need to implement this interface to interact with ProductPartDriver and ShoppingCartController
         IProductAttributesDriver {
 
         private readonly IProductAttributeAdminServices _productAttributeAdminServices;
@@ -53,6 +54,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             _combinationStatusProvider = combinationStatusProvider;          
         }
 
+        #region Editor
         protected override string Prefix {
             get { return "CombinationContainerPart"; }
         }
@@ -150,7 +152,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             shapes.Add(ContentShape("Parts_CombinationContainerPart_Editor", editorFactory));
             return Combined(shapes.ToArray());
         }
-
+        
         private CombinationContainerPartEditViewModel CreateVM(CombinationContainerPart part) {
             var partSettings = part.TypePartDefinition.Settings.GetModel<CombinationContainerPartSettings>();
             // Get existing combinations
@@ -194,7 +196,9 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             // returning for each provider a message and a severity
             get { return _combinationStatusProvider.Value; }
         }
+        #endregion
 
+        #region IProductAttributesDriver
         public dynamic GetAttributeDisplayShape(IContent product, dynamic shapeHelper) {
             var combinationContainerPart = product.As<CombinationContainerPart>();
             if (combinationContainerPart == null) {
@@ -265,7 +269,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             }
             return _productService.MayAddToCart(productPart);
         }
-
+        #endregion
         //// TODO Import/Export
         //protected override void Importing(CombinationContainerPart part, ImportContentContext context) {
         //    if (context.Data.Element(part.PartDefinition.Name) == null) {
@@ -289,9 +293,11 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         //    }
         //    root.SetAttributeValue("CombinationParts", combinationParts);
         //}
-
-        //protected override void Cloning(CombinationContainerPart originalPart, CombinationContainerPart clonePart, CloneContentContext context) {
-        //    clonePart.Record.Id = originalPart.Record.Id;
-        //}
+        #region Cloning
+        protected override void Cloning(
+            CombinationContainerPart originalPart, CombinationContainerPart clonePart, CloneContentContext context) {
+            // TODO: we should be cloning all combinations from the originalPart to the clonePart somehow
+        }
+        #endregion
     }
 }

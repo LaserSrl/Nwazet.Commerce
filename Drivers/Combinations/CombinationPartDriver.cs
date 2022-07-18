@@ -188,7 +188,8 @@ namespace Nwazet.Commerce.Drivers.Combinations {
 
         protected override void Cloning(CombinationPart originalPart, CombinationPart clonePart, CloneContentContext context) {
             // clone the combination container part id
-            clonePart.CombinationContainerPartField.Value = originalPart.CombinationContainerPartField.Value;
+            clonePart.CombinationContainerPartField.Value = 
+                originalPart.CombinationContainerPartField.Value;
         }
     }
 }

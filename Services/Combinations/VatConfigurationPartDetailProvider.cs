@@ -11,8 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Services.Combinations {
-    // added settings in VatConfigurationPartDetailProvider into NwazetIntegration
-    // added feature Nwazet.AdvancedVAT to execute this part first
+    // added feature Nwazet.AdvancedVAT explicitly to ensure this provider is executed in the
+    // right dependency order.
     [OrchardFeature("Nwazet.AdvancedVAT")]
     public class VatConfigurationPartDetailProvider :
         BaseCombinationDetailProvider {
@@ -41,7 +41,7 @@ namespace Nwazet.Commerce.Services.Combinations {
             var sourcePart = container.As<ProductVatConfigurationPart>();
             var targetPart = combination.As<ProductVatConfigurationPart>();
             if (sourcePart != null && targetPart != null) {
-                // Copy properties from the contaoiner to the combination.
+                // Copy properties from the container to the combination.
                 targetPart.Record.VatConfiguration = sourcePart.Record.VatConfiguration;
             }
         }

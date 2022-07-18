@@ -39,7 +39,7 @@ namespace Nwazet.Commerce.Services.Combinations {
             var sourcePart = container.As<InventoryPart>();
             var targetPart = combination.As<InventoryPart>();
             if (sourcePart != null && targetPart != null) {
-                // Copy properties from the contaoiner to the combination.
+                // Copy properties from the container to the combination.
                 targetPart.Inventory = sourcePart.Inventory;
                 targetPart.OutOfStockMessage = sourcePart.OutOfStockMessage;
                 targetPart.AllowBackOrder = sourcePart.AllowBackOrder;
