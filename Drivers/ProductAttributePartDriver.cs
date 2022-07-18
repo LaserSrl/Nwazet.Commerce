@@ -80,11 +80,11 @@ namespace Nwazet.Commerce.Drivers {
                     .ToList()
             };
             if (updater.TryUpdateModel(viewModel, Prefix, null, null)) {
-                part.DisplayName = viewModel.DisplayName;
-                part.TechnicalName = viewModel.TechnicalName;
+                part.DisplayName = viewModel.DisplayName.Trim();
+                part.TechnicalName = viewModel.TechnicalName.Trim();
                 part.SortOrder = viewModel.SortOrder;
-                part.CssName = viewModel.CssName;
-                part.Meaning = viewModel.Meaning;
+                part.CssName = viewModel.CssName.Trim();
+                part.Meaning = viewModel.Meaning.Trim();
                 foreach (var rec in viewModel.AttributeValueRecords.Where(vm => !vm.Deleted).Select(vm => vm.AttributeValueRecord)) {
                     if (rec.Id==-1) {
                         // added new product attribute value record
@@ -119,7 +119,7 @@ namespace Nwazet.Commerce.Drivers {
                 }
 
                 //check TechnicalName for invalid characters
-                if (!String.Equals(part.TechnicalName, part.TechnicalName.ToSafeName(), StringComparison.OrdinalIgnoreCase)) {
+                if (!string.Equals(part.TechnicalName, part.TechnicalName.ToSafeName(), StringComparison.OrdinalIgnoreCase)) {
                     updater.AddModelError("Name", T("The technical name contains invalid characters."));
                 }
                 //ensure uniqueness of TechnicalName
@@ -132,11 +132,13 @@ namespace Nwazet.Commerce.Drivers {
                 }
 
                 // valid CssName and Meaning
-                var pattern = @"^[a-zA-Z0-9 ]*$";
-                if (!Regex.IsMatch(part.CssName, pattern)) {
+                var cssNamePattern = @"-?[_a-zA-Z]+[_a-zA-Z0-9-]*";
+                var cssNames = part.CssName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.Trim());
+                if (!cssNames.All(n => Regex.IsMatch(n, cssNamePattern))) {
                     updater.AddModelError("CssName", T("The css name contains invalid characters."));
                 }
-                if (!Regex.IsMatch(part.Meaning, pattern)) {
+                if (!Regex.IsMatch(part.Meaning, cssNamePattern)) {
                     updater.AddModelError("Meaning", T("The meaning contains invalid characters."));
                 }
 
