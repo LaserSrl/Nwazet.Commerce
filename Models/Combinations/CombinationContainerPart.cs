@@ -14,7 +14,7 @@ namespace Nwazet.Commerce.Models {
         // is configured as a setting for the part
 
         // The collection of Combinations that we have configured so far:
-        // Sould this be here directly? 
+        // Should this be here directly? 
         // Should we fetch this through a service "on demand"?
         private readonly LazyField<IList<CombinationPart>> _combinationParts =
             new LazyField<IList<CombinationPart>>();

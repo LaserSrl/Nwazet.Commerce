@@ -1,4 +1,5 @@
-﻿using Nwazet.Commerce.Models;
+﻿using Newtonsoft.Json;
+using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
 using Nwazet.Commerce.Services.Combinations;
 using Nwazet.Commerce.ViewModels.Combinations;
@@ -14,8 +15,6 @@ using Orchard.UI.Notify;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Drivers.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
@@ -175,16 +174,33 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             return allAttributes;
         }
 
-        //// TODO Import/Export only AttributeValues
-        //protected override void Importing(CombinationPart part, ImportContentContext context) {
-        //    if (context.Data.Element(part.PartDefinition.Name) == null) {
-        //        return;
-        //    }
-        //}
+        protected override void Importing(CombinationPart part, ImportContentContext context) {
+            if (context.Data.Element(part.PartDefinition.Name) == null) {
+                return; 
+            }
 
-        //protected override void Exporting(CombinationPart part, ExportContentContext context) {      
-        //    var root = context.Element(part.PartDefinition.Name);
-        //}
+            var containerId = 0;
+            if (int.TryParse(context.Attribute(part.PartDefinition.Name, "CombinationContainerPart"), out containerId)) {
+                var container = _contentManager.Get(containerId);
+                var containerPart = container.As<CombinationContainerPart>();
+                if (containerPart != null) {
+                    // TODO: rendere CombinationPart.CombinationContainerPart aggiornabile? (ora e readonly)
+                    //part.Record.CombinationContainerPartRecord = containerPart.Record;
+                    part.ProductAttributeValues = JsonConvert
+                        .DeserializeObject<List<AttributesToCombine>>(context
+                            .Attribute(part.PartDefinition.Name, "ProductAttributeValues"));
+                }
+            }
+        }
+
+        protected override void Exporting(CombinationPart part, ExportContentContext context) {
+            context.Element(part.PartDefinition.Name)
+                .SetAttributeValue("ProductAttributeValues", part.Record.ProductAttributeValues);
+
+            context.Element(part.PartDefinition.Name)
+                .SetAttributeValue("CombinationContainerPart", part.Record.CombinationContainerPartRecord.Id);
+
+        }
 
         protected override void Cloning(CombinationPart originalPart, CombinationPart clonePart, CloneContentContext context) {
             // clone the combination container part id

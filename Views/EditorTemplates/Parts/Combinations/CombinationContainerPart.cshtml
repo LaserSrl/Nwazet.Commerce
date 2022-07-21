@@ -153,9 +153,11 @@
                                 id="@(shortGuid + "generate_button")">
                             @T("Generate")
                         </button>
-                        @Html.Link(T("Create combination").Text,
+                        @*
+                            Button to create a single combination - REMOVED
+                            @Html.Link(T("Create combination").Text,
                                 Url.Action("Create", "CombinationConfigurationAdmin", new { area = "Nwazet.Commerce", id = Model.Part.Id, returnUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl }),
-                                new { @class = "button primaryAction" })
+                                new { @class = "button primaryAction" })*@
                     </div>
                 } else {
                     <div class="box-body">
