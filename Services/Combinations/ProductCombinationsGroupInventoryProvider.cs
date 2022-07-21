@@ -12,11 +12,14 @@ using System.Threading.Tasks;
 namespace Nwazet.Commerce.Services.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
     public class ProductCombinationsGroupInventoryProvider : ProductGroupInventoryProviderBase {
-        
+        private readonly IContentManager _contentManager;
+
         public ProductCombinationsGroupInventoryProvider(
-            IWorkContextAccessor workContextAccessor)
+            IWorkContextAccessor workContextAccessor,
+            IContentManager contentManager)
             : base(workContextAccessor) {
-            
+
+            _contentManager = contentManager;
         }
 
         public override IEnumerable<ProductPart> FilterProductsWithSameInventory(
@@ -26,7 +29,18 @@ namespace Nwazet.Commerce.Services.Combinations {
             // inventory on.
             var combinationContainer = part.As<CombinationContainerPart>();
             if (combinationContainer != null) {
-                return combinationContainer.CombinationParts
+                // We should remove every combination in every language with this same sku.
+                // First, get all CombinationContainers with this sku.
+                var combinationContainers = _contentManager
+                    .Query<ProductPart, ProductPartVersionRecord>(VersionOptions.Latest)
+                    .Where(pa => pa.Sku == part.Record.Sku)
+                    .List()
+                    .Select(cp => cp.As<CombinationContainerPart>());
+
+                // For each container, get its combinations.
+                return combinationContainers
+                    .SelectMany(cc => cc.CombinationParts)
+                    .ToList()
                     .Select(cp => cp.As<ProductPart>())
                     .ToList();
             } else {
