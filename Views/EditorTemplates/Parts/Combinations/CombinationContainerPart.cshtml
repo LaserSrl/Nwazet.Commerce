@@ -17,158 +17,207 @@
     var statusParameter = "__COMBINATION__STATUS__";
     var deleteUrlParameter = "__COMBINATION__DELETEURL__";
 }
-<fieldset class="product-combination-container" id="@shortGuid">
-    <legend>
-        @T("Manage product combinations")
-    </legend>
-    <div class="row">
-        <div class="col-lg-8">
-            @* List of existing combinations *@
-            <div class="product-combinations-list box box-primary">
-                <div class="box-header with-border">
-                    <h3 class="box-title">@T("Combinations")</h3>
-                    <br />
-                    <span class="title-status-legend">@T("Status legend"):</span>
-                    @foreach (Severity severity in (Severity[])Enum.GetValues(typeof(Severity))) {
-                        <span class="legend-status severity-message severity-@severity.ToString().ToLower()">
-                            @severity
-                        </span>
-                    }
-                </div>
-                <div class="box-body table-responsive no-padding">
-                    <table id="table-@shortGuid" class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>@T("Title")</th>
-                                <th>@T("Status")</th>
-                                <th>@T("Actions")</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr id="template-tr-@shortGuid" style="display:none">
-                                <td>
-                                    <a href="@editUrlParameter">@titleParameter</a>
-                                </td>
-                                <td>@statusParameter</td>
-                                <td><a class="btn btn-danger btn-xs text-white" href="@deleteUrlParameter" itemprop="RemoveUrl UnsafeUrl">@T("Delete")</a></td>
-                            </tr>
 
-                            @foreach (var combination in Model.CurrentCombinations) {
-                                <tr>
-                                    <td>
-                                        @if (Authorizer.Authorize(Permissions.EditContent, combination)) {
-                                            <a href="@Url.ItemEditUrl((IContent)(combination.ContentItem))">
-                                                @Model.CombinationTitles[combination.Id]</a>
-                                        } else {
-                                            @Model.CombinationTitles[combination.Id]
-                                        }
-                                    </td>
-                                    <td>
-                                        @{
-                                            var messages = Model.CombinationStatusMessages[combination.Id].OrderBy(m => m.Severity);
-                                            foreach (var mess in messages) {
-                                                var severity = (Severity)Enum.Parse(typeof(Severity), Convert.ToString(mess.Severity));
-                                                <span class="severity-message severity-@severity.ToString().ToLower()">
-                                                    @mess.Message
-                                                </span>
-                                            }
-                                        }
-                                    </td>
-                                    <td>
-                                        @* We prevent publication of combinations from here, because there is no easy
-                                           way to properly trigger all required validations. *@
-                                        @if (combination.HasPublished()) {
-                                            if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
-                                                @Html.Link(T("Unpublish").Text,
-                                                    Url.Action("Unpublish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}),
-                                                    new {itemprop = "UnsafeUrl", @class= "btn btn-warning btn-xs text-white" })
-                                            }
-                                        } 
-                                        @if (Authorizer.Authorize(Permissions.DeleteContent, combination)) {
-                                            @Html.Link(T("Delete").Text,
-                                                Url.ItemRemoveUrl(combination.ContentItem, new { returnUrl = currentUrl }),
-                                                new { itemprop = "RemoveUrl UnsafeUrl", @class="btn btn-danger btn-xs text-white" })
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+@using (Script.Head()) {
+    <style type="text/css">
+        #throbber {
+            display: none;
+        }
+
+        #throbber .curtain {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #3e4d45;
+            opacity: 0.6;
+            filter: alpha(opacity=60);
+            z-index: 999;
+        }
+
+        #throbber .curtain-content {
+            /*position: absolute;*/
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #throbber .curtain-content div {
+            text-align: center;
+            /*padding: 250px;*/
+            color: Black;
+        }
+    </style>
+}
+
+    <fieldset class="product-combination-container" id="@shortGuid">
+        <legend>
+            @T("Manage product combinations")
+        </legend>
+
+        <div id="throbber">
+            <div class="curtain"></div>
+            <div class="curtain-content">
+                <div>
+                    <h1 id="setUpHeader">@T("Generating combinations ...")</h1>
+                    <p>
+                        <img src="@Href("../../../../content/synchronizing.gif")" alt="" />
+                    </p>
                 </div>
             </div>
         </div>
-        <div class="col-lg-4">
-            @* List of attributes *@
-            <div class="product-combination-attributes box box-primary">
-                <div class="box-header with-border">
-                    <h3 class="box-title">@T("Attributes")</h3>
-                </div>
-                @if (Model.AllAttributeParts.Any()) {
-                    @* Nested forms are not allowed, so we use the formaction attribute of the submit button *@
-                    <div class="box-body">
-                        @foreach(var att in Model.AllAttributeParts) {
-                            var attDisplayName = att.DisplayName;
-                            if (string.IsNullOrWhiteSpace(attDisplayName)) {
-                                attDisplayName = _contentManager.GetItemMetadata(att).DisplayText;
-                            }
-                            <div class="single-attribute box box-default">
-                                @* TODO: make this card collapsible *@
-                                <div class="box-header with-border">
-                                    <h3 class="box-title">@(attDisplayName)</h3>
-                                </div>
-                                <div class="box-body">
-                                    @foreach(var attVal in att.AttributeValues) {
-                                        <div class="form-check attribute-value-checkbox">
-                                            @Html.CheckBox("attribute." + att.Id + "." + attVal.Text,
-                                                new {
-                                                    @id = "attribute_" + att.Id + "_" + attVal.Text,
-                                                    @class = "form-check-input",
-                                                    data_attribute_Name = attDisplayName,
-                                                    data_attribute_id = att.Id,
-                                                    data_attribute_value_id = attVal.Id,
-                                                    data_attribute_value = attVal.Text
-                                                })
-                                            @Html.Label(attVal.Text,
-                                                new {
-                                                    @for = "attribute_" + att.Id + "_" + attVal.Text,
-                                                    @class = "form-check-label forcheckbox"
-                                                })
-                                        </div>
-                                    }
-                                </div>
-                            </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                @* List of existing combinations *@
+                <div class="product-combinations-list box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">@T("Combinations")</h3>
+                        <br />
+                        <span class="title-status-legend">@T("Status legend"):</span>
+                        @foreach (Severity severity in (Severity[])Enum.GetValues(typeof(Severity))) {
+                            <span class="legend-status severity-message severity-@severity.ToString().ToLower()">
+                                @severity
+                            </span>
                         }
                     </div>
-                    <div class="box-footer">
-                        <fieldset class="form-group selected-attributes"
-                                  id="@(shortGuid+"_selected_attributes_container")">
-                            @* We'll add labels for the selected attributes here *@
-                        </fieldset>
+                    <div class="box-body table-responsive no-padding">
+                        <table id="table-@shortGuid" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@T("Title")</th>
+                                    <th>@T("Status")</th>
+                                    <th>@T("Actions")</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="template-tr-@shortGuid" style="display:none">
+                                    <td>
+                                        <a href="@editUrlParameter">@titleParameter</a>
+                                    </td>
+                                    <td>@statusParameter</td>
+                                    <td><a class="btn btn-danger btn-xs text-white" href="@deleteUrlParameter" itemprop="RemoveUrl UnsafeUrl">@T("Delete")</a></td>
+                                </tr>
 
-                        <div id="@(shortGuid + "generate_results")">
-                            <span></span>
+                                @foreach (var combination in Model.CurrentCombinations) {
+                                    <tr>
+                                        <td>
+                                            @if (Authorizer.Authorize(Permissions.EditContent, combination)) {
+                                                <a href="@Url.ItemEditUrl((IContent)(combination.ContentItem))">
+                                                    @Model.CombinationTitles[combination.Id]
+                                                </a>
+                                            } else {
+                                                @Model.CombinationTitles[combination.Id]
+                                            }
+                                        </td>
+                                        <td>
+                                            @{
+                                                var messages = Model.CombinationStatusMessages[combination.Id].OrderBy(m => m.Severity);
+                                                foreach (var mess in messages) {
+                                                    var severity = (Severity)Enum.Parse(typeof(Severity), Convert.ToString(mess.Severity));
+                                                    <span class="severity-message severity-@severity.ToString().ToLower()">
+                                                        @mess.Message
+                                                    </span>
+                                                }
+                                            }
+                                        </td>
+                                        <td>
+                                            @* We prevent publication of combinations from here, because there is no easy
+                                            way to properly trigger all required validations. *@
+                                            @if (combination.HasPublished()) {
+                                                if (Authorizer.Authorize(Permissions.PublishContent, combination)) {
+                                                    @Html.Link(T("Unpublish").Text,
+                                                        Url.Action("Unpublish", "Admin", new {area = "Contents", id = combination.ContentItem.Id, returnUrl = currentUrl}),
+                                                        new {itemprop = "UnsafeUrl", @class= "btn btn-warning btn-xs text-white" })
+                                                }
+                                            }
+                                            @if (Authorizer.Authorize(Permissions.DeleteContent, combination)) {
+                                                @Html.Link(T("Delete").Text,
+                                                    Url.ItemRemoveUrl(combination.ContentItem, new { returnUrl = currentUrl }),
+                                                    new { itemprop = "RemoveUrl UnsafeUrl", @class="btn btn-danger btn-xs text-white" })
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                @* List of attributes *@
+                <div class="product-combination-attributes box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">@T("Attributes")</h3>
+                    </div>
+                    @if (Model.AllAttributeParts.Any()) {
+                        @* Nested forms are not allowed, so we use the formaction attribute of the submit button *@
+                        <div class="box-body">
+                            @foreach (var att in Model.AllAttributeParts) {
+                                var attDisplayName = att.DisplayName;
+                                if (string.IsNullOrWhiteSpace(attDisplayName)) {
+                                    attDisplayName = _contentManager.GetItemMetadata(att).DisplayText;
+                                }
+                                <div class="single-attribute box box-default">
+                                    @* TODO: make this card collapsible *@
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title">@(attDisplayName)</h3>
+                                    </div>
+                                    <div class="box-body">
+                                        @foreach (var attVal in att.AttributeValues) {
+                                            <div class="form-check attribute-value-checkbox">
+                                                @Html.CheckBox("attribute." + att.Id + "." + attVal.Text,
+                                                    new {
+                                                        @id = "attribute_" + att.Id + "_" + attVal.Text,
+                                                        @class = "form-check-input",
+                                                        data_attribute_Name = attDisplayName,
+                                                        data_attribute_id = att.Id,
+                                                        data_attribute_value_id = attVal.Id,
+                                                        data_attribute_value = attVal.Text
+                                                    })
+                                                @Html.Label(attVal.Text,
+                                                    new {
+                                                        @for = "attribute_" + att.Id + "_" + attVal.Text,
+                                                        @class = "form-check-label forcheckbox"
+                                                    })
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
                         </div>
-                        <button type="button" disabled
-                                class="btn btn-primary"
-                                id="@(shortGuid + "generate_button")">
-                            @T("Generate")
-                        </button>
-                        @*
+                        <div class="box-footer">
+                            <fieldset class="form-group selected-attributes"
+                                      id="@(shortGuid+"_selected_attributes_container")">
+                                @* We'll add labels for the selected attributes here *@
+                            </fieldset>
+
+                            <div id="@(shortGuid + "generate_results")">
+                                <span></span>
+                            </div>
+                            <button type="button" disabled
+                                    class="btn btn-primary"
+                                    id="@(shortGuid + "generate_button")">
+                                @T("Generate")
+                            </button>
+                            @*
                             Button to create a single combination - REMOVED
                             @Html.Link(T("Create combination").Text,
                                 Url.Action("Create", "CombinationConfigurationAdmin", new { area = "Nwazet.Commerce", id = Model.Part.Id, returnUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl }),
                                 new { @class = "button primaryAction" })*@
-                    </div>
-                } else {
-                    <div class="box-body">
-                        @T("There are no attributes to create new combinations.")
-                    </div>
-                }
+                        </div>
+                    } else {
+                        <div class="box-body">
+                            @T("There are no attributes to create new combinations.")
+                        </div>
+                    }
+                </div>
+                @* Button that will cause generation of new combinations *@
             </div>
-            @* Button that will cause generation of new combinations *@
         </div>
-    </div>
-</fieldset>
+    </fieldset>
 
 @using(Script.Foot()) {
     <script type="text/javascript">
@@ -218,7 +267,9 @@
                 $('#@(shortGuid + "generate_results") span')[0].innerHTML = '';
                 $('#@(shortGuid + "generate_results") span').removeClass('error');
                 $('#@(shortGuid + "generate_results") span').removeClass('success');
-                // TODO: prevent all other interactions with the page
+
+                // Prevent all other interactions with the page
+                $("#throbber").show();
 
                 // Get the selected attribute values
                 var attrElements = $('#@(shortGuid+"_selected_attributes_container") .selected-attribute');
@@ -288,6 +339,7 @@
                         // clear the selected attributes
                         $('#@(shortGuid+"_selected_attributes_container") .selected-attribute').remove('');
                         $('.product-combination-attributes .single-attribute .attribute-value-checkbox input.form-check-input').prop( "checked", false );
+                        $("#throbber").hide();
                     });
             });
         });

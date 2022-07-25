@@ -45,7 +45,7 @@ namespace Nwazet.Commerce.Drivers.Combinations {
 
         public Localizer T;
         public IOrchardServices Services { get; private set; }
-        
+
         protected override string Prefix {
             get { return "CombinationPart"; }
         }
@@ -65,13 +65,13 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             var vm = CreateVM(part);
 
             updater.TryUpdateModel(vm, Prefix, null, null);
-            
+
             // the driver does not have to do anything 
             // if there are already assigned combinations
             if (vm.Part.ProductAttributeValues != null && part.ProductAttributeValues.Any()) {
                 return EditorShape(vm, shapeHelper);
             }
-            
+
             // after tyyupdatemodel missing the values of attributes
             // populate missing property
             var allAttributes = GetAllAttributes(vm.Part);
@@ -176,20 +176,21 @@ namespace Nwazet.Commerce.Drivers.Combinations {
 
         protected override void Importing(CombinationPart part, ImportContentContext context) {
             if (context.Data.Element(part.PartDefinition.Name) == null) {
-                return; 
+                return;
             }
 
-            var containerId = 0;
-            if (int.TryParse(context.Attribute(part.PartDefinition.Name, "CombinationContainerPart"), out containerId)) {
-                var container = _contentManager.Get(containerId);
-                var containerPart = container.As<CombinationContainerPart>();
-                if (containerPart != null) {
-                    // TODO: rendere CombinationPart.CombinationContainerPart aggiornabile? (ora e readonly)
-                    //part.Record.CombinationContainerPartRecord = containerPart.Record;
-                    part.ProductAttributeValues = JsonConvert
-                        .DeserializeObject<List<AttributesToCombine>>(context
-                            .Attribute(part.PartDefinition.Name, "ProductAttributeValues"));
-                }
+            var containerId = context.Attribute(part.PartDefinition.Name, "CombinationContainerPart");
+            if (string.IsNullOrWhiteSpace(containerId)) {
+                return;
+            }
+
+            var container = _contentManager.ResolveIdentity(new ContentIdentity(containerId));
+            var containerPart = container.As<CombinationContainerPart>();
+            if (containerPart != null) {
+                part.CombinationContainerPartField.Value = containerPart;
+                part.ProductAttributeValues = JsonConvert
+                    .DeserializeObject<List<AttributesToCombine>>(context
+                        .Attribute(part.PartDefinition.Name, "ProductAttributeValues"));
             }
         }
 
@@ -197,14 +198,15 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             context.Element(part.PartDefinition.Name)
                 .SetAttributeValue("ProductAttributeValues", part.Record.ProductAttributeValues);
 
+            // Export the container id
             context.Element(part.PartDefinition.Name)
-                .SetAttributeValue("CombinationContainerPart", part.Record.CombinationContainerPartRecord.Id);
+                .SetAttributeValue("CombinationContainerPart", _contentManager.GetItemMetadata(part.CombinationContainerPart).Identity);
 
         }
 
         protected override void Cloning(CombinationPart originalPart, CombinationPart clonePart, CloneContentContext context) {
             // clone the combination container part id
-            clonePart.CombinationContainerPartField.Value = 
+            clonePart.CombinationContainerPartField.Value =
                 originalPart.CombinationContainerPartField.Value;
         }
     }

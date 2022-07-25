@@ -293,6 +293,12 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         //    }
         //    root.SetAttributeValue("CombinationParts", combinationParts);
         //}
+
+        protected override void Exporting(CombinationContainerPart part, ExportContentContext context) {
+            context.Element(part.PartDefinition.Name)
+                .SetAttributeValue("Id", _contentManager.GetItemMetadata(part).Identity);
+        }
+
         #region Cloning
         protected override void Cloning(
             CombinationContainerPart originalPart, CombinationContainerPart clonePart, CloneContentContext context) {
