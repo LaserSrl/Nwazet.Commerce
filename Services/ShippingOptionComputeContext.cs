@@ -21,6 +21,6 @@ namespace Nwazet.Commerce.Services {
         public string Country { get; set; }
         public string PostalCode { get; set; }
 
-        // TODO: extended information?
+        // Extended information is handled by extending this class
     }
 }
