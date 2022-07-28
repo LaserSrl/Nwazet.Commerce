@@ -3,7 +3,6 @@ using Nwazet.Commerce.Services.Combinations;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
-using Orchard.Core.Title.Models;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
@@ -12,12 +11,8 @@ using Orchard.Localization.Services;
 using Orchard.Mvc.Html;
 using Orchard.OutputCache.Services;
 using Orchard.UI.Notify;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Handlers.Combinations {

@@ -7,10 +7,12 @@ using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.Handlers;
+using Orchard.Data;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Localization.Models;
 using Orchard.Localization.Services;
+using Orchard.Logging;
 using Orchard.UI.Notify;
 using System;
 using System.Collections.Generic;
@@ -24,6 +26,8 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         private readonly ILocalizationService _localizationService;
         private readonly IContentManager _contentManager;
         private readonly IWorkContextAccessor _workContextAccessor;
+        private readonly IRepository<ProductAttributeValueRecord> _attributeValueRepo;
+        private readonly INotifier _notifier;
 
         public CombinationPartDriver(
             IOrchardServices orchardServices,
@@ -31,7 +35,9 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             IProductCombinationService productCombinationService,
             ILocalizationService localizationService,
             IContentManager contentManager,
-            IWorkContextAccessor workContextAccessor) {
+            IWorkContextAccessor workContextAccessor,
+            IRepository<ProductAttributeValueRecord> attributeValueRepo,
+            INotifier notifier) {
 
             Services = orchardServices;
             _productAttributeAdminServices = productAttributeAdminServices;
@@ -39,12 +45,16 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             _localizationService = localizationService;
             _contentManager = contentManager;
             _workContextAccessor = workContextAccessor;
+            _attributeValueRepo = attributeValueRepo;
+            _notifier = notifier;
 
             T = NullLocalizer.Instance;
+            Logger = NullLogger.Instance;
         }
 
         public Localizer T;
         public IOrchardServices Services { get; private set; }
+        public ILogger Logger;
 
         protected override string Prefix {
             get { return "CombinationPart"; }
@@ -188,21 +198,65 @@ namespace Nwazet.Commerce.Drivers.Combinations {
             var containerPart = container.As<CombinationContainerPart>();
             if (containerPart != null) {
                 part.CombinationContainerPartField.Value = containerPart;
-                part.ProductAttributeValues = JsonConvert
-                    .DeserializeObject<List<AttributesToCombine>>(context
-                        .Attribute(part.PartDefinition.Name, "ProductAttributeValues"));
+
+                var exportedAttributes = JsonConvert.DeserializeObject<List<AttributesToCombineExportViewModel>>(context
+                    .Attribute(part.PartDefinition.Name, "ProductAttributeValues"));
+
+                var atc = new List<AttributesToCombine>();
+                foreach (var a in exportedAttributes) {
+                    var attribute = _contentManager.ResolveIdentity(new ContentIdentity(a.AttributeId));
+
+                    if (attribute != null) {
+                        var attributeId = attribute.Id;
+
+                        var valueId = 0;
+                        var valueRecord = _attributeValueRepo.Table
+                            .FirstOrDefault(pavr => pavr.GUIdentifier == a.ValueId);
+                        if (valueRecord != null) {
+                            valueId = valueRecord.Id;
+
+                            atc.Add(new AttributesToCombine {
+                                AttributeId = attributeId,
+                                AttributeValue = valueId
+                            });
+                        } else {
+                            // TODO: add a flag to CombinationPart to highlight the anomaly.
+                            Logger.Error(T("Attribute value with GUIdentifier {0} is missing and cannot be imported.", a.ValueId).Text);
+                            _notifier.Error(T("Attribute value with GUIdentifier {0} is missing and cannot be imported.", a.ValueId));
+                        }
+                    } else {
+                        // TODO: add a flag to CombinationPart to highlight the anomaly.
+                        Logger.Error(T("Attribute with identity {0} is missing and cannot be imported.", a.AttributeId).Text);
+                        _notifier.Error(T("Attribute with identity {0} is missing and cannot be imported.", a.AttributeId));
+                    }
+                }
+                
+                part.ProductAttributeValues = atc;
             }
         }
 
         protected override void Exporting(CombinationPart part, ExportContentContext context) {
-            //foreach (var a in part.ProductAttributeValues) {
-            //    var attributeId = _contentManager.GetItemMetadata(_contentManager.Get(a.AttributeId)).Identity;
+            var exportedAttributes = new List<AttributesToCombineExportViewModel>();
 
-            //}
+            foreach (var a in part.ProductAttributeValues) {
+                var attributeId = _contentManager.GetItemMetadata(_contentManager.Get(a.AttributeId)).Identity.ToString();
+                var valueId = string.Empty;
+                var valueRecord = _attributeValueRepo.Table
+                    .FirstOrDefault(pavr => pavr.Id == a.AttributeValue);
+                if (valueRecord != null) {
+                    valueId = valueRecord.GUIdentifier;
+                } else {
+                    valueId = Guid.NewGuid().ToString();
+                }
 
+                exportedAttributes.Add(new AttributesToCombineExportViewModel {
+                    AttributeId = attributeId,
+                    ValueId = valueId
+                });
+            }
 
             context.Element(part.PartDefinition.Name)
-                .SetAttributeValue("ProductAttributeValues", part.Record.ProductAttributeValues);
+                .SetAttributeValue("ProductAttributeValues", JsonConvert.SerializeObject(exportedAttributes));
 
             // Export the container id
             context.Element(part.PartDefinition.Name)
