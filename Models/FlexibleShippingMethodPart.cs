@@ -62,8 +62,7 @@ namespace Nwazet.Commerce.Models {
             if (workContext != null
                 && workContext.TryResolve(out flexibleShippingManager)) {
                 // we have a usable IFlexibleShippingManager here
-                var ac = new ApplicabilityContext(
-                    context.ProductQuantities, context.ShippingMethods, context.Country, context.PostalCode);
+                var ac = new ApplicabilityContext(context);
                 if (flexibleShippingManager.TestCriteria(Id, ac)) {
                     var price = DefaultPrice;
                     // Verify if Price Tiers are enabled via site settings.

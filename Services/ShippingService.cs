@@ -30,7 +30,6 @@ namespace Nwazet.Commerce.Services {
             ShippingOptionComputeContext context) {
 
             var methods = context.ShippingMethods.ToList();
-            var quantities = context.ProductQuantities.ToList();
             var alreadyFound = new HashSet<ShippingOption>(new ShippingOption.ShippingOptionComparer());
 
             foreach (var method in methods) {
