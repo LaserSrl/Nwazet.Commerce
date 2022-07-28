@@ -165,7 +165,7 @@ namespace Nwazet.Commerce.Drivers {
                         attributeRecord.ExtensionProvider = rec.ExtensionProvider;
                     } else {
                         part.Record.AttributeValueRecords.Add(new ProductAttributeValueRecord {
-                            GUIdentifier = Guid.NewGuid().ToString(),
+                            GUIdentifier = rec.GUIdentifier,
                             Text = rec.Text,
                             SortOrder = rec.SortOrder,
                             PriceAdjustment = rec.PriceAdjustment,

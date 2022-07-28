@@ -195,6 +195,12 @@ namespace Nwazet.Commerce.Drivers.Combinations {
         }
 
         protected override void Exporting(CombinationPart part, ExportContentContext context) {
+            //foreach (var a in part.ProductAttributeValues) {
+            //    var attributeId = _contentManager.GetItemMetadata(_contentManager.Get(a.AttributeId)).Identity;
+
+            //}
+
+
             context.Element(part.PartDefinition.Name)
                 .SetAttributeValue("ProductAttributeValues", part.Record.ProductAttributeValues);
 

@@ -24,8 +24,6 @@ namespace Nwazet.Commerce.Services.Combinations {
             _contentManager = contentManager;
         }
 
-        public Localizer T { get; set; }
-
         public override List<CombinationStatusMessage> CombinationStatus(
            CombinationContainerPart container, CombinationPart combination) {
 
