@@ -121,11 +121,16 @@ namespace Nwazet.Commerce.Controllers {
             var hierarchy = _contentManager.Get(hierarchyId.Value, VersionOptions.Latest);
             var hierarchyPart = hierarchy.As<TerritoryHierarchyPart>();
             var nodes = firstNode.Nodes;
-            var updatedNodes = firstNode.UpdatedNodesIds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => {
-                int defaultInt = 0;
-                int.TryParse(x, out defaultInt);
-                return defaultInt;
-            });
+            // If no node has been updated, UpdatedNodesIds is null, thus throwing a NullReferenceException.
+            var updatedNodes = Enumerable.Empty<int>();
+            if (firstNode.UpdatedNodesIds != null) {
+                updatedNodes = firstNode.UpdatedNodesIds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => {
+                    int defaultInt = 0;
+                    int.TryParse(x, out defaultInt);
+                    return defaultInt;
+                });
+            }
+            
             if (nodes != null) {
                 foreach (var node in nodes) {
                     // The only fields we receive as populated for the nodes are:
