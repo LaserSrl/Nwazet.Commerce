@@ -27,7 +27,7 @@ namespace Nwazet.Commerce {
             manifest.DefineScript("Nwazet.Territory-Hierarchies-Admin").SetUrl("territory-hierarchies-admin.min.js", "territory-hierarchies-admin.js");
             manifest.DefineScript("Nwazet.Wishlists").SetUrl("wishlists.min.js", "wishlists.js");
             manifest.DefineScript("Nwazet.ChartJs").SetUrl("chartjs.min.js", "chartjs.js");
-            manifest.DefineScript("Nwazet.Report").SetUrl("report.min.js", "report.js");
+            manifest.DefineScript("Nwazet.Report").SetUrl("report.min.js?v=1.1", "report.js?v=1.1.");
             manifest.DefineScript("Nwazet.Referral").SetUrl("referral.min.js", "referral.js");
 
             manifest.DefineScript("Stripe").SetUrl("https://js.stripe.com/v1/");
