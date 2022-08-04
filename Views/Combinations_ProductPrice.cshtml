@@ -1,0 +1,6 @@
+﻿@{ 
+    string price = Model.CurrencyProvider.GetPriceString(Model.Price);
+}
+@if (Model.DiscountedPrice == Model.Price) {
+    <text>@price</text>
+}

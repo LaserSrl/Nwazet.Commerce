@@ -1,0 +1,21 @@
+﻿
+@using Nwazet.Commerce.Models;
+@{ 
+    var combinationPart = (CombinationPart)Model.CombinationPart;
+    var containerPart = combinationPart.CombinationContainerPart;
+    var productPart = (ProductPart)Model.ProductPart;
+    var inventoryPart = (InventoryPart)Model.InventoryPart;
+
+    var min = inventoryPart.MinimumOrderQuantity;
+    var max = inventoryPart.MaximumOrderQuantity;
+    if (!inventoryPart.AllowBackOrder) {
+        max = max < inventoryPart.Inventory ? max : inventoryPart.Inventory;
+    }
+}
+
+@if (min > 1) {
+    <br /><strong>Minimum order of @min required.</strong>
+}
+@if (max > 0) {
+    <br /><strong>Maximum order of @max required.</strong>
+}

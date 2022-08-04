@@ -1,0 +1,54 @@
+﻿@using Nwazet.Commerce.Models;
+@using Nwazet.Commerce.Services.Combinations;
+@using Nwazet.Commerce.ViewModels.Combinations;
+@using Orchard;
+@using Orchard.ContentManagement;
+@model CombinationPartEditViewModel
+@{
+    var shortGuid = "c" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
+    var _productCombinationService = WorkContext.Resolve<IProductCombinationService>();
+
+    var _contentManager = WorkContext.Resolve<IContentManager>();
+
+    var contentType = _productCombinationService.GetCombinationContentType(Model.CombinationContainer);
+}
+
+@if (Model.AllAttributes.Any()) {
+    <div class="product-combination-attributes box box-primary">
+        <input type="hidden" name="ContentType" value="@contentType" />
+        <div class="box-header with-border">
+            <h3 class="box-title">@T("Attributes")</h3>
+        </div>
+        <div class="box-body attributes-combination-wrapper">
+            @for (int i = 0; i < Model.AllAttributes.Count(); i++) {
+                <fieldset>
+                    <legend>@Model.AllAttributes[i].AttributeDisplayName</legend>
+                    <div class="form-check attribute-values">
+                        <input type="hidden"
+                               name="@Html.FieldNameFor(m => m.AllAttributes[i].AttributeDisplayName)"
+                               value="@Model.AllAttributes.ToList()[i].AttributeDisplayName" />
+                        <input type="hidden"
+                               name="@Html.FieldNameFor(m => m.AllAttributes[i].AttributeId)"
+                               value="@Model.AllAttributes.ToList()[i].AttributeId" />
+                        <select id="@Html.FieldIdFor(m => m.AllAttributes[i].SelectedAttributeValue)"
+                                name="@Html.FieldNameFor(m => m.AllAttributes[i].SelectedAttributeValue)">
+                            @Html.SelectOption(-1, false, T("- None -").ToString())
+                            @if (Model.AllAttributes[i].Values != null) {
+                                for (int j = 0; j < Model.AllAttributes[i].Values.Count(); j++) {
+                                    <option @if (Model.AllAttributes[i].Values[j].Id == Model.AllAttributes[i].SelectedAttributeValue) { <text> selected="selected" </text> }
+                                            value="@Model.AllAttributes[i].Values[j].Id">
+                                        @Model.AllAttributes[i].Values[j].Text
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </fieldset>
+            }
+        </div>
+    </div>
+} else {
+    <div class="product-combination-attributes">
+        @T("There are no attributes to create new combinations.")
+    </div>
+}

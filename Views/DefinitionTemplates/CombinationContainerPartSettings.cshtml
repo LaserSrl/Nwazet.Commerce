@@ -1,0 +1,31 @@
+﻿@model Nwazet.Commerce.Settings.Combinations.CombinationContainerPartSettings
+
+<fieldset>
+    <div class="form-group">
+        @Html.LabelFor(m => m.CombinationTypeName, 
+            T("The name of the ContentType.").Text, 
+            new { @for = Html.FieldIdFor(m => m.CombinationTypeName) })
+        @Html.TextBoxFor(m => m.CombinationTypeName,
+            new { @class = "form-control text medium",
+                id = Html.FieldIdFor(m => m.CombinationTypeName),
+                aria_describedby = "combinationTypeNameHelp",
+                placeholder = T("ContentType's name") })
+        <small id="combinationTypeNameHelp" class="form-text text-muted hint">
+            @T("Insert the name of the ContentType that will be used to create product combinations.")
+        </small>
+    </div>
+    <div class="form-check">
+        @* TODO: do this properly with actual UI *@
+        @Html.CheckBoxFor(m => m.UpdateCombinationName,
+            new { id = Html.FieldIdFor(m => m.UpdateCombinationName),
+                @class = "form-check-input",
+                aria_describedby = "updateCombinationNameHelp" })
+        @Html.LabelFor(m => m.UpdateCombinationName,
+            T("Update Combination Type Name").Text,
+            new { @for = Html.FieldIdFor(m => m.UpdateCombinationName),
+                @class = "form-check-label forcheckbox" })
+        <small id="updateCombinationNameHelp" class="form-text text-muted hint">
+            @T("Check to allow updating the name of the ContentType used for product combinations. Changing that value will cause a new ContentType to be created/edited.")
+        </small>
+    </div>
+</fieldset>
