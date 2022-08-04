@@ -172,5 +172,11 @@
     "inputFiles": [
       "Styles/workflows-activity-order-tracking-url-changed.css"
     ]
+  },
+  {
+    "outputFileName": "Styles/product-combinations.nwazet-commerce.min.css",
+    "inputFiles": [
+      "Styles/product-combinations.nwazet-commerce.css"
+    ]
   }
 ]

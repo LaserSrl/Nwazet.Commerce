@@ -197,6 +197,9 @@
       <DependentUpon>product-admin.css</DependentUpon>
     </Content>
     <Content Include="Styles\product-combinations.nwazet-commerce.css" />
+    <Content Include="Styles\product-combinations.nwazet-commerce.min.css">
+      <DependentUpon>product-combinations.nwazet-commerce.css</DependentUpon>
+    </Content>
     <Content Include="Styles\reports-admin.css" />
     <Content Include="Styles\reports-admin.min.css">
       <DependentUpon>reports-admin.css</DependentUpon>
