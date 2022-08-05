@@ -60,8 +60,13 @@ namespace Nwazet.Commerce.Tests {
             var weightShippingMethod = ShippingHelpers.BuildWeightBasedShippingMethod(price: 3);
             var sizeShippingMethod = ShippingHelpers.BuildSizeBasedShippingMethod(price: 3);
             var shippingMethods = new IShippingMethod[] { weightShippingMethod, sizeShippingMethod };
-            Assert.AreEqual(3, weightShippingMethod.ComputePrice(cart, shippingMethods, null, null, null).First().Price);
-            Assert.AreEqual(3, sizeShippingMethod.ComputePrice(cart, shippingMethods, null, null, null).First().Price);
+
+            var context = new ShippingOptionComputeContext {
+                ProductQuantities = cart,
+                ShippingMethods = shippingMethods
+            };
+            Assert.AreEqual(3, weightShippingMethod.ComputePrice(context).First().Price);
+            Assert.AreEqual(3, sizeShippingMethod.ComputePrice(context).First().Price);
         }
 
         [Test]
@@ -73,8 +78,13 @@ namespace Nwazet.Commerce.Tests {
             var weightShippingMethod = ShippingHelpers.BuildWeightBasedShippingMethod(price: 3);
             var sizeShippingMethod = ShippingHelpers.BuildSizeBasedShippingMethod(price: 3);
             var shippingMethods = new IShippingMethod[] { weightShippingMethod, sizeShippingMethod };
-            Assert.AreEqual(7, weightShippingMethod.ComputePrice(cart, shippingMethods, null, null, null).First().Price);
-            Assert.AreEqual(7, sizeShippingMethod.ComputePrice(cart, shippingMethods, null, null, null).First().Price);
+
+            var context = new ShippingOptionComputeContext {
+                ProductQuantities = cart,
+                ShippingMethods = shippingMethods
+            };
+            Assert.AreEqual(7, weightShippingMethod.ComputePrice(context).First().Price);
+            Assert.AreEqual(7, sizeShippingMethod.ComputePrice(context).First().Price);
         }
     }
 }

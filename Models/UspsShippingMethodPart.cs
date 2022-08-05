@@ -220,6 +220,96 @@ namespace Nwazet.Commerce.Models {
             }
         }
 
+        public IEnumerable<ShippingOption> ComputePrice(
+            ShippingOptionComputeContext context) {
+
+            var quantities = context.ProductQuantities.ToList();
+            var fixedCost = quantities
+                .Where(pq => pq.Product.ShippingCost != null &&
+                             pq.Product.ShippingCost >= 0 &&
+                             !pq.Product.IsDigital)
+                .Sum(pq => pq.Quantity * (decimal)pq.Product.ShippingCost);
+            var relevantQuantities = quantities
+                .Where(pq => (pq.Product.ShippingCost == null || pq.Product.ShippingCost < 0) &&
+                             !pq.Product.IsDigital)
+                .ToList();
+
+            if (MinimumQuantity > 0 || (MaximumQuantity > 0 && MinimumQuantity <= MaximumQuantity)) {
+                var articleCount = CountDistinct
+                    ? relevantQuantities.Count
+                    : relevantQuantities.Sum(q => q.Quantity);
+                if ((articleCount < MinimumQuantity)
+                    || (MaximumQuantity > 0 && articleCount > MaximumQuantity)) {
+                    yield break;
+                }
+            }
+
+            var wc = context.WorkContextAccessor.GetContext();
+            var uspsService = wc.Resolve<IUspsService>();
+
+            // If all products have fixed shipping cost, just return that
+            if (relevantQuantities.Count == 0) {
+                var domesticAreas = uspsService.GetDomesticShippingAreas().ToList();
+                var internationalAreas = uspsService.GetInternationalShippingAreas().ToList();
+                var included = International ? internationalAreas : domesticAreas;
+                var excluded = International ? domesticAreas : internationalAreas;
+
+                yield return GetOption(fixedCost, included, excluded);
+                yield break;
+            }
+
+            var uspsSettings = uspsService.GetSettings();
+            var weight = relevantQuantities.Sum(pq => pq.Quantity * pq.Product.Weight * 16) + WeightPaddingInOunces;
+            // If above the maximum package weight, pass
+            if (MaximumWeightInOunces > 0 && weight > MaximumWeightInOunces) yield break;
+
+            var valueOfContents = relevantQuantities.Sum(pq => pq.Quantity * pq.Price);
+
+            var sizePriorities = context.ShippingMethods
+                .Where(m => m.GetType() == typeof(UspsShippingMethodPart))
+                .Cast<UspsShippingMethodPart>()
+                .Where(m => !string.IsNullOrWhiteSpace(m.Size))
+                .GroupBy(m => m.Size)
+                .ToDictionary(g => g.Key, g => g.Min(m => m.Priority));
+
+            // If all products have no specific size or there is a product with a size that has higher priority, pass
+            if (relevantQuantities.Any(pq => !string.IsNullOrWhiteSpace(pq.Product.Size) &&
+                                             pq.Product.Size != Size &&
+                                             sizePriorities.ContainsKey(pq.Product.Size) &&
+                                             sizePriorities[pq.Product.Size] > Priority)) yield break;
+            // If no product has the size required by this method, pass
+            if (relevantQuantities.All(pq => pq.Product.Size != Size)) yield break;
+            // If the destination is not consistent with the method, pass
+            if ((International && context.Country == Country.UnitedStates) ||
+                (!International && context.Country != Country.UnitedStates) ||
+                (!International && String.IsNullOrWhiteSpace(context.PostalCode))) yield break;
+
+            var prices = uspsService.Prices(
+                uspsSettings.UserId,
+                weight,
+                valueOfContents,
+                Container,
+                ServiceNameValidationExpression,
+                ServiceNameExclusionExpression,
+                context.Country,
+                LengthInInches,
+                WidthInInches,
+                HeightInInches,
+                uspsSettings.OriginZip,
+                context.PostalCode,
+                uspsSettings.CommercialPrices,
+                uspsSettings.CommercialPlusPrices,
+                RegisteredMail,
+                Insurance,
+                ReturnReceipt,
+                CertificateOfMailing,
+                ElectronicConfirmation);
+            foreach (var price in prices) {
+                price.Price += fixedCost + Markup;
+                yield return price;
+            }
+        }
+
         private ShippingOption GetOption(decimal price, IList<string> includedShippingAreas, IList<string> excludedShippingAreas) {
             return new ShippingOption {
                 Description = Name,
