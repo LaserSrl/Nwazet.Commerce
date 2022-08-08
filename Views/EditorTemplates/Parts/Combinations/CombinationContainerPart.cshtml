@@ -1,4 +1,5 @@
 ﻿@using Nwazet.Commerce.ViewModels.Combinations
+@using Nwazet.Commerce.Models;
 @using Orchard;
 @using Orchard.ContentManagement;
 @using Orchard.Core.Contents;
@@ -87,6 +88,7 @@
                         <table id="table-@shortGuid" class="table table-hover">
                             <thead>
                                 <tr>
+                                    <th>@T("SKU")</th>
                                     <th>@T("Title")</th>
                                     <th>@T("Status")</th>
                                     <th>@T("Actions")</th>
@@ -103,6 +105,15 @@
 
                                 @foreach (var combination in Model.CurrentCombinations) {
                                     <tr>
+                                        <td>
+                                            @if (Authorizer.Authorize(Permissions.EditContent, combination)) {
+                                            <a href="@Url.ItemEditUrl((IContent)(combination.ContentItem))">
+                                                @(combination.As<ProductPart>().Sku)
+                                            </a>
+                                            } else {
+                                                @(combination.As<ProductPart>().Sku)
+                                            }
+                                        </td>
                                         <td>
                                             @if (Authorizer.Authorize(Permissions.EditContent, combination)) {
                                                 <a href="@Url.ItemEditUrl((IContent)(combination.ContentItem))">
@@ -167,11 +178,11 @@
                                     </div>
                                     <div class="box-body">
                                         @foreach (var attVal in att.AttributeValues) {
-                                            <div class="form-check attribute-value-checkbox">
+                                            <div class="attribute-value-checkbox">
                                                 @Html.CheckBox("attribute." + att.Id + "." + attVal.Text,
                                                     new {
                                                         @id = "attribute_" + att.Id + "_" + attVal.Text,
-                                                        @class = "form-check-input",
+                                                        @class = "form-check-attribute",
                                                         data_attribute_Name = attDisplayName,
                                                         data_attribute_id = att.Id,
                                                         data_attribute_value_id = attVal.Id,
@@ -224,7 +235,7 @@
         $(document).ready(function () {
             // when adding a checkbox, add a corresponding thing to the list that
             // we will send to generate new combinations
-            $('.product-combination-attributes .single-attribute .attribute-value-checkbox input.form-check-input').change(function () {
+            $('.product-combination-attributes .single-attribute .attribute-value-checkbox input.form-check-attribute').change(function () {
                 // the html element that contains the selected attributes
                 var attContainer = $('#@(shortGuid+"_selected_attributes_container")');
                 // Id and Value of attribute that was "clicked"
@@ -338,7 +349,7 @@
                     .always(function (dataS, textStatus, dataE) {
                         // clear the selected attributes
                         $('#@(shortGuid+"_selected_attributes_container") .selected-attribute').remove('');
-                        $('.product-combination-attributes .single-attribute .attribute-value-checkbox input.form-check-input').prop( "checked", false );
+                        $('.product-combination-attributes .single-attribute .attribute-value-checkbox input.form-check-attribute').prop( "checked", false );
                         $("#throbber").hide();
                     });
             });
