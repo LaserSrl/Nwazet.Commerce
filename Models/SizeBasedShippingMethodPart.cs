@@ -50,15 +50,27 @@ namespace Nwazet.Commerce.Models {
             string country,
             string zipCode,
             IWorkContextAccessor workContextAccessor) {
+            // this method kept to avoid rewriting all tests
+            return ComputePrice(new ShippingOptionComputeContext {
+                ProductQuantities = productQuantities,
+                ShippingMethods = shippingMethods,
+                Country = country,
+                PostalCode = zipCode,
+                WorkContextAccessor = workContextAccessor
+            });
+        }
+
+        public IEnumerable<ShippingOption> ComputePrice(
+            ShippingOptionComputeContext context) {
 
             // Get all size-based shipping methods
-            var sizePriorities = shippingMethods
-                .Where(m => m.GetType() == typeof (SizeBasedShippingMethodPart))
+            var sizePriorities = context.ShippingMethods
+                .Where(m => m.GetType() == typeof(SizeBasedShippingMethodPart))
                 .Cast<SizeBasedShippingMethodPart>()
                 .Where(m => !string.IsNullOrWhiteSpace(m.Size))
                 .GroupBy(m => m.Size)
                 .ToDictionary(g => g.Key, g => g.Min(m => m.Priority));
-            var quantities = productQuantities.ToList();
+            var quantities = context.ProductQuantities.ToList();
             var fixedCost = quantities
                 .Where(pq => pq.Product.ShippingCost != null && pq.Product.ShippingCost >= 0 && !pq.Product.IsDigital)
             // ReSharper disable PossibleInvalidOperationException
