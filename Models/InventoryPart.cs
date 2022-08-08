@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Services;
+using Nwazet.Commerce.Services.Inventory;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 

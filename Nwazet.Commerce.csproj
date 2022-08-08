@@ -99,13 +99,10 @@
     <Content Include="Content\checkout-with-stripe.png" />
     <Content Include="Content\menu.nwazet-commerce.png" />
     <Content Include="Content\move.gif" />
+    <Content Include="Content\synchronizing.gif" />
     <Content Include="LICENSE.txt" />
     <Content Include="mXparser\LICENSE.txt" />
     <Content Include="Recipes\World.recipe.xml" />
-    <Content Include="Scripts\attribute-admin.js" />
-    <Content Include="Scripts\attribute-admin.min.js">
-      <DependentUpon>attribute-admin.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\attribute-extensions.min.js">
       <DependentUpon>attribute-extensions.js</DependentUpon>
     </Content>
@@ -136,6 +133,10 @@
     <Content Include="Scripts\order-admin.js" />
     <Content Include="Scripts\order-admin.min.js">
       <DependentUpon>order-admin.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\productcombinations.js" />
+    <Content Include="Scripts\productcombinations.min.js">
+      <DependentUpon>productcombinations.js</DependentUpon>
     </Content>
     <Content Include="Scripts\productsunavailable.js" />
     <Content Include="Scripts\productsunavailable.min.js">
@@ -195,6 +196,10 @@
     <Content Include="Styles\product-admin.min.css">
       <DependentUpon>product-admin.css</DependentUpon>
     </Content>
+    <Content Include="Styles\product-combinations.nwazet-commerce.css" />
+    <Content Include="Styles\product-combinations.nwazet-commerce.min.css">
+      <DependentUpon>product-combinations.nwazet-commerce.css</DependentUpon>
+    </Content>
     <Content Include="Styles\reports-admin.css" />
     <Content Include="Styles\reports-admin.min.css">
       <DependentUpon>reports-admin.css</DependentUpon>
@@ -240,6 +245,12 @@
     <None Include="Styles\coupon-admin.less" />
     <None Include="Styles\product-admin.less" />
     <None Include="Views\BankTransferOrderAdditionalFrontEndData.cshtml" />
+    <None Include="Views\CombinationConfigurationAdmin\Create.cshtml" />
+    <None Include="Views\Combinations_ProductDiscountedPrice.cshtml" />
+    <None Include="Views\Combinations_ProductInventoryQuantities.cshtml" />
+    <None Include="Views\Combinations_ProductVatConfiguration.cshtml" />
+    <None Include="Views\Combinations_ProductPriceDetail.cshtml" />
+    <None Include="Views\Combinations_ProductPrice.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsBasicPartial.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsPartial.cshtml" />
     <None Include="Views\CouponingAdmin\_CouponActionsNewPartial.cshtml" />
@@ -257,7 +268,15 @@
     <None Include="Views\CouponingCriterion\Edit.cshtml" />
     <None Include="Views\CouponingLineCriterion\Add.cshtml" />
     <None Include="Views\CouponingLineCriterion\Edit.cshtml" />
+    <None Include="Views\DefinitionTemplates\CombinationContainerPartSettings.cshtml" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.Empty.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.Unauthorized.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\AttributesCombinationPart.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\LocalizedCombinationPart.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\CombinationPart.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.New.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Advanced.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />
@@ -290,6 +309,7 @@
     <None Include="Views\HierarchyTerritoriesAdmin\GetChildNodes.cshtml" />
     <None Include="Views\HierarchyTerritoriesAdmin\Index.cshtml" />
     <None Include="Views\OrderSsl\OrderHistory.cshtml" />
+    <None Include="Views\Parts\CombinationContainer.cshtml" />
     <None Include="Views\Parts\Inventory.cshtml" />
     <None Include="Views\Parts\TerritoryHierarchy.SummaryAdmin.cshtml" />
     <None Include="Views\Parts\WishListsActions.cshtml" />
@@ -328,6 +348,9 @@
     <Compile Include="ApplicabilityCriteria\NumericCriterionBase.cs" />
     <Compile Include="Aspects\ITerritoryAddressAspect.cs" />
     <Compile Include="Commands\TerritoriesCommands.cs" />
+    <Compile Include="Controllers\Combinations\CombinationConfigurationAdminController.cs" />
+    <Compile Include="Controllers\Combinations\CombinationsAdminController.cs" />
+    <Compile Include="Controllers\Combinations\LocalizedCombinationController.cs" />
     <Compile Include="Controllers\CouponController.cs" />
     <Compile Include="Controllers\CouponingAdminController.cs" />
     <Compile Include="Controllers\CouponingLineCriterionController.cs" />
@@ -366,6 +389,9 @@
     <Compile Include="Drivers\AttributeLocalizationProductAttributesPartDriver.cs" />
     <Compile Include="Drivers\BundleLocalizationPartDriver.cs" />
     <Compile Include="Drivers\BundlePartDriver.cs" />
+    <Compile Include="Drivers\Combinations\CombinationContainerPartDriver.cs" />
+    <Compile Include="Drivers\Combinations\CombinationPartDriver.cs" />
+    <Compile Include="Drivers\Combinations\LocalizedCombinationPartDriver.cs" />
     <Compile Include="Drivers\CouponingSiteSettingPartDriver.cs" />
     <Compile Include="Drivers\ECommerceCurrencySiteSettingsPartDriver.cs" />
     <Compile Include="Drivers\FlexibleShippingMethodPartDriver.cs" />
@@ -435,6 +461,8 @@
     <Compile Include="Handlers\BundlePartHandler.cs" />
     <Compile Include="Handlers\AttributePartHandler.cs" />
     <Compile Include="Handlers\AttributesPartHandler.cs" />
+    <Compile Include="Handlers\Combinations\CombinationContainerPartHandler.cs" />
+    <Compile Include="Handlers\Combinations\CombinationPartHandler.cs" />
     <Compile Include="Handlers\CouponingSiteSettingPartHandler.cs" />
     <Compile Include="Handlers\ECommerceCurrencySiteSettingsPartHandler.cs" />
     <Compile Include="Handlers\FlexibleShippingMethodPartAuthorizationEventHandler.cs" />
@@ -490,6 +518,7 @@
     <Compile Include="Migrations\FlexibleShippingMethodMigrations.cs" />
     <Compile Include="Migrations\OrderMigrations.cs" />
     <Compile Include="Migrations\PersistentCartMigrations.cs" />
+    <Compile Include="Migrations\ProductCombinationsMigrations.cs" />
     <Compile Include="Migrations\TaxMigrations.cs" />
     <Compile Include="Migrations\TerritoriesMigrations.cs" />
     <Compile Include="Migrations\UspsMigrations.cs" />
@@ -502,6 +531,10 @@
     <Compile Include="Models\CartPriceAlteration.cs" />
     <Compile Include="Models\CheckoutError.cs" />
     <Compile Include="Models\CheckoutItem.cs" />
+    <Compile Include="Models\Combinations\CombinationContainerPart.cs" />
+    <Compile Include="Models\Combinations\CombinationContainerPartRecord.cs" />
+    <Compile Include="Models\Combinations\CombinationPart.cs" />
+    <Compile Include="Models\Combinations\CombinationPartRecord.cs" />
     <Compile Include="Models\ConversionUtilities.cs" />
     <Compile Include="Models\Charge.cs" />
     <Compile Include="Models\Couponing\CouponCriterionBaseRecord.cs" />
@@ -530,6 +563,7 @@
     <Compile Include="Models\PricePart.cs" />
     <Compile Include="Models\PricePartRecord.cs" />
     <Compile Include="Models\PriceTiersContext.cs" />
+    <Compile Include="Models\ProductAttributeValueRecord.cs" />
     <Compile Include="Models\ProductsListPart.cs" />
     <Compile Include="Models\OrderEvent.cs" />
     <Compile Include="Models\OrderPart.cs" />
@@ -640,6 +674,20 @@
     <Compile Include="ApplicabilityCriteria\Couponing\CouponApplicabilityContext.cs" />
     <Compile Include="Descriptors\CouponApplicability\CouponApplicabilityCriterionDescriptor.cs" />
     <Compile Include="Services\CartPriceAlterationContext.cs" />
+    <Compile Include="Services\Combinations\BaseCombinationDetailProvider.cs" />
+    <Compile Include="Services\Combinations\BaseCombinationStatusProvider.cs" />
+    <Compile Include="Services\Combinations\DuplicatedCombinationStatusProvider.cs" />
+    <Compile Include="Services\Combinations\ICombinationDetailProvider.cs" />
+    <Compile Include="Services\Combinations\ICombinationStatusProvider.cs" />
+    <Compile Include="Services\Combinations\InventoryPartDetailProvider.cs" />
+    <Compile Include="Services\Combinations\IProductCombinationService.cs" />
+    <Compile Include="Services\Combinations\LocalizationPartDetailProvider.cs" />
+    <Compile Include="Services\Combinations\LocalizedCombinationStatusProvider.cs" />
+    <Compile Include="Services\Combinations\PricePartDetailProvider.cs" />
+    <Compile Include="Services\Combinations\ProductCombinationService.cs" />
+    <Compile Include="Services\Combinations\ProductCombinationsGroupInventoryProvider.cs" />
+    <Compile Include="Services\Combinations\ProductPartDetailProvider.cs" />
+    <Compile Include="Services\Combinations\VatConfigurationPartDetailProvider.cs" />
     <Compile Include="Services\Couponing\BaseCouponApplicabilityCriterion.cs" />
     <Compile Include="Services\Couponing\BaseCouponCriterionProvider.cs" />
     <Compile Include="Services\Couponing\CouponCriteriaManagementService.cs" />
@@ -679,15 +727,18 @@
     <Compile Include="Services\IFlexibleShippingManager.cs" />
     <Compile Include="Services\ILocalStorageSettings.cs" />
     <Compile Include="Services\ICartExtensionProvider.cs" />
-    <Compile Include="Services\InventoriesAreNotSynchronizedBySKU.cs" />
-    <Compile Include="Services\InventoryBySKUProductInventoryService.cs" />
+    <Compile Include="Services\Inventory\InventoriesAreNotSynchronizedBySKU.cs" />
+    <Compile Include="Services\Inventory\IProductGroupInventoryProvider.cs" />
+    <Compile Include="Services\Inventory\ProductGroupInventoryProvider.cs" />
+    <Compile Include="Services\Inventory\ProductGroupInventoryProviderBase.cs" />
+    <Compile Include="Services\Inventory\ProductGroupInventoryProviderBySKU.cs" />
     <Compile Include="Services\IOrderAdditionalInformationProvider.cs" />
     <Compile Include="Services\IOrderFrontEndAdditionalInformationProvider.cs" />
     <Compile Include="Services\IOrderStatusProvider.cs" />
     <Compile Include="Services\IPersistentShoppingCartServices.cs" />
     <Compile Include="Services\IProductAttributeAdminServices.cs" />
     <Compile Include="Services\IProductAttributeLocalizationServices.cs" />
-    <Compile Include="Services\IProductInventoryService.cs" />
+    <Compile Include="Services\Inventory\IProductInventoryService.cs" />
     <Compile Include="Services\IProductPriceService.cs" />
     <Compile Include="Services\IProductService.cs" />
     <Compile Include="Services\ISKUGenerationServices.cs" />
@@ -720,8 +771,7 @@
     <Compile Include="Services\Currency.cs" />
     <Compile Include="Services\ICurrencyProvider.cs" />
     <Compile Include="Services\ProductAttributeValueExtendedContext.cs" />
-    <Compile Include="Services\ProductInventoryService.cs" />
-    <Compile Include="Services\ProductInventoryServiceBase.cs" />
+    <Compile Include="Services\Inventory\ProductInventoryService.cs" />
     <Compile Include="Services\ProductPriceService.cs" />
     <Compile Include="Services\ProductResolverSelector.cs" />
     <Compile Include="Services\AddressFormatter.cs" />
@@ -798,6 +848,8 @@
     <Compile Include="Settings\BundleProductLocalizationEditorEvents.cs" />
     <Compile Include="Settings\BundleProductLocalizationSettings.cs" />
     <Compile Include="Settings\BundleProductSettings.cs" />
+    <Compile Include="Settings\Combinations\CombinationContainerPartEditorEvents.cs" />
+    <Compile Include="Settings\Combinations\CombinationContainerPartSettings.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationEditorEvents.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationSettings.cs" />
     <Compile Include="Settings\TerritoryHierarchyPartEditorEvents.cs" />
@@ -810,6 +862,13 @@
     <Compile Include="ViewModels\AdvancedSKUProductEditorViewModel.cs" />
     <Compile Include="ViewModels\ApplicabilityCriterionEntry.cs" />
     <Compile Include="ViewModels\CartPriceAlterationAmount.cs" />
+    <Compile Include="ViewModels\Combinations\AttributesToCombine.cs" />
+    <Compile Include="ViewModels\Combinations\AttributesToCombineExportViewModel.cs" />
+    <Compile Include="ViewModels\Combinations\CombinationAttribute.cs" />
+    <Compile Include="ViewModels\Combinations\CombinationContainerPartEditViewModel.cs" />
+    <Compile Include="ViewModels\Combinations\CombinationDetailShape.cs" />
+    <Compile Include="ViewModels\Combinations\CombinationPartEditViewModel.cs" />
+    <Compile Include="ViewModels\Combinations\CombinationStatusMessage.cs" />
     <Compile Include="ViewModels\Couponing\Coupon.cs" />
     <Compile Include="ViewModels\Couponing\CouponApplicabilityCriterionEntry.cs" />
     <Compile Include="ViewModels\Couponing\CouponCriteriaAddViewModel.cs" />
@@ -838,6 +897,7 @@
     <Compile Include="ViewModels\ListOrdersViewModel.cs" />
     <Compile Include="ViewModels\OrderEditorViewModel.cs" />
     <Compile Include="ViewModels\PricingSettingsViewModel.cs" />
+    <Compile Include="ViewModels\ProductAttributeValueViewModel.cs" />
     <Compile Include="ViewModels\ProductEditorViewModel.cs" />
     <Compile Include="ViewModels\ProductVatConfigurationPartEditorViewModel.cs" />
     <Compile Include="ViewModels\ReportDataViewModel.cs" />
@@ -1033,6 +1093,10 @@
     <ProjectReference Include="..\Orchard\src\Orchard.Web\Modules\Orchard.Modules\Orchard.Modules.csproj">
       <Project>{17f86780-9a1f-4aa1-86f1-875eec2730c7}</Project>
       <Name>Orchard.Modules</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Orchard\src\Orchard.Web\Modules\Orchard.OutputCache\Orchard.OutputCache.csproj">
+      <Project>{6E444FF1-A47C-4CF6-BB3F-507C8EBD776D}</Project>
+      <Name>Orchard.OutputCache</Name>
     </ProjectReference>
     <ProjectReference Include="..\Orchard\src\Orchard.Web\Modules\Orchard.Projections\Orchard.Projections.csproj">
       <Project>{5531e894-d259-45a3-aa61-26dbe720c1ce}</Project>

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
+using Nwazet.Commerce.Services.Inventory;
 using Nwazet.Commerce.ViewModels;
 using Orchard.ContentManagement;
 using Orchard.Core.Title.Models;
