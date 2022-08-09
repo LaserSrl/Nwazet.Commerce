@@ -11,6 +11,7 @@ using Orchard.Localization.Services;
 using Orchard.Mvc.Html;
 using Orchard.OutputCache.Services;
 using Orchard.UI.Notify;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
@@ -64,11 +65,35 @@ namespace Nwazet.Commerce.Handlers.Combinations {
             OnUnpublished<CombinationPart>((context, part) => InvalidateParentCache(part));
             OnRemoved<CombinationPart>((context, part) => InvalidateParentCache(part));
             OnDestroyed<CombinationPart>((context, part) => InvalidateParentCache(part));
+
+            // When loading the CombinationPart, I we want the content type to be represented by its container's.
+            // This is needed, for instance, to evaluate coupon or shipping criteria.
+            OnLoaded<CombinationPart>((ctx, part) => {
+                var container = part.CombinationContainerPart;
+                if (container != null) {
+                    var containerContentType = container.ContentItem.ContentType;
+                    var originalContentType = part.ContentItem.ContentType;
+                    part.ContentItem.ContentType = containerContentType;
+
+                    //// Weld every part and every field to the ContentItem (if it's not already there).
+                    //foreach (var p in container.ContentItem.Parts) {
+                    //    if (part.PartDefinition.Name.Equals(containerContentType + "Part", StringComparison.OrdinalIgnoreCase)) {
+                    //        // If it's the part containing misc fields (e.g. {ContentType}Part), weld the fields but not the entire part.
+                    //        foreach (var f in p.Fields) {
+                    //            part.Weld(f);
+                    //        }
+                    //    } else {
+                    //        if (part.ContentItem.Parts.FirstOrDefault(pa => pa.PartDefinition.Name == p.PartDefinition.Name) == null) {
+                    //            part.ContentItem.Weld(p);
+                    //        }
+                    //    }
+                    //}
+                }
+            });
         }
 
         public IOrchardServices Services { get; private set; }
         public Localizer T;
-
 
         void InvalidateParentCache(CombinationPart part) {
             // Cache items directly marked for this ContentItem are evicted elsewhere
