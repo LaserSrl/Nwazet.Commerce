@@ -13,6 +13,7 @@
     var _contentManager = WorkContext.Resolve<IContentManager>();
     var currentUrl = ViewContext.RequestContext.HttpContext.Request.RawUrl;
 
+    var skuParameter = "__COMBINATION__SKU__";
     var titleParameter = "__COMBINATION__TITLE__";
     var editUrlParameter = "__COMBINATION__EDITURL__";
     var statusParameter = "__COMBINATION__STATUS__";
@@ -97,6 +98,9 @@
                             <tbody>
                                 <tr id="template-tr-@shortGuid" style="display:none">
                                     <td>
+                                        <a href="@editUrlParameter">@skuParameter</a>
+                                    </td>
+                                    <td>
                                         <a href="@editUrlParameter">@titleParameter</a>
                                     </td>
                                     <td>@statusParameter</td>
@@ -107,9 +111,9 @@
                                     <tr>
                                         <td>
                                             @if (Authorizer.Authorize(Permissions.EditContent, combination)) {
-                                            <a href="@Url.ItemEditUrl((IContent)(combination.ContentItem))">
-                                                @(combination.As<ProductPart>().Sku)
-                                            </a>
+                                                <a href="@Url.ItemEditUrl((IContent)(combination.ContentItem))">
+                                                    @(combination.As<ProductPart>().Sku)
+                                                </a>
                                             } else {
                                                 @(combination.As<ProductPart>().Sku)
                                             }
@@ -328,6 +332,7 @@
                                 var newRow = templateRow.clone();
 
                                 var stringNewRow = newRow.html();
+                                stringNewRow = stringNewRow.replaceAll("@skuParameter", data.newCombinations[i].Sku);
                                 stringNewRow = stringNewRow.replaceAll("@titleParameter", data.newCombinations[i].Title);
                                 stringNewRow = stringNewRow.replaceAll("@editUrlParameter", data.newCombinations[i].EditUrl);
                                 stringNewRow = stringNewRow.replaceAll("@statusParameter", statusHtml);
