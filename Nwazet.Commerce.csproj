@@ -269,6 +269,7 @@
     <None Include="Views\CouponingLineCriterion\Add.cshtml" />
     <None Include="Views\CouponingLineCriterion\Edit.cshtml" />
     <None Include="Views\DefinitionTemplates\CombinationContainerPartSettings.cshtml" />
+    <None Include="Views\DefinitionTemplates\ContentFieldCombinationWeldingSettings.cshtml" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.Empty.cshtml" />
@@ -850,6 +851,8 @@
     <Compile Include="Settings\BundleProductSettings.cs" />
     <Compile Include="Settings\Combinations\CombinationContainerPartEditorEvents.cs" />
     <Compile Include="Settings\Combinations\CombinationContainerPartSettings.cs" />
+    <Compile Include="Settings\Combinations\ContentFieldCombinationWeldingSettings.cs" />
+    <Compile Include="Settings\Combinations\ContentFieldCombinationWeldingSettingsEditorEventscs.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationEditorEvents.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationSettings.cs" />
     <Compile Include="Settings\TerritoryHierarchyPartEditorEvents.cs" />
