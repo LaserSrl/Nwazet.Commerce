@@ -21,5 +21,7 @@ namespace Nwazet.Commerce.Services.Combinations {
         IEnumerable<CombinationDetailShape> GetCombinationDetailShapes(
             CombinationPart part,
             dynamic shapeHelper);
+
+        void AfterLoaded(CombinationPart part);
     }
 }

@@ -3,6 +3,7 @@ using Nwazet.Commerce.Services.Combinations;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
+using Orchard.ContentManagement.MetaData.Models;
 using Orchard.Data;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
@@ -12,6 +13,7 @@ using Orchard.Mvc.Html;
 using Orchard.OutputCache.Services;
 using Orchard.UI.Notify;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
@@ -23,6 +25,7 @@ namespace Nwazet.Commerce.Handlers.Combinations {
         private readonly IProductCombinationService _productCombinationService;
         private readonly ICacheService _cacheService;
         private readonly ILocalizationService _localizationService;
+        private readonly IEnumerable<ICombinationDetailProvider> _combinationDetailProviders;
         protected UrlHelper _url;
 
         // populated in case of duplicates
@@ -35,7 +38,8 @@ namespace Nwazet.Commerce.Handlers.Combinations {
             IProductCombinationService productCombinationService,
             ICacheService cacheService,
             ILocalizationService localizationService,
-            UrlHelper url) {
+            UrlHelper url,
+            IEnumerable<ICombinationDetailProvider> combinationDetailProviders) {
 
             Services = orchardServices;
             _contentManager = contentManager;
@@ -43,6 +47,7 @@ namespace Nwazet.Commerce.Handlers.Combinations {
             _cacheService = cacheService;
             _localizationService = localizationService;
             _url = url;
+            _combinationDetailProviders = combinationDetailProviders;
 
             T = NullLocalizer.Instance;
 
@@ -75,35 +80,47 @@ namespace Nwazet.Commerce.Handlers.Combinations {
                     var originalContentType = part.ContentItem.ContentType;
                     part.ContentItem.ContentType = containerContentType;
 
-                    // Weld every part and every field to the ContentItem (if it's not already there).
+                    // Weld every configured field to the ContentItem (if it's not already there).
                     foreach (var p in container.ContentItem.Parts) {
-                        if (p.PartDefinition.Name.Equals(containerContentType + "Part", StringComparison.OrdinalIgnoreCase)) {
-                            // If it's the part containing misc fields (e.g. {ContentType}Part), weld the fields but not the entire part.
-                            foreach (var f in p.Fields) {
+                        foreach (var f in p.Fields) {
+                            if ((part.Fields.FirstOrDefault(fld => fld.Name == f.Name) == null)
+                                && f.PartFieldDefinition.Settings
+                                    .ContainsKey("ContentFieldCombinationWeldingSettings.WeldToCombination")) {
                                 var weldField = false;
-                                if (f.PartFieldDefinition.Settings.ContainsKey("ContentFieldCombinationWeldingSettings.WeldToCombination")) {
-                                    bool.TryParse(f.PartFieldDefinition.Settings["ContentFieldCombinationWeldingSettings.WeldToCombination"], out weldField);
-                                }
-
+                                bool.TryParse(f.PartFieldDefinition.Settings["ContentFieldCombinationWeldingSettings.WeldToCombination"], out weldField);
                                 if (weldField) {
-                                    part.Weld(f);
-                                }
-                            }
-                        } else {
-                            if (part.ContentItem.Parts.FirstOrDefault(pa => pa.PartDefinition.Name == p.PartDefinition.Name) == null) {
-                                var fieldsToWeld = p.Fields
-                                    .Where(f => f.PartFieldDefinition.Settings.ContainsKey("ContentFieldCombinationWeldingSettings.WeldToCombination")
-                                        && bool.Parse(f.PartFieldDefinition.Settings["ContentFieldCombinationWeldingSettings.WeldToCombination"]))
-                                    .ToList();
-                                foreach (var f in fieldsToWeld) {
-                                    part.Weld(f);
+                                    if (p.PartDefinition.Name.Equals(containerContentType, StringComparison.OrdinalIgnoreCase)) {
+                                        // If it's the "standard" {ContentType} part, fields are just weld to the CombinationPart.
+                                        part.Weld(f);
+                                    } else {
+                                        // I check for a part with the same name of the part the field is into.
+                                        var partToWeldFieldTo = part.ContentItem.Parts
+                                            .FirstOrDefault(pa => pa.PartDefinition.Name == p.PartDefinition.Name);
+                                        if (partToWeldFieldTo != null) {
+                                            if ((part.Fields.FirstOrDefault(fld => fld.Name == f.Name) == null)) {
+                                                // If the part is found, just weld the field to it.
+                                                partToWeldFieldTo.Weld(f);
+                                            }
+                                        } else {
+                                            // Create a new ContentPart with the same original name to weld the field to.
+                                            ContentPart newPart = new ContentPart();
+                                            newPart.TypePartDefinition = new ContentTypePartDefinition(
+                                                new ContentPartDefinition(p.PartDefinition.Name),
+                                                new SettingsDictionary()
+                                            );
+                                            newPart.Weld(f);
+                                            part.ContentItem.Weld(newPart);
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                }
-
-                var a = 5;
+                    // Call the AfterLoaded of every ICombinationDetailProvider for specific actions to be completed after welding fields.
+                    foreach (var cdp in _combinationDetailProviders) {
+                        cdp.AfterLoaded(part);
+                    }
+                }                
             });
         }
 

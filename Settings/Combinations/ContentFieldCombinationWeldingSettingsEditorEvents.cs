@@ -30,8 +30,7 @@ namespace Nwazet.Commerce.Settings.Combinations {
             if (definition.ContentTypeDefinition.Parts
                 .Any(p => p.PartDefinition.Name == "CombinationContainerPart")) {
                 _typeHasCombinationContainer = true;
-                var settings = definition.Settings.GetModel<ContentFieldCombinationWeldingSettings>();
-                yield return DefinitionTemplate(settings);
+                yield break;
             }
         }
 

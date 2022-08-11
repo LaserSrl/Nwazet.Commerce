@@ -688,6 +688,7 @@
     <Compile Include="Services\Combinations\ProductCombinationService.cs" />
     <Compile Include="Services\Combinations\ProductCombinationsGroupInventoryProvider.cs" />
     <Compile Include="Services\Combinations\ProductPartDetailProvider.cs" />
+    <Compile Include="Services\Combinations\TermsPartDetailProvider.cs" />
     <Compile Include="Services\Combinations\VatConfigurationPartDetailProvider.cs" />
     <Compile Include="Services\Couponing\BaseCouponApplicabilityCriterion.cs" />
     <Compile Include="Services\Couponing\BaseCouponCriterionProvider.cs" />
