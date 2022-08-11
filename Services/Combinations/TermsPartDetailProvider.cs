@@ -19,6 +19,17 @@ namespace Nwazet.Commerce.Services.Combinations {
                         part.ContentItem.Weld(containerTermsPart);
                     }
                 }
+            } else {
+                var container = part.CombinationContainerPart?.ContentItem;
+                if (container != null) {
+                    var containerTermsPart = container.As<TermsPart>();
+                    if (containerTermsPart != null) {
+                        // Both Combination and container have the TermsPart.
+                        // TermParts need to be loaded with both loaders, which aren't going to be lazy anymore.
+                        // This causes a possibly relevant performance hit.
+                        // TODO: join both TermsPart.TermParts.
+                    }
+                }
             }
         }
     }
