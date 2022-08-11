@@ -69,28 +69,28 @@ namespace Nwazet.Commerce.Handlers.Combinations {
             // When loading the CombinationPart, I we want the content type to be represented by its container's.
             // This is needed, for instance, to evaluate coupon or shipping criteria.
             OnLoaded<CombinationPart>((ctx, part) => {
-            var container = part.CombinationContainerPart;
-            if (container != null) {
-                var containerContentType = container.ContentItem.ContentType;
-                var originalContentType = part.ContentItem.ContentType;
-                part.ContentItem.ContentType = containerContentType;
+                var container = part.CombinationContainerPart;
+                if (container != null) {
+                    var containerContentType = container.ContentItem.ContentType;
+                    var originalContentType = part.ContentItem.ContentType;
+                    part.ContentItem.ContentType = containerContentType;
 
-                // Weld every part and every field to the ContentItem (if it's not already there).
-                foreach (var p in container.ContentItem.Parts) {
-                    if (p.PartDefinition.Name.Equals(containerContentType + "Part", StringComparison.OrdinalIgnoreCase)) {
-                        // If it's the part containing misc fields (e.g. {ContentType}Part), weld the fields but not the entire part.
-                        foreach (var f in p.Fields) {
-                            var weldField = false;
-                            if (f.PartFieldDefinition.Settings.ContainsKey("ContentFieldCombinationWeldingSettings.WeldToCombination")) {
-                                bool.TryParse(f.PartFieldDefinition.Settings["ContentFieldCombinationWeldingSettings.WeldToCombination"], out weldField);
-                            }
+                    // Weld every part and every field to the ContentItem (if it's not already there).
+                    foreach (var p in container.ContentItem.Parts) {
+                        if (p.PartDefinition.Name.Equals(containerContentType + "Part", StringComparison.OrdinalIgnoreCase)) {
+                            // If it's the part containing misc fields (e.g. {ContentType}Part), weld the fields but not the entire part.
+                            foreach (var f in p.Fields) {
+                                var weldField = false;
+                                if (f.PartFieldDefinition.Settings.ContainsKey("ContentFieldCombinationWeldingSettings.WeldToCombination")) {
+                                    bool.TryParse(f.PartFieldDefinition.Settings["ContentFieldCombinationWeldingSettings.WeldToCombination"], out weldField);
+                                }
 
-                            if (weldField) {
-                                part.Weld(f);
+                                if (weldField) {
+                                    part.Weld(f);
+                                }
                             }
-                        }
-                    } else {
-                        if (part.ContentItem.Parts.FirstOrDefault(pa => pa.PartDefinition.Name == p.PartDefinition.Name) == null) {
+                        } else {
+                            if (part.ContentItem.Parts.FirstOrDefault(pa => pa.PartDefinition.Name == p.PartDefinition.Name) == null) {
                                 var fieldsToWeld = p.Fields
                                     .Where(f => f.PartFieldDefinition.Settings.ContainsKey("ContentFieldCombinationWeldingSettings.WeldToCombination")
                                         && bool.Parse(f.PartFieldDefinition.Settings["ContentFieldCombinationWeldingSettings.WeldToCombination"]))

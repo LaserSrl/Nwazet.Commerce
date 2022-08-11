@@ -852,7 +852,7 @@
     <Compile Include="Settings\Combinations\CombinationContainerPartEditorEvents.cs" />
     <Compile Include="Settings\Combinations\CombinationContainerPartSettings.cs" />
     <Compile Include="Settings\Combinations\ContentFieldCombinationWeldingSettings.cs" />
-    <Compile Include="Settings\Combinations\ContentFieldCombinationWeldingSettingsEditorEventscs.cs" />
+    <Compile Include="Settings\Combinations\ContentFieldCombinationWeldingSettingsEditorEvents.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationEditorEvents.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationSettings.cs" />
     <Compile Include="Settings\TerritoryHierarchyPartEditorEvents.cs" />
