@@ -112,6 +112,14 @@ namespace Nwazet.Commerce.Services.Combinations {
                         DiscountComment: discountedPriceQuantity.Comment)
                 });
 
+                details.Add(new CombinationDetailShape {
+                    RoleKey = "product-image",
+                    Shape = shapeHelper.Combinations_ProductImage(
+                        ContentItem: productPart.ContentItem,
+                        ProductPart: productPart,
+                        CombinationPart: part)
+                });
+
                 return details;
             }
 
