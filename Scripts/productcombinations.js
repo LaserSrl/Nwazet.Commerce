@@ -29,28 +29,13 @@
                 var $newElement = newInfoElements.filter('[data-commerce-role="' + roleKey + '"]');
                 if ($newElement && $newElement.length) {
                     $element.html($newElement.html());
+                    var eventToTrigger = $element.data('commerce-event');
+                    if (eventToTrigger) {
+                        $element.trigger(eventToTrigger);
+                    }
                 }
             }
         });
-    }
-
-    function goToCombinationSlides(productId, combinationId) {
-        var infoElements =
-            $('head script[data-for-product="' + productId + '"][data-for-combination="' + combinationId + '"][data-commerce-role=product-image');
-
-        if (infoElements) {
-            var firstMediaId = infoElements.html();
-            if (firstMediaId) {
-                firstMediaId = firstMediaId.trim();
-            }
-            if (firstMediaId && firstMediaId.length) {
-                var slide = $("[mid=" + firstMediaId + "]", $(".slick-slide:not(.slick-cloned)"));
-                if (slide) {
-                    var sliderIndex = slide.parent().parent().data("slick-index");
-                    $(".slick-slider").slick("slickGoTo", sliderIndex, true)
-                }
-            }
-        }
     }
 
     $('[data-input-role="combination_id"][data-for-product]').on('change', function () {
@@ -60,7 +45,7 @@
         var prodId = $(this).data('for-product');
         var combId = $(this).val();
         updateProductInformation(prodId, combId);
-        goToCombinationSlides(prodId, combId);
+        //goToCombinationSlides(prodId, combId);
     });
     // Use the default combination as the "selected" product
     $('[data-input-role="combination_id"][data-for-product]').each(function (index, element) {

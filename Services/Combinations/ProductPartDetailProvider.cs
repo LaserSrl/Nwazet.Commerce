@@ -125,7 +125,7 @@ namespace Nwazet.Commerce.Services.Combinations {
 
             return Enumerable.Empty<CombinationDetailShape>();
         }
-
+        
         #region ISKUUniquenessHelper
         // While the implementation here makes the relationship among inventories
         // explicit, ProductCombinationsGroupInventoryProvider prevents inventories from 
