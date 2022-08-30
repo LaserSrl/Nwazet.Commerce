@@ -29,7 +29,7 @@
                 var $newElement = newInfoElements.filter('[data-commerce-role="' + roleKey + '"]');
                 if ($newElement && $newElement.length) {
                     $element.html($newElement.html());
-                    var eventToTrigger = $element.data('commerce-event');
+                    var eventToTrigger = $element.data('trigger-event');
                     if (eventToTrigger) {
                         $element.trigger(eventToTrigger);
                     }
