@@ -56,7 +56,8 @@ namespace Nwazet.Commerce.Services.Combinations {
             if (sourceProductPart != null && targetProductPart != null) {
                 // Simply copy all properties from the container to the 
                 // combination.
-                targetProductPart.Sku = sourceProductPart.Sku;
+                var sku = GenerateUniqueSku(sourceProductPart, targetProductPart);
+                targetProductPart.Sku = sku;
                 targetProductPart.Price = sourceProductPart.Price;
                 targetProductPart.DiscountPrice = sourceProductPart.DiscountPrice;
                 targetProductPart.ShippingCost = sourceProductPart.ShippingCost;
@@ -67,6 +68,10 @@ namespace Nwazet.Commerce.Services.Combinations {
                 targetProductPart.AuthenticationRequired = sourceProductPart.AuthenticationRequired;
                 targetProductPart.IsDigital = sourceProductPart.IsDigital;
             }
+        }
+
+        protected string GenerateUniqueSku(ProductPart source, ProductPart target) {
+            return source.Sku + "-" + target.Id.ToString();
         }
 
         public override IEnumerable<CombinationDetailShape> GetCombinationDetailShapes(
@@ -107,12 +112,18 @@ namespace Nwazet.Commerce.Services.Combinations {
                         DiscountComment: discountedPriceQuantity.Comment)
                 });
 
+                details.Add(new CombinationDetailShape {
+                    RoleKey = "product-first-mediaid",
+                    Shape = shapeHelper.Combinations_ProductFirstMediaId(
+                        CombinationPart: part)
+                });
+
                 return details;
             }
 
             return Enumerable.Empty<CombinationDetailShape>();
         }
-
+        
         #region ISKUUniquenessHelper
         // While the implementation here makes the relationship among inventories
         // explicit, ProductCombinationsGroupInventoryProvider prevents inventories from 

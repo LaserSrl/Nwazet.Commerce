@@ -247,6 +247,7 @@
     <None Include="Views\BankTransferOrderAdditionalFrontEndData.cshtml" />
     <None Include="Views\CombinationConfigurationAdmin\Create.cshtml" />
     <None Include="Views\Combinations_ProductDiscountedPrice.cshtml" />
+    <None Include="Views\Combinations_ProductFirstMediaId.cshtml" />
     <None Include="Views\Combinations_ProductInventoryQuantities.cshtml" />
     <None Include="Views\Combinations_ProductVatConfiguration.cshtml" />
     <None Include="Views\Combinations_ProductPriceDetail.cshtml" />
@@ -269,6 +270,7 @@
     <None Include="Views\CouponingLineCriterion\Add.cshtml" />
     <None Include="Views\CouponingLineCriterion\Edit.cshtml" />
     <None Include="Views\DefinitionTemplates\CombinationContainerPartSettings.cshtml" />
+    <None Include="Views\DefinitionTemplates\ContentFieldCombinationWeldingSettings.cshtml" />
     <None Include="Views\DefinitionTemplates\TerritoryHierarchyPartSettingsViewModel.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.Empty.cshtml" />
@@ -687,6 +689,7 @@
     <Compile Include="Services\Combinations\ProductCombinationService.cs" />
     <Compile Include="Services\Combinations\ProductCombinationsGroupInventoryProvider.cs" />
     <Compile Include="Services\Combinations\ProductPartDetailProvider.cs" />
+    <Compile Include="Services\Combinations\TermsPartDetailProvider.cs" />
     <Compile Include="Services\Combinations\VatConfigurationPartDetailProvider.cs" />
     <Compile Include="Services\Couponing\BaseCouponApplicabilityCriterion.cs" />
     <Compile Include="Services\Couponing\BaseCouponCriterionProvider.cs" />
@@ -851,6 +854,8 @@
     <Compile Include="Settings\BundleProductSettings.cs" />
     <Compile Include="Settings\Combinations\CombinationContainerPartEditorEvents.cs" />
     <Compile Include="Settings\Combinations\CombinationContainerPartSettings.cs" />
+    <Compile Include="Settings\Combinations\ContentFieldCombinationWeldingSettings.cs" />
+    <Compile Include="Settings\Combinations\ContentFieldCombinationWeldingSettingsEditorEvents.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationEditorEvents.cs" />
     <Compile Include="Settings\ProductAttributeLocalizationSettings.cs" />
     <Compile Include="Settings\TerritoryHierarchyPartEditorEvents.cs" />

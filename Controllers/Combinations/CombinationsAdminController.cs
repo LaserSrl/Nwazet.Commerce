@@ -162,6 +162,7 @@ namespace Nwazet.Commerce.Controllers {
                     comboStatus.AddRange(provider.CombinationStatus(container, combination));
                 }
                 combinations.Add(new JsonCombination {
+                    Sku = combination.ContentItem.As<ProductPart>().Sku,
                     Title = _productCombinationService.CombinationDisplayText(combination),
                     EditUrl= _url.ItemEditUrl((IContent)combination.ContentItem, new { returnUrl = Url.ItemEditUrl(combination.CombinationContainerPart.ContentItem) }),
                     DeleteUrl= _url.ItemRemoveUrl(combination.ContentItem, new { returnUrl = Url.ItemEditUrl(combination.CombinationContainerPart.ContentItem) }),
@@ -186,6 +187,7 @@ namespace Nwazet.Commerce.Controllers {
         }
         
         class JsonCombination {
+            public string Sku { get; set; }
             public string Title { get; set; }
             public string EditUrl { get; set; }
             public string DeleteUrl { get; set; }
