@@ -201,8 +201,15 @@ namespace Nwazet.Commerce.Controllers {
                         ? T("Your content has been created.")
                         : T("Your {0} has been created.", item.TypeDefinition.DisplayName));
 
-                    return this.RedirectLocal(returnUrl, () =>
-                        RedirectToAction("EditProduct", new RouteValueDictionary { { "Id", item.Id } }));
+                    return this.RedirectLocal(returnUrl,
+                        // fall back to edit action on default ContentItem controller
+                        () => RedirectToAction(
+                            "Edit",
+                            "Admin",
+                            new RouteValueDictionary {
+                                { "Area", "Contents" },
+                                { "Id", item.Id },
+                            }));
                 }
             });
         }
