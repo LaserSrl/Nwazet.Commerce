@@ -80,11 +80,11 @@ namespace Nwazet.Commerce.Drivers {
                     .ToList()
             };
             if (updater.TryUpdateModel(viewModel, Prefix, null, null)) {
-                part.DisplayName = viewModel.DisplayName.Trim();
+                part.DisplayName = viewModel.DisplayName?.Trim();
                 part.TechnicalName = viewModel.TechnicalName.Trim();
                 part.SortOrder = viewModel.SortOrder;
-                part.CssName = viewModel.CssName.Trim();
-                part.Meaning = viewModel.Meaning.Trim();
+                part.CssName = viewModel.CssName?.Trim();
+                part.Meaning = viewModel.Meaning?.Trim();
                 foreach (var rec in viewModel.AttributeValueRecords.Where(vm => !vm.Deleted).Select(vm => vm.AttributeValueRecord)) {
                     if (rec.Id==-1) {
                         // added new product attribute value record
