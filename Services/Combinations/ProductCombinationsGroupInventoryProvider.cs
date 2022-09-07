@@ -3,23 +3,17 @@ using Nwazet.Commerce.Services.Inventory;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nwazet.Commerce.Services.Combinations {
     [OrchardFeature("Nwazet.ProductCombinations")]
     public class ProductCombinationsGroupInventoryProvider : ProductGroupInventoryProviderBase {
-        private readonly IContentManager _contentManager;
 
         public ProductCombinationsGroupInventoryProvider(
-            IWorkContextAccessor workContextAccessor,
-            IContentManager contentManager)
+            IWorkContextAccessor workContextAccessor)
             : base(workContextAccessor) {
 
-            _contentManager = contentManager;
         }
 
         public override IEnumerable<ProductPart> FilterProductsWithSameInventory(
@@ -29,19 +23,9 @@ namespace Nwazet.Commerce.Services.Combinations {
             // inventory on.
             var combinationContainer = part.As<CombinationContainerPart>();
             if (combinationContainer != null) {
-                // We should remove every combination in every language with this same sku.
-                // First, get all CombinationContainers with this sku.
-                var combinationContainers = _contentManager
-                    .Query<ProductPart, ProductPartVersionRecord>(VersionOptions.Latest)
-                    .Where(pa => pa.Sku == part.Record.Sku)
-                    .List()
-                    .Select(cp => cp.As<CombinationContainerPart>());
-
-                // For each container, get its combinations.
-                return combinationContainers
-                    .SelectMany(cc => cc.CombinationParts)
-                    .ToList()
-                    .Select(cp => cp.As<ProductPart>());
+                return combinationContainer.CombinationParts
+                    .Select(cp => cp.As<ProductPart>())
+                    .ToList();
             } else {
                 // If the product is a combination, we should remove its container
                 // and its siblings (combinations of the same container) from the
@@ -55,24 +39,6 @@ namespace Nwazet.Commerce.Services.Combinations {
                         .CombinationContainerPart.CombinationParts
                         .Select(cp => cp.As<ProductPart>()));
                     toRemove.RemoveAll(pp => pp.Id == combination.Id);
-
-                    // I also need to remove combinations with the same sku and other CombinationContainers (e.g. in the case of localized products).
-                    // Containers with the same sku
-                    var combinationContainers = _contentManager
-                        .Query<ProductPart, ProductPartVersionRecord>(VersionOptions.Latest)
-                        .Where(pa => pa.Sku == part.Record.Sku)
-                        .List()
-                        .Select(cp => cp.As<CombinationContainerPart>());
-                    toRemove.AddRange(combinationContainers
-                        .ToList()
-                        .Select(cc => cc.As<ProductPart>()));
-
-                    // Combinations inside containers with the same sku
-                    toRemove.AddRange(combinationContainers
-                        .SelectMany(cc => cc.CombinationParts)
-                        .ToList()
-                        .Select(cp => cp.As<ProductPart>()));
-
                     return toRemove.ToList();
                 }
             }
@@ -125,7 +91,7 @@ namespace Nwazet.Commerce.Services.Combinations {
                 // not all equal.
                 results.Add(group);
             }
-            
+
             return results.ToList(); // Enumerate just in case.
         }
     }

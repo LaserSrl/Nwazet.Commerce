@@ -21,6 +21,8 @@ namespace Nwazet.Commerce.Drivers {
         private readonly IEnumerable<IProductAttributeExtensionProvider> _attributeExtensionProviders;
         private readonly IProductAttributeNameService _productAttributeNameService;
 
+        private const string _cssNamePattern = @"-?[_a-zA-Z]+[_a-zA-Z0-9-]*";
+
         public ProductAttributePartDriver(
            IOrchardServices services,
            IEnumerable<IProductAttributeExtensionProvider> attributeExtensionProviders,
@@ -80,13 +82,15 @@ namespace Nwazet.Commerce.Drivers {
                     .ToList()
             };
             if (updater.TryUpdateModel(viewModel, Prefix, null, null)) {
-                part.DisplayName = viewModel.DisplayName.Trim();
-                part.TechnicalName = viewModel.TechnicalName.Trim();
+                part.DisplayName = viewModel.DisplayName?.Trim();
+                part.TechnicalName = viewModel.TechnicalName?.Trim();
                 part.SortOrder = viewModel.SortOrder;
-                part.CssName = viewModel.CssName.Trim();
-                part.Meaning = viewModel.Meaning.Trim();
-                foreach (var rec in viewModel.AttributeValueRecords.Where(vm => !vm.Deleted).Select(vm => vm.AttributeValueRecord)) {
-                    if (rec.Id==-1) {
+                part.CssName = viewModel.CssName?.Trim();
+                part.Meaning = viewModel.Meaning?.Trim();
+                foreach (var rec in viewModel.AttributeValueRecords
+                    .Where(vm => !vm.Deleted).Select(vm => vm.AttributeValueRecord)) {
+                    // for each of the attribute values that aren't marked to be deleted:
+                    if (rec.Id == -1) {
                         // added new product attribute value record
                         part.Record.AttributeValueRecords.Add(new ProductAttributeValueRecord {
                             GUIdentifier = rec.GUIdentifier,
@@ -110,7 +114,10 @@ namespace Nwazet.Commerce.Drivers {
                         }
                     }
                 }
-                foreach (var rec in viewModel.AttributeValueRecords.Where(vm => vm.Deleted).Select(vm => vm.AttributeValueRecord)) {
+                foreach (var rec in viewModel.AttributeValueRecords
+                    .Where(vm => vm.Deleted)
+                    .Select(vm => vm.AttributeValueRecord)) {
+                    // for each of the attribute values that are marked to be deleted:
                     var valueRecord = part.Record.AttributeValueRecords
                          .FirstOrDefault(r => r.Id == rec.Id);
                     if (valueRecord != null) {
@@ -118,11 +125,11 @@ namespace Nwazet.Commerce.Drivers {
                     }
                 }
 
-                //check TechnicalName for invalid characters
+                // check TechnicalName for invalid characters
                 if (!string.Equals(part.TechnicalName, part.TechnicalName.ToSafeName(), StringComparison.OrdinalIgnoreCase)) {
                     updater.AddModelError("Name", T("The technical name contains invalid characters."));
                 }
-                //ensure uniqueness of TechnicalName
+                // ensure uniqueness of TechnicalName
                 var tName = part.TechnicalName;
                 var processTechnicalName = _productAttributeNameService.ProcessTechnicalName(part);
                 if (!processTechnicalName) {
@@ -131,15 +138,18 @@ namespace Nwazet.Commerce.Drivers {
                         tName, part.TechnicalName));
                 }
 
-                // valid CssName and Meaning
-                var cssNamePattern = @"-?[_a-zA-Z]+[_a-zA-Z0-9-]*";
-                var cssNames = part.CssName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(s => s.Trim());
-                if (!cssNames.All(n => Regex.IsMatch(n, cssNamePattern))) {
-                    updater.AddModelError("CssName", T("The css name contains invalid characters."));
+                // validate CssName and Meaning. Both are optional.
+                if (!string.IsNullOrWhiteSpace(part.CssName)) {
+                    var cssNames = part.CssName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => s.Trim());
+                    if (!cssNames.All(n => Regex.IsMatch(n, _cssNamePattern))) {
+                        updater.AddModelError("CssName", T("The css name contains invalid characters."));
+                    }
                 }
-                if (!Regex.IsMatch(part.Meaning, cssNamePattern)) {
-                    updater.AddModelError("Meaning", T("The meaning contains invalid characters."));
+                if (!string.IsNullOrWhiteSpace(part.Meaning)) {
+                    if (!Regex.IsMatch(part.Meaning, _cssNamePattern)) {
+                        updater.AddModelError("Meaning", T("The meaning contains invalid characters."));
+                    }
                 }
 
                 // in edit the value of technical name cannot be changed

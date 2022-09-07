@@ -38,5 +38,9 @@ namespace Nwazet.Commerce.Services.Combinations {
             // Base implementation empty on purpose
             return Enumerable.Empty<CombinationDetailShape>();
         }
+
+        public virtual void AfterLoaded(CombinationPart part) {
+            // Base implementation empty on purpose.
+        }
     }
 }
