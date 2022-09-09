@@ -247,8 +247,8 @@
     <None Include="Views\BankTransferOrderAdditionalFrontEndData.cshtml" />
     <None Include="Views\CombinationConfigurationAdmin\Create.cshtml" />
     <None Include="Views\Combinations_ProductDiscountedPrice.cshtml" />
-    <None Include="Views\Combinations_ProductFirstMediaId.cshtml" />
     <None Include="Views\Combinations_ProductInventoryQuantities.cshtml" />
+    <None Include="Views\Combinations_ProductPictures.cshtml" />
     <None Include="Views\Combinations_ProductVatConfiguration.cshtml" />
     <None Include="Views\Combinations_ProductPriceDetail.cshtml" />
     <None Include="Views\Combinations_ProductPrice.cshtml" />

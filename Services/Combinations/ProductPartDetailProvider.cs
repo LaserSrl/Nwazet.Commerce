@@ -113,8 +113,9 @@ namespace Nwazet.Commerce.Services.Combinations {
                 });
 
                 details.Add(new CombinationDetailShape {
-                    RoleKey = "product-first-mediaid",
-                    Shape = shapeHelper.Combinations_ProductFirstMediaId(
+                    RoleKey = "product-pictures",
+                    Shape = shapeHelper.Combinations_ProductPictures(
+                        ProductPart: productPart,
                         CombinationPart: part)
                 });
 
