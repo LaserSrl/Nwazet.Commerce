@@ -17,8 +17,9 @@ namespace Nwazet.Commerce.Services.Combinations {
 
         private readonly IContentManager _contentManager;
 
-        public LocalizedCombinationStatusProvider(
-            IContentManager contentManager) {
+        public LocalizedCombinationStatusProvider (
+            IProductAttributeAdminServices productAttributeAdminServices,
+            IContentManager contentManager) : base (productAttributeAdminServices, contentManager) {
             T = NullLocalizer.Instance;
 
             _contentManager = contentManager;

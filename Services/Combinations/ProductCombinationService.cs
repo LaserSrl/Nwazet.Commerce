@@ -170,9 +170,17 @@ namespace Nwazet.Commerce.Services.Combinations {
                 }
             }
             var textElements = comboValues == null ? new List<string>() : comboValues
-                .Select(cv => _attributeNames[cv.AttributeId] + " " + _attributeValueText[cv.AttributeValue]);
+                .Select(cv => GetDisplayText(cv)).Where(s => !string.IsNullOrWhiteSpace(s));
             // TODO: when Attributes get their own records for values, handle them here properly
             return string.Join(", ", textElements);
+        }
+
+        private string GetDisplayText(AttributesToCombine cv) {
+            if (_attributeNames.ContainsKey(cv.AttributeId) && _attributeValueText.ContainsKey(cv.AttributeValue)) {
+                return _attributeNames[cv.AttributeId] + " " + _attributeValueText[cv.AttributeValue];
+            } else {
+                return T("Invalid attribute").Text;
+            }
         }
 
         public void CreateCombinationType(
