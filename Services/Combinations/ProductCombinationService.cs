@@ -122,6 +122,7 @@ namespace Nwazet.Commerce.Services.Combinations {
                 var combinationPart = newItem.As<CombinationPart>();
                 combinationPart.CombinationContainerPartField.Value = containerPart;
                 combinationPart.ProductAttributeValues = combination;
+                SaveAttributes(combinationPart, combination);
                 // Sync information from the container to the combination
                 foreach (var provider in DetailProviders) {
                     provider.Synchronize(containerPart, combinationPart);
@@ -135,6 +136,14 @@ namespace Nwazet.Commerce.Services.Combinations {
             }
 
             return createdItems;
+        }
+
+        public void SaveAttributes(CombinationPart combinationPart, IEnumerable<AttributesToCombine> attributes) {
+            //var paps = _contentManager.Query<ProductAttributePart>(VersionOptions.Latest)
+            //    .ForContentItems(attributes.Select(a => a.AttributeValue))
+            //    .List();
+
+            //combinationPart.ProductAttributeParts = paps;
         }
 
         private Dictionary<int, string> _attributeNames;
@@ -170,9 +179,17 @@ namespace Nwazet.Commerce.Services.Combinations {
                 }
             }
             var textElements = comboValues == null ? new List<string>() : comboValues
-                .Select(cv => _attributeNames[cv.AttributeId] + " " + _attributeValueText[cv.AttributeValue]);
+                .Select(cv => GetDisplayText(cv)).Where(s => !string.IsNullOrWhiteSpace(s));
             // TODO: when Attributes get their own records for values, handle them here properly
             return string.Join(", ", textElements);
+        }
+
+        private string GetDisplayText(AttributesToCombine cv) {
+            if (_attributeNames.ContainsKey(cv.AttributeId) && _attributeValueText.ContainsKey(cv.AttributeValue)) {
+                return _attributeNames[cv.AttributeId] + " " + _attributeValueText[cv.AttributeValue];
+            } else {
+                return T("Invalid attributes").Text;
+            }
         }
 
         public void CreateCombinationType(

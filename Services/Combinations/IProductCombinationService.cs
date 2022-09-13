@@ -27,5 +27,7 @@ namespace Nwazet.Commerce.Services.Combinations {
 
         string GetCombinationContentType(
             CombinationContainerPart containerPart);
+
+        void SaveAttributes(CombinationPart combinationPart, IEnumerable<AttributesToCombine> attributes);
     }
 }

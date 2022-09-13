@@ -1,5 +1,7 @@
-﻿using Nwazet.Commerce.Models;
+﻿using Newtonsoft.Json;
+using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services.Combinations;
+using Nwazet.Commerce.ViewModels.Combinations;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
@@ -169,7 +171,7 @@ namespace Nwazet.Commerce.Handlers.Combinations {
                                 Services.Notifier.Error(T("The selected combination already exists."));
                             }
                         }
-                        Services.Notifier.Information(T("Your combination has been moved under the <a href=\"{0}\">{1}</a",
+                        Services.Notifier.Information(T("Your combination has been moved under the <a href=\"{0}\">{1}</a>",
                             _url.ItemEditUrl(part.CombinationContainerPart),
                             _contentManager.GetItemMetadata(part.CombinationContainerPart).DisplayText));
                     }

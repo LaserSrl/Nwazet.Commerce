@@ -4,6 +4,7 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.Utilities;
 using Orchard.Environment.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.ProductCombinations")]
@@ -28,6 +29,15 @@ namespace Nwazet.Commerce.Models {
                 Store(r => r.ProductAttributeValues, serialized);
             }
         }
+
+        //public IEnumerable<ProductAttributePart> ProductAttributeParts {
+        //    get {
+        //        return Retrieve(r => r.ProductAttributeParts);
+        //    }
+        //    set {
+        //        Store(r => r.ProductAttributeParts, value);
+        //    }
+        //}
 
         public static IEnumerable<AttributesToCombine> DeserializeCombinations(
             CombinationPartRecord record) {
