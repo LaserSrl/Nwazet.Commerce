@@ -188,7 +188,7 @@ namespace Nwazet.Commerce.Services.Combinations {
             if (_attributeNames.ContainsKey(cv.AttributeId) && _attributeValueText.ContainsKey(cv.AttributeValue)) {
                 return _attributeNames[cv.AttributeId] + " " + _attributeValueText[cv.AttributeValue];
             } else {
-                return T("Invalid attributes").Text;
+                return T("Invalid attribute").Text;
             }
         }
 
