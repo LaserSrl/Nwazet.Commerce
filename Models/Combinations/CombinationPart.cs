@@ -30,15 +30,6 @@ namespace Nwazet.Commerce.Models {
             }
         }
 
-        //public IEnumerable<ProductAttributePart> ProductAttributeParts {
-        //    get {
-        //        return Retrieve(r => r.ProductAttributeParts);
-        //    }
-        //    set {
-        //        Store(r => r.ProductAttributeParts, value);
-        //    }
-        //}
-
         public static IEnumerable<AttributesToCombine> DeserializeCombinations(
             CombinationPartRecord record) {
             var serialized = record.ProductAttributeValues ?? string.Empty;

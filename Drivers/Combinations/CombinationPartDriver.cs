@@ -118,7 +118,6 @@ namespace Nwazet.Commerce.Drivers.Combinations {
 
             // Create the new contents
             part.ProductAttributeValues = attributeToCombine;
-            _productCombinationService.SaveAttributes(part, attributeToCombine);
 
             Services.Notifier.Information(T("A new combination has been created"));
 

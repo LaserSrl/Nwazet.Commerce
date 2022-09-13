@@ -22,7 +22,5 @@ namespace Nwazet.Commerce.Models {
         // when it will be probably replaced by a list of records.
         // Right now it's the json serialization of Selected AttributesToCombine
         public virtual string ProductAttributeValues { get; set; }
-
-        //public virtual IEnumerable<ProductAttributePart> ProductAttributeParts { get; set; }
     }
 }

@@ -122,7 +122,6 @@ namespace Nwazet.Commerce.Services.Combinations {
                 var combinationPart = newItem.As<CombinationPart>();
                 combinationPart.CombinationContainerPartField.Value = containerPart;
                 combinationPart.ProductAttributeValues = combination;
-                SaveAttributes(combinationPart, combination);
                 // Sync information from the container to the combination
                 foreach (var provider in DetailProviders) {
                     provider.Synchronize(containerPart, combinationPart);
@@ -136,14 +135,6 @@ namespace Nwazet.Commerce.Services.Combinations {
             }
 
             return createdItems;
-        }
-
-        public void SaveAttributes(CombinationPart combinationPart, IEnumerable<AttributesToCombine> attributes) {
-            //var paps = _contentManager.Query<ProductAttributePart>(VersionOptions.Latest)
-            //    .ForContentItems(attributes.Select(a => a.AttributeValue))
-            //    .List();
-
-            //combinationPart.ProductAttributeParts = paps;
         }
 
         private Dictionary<int, string> _attributeNames;
