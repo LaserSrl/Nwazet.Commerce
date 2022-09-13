@@ -88,11 +88,24 @@ namespace Nwazet.Commerce.Reports {
                 .ToDictionary(sale => sale.Id, sale => sale.ProductVersion);
 
             // TO DO: within the dictionary there must be the uniquekey and not the product id
-            var titleProducts = seriesProduct
-                .Select(i => _contentManager.Get<TitlePart>(i.Key,
-                            (i.Key != 0 ? VersionOptions.Number(i.Value) :
-                            VersionOptions.Number(_contentManager.GetAllVersions(i.Key).Max(cv => cv.VersionRecord.Number)))))
-                .ToDictionary(t => t.Id, t => t.Title);
+            //var titleProducts = seriesProduct
+            //    .Select(i => _contentManager.Get<TitlePart>(i.Key,
+            //                (i.Key != 0 ? VersionOptions.Number(i.Value) :
+            //                VersionOptions.Number(_contentManager.GetAllVersions(i.Key).Max(cv => cv.VersionRecord.Number)))))
+            //    .ToDictionary(t => t.Id, t => t.Title);
+            // Using titles from order items, avoiding queries on TitlePart and ensuring compatibility with Product Combinations (which have no TitlePart).
+            // TODO: ensure that product collection has actually unique ids with the Distinct() function.
+            // This because potentially title may change between orders.
+            var titleProducts = orders
+                .SelectMany(order => order
+                    .As<OrderPart>()
+                    .Items
+                    .Select(item => new {
+                        Id = item.ProductId,
+                        Title = item.Title
+                    }))
+                    .Distinct()
+                .ToDictionary(p => p.Id, p => p.Title);
 
             while (intervalStart < endDate) {
                 var ordersForInterval = orders.Where(
