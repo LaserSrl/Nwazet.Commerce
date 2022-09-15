@@ -70,22 +70,24 @@ namespace Nwazet.Commerce.Reports {
                     .Select(item => new {
                         Id = item.ProductId,
                         Amount = (item.Quantity * item.Price) + item.LinePriceAdjustment,
-                        ProductVersion = item.ProductVersion
+                        ProductVersion = item.ProductVersion,
+                        Title = item.Title
                     }))
                 .GroupBy(item => item.Id)
                 .Select(group => new {
                     Id = group.Key,
                     Amount = group.Sum(item => item.Amount),
-                    ProductVersion = group.Max(item => item.ProductVersion)
+                    ProductVersion = group.Max(item => item.ProductVersion),
+                    Title = group.FirstOrDefault(item => !string.IsNullOrWhiteSpace(item.Title))?.Title ?? ""
                 })
                 .OrderByDescending(sale => sale.Amount)
                 .Take(HowManyProductsAreDisplayed);
 
-            var seriesProductIds = seriesIds
-                .Select(sale => sale.Id);
+            var seriesProductIds = seriesIds.Distinct()
+                .Select(sale => sale.Id.ToString() + "_" + sale.ProductVersion.ToString() + "_" + sale.Title);
 
-            var seriesProduct = seriesIds
-                .ToDictionary(sale => sale.Id, sale => sale.ProductVersion);
+            var seriesProduct = seriesIds.Distinct()
+                .ToDictionary(sale => sale.Id.ToString() + "_" + sale.ProductVersion.ToString() + "_" + sale.Title, sale => sale.ProductVersion);
 
             // TO DO: within the dictionary there must be the uniquekey and not the product id
             //var titleProducts = seriesProduct
@@ -99,12 +101,12 @@ namespace Nwazet.Commerce.Reports {
             var titleProducts = orders
                 .SelectMany(order => order
                     .As<OrderPart>()
-                    .Items
-                    .Select(item => new {
-                        Id = item.ProductId,
-                        Title = item.Title
-                    }))
-                    .Distinct()
+                    .Items)
+                .Select(item => new {
+                    Id = item.ProductId.ToString() + "_" + item.ProductVersion.ToString() + "_" + item.Title,
+                    Title = item.Title
+                })
+                .Distinct()
                 .ToDictionary(p => p.Id, p => p.Title);
 
             while (intervalStart < endDate) {
@@ -122,9 +124,10 @@ namespace Nwazet.Commerce.Reports {
                     Series = ordersForInterval
                         .SelectMany(order => order
                             .Items
-                            .Where(item => seriesProductIds.Contains(item.ProductId)))
-                        .GroupBy(item => item.ProductId)
+                            .Where(item => seriesProductIds.Contains(item.ProductId.ToString() + "_" + item.ProductVersion.ToString() + "_" + item.Title)))
+                        .GroupBy(item => (item.ProductId.ToString() + "_" + item.ProductVersion.ToString() + "_" + item.Title))
                         .Where(group => titleProducts.ContainsKey(group.Key))
+                        .Distinct()
                         .ToDictionary(
                             group => group.Key,
                             group => new ReportDataPoint {
@@ -140,7 +143,7 @@ namespace Nwazet.Commerce.Reports {
                 Series = seriesProductIds
                     .Where(id => titleProducts.ContainsKey(id))
                     .Select(id => titleProducts[id]).ToList(),
-                OrderBySeriesId= seriesProductIds
+                OrderBySeriesId = seriesProductIds
             };
         }
     }
