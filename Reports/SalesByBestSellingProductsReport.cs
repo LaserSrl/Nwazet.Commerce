@@ -115,26 +115,41 @@ namespace Nwazet.Commerce.Reports {
                               && common.CreatedUtc < intervalEnd)
                     .Select(common => common.As<OrderPart>())
                     .ToList();
-                               
-                results.Add(new ReportDataPoint {
-                    Description = granularity.ToString(intervalStart, CultureInfo.CurrentUICulture),
-                    Value = ordersForInterval.Any()
-                        ? ordersForInterval.Sum(order => order.AmountPaid)
-                        : 0.0M,
-                    Series = ordersForInterval
-                        .SelectMany(order => order
-                            .Items
-                            .Where(item => seriesProductIds.Contains(item.ProductId.ToString() + "_" + item.ProductVersion.ToString() + "_" + item.Title)))
-                        .GroupBy(item => (item.ProductId.ToString() + "_" + item.ProductVersion.ToString() + "_" + item.Title))
-                        .Where(group => titleProducts.ContainsKey(group.Key))
-                        .Distinct()
-                        .ToDictionary(
-                            group => group.Key,
-                            group => new ReportDataPoint {
-                                Description = titleProducts[group.Key],
-                                Value = group.Sum(item => (item.Quantity * item.Price) + item.LinePriceAdjustment)
-                            })
-                });
+
+                if (ordersForInterval.Any()) {
+                    results.Add(new ReportDataPoint {
+                        Description = granularity.ToString(intervalStart, CultureInfo.CurrentUICulture),
+                        Value = ordersForInterval.Any()
+                            ? ordersForInterval.Sum(order => order.AmountPaid)
+                            : 0.0M,
+                        Series = ordersForInterval
+                            .SelectMany(order => order
+                                .Items
+                                .Where(item => seriesProductIds.Contains(item.ProductId.ToString() + "_" + item.ProductVersion.ToString() + "_" + item.Title)))
+                            .GroupBy(item => (item.ProductId.ToString() + "_" + item.ProductVersion.ToString() + "_" + item.Title))
+                            .Where(group => titleProducts.ContainsKey(group.Key))
+                            .Distinct()
+                            .ToDictionary(
+                                group => group.Key,
+                                group => new ReportDataPoint {
+                                    Description = titleProducts[group.Key],
+                                    Value = group.Sum(item => (item.Quantity * item.Price) + item.LinePriceAdjustment)
+                                })
+                    });
+                } else if (titleProducts.Keys.Any()) {
+                    // If there is no order for the interval, add a empty series just to have it and avoid data shifting 
+                    // (e.g. no series for january -> february data is displayed for january inside the graph)
+                    // This can be done if there is at least a product in the order list.
+                    var rdp = new ReportDataPoint();
+                    rdp.Description = granularity.ToString(intervalStart, CultureInfo.CurrentUICulture);
+                    rdp.Value = 0.0M;
+                    rdp.Series = new Dictionary<string, ReportDataPoint>();
+                    rdp.Series.Add(titleProducts.Keys.First(), new ReportDataPoint {
+                        Description = titleProducts[titleProducts.Keys.First()],
+                        Value = 0.0M
+                    });
+                    results.Add(rdp);
+                }
                 intervalStart = intervalEnd;
                 intervalEnd = intervalStart + granularity;
             }
