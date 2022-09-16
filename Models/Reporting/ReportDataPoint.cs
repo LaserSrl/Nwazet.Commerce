@@ -6,6 +6,6 @@ namespace Nwazet.Commerce.Models.Reporting {
         public string Url { get; set; }
         public decimal Value { get; set; }
         public string ValueString { get; set; }
-        public IDictionary<int, ReportDataPoint> Series { get; set; }
+        public IDictionary<string, ReportDataPoint> Series { get; set; }
     }
 }
