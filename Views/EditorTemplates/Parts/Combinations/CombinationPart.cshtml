@@ -1,0 +1,34 @@
+﻿@using Nwazet.Commerce.Models;
+@using Nwazet.Commerce.Services.Combinations;
+@using Nwazet.Commerce.ViewModels.Combinations;
+@using Orchard;
+@using Orchard.ContentManagement;
+@model CombinationPartEditViewModel
+@{
+    var shortGuid = "c" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
+    var _productCombinationService = WorkContext.Resolve<IProductCombinationService>();
+
+
+    var _contentManager = WorkContext.Resolve<IContentManager>();
+}
+
+@if (Model.CombinationContainer != null || Model.Part.ProductAttributeValues != null) {
+    <div class="callout callout-info" id="@shortGuid">
+        @if (Model.CombinationContainer != null) {
+        <h4>
+            @T("This product is a variant of: ")
+            <a href="@Url.ItemEditUrl((IContent)(Model.CombinationContainer))">
+                @Html.ItemDisplayText((IContent)(Model.CombinationContainer))
+            </a>
+        </h4>
+        }
+        @if (Model.Part.ProductAttributeValues != null) {
+            var displayCombinations = _productCombinationService.CombinationDisplayText(Model.Part);
+
+            <p>
+                @T("It maps the following combination of attributes: {0}",
+                    displayCombinations)
+            </p>
+        }
+    </div>
+}

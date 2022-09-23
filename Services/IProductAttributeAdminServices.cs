@@ -6,5 +6,6 @@ namespace Nwazet.Commerce.Services {
     public interface IProductAttributeAdminServices : IDependency {
 
         IEnumerable<ProductAttributePart> GetAllProductAttributeParts();
+        IEnumerable<ProductAttributePart> GetProductAttributeParts(IEnumerable<int> ids);
     }
 }

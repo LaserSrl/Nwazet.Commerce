@@ -1,0 +1,14 @@
+﻿@using Nwazet.Commerce.Models;
+@using Nwazet.Commerce.Services.Combinations;
+@using Orchard.ContentManagement
+@using Orchard.Utility.Extensions
+@{
+    ContentItem contentItem = Model.ContentItem;
+    var typeDisplayName = contentItem.TypeDefinition.DisplayName ?? contentItem.ContentType.CamelFriendly();
+
+    Layout.Title = T("New {0}", Html.Raw(typeDisplayName)).Text;
+}
+@using (Html.BeginFormAntiForgeryPost(Url.Action("Create", new { ReturnUrl = Request.QueryString["returnUrl"] }), FormMethod.Post, new { enctype = "multipart/form-data" })) {
+    @Html.ValidationSummary()
+    @Display(Model)
+}

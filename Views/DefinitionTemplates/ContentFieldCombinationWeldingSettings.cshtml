@@ -1,0 +1,9 @@
+﻿@using Nwazet.Commerce.Settings.Combinations
+
+@model ContentFieldCombinationWeldingSettings
+
+<fieldset>
+    @Html.CheckBoxFor(m => m.WeldToCombination)
+    <label for="@Html.FieldIdFor(m => m.WeldToCombination)" class="forcheckbox">@T("Weld to combination")</label>
+    <span class="hint">@T("Check to weld this content part or field to the product combinations.")</span>
+</fieldset>

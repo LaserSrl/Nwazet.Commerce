@@ -8,15 +8,20 @@ using System.Linq;
 using Orchard.Utility.Extensions;
 using Nwazet.Commerce.Extensions;
 using System.Collections.Generic;
+using Orchard.Data;
 
 namespace Nwazet.Commerce.Migrations {
     [OrchardFeature("Nwazet.Attributes")]
     public class AttributesMigrations : DataMigrationImpl {
 
         private readonly IContentManager _contentManager;
+        private readonly IRepository<ProductAttributeValueRecord> _productAttributeValueRepository;
 
-        public AttributesMigrations(IContentManager contentManager) {
+        public AttributesMigrations(
+            IContentManager contentManager,
+            IRepository<ProductAttributeValueRecord> productAttributeValueRepository) {
             _contentManager = contentManager;
+            _productAttributeValueRepository = productAttributeValueRepository;
         }
 
         public int Create() {
@@ -117,6 +122,44 @@ namespace Nwazet.Commerce.Migrations {
             SchemaBuilder.AlterTable("ProductAttributePartRecord", table => table
                 .AddColumn<string>("Meaning"));
             return 6;
+        }
+
+        public int UpdateFrom6() {
+            SchemaBuilder.CreateTable("ProductAttributeValueRecord", table => table
+             .Column<int>("Id", col => col.PrimaryKey().Identity())
+             .Column<string>("GUIdentifier", col => col.WithLength(255).NotNull())
+             .Column<string>("Text", col => col.WithLength(500))
+             .Column<decimal>("PriceAdjustment")
+             .Column<bool>("IsLineAdjustment", col => col.WithDefault(false))
+             .Column<int>("SortOrder")
+             .Column<string>("ExtensionProvider", col => col.WithLength(500))
+             .Column<int>("AttributePartRecord_Id")
+            );
+
+            // merged existing values
+            var productAttributeParts = _contentManager.Query<ProductAttributePart, ProductAttributePartRecord>().List();
+            foreach (var attribute in productAttributeParts) {
+                string attributeValue = attribute.AttributeValuesString;
+                if (!string.IsNullOrWhiteSpace(attributeValue)) {
+                    var itemsAttribute = attributeValue.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(a => a.Split('='));
+                    foreach (var attr in itemsAttribute) {
+                        var attrSettings = attr[1].Split(',');
+                        _productAttributeValueRepository.Create(new ProductAttributeValueRecord {
+                            GUIdentifier = Guid.NewGuid().ToString(),
+                            Text = attr[0],
+                            PriceAdjustment = Convert.ToDecimal(attrSettings[0]),
+                            IsLineAdjustment = Convert.ToBoolean(attrSettings[1]),
+                            // Check if sort order value is present, didn't exist in previous versions
+                            SortOrder = attrSettings.Length > 2 ? Convert.ToInt32(attrSettings[2]) : 0,
+                            // Check if extension provider value is present, didn't exist in previous versions
+                            ExtensionProvider = attrSettings.Length > 3 ? attrSettings[3] : string.Empty,
+                            AttributePartRecord = attribute.Record
+                        });
+                    }
+                }
+            }
+            return 7;
         }
 
         private static string ConvertSerializedAttributeValues(string values) {
