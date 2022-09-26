@@ -35,11 +35,13 @@
             <button type="submit" class="addtocart-button">@T("Add to cart")</button>
         </div>
         <div data-cart-button-state="spinner" style="display:none"><span>@T("Adding...")</span></div>
-        @if ((int)Model.MinimumOrderQuantity > 1) {
-            <br /><strong>Minimum order of @Model.MinimumOrderQuantity required.</strong>
-        }
-        @if ((int)Model.MaximumOrderQuantity > 0) {
-            <br /><strong>Maximum order of @Model.MaximumOrderQuantity required.</strong>
-        }
+        <div data-commerce-role="product-inventory-quantities">
+            @if ((int)Model.MinimumOrderQuantity > 1) {
+                <br /><strong>Minimum order of @Model.MinimumOrderQuantity required.</strong>
+            }
+            @if ((int)Model.MaximumOrderQuantity > 0) {
+                <br /><strong>Maximum order of @Model.MaximumOrderQuantity required.</strong>
+            }
+        </div>
     </div>
 }

@@ -1,0 +1,32 @@
+﻿@using Nwazet.Commerce.Models;
+@using Nwazet.Commerce.Services.Combinations;
+@using Nwazet.Commerce.ViewModels.Combinations;
+@using Orchard;
+@using Orchard.ContentManagement;
+@model CombinationPartEditViewModel
+@using (Script.Foot()) {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var pageurl = '@Url.Action("GetCombination", "LocalizedCombination", new { area = "Nwazet.Commerce" })';
+            function filterCombinationCulture(culture) {
+                $.ajax({
+                    url: pageurl,
+                    data: { containerId: '@Model.CombinationContainer.Id', culture: culture },
+                    success: function (html) {
+                        $(".product-combination-attributes").replaceWith(html);
+                    },
+                    error: function (request, status, error) {
+                        alert(request.responseText);
+                    }
+                });
+            }
+
+            $("#Localization_SelectedCulture").on('change', function () {
+                var optionSelected = $("option:selected", this);
+                filterCombinationCulture($("#Localization_SelectedCulture").val());
+            });
+            $("#Localization_SelectedCulture").trigger("change");
+
+        });
+    </script>
+}

@@ -49,7 +49,7 @@
         }
         return s;
     };
-    var appendIfHasValue = function(array, item) {
+    var appendIfHasValue = function (array, item) {
         if (item.value) {
             array.push(item);
         }

@@ -108,6 +108,12 @@
     ]
   },
   {
+    "outputFileName": "Scripts/productcombinations.min.js",
+    "inputFiles": [
+      "Scripts/productcombinations.js"
+    ]
+  },
+  {
     "outputFileName": "Styles/attribute.nwazet-commerce-admin.min.css",
     "inputFiles": [
       "Styles/attribute.nwazet-commerce-admin.css"
@@ -165,6 +171,12 @@
     "outputFileName": "Styles/workflows-activity-order-tracking-url-changed.min.css",
     "inputFiles": [
       "Styles/workflows-activity-order-tracking-url-changed.css"
+    ]
+  },
+  {
+    "outputFileName": "Styles/product-combinations.nwazet-commerce.min.css",
+    "inputFiles": [
+      "Styles/product-combinations.nwazet-commerce.css"
     ]
   }
 ]

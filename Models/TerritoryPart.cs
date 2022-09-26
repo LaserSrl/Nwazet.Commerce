@@ -18,7 +18,7 @@ namespace Nwazet.Commerce.Models {
             set { Store(r => r.TerritoriesFullPath, value); }
         }
 
-    public LazyField<IEnumerable<ContentItem>> ChildrenField {
+        public LazyField<IEnumerable<ContentItem>> ChildrenField {
             get { return _children; }
         }
 

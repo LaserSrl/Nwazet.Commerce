@@ -23,7 +23,6 @@ namespace Nwazet.Commerce {
             manifest.DefineScript("Nwazet.Inventory").SetUrl("inventory.min.js?v=1.0", "inventory.js?v=1.0");
             manifest.DefineScript("Nwazet.Order-Admin").SetUrl("order-admin.min.js", "order-admin.js");
             manifest.DefineScript("Mustache").SetUrl("mustache.min.js", "mustache.js");
-            manifest.DefineScript("Nwazet.Attribute-Admin").SetUrl("attribute-admin.min.js", "attribute-admin.js");
             manifest.DefineScript("Nwazet.Territory-Hierarchies-Admin").SetUrl("territory-hierarchies-admin.min.js", "territory-hierarchies-admin.js");
             manifest.DefineScript("Nwazet.Wishlists").SetUrl("wishlists.min.js", "wishlists.js");
             manifest.DefineScript("Nwazet.ChartJs").SetUrl("chartjs.min.js", "chartjs.js");
@@ -35,15 +34,19 @@ namespace Nwazet.Commerce {
             manifest.DefineStyle("Nwazet.Bundle-Admin").SetUrl("bundle.nwazet-commerce-admin.min.css", "bundle.nwazet-commerce-admin.css");
             manifest.DefineStyle("Nwazet.Discount-Admin").SetUrl("discount.nwazet-commerce-admin.min.css", "discount.nwazet-commerce-admin.css");
             manifest.DefineStyle("Nwazet.Order-Admin").SetUrl("order-admin.min.css", "order-admin.css");
-            manifest.DefineStyle("Nwazet.Attribute-Admin").SetUrl("attribute.nwazet-commerce-admin.min.css?v=1", "attribute.nwazet-commerce-admin.css?v=1");
+            manifest.DefineStyle("Nwazet.Attribute-Admin").SetUrl("attribute.nwazet-commerce-admin.min.css?v=1.1", "attribute.nwazet-commerce-admin.css?v=1.1");
             manifest.DefineStyle("Nwazet.Product-Admin").SetUrl("product-admin.min.css?v=1.1", "product-admin.css");
             manifest.DefineStyle("Nwazet.Coupon-Admin").SetUrl("product-admin.min.css?v=1.0", "product-admin.css");
             manifest.DefineStyle("Nwazet.Report-Admin").SetUrl("reports-admin.min.css", "reports-admin.css");
             manifest.DefineStyle("Nwazet.Territory-Hierarchies-Admin").SetUrl("territory-hierarchies-admin.min.css", "territory-hierarchies-admin.css");
             manifest.DefineStyle("Nwazet.WishLists").SetUrl("wishlists.nwazet-commerce.min.css", "wishlists.nwazet-commerce.css");
+            manifest.DefineStyle("Nwazet.ProductCombinations").SetUrl("product-combinations.nwazet-commerce.min.css", "product-combinations.nwazet-commerce.css");
             
             manifest.DefineScript("Nwazet.ProductAvailability")
                 .SetUrl("productsunavailable.min.js?v=1.0", "productsunavailable.js?v=1.0").SetDependencies("jQuery");
+
+            manifest.DefineScript("Nwazet.ProductCombinations")
+                .SetUrl("productcombinations.min.js?v=1.0", "productcombinations.js?v=1.0").SetDependencies("jQuery");
         }
     }
 }

@@ -2,7 +2,7 @@
 using Nwazet.Commerce.Models;
 using Orchard;
 
-namespace Nwazet.Commerce.Services {
+namespace Nwazet.Commerce.Services.Inventory {
     public interface IProductInventoryService : IDependency {
         /// <summary>
         /// Get all the ProductParts that share the inventory with the one passed as parameter.

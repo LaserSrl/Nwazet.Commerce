@@ -10,6 +10,7 @@ using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Environment.Extensions;
 using Nwazet.Commerce.ViewModels;
+using Nwazet.Commerce.Services.Inventory;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.Commerce")]

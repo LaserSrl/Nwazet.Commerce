@@ -40,6 +40,18 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/BundleSummaryAdmin.cshtml"
 msgid "Remove one"
 msgstr "Rimuovi uno"
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/CombinationConfigurationAdmin/Create.cshtml"
+msgid "New {0}"
+msgstr "Nuovo {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Combinations_ProductDiscountedPrice.cshtml"
+msgid "Now {0}"
+msgstr "Ora {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/Combinations_ProductDiscountedPrice.cshtml"
+msgid "Was {0}"
+msgstr "Era {0}"
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/CommerceAddressForm.cshtml"
 msgid "Address"
 msgstr "Indirizzo"
@@ -640,6 +652,10 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/BundleProductLocali
 msgid "Verify culture of selected products."
 msgstr "Verifica la cultura dei prodotti selezionati."
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/BundleProductLocalizationSettings.cshtml"
+msgid "When localizing products, there is the issue of the quantities set for the bundle. If this option is NOT CHECKED, quantities of the item in the wrong localization will be used only if the correct localization was not in the bundle yet, and will be ignored otherwise. If this option is CHECKED, quantities of the item in the wrong localization will be added to those of the product in the correct culture."
+msgstr "Nella localizzazione dei prodotti, esiste un problema relativa alla quantità impostata per il bundle. Se questa opzioni è NON SELEZIONATA, le quantita degli oggetti nella localizzazione errata saranno utilizzate solo se la combinazione corretta non era ancora nel bundle, e ignorate altrimenti. Se questa opzione è SELEZIONATA, le quantità dell'oggetto nella localizazzione errata saranno aggiunte a quelle del prodotto nella corretta cultura."
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/BundleProductSettings.cshtml"
 msgid "Check to enable autocomplete search for product title / product sku  ."
 msgstr "Spunta per abilitare la ricerca con completamento automatico per titolo o sku di prodotto."
@@ -647,6 +663,34 @@ msgstr "Spunta per abilitare la ricerca con completamento automatico per titolo 
 msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/BundleProductSettings.cshtml"
 msgid "Enable Autocomplete."
 msgstr "Abilita il completamento automatico."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/CombinationContainerPartSettings.cshtml"
+msgid "Check to allow updating the name of the ContentType used for product combinations. Changing that value will cause a new ContentType to be created/edited."
+msgstr "Spunta per abilitare l'aggiornamento del nome del ContentType usato per le product combinations. Cambiare quel valore provocherà la creazione / modifica del ContentType."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/CombinationContainerPartSettings.cshtml"
+msgid "ContentType's name"
+msgstr "Nome del ContentType"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/CombinationContainerPartSettings.cshtml"
+msgid "Insert the name of the ContentType that will be used to create product combinations."
+msgstr "Inserisci il nome del ContentType che sarà utilizzato per creare le product combinations."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/CombinationContainerPartSettings.cshtml"
+msgid "The name of the ContentType."
+msgstr "Il nome del ContentType."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/CombinationContainerPartSettings.cshtml"
+msgid "Update Combination Type Name"
+msgstr "Aggiorna il nome del ContentType della combinazione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/ContentFieldCombinationWeldingSettings.cshtml"
+msgid "Check to weld this content part or field to the product combinations."
+msgstr "Spunta per fondere questa content part o field alle product combinations."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/ContentFieldCombinationWeldingSettings.cshtml"
+msgid "Weld to combination"
+msgstr "Fondi con la combinazione"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/DefinitionTemplates/ProductAttributeLocalizationSettings.cshtml"
 msgid "Check to attempt to replace selected attributes with their translation in the product's culture. This only applies if the product has a LocalizationPart."
@@ -783,6 +827,94 @@ msgstr "Sku"
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/BundleAutocomplete.cshtml"
 msgid "You need to save your changes."
 msgstr "È necessario salvare le modifiche."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/AttributesCombinationPart.cshtml"
+msgid "- None -"
+msgstr "- Nessuno -"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/AttributesCombinationPart.cshtml"
+msgid "Attributes"
+msgstr "Attributi"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/AttributesCombinationPart.cshtml"
+msgid "There are no attributes to create new combinations."
+msgstr "Non ci sono attributi per creare nuove combinazioni."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "Actions"
+msgstr "Azioni"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "Attributes"
+msgstr "Attributi"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "Combinations"
+msgstr "Combinazioni"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "Create combination"
+msgstr "Crea combinazione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "Delete"
+msgstr "Elimina"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "Generate"
+msgstr "Genera"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "Generating combinations ..."
+msgstr "Generazione combinazioni ..."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "Manage product combinations"
+msgstr "Gestisci le product combinations"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "SKU"
+msgstr "SKU"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "Status"
+msgstr "Stato"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "Status legend"
+msgstr "Legenda degli stati"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "There are no attributes to create new combinations."
+msgstr "Non ci sono attributi per creare nuove combinazioni."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "Title"
+msgstr "Titolo"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "Unknown error while generating combinations."
+msgstr "Errore sconosciuto durante la generazione delle combinazioni."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.cshtml"
+msgid "Unpublish"
+msgstr "Annulla Pubblicazione"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.New.cshtml"
+msgid "Manage product combinations"
+msgstr "Gestisci le product combinations"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationContainerPart.New.cshtml"
+msgid "You'll be able to manage combinations once the product is saved."
+msgstr "Potrai gestire le combinazioni dopo il salvataggio del prodotto."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationPart.cshtml"
+msgid "It maps the following combination of attributes: {0}"
+msgstr "Mappa le seguenti combinazioni di attributi: {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Combinations/CombinationPart.cshtml"
+msgid "This product is a variant of: "
+msgstr "Questo prodotto è una variante di:"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Discount.cshtml"
 msgid "A short comment that will be displayed next to the discounted price on the front-end."
@@ -2905,6 +3037,10 @@ msgid "Price can be a fixed amount or a percentage of the base price. "
 msgstr "Il Prezzo può essere un importo fisso o una percentuale del prezzo base."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/PriceTiersAdmin.cshtml"
+msgid "Price can be a fixed amount or a percentage of the base price. '90%' makes the tiered price 90% of the base price. '90' makes the tiered price $90."
+msgstr "Il prezzo può essere un valore fisso o una percentuale del prezzo base. '90%' fa sì che il prezzo sia il 90% del prezzo base. '90' fa sì che il prezzo sia 90€."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/PriceTiersAdmin.cshtml"
 msgid "Quantity"
 msgstr "Quantità"
 
@@ -4164,6 +4300,34 @@ msgctxt "Nwazet.Commerce.Controllers.AttributesAdminController"
 msgid "Not authorized to manage product attributes"
 msgstr "Non autorizzato a gestire gli attributi di prodotto"
 
+msgctxt "Nwazet.Commerce.Controllers.Combinations.CombinationConfigurationAdminController"
+msgid "Cannot create content"
+msgstr "Impossibile creare il contenuto"
+
+msgctxt "Nwazet.Commerce.Controllers.Combinations.CombinationConfigurationAdminController"
+msgid "Couldn't create content"
+msgstr "Non è stato possibile creare il contenuto"
+
+msgctxt "Nwazet.Commerce.Controllers.Combinations.CombinationConfigurationAdminController"
+msgid "Your {0} has been created."
+msgstr "Il tuo {0} è stato creato."
+
+msgctxt "Nwazet.Commerce.Controllers.Combinations.CombinationConfigurationAdminController"
+msgid "Your content has been created."
+msgstr "Il tuo contenuto è stato creato."
+
+msgctxt "Nwazet.Commerce.Controllers.CombinationsAdminController"
+msgid "{0} new combinations created."
+msgstr "{0} nuove combinazioni create."
+
+msgctxt "Nwazet.Commerce.Controllers.CombinationsAdminController"
+msgid "Invalid container."
+msgstr "Contenitore non valido."
+
+msgctxt "Nwazet.Commerce.Controllers.CombinationsAdminController"
+msgid "Unauthorized."
+msgstr "Non autorizzato."
+
 msgctxt "Nwazet.Commerce.Controllers.CouponingAdminController"
 msgid "{0} is an invalid number"
 msgstr "{0} non è un numero valido"
@@ -4471,6 +4635,26 @@ msgstr "Il tuo contenuto è stato creato."
 msgctxt "Nwazet.Commerce.Controllers.TerritoryHierarchiesAdminController"
 msgid "Your content has been saved."
 msgstr "Il tuo contenuto è stato salvato."
+
+msgctxt "Nwazet.Commerce.Drivers.Combinations.CombinationPartDriver"
+msgid "A new combination has been created"
+msgstr "Una combinazione è stata creata"
+
+msgctxt "Nwazet.Commerce.Drivers.Combinations.CombinationPartDriver"
+msgid "Attribute value with GUIdentifier {0} is missing and cannot be imported."
+msgstr "Valore attributo con GUIdentifier {0} mancante e non può essere importato."
+
+msgctxt "Nwazet.Commerce.Drivers.Combinations.CombinationPartDriver"
+msgid "Attribute with identity {0} is missing and cannot be imported."
+msgstr "Attributo con identity {0} mancante e non può essere importato."
+
+msgctxt "Nwazet.Commerce.Drivers.Combinations.CombinationPartDriver"
+msgid "The selected combination already exists. Try again."
+msgstr "La combinazione selezionata esiste già. Riprova."
+
+msgctxt "Nwazet.Commerce.Drivers.Combinations.CombinationPartDriver"
+msgid "There is no attribute selected."
+msgstr "Nessun attributo selezionato."
 
 msgctxt "Nwazet.Commerce.Drivers.HierarchyVatConfigurationPartDriver"
 msgid "{0} Is not a valid value for rate."
@@ -5340,6 +5524,18 @@ msgctxt "Nwazet.Commerce.Filters.UserRolesFilterForm"
 msgid "The user must have no one of these roles: {0}"
 msgstr "L'utente non deve avere nessuno dei seguenti ruoli: {0}"
 
+msgctxt "Nwazet.Commerce.Forms.OrderStatusForm"
+msgid "Any"
+msgstr "Tutti"
+
+msgctxt "Nwazet.Commerce.Forms.OrderStatusForm"
+msgid "Order Status"
+msgstr "Stato dell'Ordine"
+
+msgctxt "Nwazet.Commerce.Forms.OrderStatusForm"
+msgid "Select some order status"
+msgstr "Seleziona alcuni stati ordine"
+
 msgctxt "Nwazet.Commerce.Handlers.AdvancedSKUManagementHandler"
 msgid "A new SKU has been generated: \"{0}\""
 msgstr "Un nuovo SKU è stato generato: \"{0}\""
@@ -5359,6 +5555,18 @@ msgstr "Il prodotto {0} fa parte di : {1}"
 msgctxt "Nwazet.Commerce.Handlers.BundleProcuctsHandler"
 msgid "The product {0} is present in some bundles"
 msgstr "Il prodotto {0} è presente in qualche bundle"
+
+msgctxt "Nwazet.Commerce.Handlers.Combinations.CombinationContainerPartHandler"
+msgid "Combinations in the chosen language have been automatically moved from the other translations."
+msgstr "Combinazioni nella lingua selezionata sono state spostate automaticamente dalle altre traduzioni."
+
+msgctxt "Nwazet.Commerce.Handlers.Combinations.CombinationPartHandler"
+msgid "The selected combination already exists."
+msgstr "La combinazione selezionata esiste già."
+
+msgctxt "Nwazet.Commerce.Handlers.Combinations.CombinationPartHandler"
+msgid "Your combination has been moved under the <a href=\"{0}\">{1}</a>"
+msgstr "La combinazione è stata spostata sotto <a href=\"{0}\">{1}</a>"
 
 msgctxt "Nwazet.Commerce.Handlers.LocalizationAttributePartHandler"
 msgid "Some of the attributes have the wrong culture: {0}"
@@ -5647,6 +5855,58 @@ msgstr "Imponibile"
 msgctxt "Nwazet.Commerce.Services.CheckoutItem."
 msgid "VAT Rate"
 msgstr "Aliquota IVA"
+
+msgctxt "Nwazet.Commerce.Services.Combinations.BaseCombinationStatusProvider"
+msgid "(Draft)"
+msgstr "(Bozza)"
+
+msgctxt "Nwazet.Commerce.Services.Combinations.BaseCombinationStatusProvider"
+msgid "(Invalid Attributes)"
+msgstr "(Attributi non validi)"
+
+msgctxt "Nwazet.Commerce.Services.Combinations.BaseCombinationStatusProvider"
+msgid "(No Draft)"
+msgstr "(Nessuna Bozza)"
+
+msgctxt "Nwazet.Commerce.Services.Combinations.BaseCombinationStatusProvider"
+msgid "(Not Published)"
+msgstr "(Non Pubblicato)"
+
+msgctxt "Nwazet.Commerce.Services.Combinations.BaseCombinationStatusProvider"
+msgid "(Published)"
+msgstr "(Pubblicato)"
+
+msgctxt "Nwazet.Commerce.Services.Combinations.DuplicatedCombinationStatusProvider"
+msgid "(Duplicated)"
+msgstr "(Duplicato)"
+
+msgctxt "Nwazet.Commerce.Services.Combinations.DuplicatedCombinationStatusProvider"
+msgid "(No attribute has been selected)"
+msgstr "(Nessun attributo selezionato)"
+
+msgctxt "Nwazet.Commerce.Services.Combinations.LocalizedCombinationStatusProvider"
+msgid "(Different culture. Combination: {0} - Container: {1})"
+msgstr "(Cultura differente. Combinazione: {0} - Contenitore: {1})"
+
+msgctxt "Nwazet.Commerce.Services.Combinations.LocalizedCombinationStatusProvider"
+msgid "(Missing culture)"
+msgstr "(Cultura mancante)"
+
+msgctxt "Nwazet.Commerce.Services.Combinations.LocalizedCombinationStatusProvider"
+msgid "(The combination has no localization)"
+msgstr "(La combinazione non ha localizzazione)"
+
+msgctxt "Nwazet.Commerce.Services.Combinations.LocalizedCombinationStatusProvider"
+msgid "Not selected"
+msgstr "Non selezionato"
+
+msgctxt "Nwazet.Commerce.Services.Combinations.ProductCombinationService"
+msgid "Invalid attribute"
+msgstr "Attributo non valido"
+
+msgctxt "Nwazet.Commerce.Services.Combinations.ProductCombinationService"
+msgid "Undefined"
+msgstr "Non definito"
 
 msgctxt "Nwazet.Commerce.Services.Couponing.BasicCouponApplicabilityCriterion"
 msgid "Coupon code {0} is already in use."

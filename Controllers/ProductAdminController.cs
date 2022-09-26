@@ -37,6 +37,7 @@ using Orchard.Localization.Models;
 using Orchard.Taxonomies.Helpers;
 using Orchard.Taxonomies.Models;
 using CorePermissions = Orchard.Core.Contents.Permissions;
+using Nwazet.Commerce.Services.Inventory;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Commerce")]
@@ -547,12 +548,15 @@ namespace Nwazet.Commerce.Controllers {
                 .Where(ctd => ctd.Parts.Any(ctpd => ctpd
                     .PartDefinition.Name
                     .Equals(ProductPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
+                // Products with a CombinationPart should not be in this list
+                .Where(ctd => !ctd.Parts.Any(ctpd => ctpd
+                    .PartDefinition.Name
+                    .Equals("CombinationPart", StringComparison.InvariantCultureIgnoreCase)))
                 // We can edit ContentItems of that type
                 .Where(ctd => {
                     var dummyContent = _contentManager.New(ctd.Name);
                     return _authorizer.Authorize(CorePermissions.EditContent, dummyContent);
                 });
-
 
             return allowedTypes;
         }
@@ -570,6 +574,10 @@ namespace Nwazet.Commerce.Controllers {
                 .Where(ctd => ctd.Parts.Any(ctpd => ctpd
                     .PartDefinition.Name
                     .Equals(ProductPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
+                // Products with a CombinationPart should not be in this list
+                .Where(ctd => !ctd.Parts.Any(ctpd => ctpd
+                    .PartDefinition.Name
+                    .Equals("CombinationPart", StringComparison.InvariantCultureIgnoreCase)))
                 // We can create ContentItems of that type
                 .Where(ctd => {
                     var dummyContent = _contentManager.New(ctd.Name);

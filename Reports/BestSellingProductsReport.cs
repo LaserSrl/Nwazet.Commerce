@@ -60,11 +60,13 @@ namespace Nwazet.Commerce.Reports {
                 var checkoutItems = order.As<OrderPart>().Items;
 
                 // TO DO: within the dictionary there must be the uniquekey and not the product id
-                var titleProduct = checkoutItems
-                    .Select(i => _contentManager.Get<TitlePart>(i.ProductId,
-                                (i.ProductVersion != 0 ? VersionOptions.Number(i.ProductVersion) :
-                                VersionOptions.Number(_contentManager.GetAllVersions(i.ProductId).Max(cv => cv.VersionRecord.Number)))))
-                    .ToDictionary(t => t.Id, t => t.Title);
+                //var titleProduct = checkoutItems
+                //    .Select(i => _contentManager.Get<TitlePart>(i.ProductId,
+                //                (i.ProductVersion != 0 ? VersionOptions.Number(i.ProductVersion) :
+                //                VersionOptions.Number(_contentManager.GetAllVersions(i.ProductId).Max(cv => cv.VersionRecord.Number)))))
+                //    .ToDictionary(t => t.Id, t => t.Title);
+                // Using titles from order items, avoiding queries on TitlePart and ensuring compatibility with Product Combinations (which have no TitlePart).
+                var titleProduct = checkoutItems.ToDictionary(ci => ci.ProductId, ci => ci.Title);
 
                 foreach (var checkoutItem in checkoutItems) {
                     var productId = checkoutItem.ProductId;
