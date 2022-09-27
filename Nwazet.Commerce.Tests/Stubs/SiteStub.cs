@@ -36,7 +36,7 @@ namespace Nwazet.Commerce.Tests.Stubs {
         public string SiteTimeZone { get; set; }
         public string SuperUser { get; set; }
         public int Id { get; set; }
-        public bool UseFileHash { get; set; }
+        public bool UseFileHash { get ; set ; }
     }
 
     public class ProductSettingsStub : ProductSettingsPart {

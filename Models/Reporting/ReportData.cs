@@ -4,6 +4,6 @@ namespace Nwazet.Commerce.Models.Reporting {
     public class ReportData {
         public IEnumerable<ReportDataPoint> DataPoints { get; set; }
         public IEnumerable<string> Series { get; set; } 
-        public IEnumerable<int> OrderBySeriesId { get; set; }
+        public IEnumerable<string> OrderBySeriesId { get; set; }
     }
 }

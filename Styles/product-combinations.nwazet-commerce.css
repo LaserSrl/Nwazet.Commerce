@@ -1,17 +1,15 @@
 ﻿.severity-message {
-    padding: 0.2rem;
+    /*padding: 0.2rem;*/
     white-space: nowrap;
 }
 
 .severity-error {
-    color: white;
-    background-color: #dd4b39;
+    color: #dd4b39;
     margin-right: 0.2rem;
 }
 
 .severity-warning {
-    color: white;
-    background-color: #f39c12;
+    color: #f39c12;
     margin-right: 0.2rem;
 }
 
@@ -25,10 +23,8 @@
 }
 
 .severity-success {
-    background-color: #00a65a;
-    color: white;
+    color: #00a65a;
     margin-right: 0.2rem;
-
 }
 
 .title-status-legend {
