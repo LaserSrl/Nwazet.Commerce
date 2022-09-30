@@ -31,7 +31,7 @@ namespace Nwazet.Commerce.Handlers.Combinations {
         private readonly ILocalizationService _localizationService;
         private readonly IEnumerable<ICombinationDetailProvider> _combinationDetailProviders;
         private readonly WorkContext _workContext;
-        
+
         protected UrlHelper _url;
 
         // populated in case of duplicates
@@ -148,35 +148,42 @@ namespace Nwazet.Commerce.Handlers.Combinations {
         void CheckCombinationContainer(UpdateContentContext context, CombinationPart part) {
 
             var container = part.CombinationContainerPart;
-            var ci = container.ContentItem;
-            if (ci.Has<LocalizationPart>() && ci.As<LocalizationPart>().Culture != null) {
-                var contentCulture = context.ContentItem.As<LocalizationPart>().Culture != null ? context.ContentItem.As<LocalizationPart>().Culture : null;
-                if (contentCulture != container.ContentItem.As<LocalizationPart>().Culture) {
-                    // check translation of CombinationContainerPart
-                    var realCombinationContainerPart = _localizationService.GetLocalizations(ci)
-                        .FirstOrDefault(l => l.As<LocalizationPart>().Culture == contentCulture);
-                    if (realCombinationContainerPart != null &&
-                        realCombinationContainerPart.ContentItem.As<CombinationContainerPart>() != null) {
-                        // save the container in the correct language
-                        part.CombinationContainerPartField.Value = realCombinationContainerPart.ContentItem.As<CombinationContainerPart>();
 
-                        // check that the combination is not already present in the new container
-                        var newCurrentCombinations = part.CombinationContainerPart
-                            .CombinationParts
-                            .Select(cp => CombinationPart.DeserializeCombinations(cp));
-                        foreach (var comb in newCurrentCombinations) {
-                            if (!part.ProductAttributeValues.Any(a =>
-                                    !comb.Any(com => com.AttributeId == a.AttributeId && com.AttributeValue == a.AttributeValue))) {
-                                combinationIsDuplicated = true;
-                                Services.Notifier.Error(T("The selected combination already exists."));
+            if (container != null) {
+                var ci = container.ContentItem;
+                if (ci.Has<LocalizationPart>() && ci.As<LocalizationPart>().Culture != null && 
+                   context.ContentItem.As<LocalizationPart>()!= null && context.ContentItem.As<LocalizationPart>().Culture != null) {
+                    
+                    var contentCulture = context.ContentItem.As<LocalizationPart>().Culture != null ? context.ContentItem.As<LocalizationPart>().Culture : null;
+
+                    if (contentCulture != ci.As<LocalizationPart>().Culture) {
+                        // check translation of CombinationContainerPart
+                        var realCombinationContainerPart = _localizationService.GetLocalizations(ci)
+                            .FirstOrDefault(l => l.As<LocalizationPart>().Culture == contentCulture);
+                        if (realCombinationContainerPart != null &&
+                            realCombinationContainerPart.ContentItem.As<CombinationContainerPart>() != null) {
+                            // save the container in the correct language
+                            part.CombinationContainerPartField.Value = realCombinationContainerPart.ContentItem.As<CombinationContainerPart>();
+
+                            // check that the combination is not already present in the new container
+                            var newCurrentCombinations = part.CombinationContainerPart
+                                .CombinationParts
+                                .Select(cp => CombinationPart.DeserializeCombinations(cp));
+                            foreach (var comb in newCurrentCombinations) {
+                                if (!part.ProductAttributeValues.Any(a =>
+                                        !comb.Any(com => com.AttributeId == a.AttributeId && com.AttributeValue == a.AttributeValue))) {
+                                    combinationIsDuplicated = true;
+                                    Services.Notifier.Error(T("The selected combination already exists."));
+                                }
                             }
+                            Services.Notifier.Information(T("Your combination has been moved under the <a href=\"{0}\">{1}</a>",
+                                _url.ItemEditUrl(part.CombinationContainerPart),
+                                _contentManager.GetItemMetadata(part.CombinationContainerPart).DisplayText));
                         }
-                        Services.Notifier.Information(T("Your combination has been moved under the <a href=\"{0}\">{1}</a>",
-                            _url.ItemEditUrl(part.CombinationContainerPart),
-                            _contentManager.GetItemMetadata(part.CombinationContainerPart).DisplayText));
                     }
                 }
             }
+
         }
 
         void CheckCombinationDuplicated(PublishContentContext context, CombinationPart part) {
