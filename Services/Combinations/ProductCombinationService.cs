@@ -190,6 +190,9 @@ namespace Nwazet.Commerce.Services.Combinations {
                 cfg => cfg
                     .WithPart("CombinationPart")
                     .WithPart("CommonPart")
+                    // Add the LocalizationPart.
+                    // This way, in the case products are going to be multilingual in the future, Combination's culture wouldn't be empty.
+                    .WithPart("LocalizationPart")
                     .WithIdentity()
                     // Make the new ContentType Draftable, so when we create new combinations they
                     // are not automatically published.
