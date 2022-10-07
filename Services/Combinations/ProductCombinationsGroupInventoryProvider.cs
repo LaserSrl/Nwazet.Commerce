@@ -23,9 +23,11 @@ namespace Nwazet.Commerce.Services.Combinations {
             // inventory on.
             var combinationContainer = part.As<CombinationContainerPart>();
             if (combinationContainer != null) {
-                return combinationContainer.CombinationParts
-                    .Select(cp => cp.As<ProductPart>())
-                    .ToList();
+                if (combinationContainer.CombinationParts != null) {
+                    return combinationContainer.CombinationParts
+                        .Select(cp => cp.As<ProductPart>())
+                        .ToList();
+                }
             } else {
                 // If the product is a combination, we should remove its container
                 // and its siblings (combinations of the same container) from the
@@ -35,9 +37,11 @@ namespace Nwazet.Commerce.Services.Combinations {
                     var toRemove = new List<ProductPart>();
                     toRemove.Add(combination
                         .CombinationContainerPart.As<ProductPart>());
-                    toRemove.AddRange(combination
-                        .CombinationContainerPart.CombinationParts
-                        .Select(cp => cp.As<ProductPart>()));
+                    if (combination.CombinationContainerPart != null && combination.CombinationContainerPart.CombinationParts != null) {
+                        toRemove.AddRange(combination
+                            .CombinationContainerPart.CombinationParts
+                            .Select(cp => cp.As<ProductPart>()));
+                    }
                     toRemove.RemoveAll(pp => pp.Id == combination.Id);
                     return toRemove.ToList();
                 }
