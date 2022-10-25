@@ -34,11 +34,10 @@
                                 @Html.HiddenFor(m => m.BasicApplicabilityProviders[providerIndex].ProviderLabel)
                                 @Html.HiddenFor(m => m.BasicApplicabilityProviders[providerIndex].ProviderName)
                             </td>
-                            <td class="form-check">
+                            <td>
                                 @Html.CheckBoxFor(m => m.BasicApplicabilityProviders[providerIndex].EvaluateCriterion,
                                     new {
-                                        id = Html.FieldIdFor(m => m.BasicApplicabilityProviders[providerIndex].EvaluateCriterion),
-                                        @class = "form-check-input"
+                                        id = Html.FieldIdFor(m => m.BasicApplicabilityProviders[providerIndex].EvaluateCriterion)
                                     })
                             </td>
                         </tr>
@@ -77,18 +76,16 @@
                                 @Html.HiddenFor(m => m.ApplicabilityProviders[providerIndex].ProviderLabel)
                                 @Html.HiddenFor(m => m.ApplicabilityProviders[providerIndex].ProviderName)
                             </td>
-                            <td class="form-check">
+                            <td>
                                 @Html.CheckBoxFor(m => m.ApplicabilityProviders[providerIndex].AvailableForConfiguration,
                                     new {
-                                        id = Html.FieldIdFor(m => m.ApplicabilityProviders[providerIndex].AvailableForConfiguration),
-                                        @class = "form-check-input"
+                                        id = Html.FieldIdFor(m => m.ApplicabilityProviders[providerIndex].AvailableForConfiguration)
                                     })
                             </td>
-                            <td class="form-check">
+                            <td>
                                 @Html.CheckBoxFor(m => m.ApplicabilityProviders[providerIndex].AvailableForProcessing,
                                     new {
-                                        id = Html.FieldIdFor(m => m.ApplicabilityProviders[providerIndex].AvailableForProcessing),
-                                        @class = "form-check-input"
+                                        id = Html.FieldIdFor(m => m.ApplicabilityProviders[providerIndex].AvailableForProcessing)
                                     })
                             </td>
                         </tr>
@@ -128,18 +125,16 @@
                                 @Html.HiddenFor(m => m.LineProviders[providerIndex].ProviderLabel)
                                 @Html.HiddenFor(m => m.LineProviders[providerIndex].ProviderName)
                             </td>
-                            <td class="form-check">
+                            <td>
                                 @Html.CheckBoxFor(m => m.LineProviders[providerIndex].AvailableForConfiguration,
                                     new {
-                                        id = Html.FieldIdFor(m => m.LineProviders[providerIndex].AvailableForConfiguration),
-                                        @class = "form-check-input"
+                                        id = Html.FieldIdFor(m => m.LineProviders[providerIndex].AvailableForConfiguration)
                                     })
                             </td>
-                            <td class="form-check">
+                            <td>
                                 @Html.CheckBoxFor(m => m.LineProviders[providerIndex].AvailableForProcessing,
                                     new {
-                                        id = Html.FieldIdFor(m => m.LineProviders[providerIndex].AvailableForProcessing),
-                                        @class = "form-check-input"
+                                        id = Html.FieldIdFor(m => m.LineProviders[providerIndex].AvailableForProcessing)
                                     })
                             </td>
                         </tr>
