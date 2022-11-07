@@ -124,13 +124,16 @@ namespace Nwazet.Commerce.Drivers {
             var vm = new ProductEditorViewModel {
                 Product = part,
                 AllowProductOverrides = allowTieredPricingOverride,
-                PriceTiers = part.PriceTiers
+                PriceTiers = new List<PriceTierViewModel>()
+            };
+            if (part.PriceTiers != null) {
+                vm.PriceTiers = part.PriceTiers
                     .Select(t => new PriceTierViewModel() {
                         Quantity = t.Quantity,
                         Price = (t.PricePercent != null ? t.PricePercent.ToString() + "%" : t.Price.ToString())
                     })
-                    .ToList()
-            };
+                    .ToList();
+            }
             return Combined(
                 ContentShape("Parts_Product_Edit",
                     () => shapeHelper.EditorTemplate(
