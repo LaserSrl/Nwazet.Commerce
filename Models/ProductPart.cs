@@ -9,7 +9,7 @@ namespace Nwazet.Commerce.Models {
     [OrchardFeature("Nwazet.Commerce")]
     public class ProductPart : ContentPart<ProductPartVersionRecord>, IProduct {
         public static string PartName = "ProductPart";
-
+        
         [Required]
         public string Sku
         {
@@ -18,6 +18,7 @@ namespace Nwazet.Commerce.Models {
         }
 
         [Required]
+        [Range(typeof(decimal), "0.01", "79228162514264337593543950335", ErrorMessage = "Price must be a positive number." )]
         public decimal Price {
             get { return Retrieve(r => r.Price); }
             set { Store(r => r.Price, value); }
