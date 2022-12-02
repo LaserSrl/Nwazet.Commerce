@@ -166,7 +166,7 @@ namespace Nwazet.Commerce.Drivers {
                 Product = part
             };
             updater.TryUpdateModel(model, Prefix, null, null);
-            if (model.PriceTiers != null) {
+            if (model.PriceTiers != null && model.PriceTiers.Any()) {
                 part.PriceTiers = model.PriceTiers.Select(t => new PriceTier() {
                     Quantity = t.Quantity,
                     Price = (!t.Price.EndsWith("%") ? t.Price.ToDecimal() : null),
