@@ -8,7 +8,10 @@
     <legend>@T("Shipping")</legend>
     <label class="sub" for="@Html.IdFor(m => m.Product.Weight)">@T("Weight in grams")</label><br />
     @Html.TextBoxFor(m => m.Product.Weight, new { @class = "text" })<br />
-    <label class="sub" for="@Html.IdFor(m => m.Product.Size)">@T("Size")</label><br />
+    @Html.HiddenFor(m => m.Product.Size)
+    @Html.HiddenFor(m => m.Product.ShippingCost)
+
+    @*<label class="sub" for="@Html.IdFor(m => m.Product.Size)">@T("Size")</label><br />
     @{
         // Attempt to get size-based shipping methods through WCA so we do it late and we don't fail if the feature is not enabled
         var shippingMethods = WorkContext.Resolve<IEnumerable<IShippingMethodProvider>>();
@@ -36,5 +39,7 @@
     @Html.TextBoxFor(m => m.Product.Size, new { @class = "text" })<br />
     <label class="sub" for="@Html.IdFor(m => m.Product.ShippingCost)">@T("Shipping Cost")</label><br />
     @Html.TextBoxFor(m => m.Product.ShippingCost, new { @class = "text" })<br />
-    <span class="hint">@T("Specify a shipping cost if you want the shipping cost to be fixed. Otherwise, leave this empty and only specify the weight. The shipping will be computed based on the shipping provider that the customer will pick.")</span>
+    <span class="hint">@T("Specify a shipping cost if you want the shipping cost to be fixed. Otherwise, leave this empty and only specify the weight. The shipping will be computed based on the shipping provider that the customer will pick.")</span>*@
+
+
 </fieldset>
