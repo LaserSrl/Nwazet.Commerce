@@ -279,6 +279,8 @@
     <None Include="Views\EditorTemplates\Parts\Combinations\LocalizedCombinationPart.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationPart.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.New.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\InventoryControl\Inventory.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\InventoryControl\InventoryControl.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Advanced.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />
@@ -428,6 +430,7 @@
     <Compile Include="Drivers\ProductPartDriver.cs" />
     <Compile Include="Drivers\ShoppingCartWidgetDriver.cs" />
     <Compile Include="Drivers\WeightBasedShippingMethodPartDriver.cs" />
+    <Compile Include="Events\InventoryControlOrderEventHandler.cs" />
     <Compile Include="Events\IOrderEventHandler.cs" />
     <Compile Include="Events\WorkflowOrderEventHandler.cs" />
     <Compile Include="Exceptions\StripeException.cs" />
@@ -900,6 +903,7 @@
     <Compile Include="ViewModels\HierarchyVatConfigurationPartViewModel.cs" />
     <Compile Include="ViewModels\InventoryBySKUProductEditorViewModel.cs" />
     <Compile Include="ViewModels\InventoryBySKUSiteSettingsPartViewModel.cs" />
+    <Compile Include="ViewModels\InventoryControl\InventoryControlEditViewModel.cs" />
     <Compile Include="ViewModels\InventoryEditViewModel.cs" />
     <Compile Include="ViewModels\ListProductsViewModel.cs" />
     <Compile Include="ViewModels\OrderEditorAdditionalProductInfoViewModel.cs" />

@@ -4,6 +4,7 @@
   <Place Parts_Product_Inventory_Edit="Content:3.1"/>
   <Place Parts_Product_Accessibility_Edit="Content:3.1"/>
   <Place Parts_Inventory_Edit="Content:3.2"/>
+  <Place Parts_InventoryControl_Edit="Content:3.2.1"/>
   <Place Part_Product_SKUEdit="Content:3.1"/>
   <Place Part_Product_InventoryBySKUEdit="Content:3.1"/>
   <Place Parts_Product="Content:3.1"/>
