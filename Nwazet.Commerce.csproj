@@ -401,6 +401,7 @@
     <Compile Include="Drivers\HierarchyVatConfigurationPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUProductPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUSiteSettingsPartDriver.cs" />
+    <Compile Include="Drivers\InventoryControl\InventoryControlPartDriver.cs" />
     <Compile Include="Drivers\InventoryPartDriver.cs" />
     <Compile Include="Drivers\OrderPartDriver.cs" />
     <Compile Include="Drivers\PricePartDriver.cs" />
@@ -427,6 +428,8 @@
     <Compile Include="Drivers\ProductPartDriver.cs" />
     <Compile Include="Drivers\ShoppingCartWidgetDriver.cs" />
     <Compile Include="Drivers\WeightBasedShippingMethodPartDriver.cs" />
+    <Compile Include="Events\IOrderEventHandler.cs" />
+    <Compile Include="Events\WorkflowOrderEventHandler.cs" />
     <Compile Include="Exceptions\StripeException.cs" />
     <Compile Include="Exceptions\TerritoryInternalDuplicateException.cs" />
     <Compile Include="Extensions\AttributeNameUtilities.cs" />
@@ -472,6 +475,7 @@
     <Compile Include="Handlers\FlexibleShippingSiteSettingPartHandler.cs" />
     <Compile Include="Handlers\HierarchyVatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\InventoryBySKUSiteSettingsPartHandler.cs" />
+    <Compile Include="Handlers\InventoryControl\InventoryControlContentHandler.cs" />
     <Compile Include="Handlers\InventoryPartHandler.cs" />
     <Compile Include="Handlers\LocalizationAttributePartHandler.cs" />
     <Compile Include="Handlers\OrderPartAuthorizationEventHandler.cs" />
@@ -518,6 +522,7 @@
     <Compile Include="Migrations\AttributesMigrations.cs" />
     <Compile Include="Migrations\CouponingMigrations.cs" />
     <Compile Include="Migrations\FlexibleShippingMethodMigrations.cs" />
+    <Compile Include="Migrations\InventoryControlMigrations.cs" />
     <Compile Include="Migrations\OrderMigrations.cs" />
     <Compile Include="Migrations\PersistentCartMigrations.cs" />
     <Compile Include="Migrations\ProductCombinationsMigrations.cs" />
@@ -555,6 +560,8 @@
     <Compile Include="Models\HierarchyVatConfigurationPartRecord.cs" />
     <Compile Include="Models\ICharge.cs" />
     <Compile Include="Models\InventoryBySKUSiteSettingsPart.cs" />
+    <Compile Include="Models\InventoryControl\InventoryControlPart.cs" />
+    <Compile Include="Models\InventoryControl\InventoryControlPartRecord.cs" />
     <Compile Include="Models\InventoryPart.cs" />
     <Compile Include="Models\InventoryPartRecord.cs" />
     <Compile Include="Models\OrderAdditionalInformation.cs" />
