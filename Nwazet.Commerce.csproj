@@ -279,13 +279,15 @@
     <None Include="Views\EditorTemplates\Parts\Combinations\LocalizedCombinationPart.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationPart.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.New.cshtml" />
-    <None Include="Views\EditorTemplates\Parts\InventoryControl\Inventory.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\InventoryControl\Inventory.BaseQuantity.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Inventory.Quantity.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\InventoryControl\Inventory.Quantity.cshtml" />
     <None Include="Views\EditorTemplates\Parts\InventoryControl\InventoryControl.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Advanced.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethodCriteria.cshtml" />
-    <None Include="Views\EditorTemplates\Parts\Inventory.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Inventory.Configuration.cshtml" />
     <None Include="Views\EditorTemplates\Parts\NewFlexibleShippingMethodCriteria.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Activity.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Addresses.cshtml" />
@@ -363,6 +365,7 @@
     <Compile Include="Controllers\FlexibleShippingCriterionController.cs" />
     <Compile Include="Controllers\HierarchyTerritoriesAdminController.cs" />
     <Compile Include="Controllers\InventoryBySKUSettingsAdminController.cs" />
+    <Compile Include="Controllers\InventoryControl\InventoryControlAdminController.cs" />
     <Compile Include="Controllers\ProductExecutionContext.cs" />
     <Compile Include="Controllers\ProductSettingsAdminController.cs" />
     <Compile Include="Controllers\BundleAdminController.cs" />
@@ -430,7 +433,8 @@
     <Compile Include="Drivers\ProductPartDriver.cs" />
     <Compile Include="Drivers\ShoppingCartWidgetDriver.cs" />
     <Compile Include="Drivers\WeightBasedShippingMethodPartDriver.cs" />
-    <Compile Include="Events\InventoryControlOrderEventHandler.cs" />
+    <Compile Include="Events\InventoryControl\InventoryControlOrderEventHandler.cs" />
+    <Compile Include="Events\InventoryControl\InventoryControlShapeTableEventHandler.cs" />
     <Compile Include="Events\IOrderEventHandler.cs" />
     <Compile Include="Events\WorkflowOrderEventHandler.cs" />
     <Compile Include="Exceptions\StripeException.cs" />

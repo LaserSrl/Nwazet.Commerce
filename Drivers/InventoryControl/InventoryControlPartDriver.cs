@@ -1,4 +1,5 @@
 ﻿using Nwazet.Commerce.Models;
+using Nwazet.Commerce.Services.Inventory;
 using Nwazet.Commerce.ViewModels;
 using Nwazet.Commerce.ViewModels.InventoryControl;
 using Orchard.ContentManagement;
@@ -15,6 +16,13 @@ namespace Nwazet.Commerce.Drivers.InventoryControl {
     [OrchardFeature("Nwazet.InventoryControl")]
     public class InventoryControlPartDriver 
         : ContentPartCloningDriver<InventoryControlPart> {
+        private readonly IProductInventoryService _productInventoryService;
+
+        public InventoryControlPartDriver(
+            IProductInventoryService productInventoryService) {
+
+            _productInventoryService = productInventoryService;
+        }
 
         protected override string Prefix => "InventoryControlPart";
 
@@ -30,24 +38,30 @@ namespace Nwazet.Commerce.Drivers.InventoryControl {
 
             // shape for the InventoryPart
             if (part.Is<InventoryPart>()) {
-                // doing it like this adds a second Inventory shape, because 
-                // DriverPartCoordinator doesn't care and executes all DriverResults
-                // it receives: none is overriding any other. I should try from
-                // a handler.BuildEditor to affect the placement somehow, so
-                // that the "default" inventory shape doesn't get applied.
-                shapes.Add(ContentShape("Parts_Inventory_Edit",
-                    () => shapeHelper.EditorTemplate(
-                        TemplateName: part.Id == 0 
-                            ? "Parts/Inventory"
-                            : "Parts/InventoryControl/Inventory",
-                        Model: new InventoryEditViewModel(part.As<InventoryPart>()),
-                        Prefix: "InventoryPart")));
+                // We are going to use the ShapeTableCreated to alter the shape tables so that
+                // the default shape usually displayed for inventory isn't shown anymore.
+                shapes.Add(ContentShape("Parts_InventoryControl_Quantity_Edit",
+                    () => {
+                        if (part.Id == 0) {
+                            // creation of new content
+                            return shapeHelper.EditorTemplate(
+                                TemplateName: "Parts/InventoryControl/Inventory.BaseQuantity",
+                                Model: new InventoryEditViewModel(part.As<InventoryPart>()),
+                                Prefix: "InventoryPart");
+                        }
+                        else {
+                            return shapeHelper.EditorTemplate(
+                                TemplateName: "Parts/InventoryControl/Inventory.Quantity",
+                                Model: new InventoryControlEditViewModel(part, _productInventoryService),
+                                Prefix: Prefix);
+                        }
+                    }));
             }
 
             // shape for the PreventAutomaticDecrease flag
             shapes.Add(ContentShape("Parts_InventoryControl_Edit",
                 () => {
-                    var viewModel = new InventoryControlEditViewModel(part);
+                    var viewModel = new InventoryControlEditViewModel(part, _productInventoryService);
                     if (updater != null) {
                         updater.TryUpdateModel(viewModel, Prefix, null, null);
                         part.PreventAutomaticDecrease = viewModel.PreventAutomaticDecrease;

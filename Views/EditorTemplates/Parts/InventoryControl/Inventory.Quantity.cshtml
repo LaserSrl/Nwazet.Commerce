@@ -1,0 +1,79 @@
+﻿@using Nwazet.Commerce.Models
+@using Nwazet.Commerce.Services
+@using Orchard.ContentManagement
+@model Nwazet.Commerce.ViewModels.InventoryControl.InventoryControlEditViewModel
+@{ 
+
+    var shortGuid = "a" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
+
+    var containerGuid = "container" + shortGuid;
+
+    var currentInventoryGuid = "current" + shortGuid;
+    var variationAmountGuid = "varAmount" + shortGuid;
+}
+
+<fieldset>
+    <div class="product-inventory" id="@containerGuid">
+        <div class="current-inventory">
+            @T("Current inventory:") 
+            <span id="@currentInventoryGuid"
+                  class="value"
+                  data-sku-value="@Model.ProductSku">
+                @Model.InventoryValue
+            </span>
+        </div>
+
+        <div class="inventory-variation">
+            <label for="@variationAmountGuid">
+                @T("Inventory change:")
+            </label>
+            <input id="@variationAmountGuid"
+                   type="number"
+                   min="1" step="1" value="1" />
+
+            <a class="remove variation-action"
+               href="#"
+               data-product-id="@Model.ContentId"
+               data-action-url="@Url.Action("RemoveInventory", "InventoryControlAdmin", new {area = "Nwazet.Commerce"})">
+                @T("Remove")
+            </a>
+
+            <a class="add variation-action"
+               href="#"
+               data-product-id="@Model.ContentId"
+               data-action-url="@Url.Action("AddInventory", "InventoryControlAdmin", new {area = "Nwazet.Commerce"})">
+                @T("Add")
+            </a>
+        </div>
+        
+    </div>
+</fieldset>
+
+@using (Script.Foot()) {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#@containerGuid a.variation-action').click(function () {
+                var variationValue = parseInt($('#@variationAmountGuid').val());
+                console.log("variation value is " + variationValue);
+                if (variationValue && variationValue > 0) {
+                    $.post(
+                        $(this).data("action-url"),
+                        {
+                            __RequestVerificationToken: $("input[name=__RequestVerificationToken]").val(),
+                            id: $(this).data("product-id"),
+                            quantity: variationValue,
+                        },
+                        function (data) {
+                            // use the received data to update the displayed value for the current inventory.
+                            console.log("Sku " + data.Sku + " Inventory " + data.Inventory);
+                            $('#@currentInventoryGuid').text(data.Inventory);
+                        }
+                    );
+                }
+                return false;
+            });
+        });
+    </script>
+    
+}

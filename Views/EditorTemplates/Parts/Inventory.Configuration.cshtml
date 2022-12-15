@@ -4,7 +4,7 @@
 @model Nwazet.Commerce.ViewModels.InventoryEditViewModel
 
 <fieldset>
-    @Html.HiddenFor(m => m.Inventory, new { @class = "text" })<label class="sub" for="@Html.IdFor(m => m.OutOfStockMessage)">@T("Out of stock message")</label>
+    <label class="sub" for="@Html.IdFor(m => m.OutOfStockMessage)">@T("Out of stock message")</label>
     @Html.TextBoxFor(m => m.OutOfStockMessage, new { @class = "text-medium" })<br />
     <span class="hint">@T("This message will be displayed if the inventory is zero or less. Leave blank for the default message to be used.")</span>
     @Html.CheckBoxFor(m => m.AllowBackOrder)

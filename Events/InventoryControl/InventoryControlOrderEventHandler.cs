@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nwazet.Commerce.Events {
+namespace Nwazet.Commerce.Events.InventoryControl {
     [OrchardFeature("Nwazet.InventoryControl")]
     public class InventoryControlOrderEventHandler : IOrderEventHandler {
         private readonly IContentManager _contentManager;
