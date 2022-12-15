@@ -51,7 +51,8 @@
 
 @using (Script.Foot()) {
     <script type="text/javascript">
-
+        // TODO: prevent clicking either button when we are waiting for the response by
+        // showing a loading thingy
         $(document).ready(function () {
             $('#@containerGuid a.variation-action').click(function () {
                 var variationValue = parseInt($('#@variationAmountGuid').val());
