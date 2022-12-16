@@ -55,9 +55,21 @@ namespace Nwazet.Commerce.Controllers.InventoryControl {
                 return Unauthorized(T("Not authorized to manage products"));
             }
             // TODO: bundles, combinations...
+            var currentInventory = _productInventoryService.GetInventory(product);
+            if (quantity > currentInventory) {
+                // we cannot have negative inventories
+                return new JsonResult {
+                    Data = new {
+                        Result = "Error",
+                        Sku = product.Sku,
+                        Message = T("Operation denied beceuse it would result in negative inventory.").Text
+                    }
+                };
+            }
             _productInventoryService.UpdateInventory(product, -quantity);
             return new JsonResult {
                 Data = new { 
+                    Result = "Success",
                     Sku = product.Sku,
                     Inventory = _productInventoryService.GetInventory(product)
                 }
@@ -82,6 +94,7 @@ namespace Nwazet.Commerce.Controllers.InventoryControl {
             _productInventoryService.UpdateInventory(product, quantity);
             return new JsonResult {
                 Data = new {
+                    Result = "Success",
                     Sku = product.Sku,
                     Inventory = _productInventoryService.GetInventory(product)
                 }
