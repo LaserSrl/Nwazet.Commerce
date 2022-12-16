@@ -114,10 +114,6 @@
     <Content Include="Scripts\chartjs.min.js">
       <DependentUpon>chartjs.js</DependentUpon>
     </Content>
-    <Content Include="Scripts\inventory.js" />
-    <Content Include="Scripts\inventory.min.js">
-      <DependentUpon>inventory.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\jquery.iframe-transport.js" />
     <Content Include="Scripts\jquery.iframe-transport.min.js">
       <DependentUpon>jquery.iframe-transport.js</DependentUpon>
@@ -322,7 +318,6 @@
     <None Include="Views\CouponingAdmin\_CouponsListPartial.cshtml" />
     <Content Include="Views\ProductAdmin\CreateProduct.cshtml" />
     <Content Include="Views\ProductAdmin\CreatableTypeList.cshtml" />
-    <Content Include="Views\InventorySummaryAdmin.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\CreatableTypeList.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\CreateHierarchy.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\EditHierarchy.cshtml" />
@@ -963,7 +958,6 @@
     <Content Include="Views\Parts\Bundle.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\Bundle.cshtml" />
     <Content Include="Views\ProductSummaryAdmin.cshtml" />
-    <Content Include="Views\BundleSummaryAdmin.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\SizeBasedShippingMethod.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\Discount.cshtml" />
     <Content Include="Views\Price.cshtml" />
@@ -975,9 +969,6 @@
     <Content Include="Views\TitleWithLink.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Scripts\inventory.min.js.map">
-      <DependentUpon>inventory.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\referral.min.js.map">
       <DependentUpon>referral.js</DependentUpon>
     </Content>
