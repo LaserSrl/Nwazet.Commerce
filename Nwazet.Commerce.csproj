@@ -401,6 +401,7 @@
     <Compile Include="Drivers\HierarchyVatConfigurationPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUProductPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUSiteSettingsPartDriver.cs" />
+    <Compile Include="Drivers\InventoryControl\BaseInventoryPartDriver.cs" />
     <Compile Include="Drivers\InventoryControl\InventoryControlPartDriver.cs" />
     <Compile Include="Drivers\InventoryPartDriver.cs" />
     <Compile Include="Drivers\OrderPartDriver.cs" />

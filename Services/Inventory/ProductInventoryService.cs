@@ -65,9 +65,11 @@ namespace Nwazet.Commerce.Services.Inventory {
             }
         }
 
-        public int SetInventory(ProductPart part, int inventoryValue) {
-            part.As<InventoryPart>().Inventory = inventoryValue;
-            SynchronizeInventories(part);
+        private int SetInventory(ProductPart part, int inventoryValue) {
+            if (part.Is<InventoryPart>()) {
+                part.As<InventoryPart>().Inventory = inventoryValue;
+                SynchronizeInventories(part);
+            }
             return part.Inventory;
         }
 
