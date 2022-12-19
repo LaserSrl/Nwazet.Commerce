@@ -68,24 +68,23 @@ namespace Nwazet.Commerce.Services.Inventory {
         private int SetInventory(ProductPart part, int inventoryValue) {
             if (part.Is<InventoryPart>()) {
                 part.As<InventoryPart>().Inventory = inventoryValue;
-                SynchronizeInventories(part);
             }
+            SynchronizeInventories(part);
             return part.Inventory;
         }
 
         public int UpdateInventory(ProductPart part, int inventoryChange) {
-            part.As<InventoryPart>().Inventory += inventoryChange;
+            if (part.Is<InventoryPart>()) {
+                part.As<InventoryPart>().Inventory += inventoryChange;
+            }
             SynchronizeInventories(part);
             return part.Inventory;
         }
 
         public int GetInventory(InventoryPart part) {
-            IBundleService bundleService;
             var inventory = part.Inventory;
-            if (_workContextAccessor.GetContext().TryResolve(out bundleService) && part.Has<BundlePart>()) {
-                var bundlePart = part.As<BundlePart>();
-                inventory = GetInventoryForBundle(bundlePart, bundleService);
-            }
+            // Since with this method we explicitly ask for the inventoy from the InventoryPart
+            // we don't do the computations to figure out availability based on bundles and what not.
             return inventory;
         }
 

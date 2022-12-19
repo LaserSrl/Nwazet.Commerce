@@ -29,7 +29,6 @@ namespace Nwazet.Commerce.Migrations {
 
             ContentDefinitionManager.AlterPartDefinition("InventoryControlPart",
                 builder => builder
-                    .Named("InventoryControl")
                     .WithDescription("Enables automatic decrease of inventory when products are ordered."));
 
             return 2;

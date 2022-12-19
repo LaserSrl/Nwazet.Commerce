@@ -37,40 +37,31 @@ namespace Nwazet.Commerce.Drivers.InventoryControl {
             var shapes = new List<DriverResult>();
 
             // shape for the InventoryPart
-            if (part.Is<InventoryPart>()) {
-                // We are going to use the ShapeTableCreated to alter the shape tables so that
-                // the default shape usually displayed for inventory isn't shown anymore.
-                shapes.Add(ContentShape("Parts_InventoryControl_Quantity_Edit",
-                    () => {
-                        if (part.Id == 0) {
-                            // creation of new content
-                            return shapeHelper.EditorTemplate(
-                                TemplateName: "Parts/InventoryControl/Inventory.BaseQuantity",
-                                Model: new InventoryEditViewModel(part.As<InventoryPart>()),
-                                Prefix: "InventoryPart");
-                        }
-                        else {
-                            return shapeHelper.EditorTemplate(
+            if (part.Is<InventoryPart>() && part.Id != 0) {
+                if (part.Id != 0) {
+                    // We are going to use the ShapeTableCreated to alter the shape tables so that
+                    // the default shape usually displayed for inventory isn't shown anymore.
+                    shapes.Add(ContentShape("Parts_InventoryControl_Quantity_Edit",
+                        () => shapeHelper.EditorTemplate(
                                 TemplateName: "Parts/InventoryControl/Inventory.Quantity",
                                 Model: new InventoryControlEditViewModel(part, _productInventoryService),
-                                Prefix: Prefix);
+                                Prefix: Prefix)));
+                }
+
+                // shape for the PreventAutomaticDecrease flag
+                shapes.Add(ContentShape("Parts_InventoryControl_Edit",
+                    () => {
+                        var viewModel = new InventoryControlEditViewModel(part, _productInventoryService);
+                        if (updater != null) {
+                            updater.TryUpdateModel(viewModel, Prefix, null, null);
+                            part.PreventAutomaticDecrease = viewModel.PreventAutomaticDecrease;
                         }
+                        return shapeHelper.EditorTemplate(
+                            TemplateName: "Parts/InventoryControl/InventoryControl",
+                            Model: viewModel,
+                            Prefix: Prefix);
                     }));
             }
-
-            // shape for the PreventAutomaticDecrease flag
-            shapes.Add(ContentShape("Parts_InventoryControl_Edit",
-                () => {
-                    var viewModel = new InventoryControlEditViewModel(part, _productInventoryService);
-                    if (updater != null) {
-                        updater.TryUpdateModel(viewModel, Prefix, null, null);
-                        part.PreventAutomaticDecrease = viewModel.PreventAutomaticDecrease;
-                    }
-                    return shapeHelper.EditorTemplate(
-                        TemplateName: "Parts/InventoryControl/InventoryControl",
-                        Model: viewModel,
-                        Prefix: Prefix);
-                }));
 
             return Combined(shapes.ToArray());
         }

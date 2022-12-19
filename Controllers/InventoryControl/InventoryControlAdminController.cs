@@ -71,7 +71,9 @@ namespace Nwazet.Commerce.Controllers.InventoryControl {
                 Data = new { 
                     Result = "Success",
                     Sku = product.Sku,
-                    Inventory = _productInventoryService.GetInventory(product)
+                    Inventory = product.Is<InventoryPart>()
+                        ? _productInventoryService.GetInventory(product.As<InventoryPart>())
+                        : _productInventoryService.GetInventory(product)
                 }
             };
         }
@@ -96,7 +98,9 @@ namespace Nwazet.Commerce.Controllers.InventoryControl {
                 Data = new {
                     Result = "Success",
                     Sku = product.Sku,
-                    Inventory = _productInventoryService.GetInventory(product)
+                    Inventory = product.Is<InventoryPart>()
+                        ? _productInventoryService.GetInventory(product.As<InventoryPart>())
+                        : _productInventoryService.GetInventory(product)
                 }
             };
         }
