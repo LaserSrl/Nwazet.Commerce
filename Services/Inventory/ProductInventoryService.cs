@@ -1,24 +1,30 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web.UI.WebControls.WebParts;
 using Nwazet.Commerce.Models;
 using Orchard;
 using Orchard.ContentManagement;
+using Orchard.Core.Common.Models;
+using Orchard.OutputCache.Services;
 
 namespace Nwazet.Commerce.Services.Inventory {
     public class ProductInventoryService : IProductInventoryService {
         protected readonly IWorkContextAccessor _workContextAccessor;
         protected readonly IContentManager _contentManager;
         protected readonly IEnumerable<IProductGroupInventoryProvider> _productGroupInventoryProviders;
+        private readonly ICacheService _cacheService;
 
         public ProductInventoryService(
             IWorkContextAccessor workContextAccessor,
             IContentManager contentManager,
-            IEnumerable<IProductGroupInventoryProvider> productGroupInventoryProviders) {
+            IEnumerable<IProductGroupInventoryProvider> productGroupInventoryProviders,
+            ICacheService cacheService) {
 
             _workContextAccessor = workContextAccessor;
             _contentManager = contentManager;
             _productGroupInventoryProviders = productGroupInventoryProviders;
+            _cacheService = cacheService;
         }
 
         public IEnumerable<ProductPart> GetProductsWithSameInventory(ProductPart part) {
@@ -56,6 +62,12 @@ namespace Nwazet.Commerce.Services.Inventory {
 
         private int SetInventory(ProductPart part, int inventoryValue) {
             if (part.Is<InventoryPart>()) {
+                // if the inventory was or will be 0, invalidate cache entries for the
+                // product so users may now see that it's become available/unavailable.
+                var oldValue = part.As<InventoryPart>().Inventory;
+                if ((oldValue == 0 || inventoryValue == 0) && oldValue != inventoryValue) {
+                    InvalidateCacheEntries(part);
+                }
                 part.As<InventoryPart>().Inventory = inventoryValue;
             }
             SynchronizeInventories(part);
@@ -64,6 +76,13 @@ namespace Nwazet.Commerce.Services.Inventory {
 
         public int UpdateInventory(ProductPart part, int inventoryChange) {
             if (part.Is<InventoryPart>()) {
+                // if the inventory was or will be 0, invalidate cache entries for the
+                // product so users may now see that it's become available/unavailable.
+                var oldValue = part.As<InventoryPart>().Inventory;
+                var newValue = oldValue + inventoryChange;
+                if ((oldValue == 0 || newValue == 0) && oldValue != newValue) {
+                    InvalidateCacheEntries(part);
+                }
                 part.As<InventoryPart>().Inventory += inventoryChange;
             }
             SynchronizeInventories(part);
@@ -127,6 +146,19 @@ namespace Nwazet.Commerce.Services.Inventory {
                 }
             }
             return false;
+        }
+
+        private void InvalidateCacheEntries(IContent content) {
+            // Remove any item tagged with this content item ID.
+            _cacheService.RemoveByTag(content.ContentItem.Id.ToString(CultureInfo.InvariantCulture));
+
+            // Search the cache for containers too.
+            var commonPart = content.As<CommonPart>();
+            if (commonPart != null) {
+                if (commonPart.Container != null) {
+                    _cacheService.RemoveByTag(commonPart.Container.Id.ToString(CultureInfo.InvariantCulture));
+                }
+            }
         }
     }
 }
