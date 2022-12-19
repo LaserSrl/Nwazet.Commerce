@@ -691,6 +691,7 @@
     <Compile Include="Services\Combinations\DuplicatedCombinationStatusProvider.cs" />
     <Compile Include="Services\Combinations\ICombinationDetailProvider.cs" />
     <Compile Include="Services\Combinations\ICombinationStatusProvider.cs" />
+    <Compile Include="Services\Combinations\InventoryControlPartDetailProvider.cs" />
     <Compile Include="Services\Combinations\InventoryPartDetailProvider.cs" />
     <Compile Include="Services\Combinations\IProductCombinationService.cs" />
     <Compile Include="Services\Combinations\LocalizationPartDetailProvider.cs" />

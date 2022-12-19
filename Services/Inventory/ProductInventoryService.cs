@@ -52,18 +52,6 @@ namespace Nwazet.Commerce.Services.Inventory {
                    .Where(pa => GetInventory(pa) != inv)) { //condition to avoid infinite recursion
                 SetInventory(pp, GetInventory(part)); //call methods from base class
             }
-            ////Synchronize the inventory for the eventual bundles that contain the product
-            //IBundleService bundleService;
-            //if (_workContextAccessor.GetContext().TryResolve(out bundleService)) {
-            //    var affectedBundles = _contentManager.Query<BundlePart, BundlePartRecord>()
-            //        .Where(b => b.Products.Any(p => p.ContentItemRecord.Id == part.Id))
-            //        .WithQueryHints(new QueryHints().ExpandParts<ProductPart>())
-            //        .List();
-            //    foreach (var bundle in affectedBundles.Where(b => b.ContentItem.As<ProductPart>() != null)) {
-            //        var prod = bundle.ContentItem.As<ProductPart>();
-            //        SetInventory(prod, GetInventory(prod));
-            //    }
-            //}
         }
 
         private int SetInventory(ProductPart part, int inventoryValue) {
