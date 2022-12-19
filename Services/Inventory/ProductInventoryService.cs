@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Web.UI.WebControls.WebParts;
 using Nwazet.Commerce.Models;
 using Orchard;
 using Orchard.ContentManagement;
@@ -51,18 +52,18 @@ namespace Nwazet.Commerce.Services.Inventory {
                    .Where(pa => GetInventory(pa) != inv)) { //condition to avoid infinite recursion
                 SetInventory(pp, GetInventory(part)); //call methods from base class
             }
-            //Synchronize the inventory for the eventual bundles that contain the product
-            IBundleService bundleService;
-            if (_workContextAccessor.GetContext().TryResolve(out bundleService)) {
-                var affectedBundles = _contentManager.Query<BundlePart, BundlePartRecord>()
-                    .Where(b => b.Products.Any(p => p.ContentItemRecord.Id == part.Id))
-                    .WithQueryHints(new QueryHints().ExpandParts<ProductPart>())
-                    .List();
-                foreach (var bundle in affectedBundles.Where(b => b.ContentItem.As<ProductPart>() != null)) {
-                    var prod = bundle.ContentItem.As<ProductPart>();
-                    SetInventory(prod, GetInventory(prod));
-                }
-            }
+            ////Synchronize the inventory for the eventual bundles that contain the product
+            //IBundleService bundleService;
+            //if (_workContextAccessor.GetContext().TryResolve(out bundleService)) {
+            //    var affectedBundles = _contentManager.Query<BundlePart, BundlePartRecord>()
+            //        .Where(b => b.Products.Any(p => p.ContentItemRecord.Id == part.Id))
+            //        .WithQueryHints(new QueryHints().ExpandParts<ProductPart>())
+            //        .List();
+            //    foreach (var bundle in affectedBundles.Where(b => b.ContentItem.As<ProductPart>() != null)) {
+            //        var prod = bundle.ContentItem.As<ProductPart>();
+            //        SetInventory(prod, GetInventory(prod));
+            //    }
+            //}
         }
 
         private int SetInventory(ProductPart part, int inventoryValue) {
@@ -89,6 +90,8 @@ namespace Nwazet.Commerce.Services.Inventory {
         }
 
         public int GetInventory(ProductPart part) {
+            // Here we explicitly don't fallback to the implementation using only InventoryPart, because
+            // we invoke this to have the rest of the computations done.
             IBundleService bundleService;
             var inventory = part.As<InventoryPart>()?.Inventory ?? 0;
             if (_workContextAccessor.GetContext().TryResolve(out bundleService) && part.Has<BundlePart>()) {
@@ -97,7 +100,7 @@ namespace Nwazet.Commerce.Services.Inventory {
             }
             return inventory;
         }
-        
+                
         private int GetInventoryForBundle(BundlePart bundlePart, IBundleService bundleService) {
             var ids = bundlePart.ProductIds.ToList();
             if (!ids.Any()) return 0;
