@@ -14,16 +14,16 @@
     var variationAmountGuid = "varAmount" + shortGuid;
 }
 
-<fieldset id="@fieldsetGuid">
+<fieldset class="product-inventory" id="@fieldsetGuid">
+    <legend class="inventory-control-legend">
+        @T("Current inventory:") 
+        <span id="@currentInventoryGuid"
+              class="value"
+              data-sku-value="@Model.ProductSku">
+            @Model.InventoryValue
+        </span>
+    </legend>
     <div class="product-inventory" id="@containerGuid">
-        <div class="current-inventory">
-            @T("Current inventory:") 
-            <span id="@currentInventoryGuid"
-                  class="value"
-                  data-sku-value="@Model.ProductSku">
-                @Model.InventoryValue
-            </span>
-        </div>
 
         <div class="inventory-variation">
             <label for="@variationAmountGuid">
