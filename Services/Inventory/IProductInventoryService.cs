@@ -29,12 +29,18 @@ namespace Nwazet.Commerce.Services.Inventory {
         /// </summary>
         /// <param name="part">The ProductPart whose inventory we are looking for.</param>
         /// <returns>The quantity in inventory.</returns>
+        /// <remarks>The implementations asking directly for the inventory from the InventoryPart and the
+        /// ProductPart may be different. The latter may generally involve other computations with different
+        /// Parts that may alter and extend a product (e.g. Bundles).</remarks>
         int GetInventory(ProductPart part);
         /// <summary>
         /// Get the inventory of the InventoryPart specified.
         /// </summary>
         /// <param name="part">The InventoryPart whose inventory we are looking for.</param>
         /// <returns>The quantity in inventory.</returns>
+        /// <remarks>The implementations asking directly for the inventory from the InventoryPart and the
+        /// ProductPart may be different. The latter may generally involve other computations with different
+        /// Parts that may alter and extend a product (e.g. Bundles).</remarks>
         int GetInventory(InventoryPart part);
         /// <summary>
         /// Gets the ProductParts whose inventory has issues, e.g. is not synchronized correctly.

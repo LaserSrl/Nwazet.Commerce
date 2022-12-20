@@ -19,7 +19,9 @@ namespace Nwazet.Commerce.ViewModels.InventoryControl {
 
             ProductSku = part.As<ProductPart>().Sku;
             ContentId = part.Id;
-            InventoryValue = productInventoryService.GetInventory(part.As<ProductPart>());
+            InventoryValue = part.Is<InventoryPart>()
+                ? productInventoryService.GetInventory(part.As<InventoryPart>())
+                : productInventoryService.GetInventory(part.As<ProductPart>());
         }
 
         public bool PreventAutomaticDecrease { get; set; }

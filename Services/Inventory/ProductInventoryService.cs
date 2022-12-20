@@ -1,23 +1,30 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Web.UI.WebControls.WebParts;
 using Nwazet.Commerce.Models;
 using Orchard;
 using Orchard.ContentManagement;
+using Orchard.Core.Common.Models;
+using Orchard.OutputCache.Services;
 
 namespace Nwazet.Commerce.Services.Inventory {
     public class ProductInventoryService : IProductInventoryService {
         protected readonly IWorkContextAccessor _workContextAccessor;
         protected readonly IContentManager _contentManager;
         protected readonly IEnumerable<IProductGroupInventoryProvider> _productGroupInventoryProviders;
+        private readonly ICacheService _cacheService;
 
         public ProductInventoryService(
             IWorkContextAccessor workContextAccessor,
             IContentManager contentManager,
-            IEnumerable<IProductGroupInventoryProvider> productGroupInventoryProviders) {
+            IEnumerable<IProductGroupInventoryProvider> productGroupInventoryProviders,
+            ICacheService cacheService) {
 
             _workContextAccessor = workContextAccessor;
             _contentManager = contentManager;
             _productGroupInventoryProviders = productGroupInventoryProviders;
+            _cacheService = cacheService;
         }
 
         public IEnumerable<ProductPart> GetProductsWithSameInventory(ProductPart part) {
@@ -51,43 +58,47 @@ namespace Nwazet.Commerce.Services.Inventory {
                    .Where(pa => GetInventory(pa) != inv)) { //condition to avoid infinite recursion
                 SetInventory(pp, GetInventory(part)); //call methods from base class
             }
-            //Synchronize the inventory for the eventual bundles that contain the product
-            IBundleService bundleService;
-            if (_workContextAccessor.GetContext().TryResolve(out bundleService)) {
-                var affectedBundles = _contentManager.Query<BundlePart, BundlePartRecord>()
-                    .Where(b => b.Products.Any(p => p.ContentItemRecord.Id == part.Id))
-                    .WithQueryHints(new QueryHints().ExpandParts<ProductPart>())
-                    .List();
-                foreach (var bundle in affectedBundles.Where(b => b.ContentItem.As<ProductPart>() != null)) {
-                    var prod = bundle.ContentItem.As<ProductPart>();
-                    SetInventory(prod, GetInventory(prod));
-                }
-            }
         }
 
-        public int SetInventory(ProductPart part, int inventoryValue) {
-            part.As<InventoryPart>().Inventory = inventoryValue;
+        private int SetInventory(ProductPart part, int inventoryValue) {
+            if (part.Is<InventoryPart>()) {
+                // if the inventory was or will be 0, invalidate cache entries for the
+                // product so users may now see that it's become available/unavailable.
+                var oldValue = part.As<InventoryPart>().Inventory;
+                if ((oldValue == 0 || inventoryValue == 0) && oldValue != inventoryValue) {
+                    InvalidateCacheEntries(part);
+                }
+                part.As<InventoryPart>().Inventory = inventoryValue;
+            }
             SynchronizeInventories(part);
             return part.Inventory;
         }
 
         public int UpdateInventory(ProductPart part, int inventoryChange) {
-            part.As<InventoryPart>().Inventory += inventoryChange;
+            if (part.Is<InventoryPart>()) {
+                // if the inventory was or will be 0, invalidate cache entries for the
+                // product so users may now see that it's become available/unavailable.
+                var oldValue = part.As<InventoryPart>().Inventory;
+                var newValue = oldValue + inventoryChange;
+                if ((oldValue == 0 || newValue == 0) && oldValue != newValue) {
+                    InvalidateCacheEntries(part);
+                }
+                part.As<InventoryPart>().Inventory += inventoryChange;
+            }
             SynchronizeInventories(part);
             return part.Inventory;
         }
 
         public int GetInventory(InventoryPart part) {
-            IBundleService bundleService;
             var inventory = part.Inventory;
-            if (_workContextAccessor.GetContext().TryResolve(out bundleService) && part.Has<BundlePart>()) {
-                var bundlePart = part.As<BundlePart>();
-                inventory = GetInventoryForBundle(bundlePart, bundleService);
-            }
+            // Since with this method we explicitly ask for the inventoy from the InventoryPart
+            // we don't do the computations to figure out availability based on bundles and what not.
             return inventory;
         }
 
         public int GetInventory(ProductPart part) {
+            // Here we explicitly don't fallback to the implementation using only InventoryPart, because
+            // we invoke this to have the rest of the computations done.
             IBundleService bundleService;
             var inventory = part.As<InventoryPart>()?.Inventory ?? 0;
             if (_workContextAccessor.GetContext().TryResolve(out bundleService) && part.Has<BundlePart>()) {
@@ -96,7 +107,7 @@ namespace Nwazet.Commerce.Services.Inventory {
             }
             return inventory;
         }
-        
+                
         private int GetInventoryForBundle(BundlePart bundlePart, IBundleService bundleService) {
             var ids = bundlePart.ProductIds.ToList();
             if (!ids.Any()) return 0;
@@ -135,6 +146,19 @@ namespace Nwazet.Commerce.Services.Inventory {
                 }
             }
             return false;
+        }
+
+        private void InvalidateCacheEntries(IContent content) {
+            // Remove any item tagged with this content item ID.
+            _cacheService.RemoveByTag(content.ContentItem.Id.ToString(CultureInfo.InvariantCulture));
+
+            // Search the cache for containers too.
+            var commonPart = content.As<CommonPart>();
+            if (commonPart != null) {
+                if (commonPart.Container != null) {
+                    _cacheService.RemoveByTag(commonPart.Container.Id.ToString(CultureInfo.InvariantCulture));
+                }
+            }
         }
     }
 }

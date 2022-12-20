@@ -412,6 +412,7 @@
     <Compile Include="Drivers\HierarchyVatConfigurationPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUProductPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUSiteSettingsPartDriver.cs" />
+    <Compile Include="Drivers\InventoryControl\BaseInventoryPartDriver.cs" />
     <Compile Include="Drivers\InventoryControl\InventoryControlPartDriver.cs" />
     <Compile Include="Drivers\InventoryPartDriver.cs" />
     <Compile Include="Drivers\OrderPartDriver.cs" />
@@ -701,6 +702,7 @@
     <Compile Include="Services\Combinations\DuplicatedCombinationStatusProvider.cs" />
     <Compile Include="Services\Combinations\ICombinationDetailProvider.cs" />
     <Compile Include="Services\Combinations\ICombinationStatusProvider.cs" />
+    <Compile Include="Services\Combinations\InventoryControlPartDetailProvider.cs" />
     <Compile Include="Services\Combinations\InventoryPartDetailProvider.cs" />
     <Compile Include="Services\Combinations\IProductCombinationService.cs" />
     <Compile Include="Services\Combinations\LocalizationPartDetailProvider.cs" />
