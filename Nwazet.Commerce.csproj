@@ -125,10 +125,6 @@
     <Content Include="Scripts\chartjs.min.js">
       <DependentUpon>chartjs.js</DependentUpon>
     </Content>
-    <Content Include="Scripts\inventory.js" />
-    <Content Include="Scripts\inventory.min.js">
-      <DependentUpon>inventory.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\jquery.iframe-transport.js" />
     <Content Include="Scripts\jquery.iframe-transport.min.js">
       <DependentUpon>jquery.iframe-transport.js</DependentUpon>
@@ -290,11 +286,15 @@
     <None Include="Views\EditorTemplates\Parts\Combinations\LocalizedCombinationPart.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationPart.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Combinations\CombinationContainerPart.New.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\InventoryControl\Inventory.BaseQuantity.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Inventory.Quantity.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\InventoryControl\Inventory.Quantity.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\InventoryControl\InventoryControl.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Advanced.cshtml" />
     <None Include="Views\EditorTemplates\Parts\ShippingMethodAreas.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethod.cshtml" />
     <None Include="Views\EditorTemplates\Parts\FlexibleShippingMethodCriteria.cshtml" />
-    <None Include="Views\EditorTemplates\Parts\Inventory.cshtml" />
+    <None Include="Views\EditorTemplates\Parts\Inventory.Configuration.cshtml" />
     <None Include="Views\EditorTemplates\Parts\NewFlexibleShippingMethodCriteria.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Activity.cshtml" />
     <None Include="Views\EditorTemplates\Parts\Order.Addresses.cshtml" />
@@ -329,7 +329,6 @@
     <None Include="Views\CouponingAdmin\_CouponsListPartial.cshtml" />
     <Content Include="Views\ProductAdmin\CreateProduct.cshtml" />
     <Content Include="Views\ProductAdmin\CreatableTypeList.cshtml" />
-    <Content Include="Views\InventorySummaryAdmin.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\CreatableTypeList.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\CreateHierarchy.cshtml" />
     <None Include="Views\TerritoryHierarchiesAdmin\EditHierarchy.cshtml" />
@@ -372,6 +371,7 @@
     <Compile Include="Controllers\FlexibleShippingCriterionController.cs" />
     <Compile Include="Controllers\HierarchyTerritoriesAdminController.cs" />
     <Compile Include="Controllers\InventoryBySKUSettingsAdminController.cs" />
+    <Compile Include="Controllers\InventoryControl\InventoryControlAdminController.cs" />
     <Compile Include="Controllers\ProductExecutionContext.cs" />
     <Compile Include="Controllers\ProductSettingsAdminController.cs" />
     <Compile Include="Controllers\BundleAdminController.cs" />
@@ -412,6 +412,8 @@
     <Compile Include="Drivers\HierarchyVatConfigurationPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUProductPartDriver.cs" />
     <Compile Include="Drivers\InventoryBySKUSiteSettingsPartDriver.cs" />
+    <Compile Include="Drivers\InventoryControl\BaseInventoryPartDriver.cs" />
+    <Compile Include="Drivers\InventoryControl\InventoryControlPartDriver.cs" />
     <Compile Include="Drivers\InventoryPartDriver.cs" />
     <Compile Include="Drivers\OrderPartDriver.cs" />
     <Compile Include="Drivers\PricePartDriver.cs" />
@@ -438,6 +440,10 @@
     <Compile Include="Drivers\ProductPartDriver.cs" />
     <Compile Include="Drivers\ShoppingCartWidgetDriver.cs" />
     <Compile Include="Drivers\WeightBasedShippingMethodPartDriver.cs" />
+    <Compile Include="Events\InventoryControl\InventoryControlOrderEventHandler.cs" />
+    <Compile Include="Events\InventoryControl\InventoryControlShapeTableEventHandler.cs" />
+    <Compile Include="Events\IOrderEventHandler.cs" />
+    <Compile Include="Events\WorkflowOrderEventHandler.cs" />
     <Compile Include="Exceptions\StripeException.cs" />
     <Compile Include="Exceptions\TerritoryInternalDuplicateException.cs" />
     <Compile Include="Extensions\AttributeNameUtilities.cs" />
@@ -483,6 +489,7 @@
     <Compile Include="Handlers\FlexibleShippingSiteSettingPartHandler.cs" />
     <Compile Include="Handlers\HierarchyVatConfigurationPartHandler.cs" />
     <Compile Include="Handlers\InventoryBySKUSiteSettingsPartHandler.cs" />
+    <Compile Include="Handlers\InventoryControl\InventoryControlContentHandler.cs" />
     <Compile Include="Handlers\InventoryPartHandler.cs" />
     <Compile Include="Handlers\LocalizationAttributePartHandler.cs" />
     <Compile Include="Handlers\OrderPartAuthorizationEventHandler.cs" />
@@ -529,6 +536,7 @@
     <Compile Include="Migrations\AttributesMigrations.cs" />
     <Compile Include="Migrations\CouponingMigrations.cs" />
     <Compile Include="Migrations\FlexibleShippingMethodMigrations.cs" />
+    <Compile Include="Migrations\InventoryControlMigrations.cs" />
     <Compile Include="Migrations\OrderMigrations.cs" />
     <Compile Include="Migrations\PersistentCartMigrations.cs" />
     <Compile Include="Migrations\ProductCombinationsMigrations.cs" />
@@ -566,6 +574,8 @@
     <Compile Include="Models\HierarchyVatConfigurationPartRecord.cs" />
     <Compile Include="Models\ICharge.cs" />
     <Compile Include="Models\InventoryBySKUSiteSettingsPart.cs" />
+    <Compile Include="Models\InventoryControl\InventoryControlPart.cs" />
+    <Compile Include="Models\InventoryControl\InventoryControlPartRecord.cs" />
     <Compile Include="Models\InventoryPart.cs" />
     <Compile Include="Models\InventoryPartRecord.cs" />
     <Compile Include="Models\OrderAdditionalInformation.cs" />
@@ -692,6 +702,7 @@
     <Compile Include="Services\Combinations\DuplicatedCombinationStatusProvider.cs" />
     <Compile Include="Services\Combinations\ICombinationDetailProvider.cs" />
     <Compile Include="Services\Combinations\ICombinationStatusProvider.cs" />
+    <Compile Include="Services\Combinations\InventoryControlPartDetailProvider.cs" />
     <Compile Include="Services\Combinations\InventoryPartDetailProvider.cs" />
     <Compile Include="Services\Combinations\IProductCombinationService.cs" />
     <Compile Include="Services\Combinations\LocalizationPartDetailProvider.cs" />
@@ -904,6 +915,7 @@
     <Compile Include="ViewModels\HierarchyVatConfigurationPartViewModel.cs" />
     <Compile Include="ViewModels\InventoryBySKUProductEditorViewModel.cs" />
     <Compile Include="ViewModels\InventoryBySKUSiteSettingsPartViewModel.cs" />
+    <Compile Include="ViewModels\InventoryControl\InventoryControlEditViewModel.cs" />
     <Compile Include="ViewModels\InventoryEditViewModel.cs" />
     <Compile Include="ViewModels\ListProductsViewModel.cs" />
     <Compile Include="ViewModels\OrderEditorAdditionalProductInfoViewModel.cs" />
@@ -959,7 +971,6 @@
     <Content Include="Views\Parts\Bundle.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\Bundle.cshtml" />
     <Content Include="Views\ProductSummaryAdmin.cshtml" />
-    <Content Include="Views\BundleSummaryAdmin.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\SizeBasedShippingMethod.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\Discount.cshtml" />
     <Content Include="Views\Price.cshtml" />
@@ -971,9 +982,6 @@
     <Content Include="Views\TitleWithLink.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Scripts\inventory.min.js.map">
-      <DependentUpon>inventory.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\referral.min.js.map">
       <DependentUpon>referral.js</DependentUpon>
     </Content>

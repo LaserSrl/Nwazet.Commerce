@@ -18,12 +18,6 @@
     ]
   },
   {
-    "outputFileName": "Scripts/inventory.min.js",
-    "inputFiles": [
-      "Scripts/inventory.js"
-    ]
-  },
-  {
     "outputFileName": "Scripts/order-admin.min.js",
     "inputFiles": [
       "Scripts/order-admin.js"

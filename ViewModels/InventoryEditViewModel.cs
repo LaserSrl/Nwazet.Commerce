@@ -15,7 +15,7 @@ namespace Nwazet.Commerce.ViewModels {
             MaximumOrderQuantity = part.MaximumOrderQuantity;
         }
 
-        public int Inventory { get; set; }
+        public int? Inventory { get; set; }
         public string OutOfStockMessage { get; set; }
         public bool AllowBackOrder { get; set; }
         public int MinimumOrderQuantity { get; set; }
