@@ -4,7 +4,6 @@
 @model Nwazet.Commerce.ViewModels.InventoryEditViewModel
 
 <fieldset>
-    CONTROL
     <label class="sub" for="@Html.IdFor(m => m.Inventory)">@T("Inventory")</label>
     @Html.TextBoxFor(m => m.Inventory, new { @class = "text" })
     <span class="hint">@T("Changes to the inventory value will propagate to other versions of this product.")</span>
