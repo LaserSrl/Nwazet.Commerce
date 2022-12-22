@@ -4,6 +4,8 @@
 @model Nwazet.Commerce.ViewModels.InventoryControl.InventoryControlEditViewModel
 @{ 
 
+    Style.Require("Nwazet.Inventory-Control-Admin").AtHead();
+
     var shortGuid = "a" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
 
     var fieldsetGuid = "fieldset" + shortGuid;
@@ -12,13 +14,18 @@
 
     var currentInventoryGuid = "current" + shortGuid;
     var variationAmountGuid = "varAmount" + shortGuid;
+
+    var spanClass = "value ";
+    if ((int)Model.InventoryValue < 0) {
+        spanClass += "negative";
+    }
 }
 
 <fieldset class="product-inventory" id="@fieldsetGuid">
     <legend class="inventory-control-legend">
         @T("Current inventory:") 
         <span id="@currentInventoryGuid"
-              class="value"
+              class="@spanClass"
               data-sku-value="@Model.ProductSku">
             @Model.InventoryValue
         </span>
@@ -40,7 +47,7 @@
                 @T("Remove")
             </a>
 
-            <a class="variation-action action-add button add"
+            <a class="variation-action action-add button"
                href="#" role="button"
                data-product-id="@Model.ContentId"
                data-action-url="@Url.Action("AddInventory", "InventoryControlAdmin", new {area = "Nwazet.Commerce"})">
@@ -77,11 +84,17 @@
                             // use the received data to update the displayed value for the current inventory.
                             if (data.Result && data.Result == "Success") {
                                 console.log("Sku " + data.Sku + " Inventory " + data.Inventory);
+                                var newInventory = parseInt(data.Inventory);
+                                if (newInventory < 0) {
+                                    $('#@currentInventoryGuid').addClass('negative');
+                                } else {
+                                    $('#@currentInventoryGuid').removeClass('negative');
+                                }
                                 $('#@currentInventoryGuid').text(data.Inventory);
                             } else {
                                 if (data.Message) {
-                                $('#@messagesGuid div').text(data.Message);
-                                $('#@messagesGuid').show();
+                                    $('#@messagesGuid div').text(data.Message);
+                                    $('#@messagesGuid').show();
                                 }
                             }
                         }
