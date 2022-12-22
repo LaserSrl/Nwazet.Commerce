@@ -183,6 +183,12 @@
       <DependentUpon>discount.nwazet-commerce-admin.css</DependentUpon>
     </Content>
     <Content Include="Styles\images\move.gif" />
+    <Content Include="Styles\inventory-control-admin.css">
+      <DependentUpon>inventory-control-admin.scss</DependentUpon>
+    </Content>
+    <Content Include="Styles\inventory-control-admin.min.css">
+      <DependentUpon>inventory-control-admin.css</DependentUpon>
+    </Content>
     <Content Include="Styles\menu.nwazet-commerce-admin.min.css">
       <DependentUpon>menu.nwazet-commerce-admin.css</DependentUpon>
     </Content>
@@ -239,6 +245,7 @@
     </None>
     <None Include="packages.config" />
     <None Include="Styles\coupon-admin.less" />
+    <None Include="Styles\inventory-control-admin.scss" />
     <None Include="Styles\product-admin.less" />
     <None Include="Views\BankTransferOrderAdditionalFrontEndData.cshtml" />
     <None Include="Views\CombinationConfigurationAdmin\Create.cshtml" />
@@ -1173,4 +1180,13 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\Orchard\src\packages\BuildBundlerMinifier.3.2.449\build\BuildBundlerMinifier.targets" Condition="Exists('..\Orchard\src\packages\BuildBundlerMinifier.3.2.449\build\BuildBundlerMinifier.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\Orchard\src\packages\BuildBundlerMinifier.3.2.449\build\BuildBundlerMinifier.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\Orchard\src\packages\BuildBundlerMinifier.3.2.449\build\BuildBundlerMinifier.targets'))" />
+    <Error Condition="!Exists('..\Orchard\src\packages\BuildWebCompiler2022.1.14.9.1\build\BuildWebCompiler2022.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\Orchard\src\packages\BuildWebCompiler2022.1.14.9.1\build\BuildWebCompiler2022.targets'))" />
+  </Target>
+  <Import Project="..\Orchard\src\packages\BuildWebCompiler2022.1.14.9.1\build\BuildWebCompiler2022.targets" Condition="Exists('..\Orchard\src\packages\BuildWebCompiler2022.1.14.9.1\build\BuildWebCompiler2022.targets')" />
 </Project>

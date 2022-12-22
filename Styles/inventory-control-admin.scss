@@ -1,0 +1,43 @@
+﻿.product-inventory {
+
+    .inventory-control-legend {
+        font-size: larger;
+        display: block;
+
+        .value {
+            color: green;
+
+            &.negative {
+                color: red;
+            }
+        }
+    }
+
+    .product-inventory {
+
+        .inventory-variation {
+
+            .variation-action {
+
+                &.button {
+
+                    &.action-remove {
+                        background: grey;
+
+                        &:hover {
+                            background: orange;
+                        }
+                    }
+
+                    &.action-add {
+                        background: grey;
+
+                        &:hover {
+                            background: orange;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
