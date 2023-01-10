@@ -138,3 +138,8 @@ Features:
 		Name: Nwazet Product Combinations
 		Description: Manage product variants as combinations of their attributes.
 		Dependencies: Nwazet.Commerce, Nwazet.Attributes
+    Nwazet.InventoryControl:
+        Name: Nwazet Inventory Control
+        Description: Enables automatic decrements of product inventory. Also causes inventories to be manages by increments rather than by setting the value directly.
+        Category: Commerce
+        Dependencies: Nwazet.Commerce

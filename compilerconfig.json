@@ -10,5 +10,9 @@
   {
     "outputFile": "Styles/coupon-admin.css",
     "inputFile": "Styles/coupon-admin.less"
+  },
+  {
+    "outputFile": "Styles/inventory-control-admin.css",
+    "inputFile": "Styles/inventory-control-admin.scss"
   }
 ]

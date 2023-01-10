@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
+﻿using Nwazet.Commerce.Events;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
 using Nwazet.Commerce.ViewModels;
@@ -11,7 +8,10 @@ using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Themes;
 using Orchard.UI.Notify;
-using Orchard.Workflows.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Controllers {
     [Themed]
@@ -22,30 +22,30 @@ namespace Nwazet.Commerce.Controllers {
         private readonly IStripeService _stripeService;
         private readonly IOrderService _orderService;
         private readonly IWorkContextAccessor _wca;
-        private readonly IWorkflowManager _workflowManager;
         private readonly INotifier _notifier;
         private readonly IEnumerable<ICartLifeCycleEventHandler> _cartLifeCycleEventHandlers;
         private readonly IShoppingCart _shoppingCart;
         private readonly IEnumerable<IOrderAdditionalInformationProvider> _orderAdditionalInformationProviders;
+        private readonly IEnumerable<IOrderEventHandler> _orderEventHandlers;
 
         public StripeController(
             IStripeService stripeService,
             IOrderService orderService,
             IWorkContextAccessor wca,
-            IWorkflowManager workflowManager,
             INotifier notifier,
             IEnumerable<ICartLifeCycleEventHandler> cartLifeCycleEventHandlers,
             IShoppingCart shoppingCart,
-            IEnumerable<IOrderAdditionalInformationProvider> orderAdditionalInformationProviders) {
+            IEnumerable<IOrderAdditionalInformationProvider> orderAdditionalInformationProviders,
+            IEnumerable<IOrderEventHandler> orderEventHandlers) {
 
             _stripeService = stripeService;
             _orderService = orderService;
             _wca = wca;
-            _workflowManager = workflowManager;
             _notifier = notifier;
             _cartLifeCycleEventHandlers = cartLifeCycleEventHandlers;
             _shoppingCart = shoppingCart;
             _orderAdditionalInformationProviders = orderAdditionalInformationProviders;
+            _orderEventHandlers = orderEventHandlers;
 
             Logger = NullLogger.Instance;
             T = NullLocalizer.Instance;
@@ -126,10 +126,12 @@ namespace Nwazet.Commerce.Controllers {
 
             if (stripeCharge.Error != null) {
                 Logger.Error(stripeCharge.Error.Type + ": " + stripeCharge.Error.Message);
-                _workflowManager.TriggerEvent("OrderError", null,
-                    () => new Dictionary<string, object> {
-                        {"CheckoutError", stripeCharge.Error}
-                    });
+
+                _orderEventHandlers.Invoke(
+                    h => h.OnOrderError(null,
+                        new Dictionary<string, string> { { "CheckoutError", stripeCharge.Error.Message } }),
+                    Logger);
+
                 if (stripeCharge.Error.Type == "card_error") {
                     return Pay(stripeCharge.Error.Message);
                 }
@@ -170,18 +172,15 @@ namespace Nwazet.Commerce.Controllers {
                 _orderAdditionalInformationProviders
                     .SelectMany(oaip => oaip.PrepareAdditionalInformation(orderContext)));
             TempData["OrderId"] = order.Id;
-            _workflowManager.TriggerEvent(
-                isProductOrder ? "NewOrder" : "NewPayment",
-                order,
-                () => new Dictionary<string, object> {
-                    {"Content", order},
-                    {"Order", order}
-                });
+            if (isProductOrder) {
+                _orderEventHandlers.Invoke(h => h.OnNewOrder(order), Logger);
+            }
+            else {
+                _orderEventHandlers.Invoke(h => h.OnNewPayment(order), Logger);
+            }
             // call handlers to manage the cart
             var cartContext = new CartFinalizedContext { Order = order };
-            foreach (var handler in _cartLifeCycleEventHandlers) {
-                handler.Finalized(cartContext);
-            }
+            _cartLifeCycleEventHandlers.Invoke(h => h.Finalized(cartContext), Logger);
             _shoppingCart.ClearAll();
             order.LogActivity(OrderPart.Event, T("Order created.").Text, "System");
             // Clear checkout info from temp data

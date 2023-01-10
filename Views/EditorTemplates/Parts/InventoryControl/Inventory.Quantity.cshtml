@@ -1,0 +1,124 @@
+﻿@using Nwazet.Commerce.Models
+@using Nwazet.Commerce.Services
+@using Orchard.ContentManagement
+@model Nwazet.Commerce.ViewModels.InventoryControl.InventoryControlEditViewModel
+@{ 
+
+    Style.Require("Nwazet.Inventory-Control-Admin").AtHead();
+
+    var shortGuid = "a" + Guid.NewGuid().ToString().Split(new char[] { '-' })[0];
+
+    var fieldsetGuid = "fieldset" + shortGuid;
+    var containerGuid = "container" + shortGuid;
+    var messagesGuid = "messages" + shortGuid;
+
+    var currentInventoryGuid = "current" + shortGuid;
+    var variationAmountGuid = "varAmount" + shortGuid;
+
+    var spanClass = "value ";
+    if ((int)Model.InventoryValue < 0) {
+        spanClass += "negative";
+    }
+}
+
+<fieldset class="product-inventory" id="@fieldsetGuid">
+    <legend class="inventory-control-legend">
+        @T("Current inventory:") 
+        <span id="@currentInventoryGuid"
+              class="@spanClass"
+              data-sku-value="@Model.ProductSku">
+            @Model.InventoryValue
+        </span>
+    </legend>
+    <div class="product-inventory" id="@containerGuid">
+
+        <div class="inventory-variation">
+            <label for="@variationAmountGuid">
+                @T("Inventory change:")
+            </label>
+            <input id="@variationAmountGuid"
+                   type="number"
+                   min="1" step="1" value="1" />
+
+            <a class="variation-action action-remove button"
+               href="#" role="button"
+               data-product-id="@Model.ContentId"
+               data-action-url="@Url.Action("RemoveInventory", "InventoryControlAdmin", new {area = "Nwazet.Commerce"})">
+                @T("Remove")
+            </a>
+
+            <a class="variation-action action-add button"
+               href="#" role="button"
+               data-product-id="@Model.ContentId"
+               data-action-url="@Url.Action("AddInventory", "InventoryControlAdmin", new {area = "Nwazet.Commerce"})">
+                @T("Add")
+            </a>
+        </div>
+        
+        <div class="inventory-messages" id="@messagesGuid" style="display:none;">
+            <div class="callout callout-warning"></div>
+        </div>
+    </div>
+</fieldset>
+
+@using (Script.Foot()) {
+    <script type="text/javascript">
+        // TODO: prevent clicking either button when we are waiting for the response by
+        // showing a loading thingy
+        $(document).ready(function () {
+            $('#@containerGuid a.variation-action').click(function () {
+                $('#@fieldsetGuid').prop('disabled', true);
+                $('#@messagesGuid div').text();
+                $('#@messagesGuid').hide();
+                var variationValue = parseInt($('#@variationAmountGuid').val());
+                console.log("variation value is " + variationValue);
+                if (variationValue && variationValue > 0) {
+                    $.post(
+                        $(this).data("action-url"),
+                        {
+                            __RequestVerificationToken: $("input[name=__RequestVerificationToken]").val(),
+                            id: $(this).data("product-id"),
+                            quantity: variationValue,
+                        },
+                        function (data) {
+                            // use the received data to update the displayed value for the current inventory.
+                            if (data.Result && data.Result == "Success") {
+                                console.log("Sku " + data.Sku + " Inventory " + data.Inventory);
+                                var newInventory = parseInt(data.Inventory);
+                                if (newInventory < 0) {
+                                    $('#@currentInventoryGuid').addClass('negative');
+                                } else {
+                                    $('#@currentInventoryGuid').removeClass('negative');
+                                }
+                                $('#@currentInventoryGuid').text(data.Inventory);
+                            } else {
+                                if (data.Message) {
+                                    $('#@messagesGuid div').text(data.Message);
+                                    $('#@messagesGuid').show();
+                                }
+                            }
+                        }
+                    )
+                        .fail(function (data) {
+                            if (data.Message) {
+                                console.log("post failed. Message: " + data.Message);
+                                $('#@messagesGuid div').text(data.Message);
+                                $('#@messagesGuid div').show();
+                            }
+
+                        })
+                        .always(function (data) {
+                            console.log("Finalizer.");
+                            // re-enable UI
+                            $('#@fieldsetGuid').prop('disabled', false);
+                        });
+                } else {
+                    // re-enable UI
+                    $('#@fieldsetGuid').prop('disabled', false);
+                }
+                return false;
+            });
+        });
+    </script>
+    
+}

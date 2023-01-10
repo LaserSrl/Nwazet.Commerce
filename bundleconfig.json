@@ -18,12 +18,6 @@
     ]
   },
   {
-    "outputFileName": "Scripts/inventory.min.js",
-    "inputFiles": [
-      "Scripts/inventory.js"
-    ]
-  },
-  {
     "outputFileName": "Scripts/order-admin.min.js",
     "inputFiles": [
       "Scripts/order-admin.js"
@@ -177,6 +171,12 @@
     "outputFileName": "Styles/product-combinations.nwazet-commerce.min.css",
     "inputFiles": [
       "Styles/product-combinations.nwazet-commerce.css"
+    ]
+  },
+  {
+    "outputFileName": "Styles/inventory-control-admin.min.css",
+    "inputFiles": [
+      "Styles/inventory-control-admin.css"
     ]
   }
 ]

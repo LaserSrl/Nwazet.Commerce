@@ -1,0 +1,9 @@
+﻿
+@model Nwazet.Commerce.ViewModels.InventoryControl.InventoryControlEditViewModel
+
+<fieldset>
+    @Html.CheckBoxFor(m => m.PreventAutomaticDecrease)
+    <label class="sub" for="@Html.IdFor(m => m.PreventAutomaticDecrease)">
+        @T("Prevent inventory for this item from being decreased automatically when the product is ordered.")
+    </label>
+</fieldset>
