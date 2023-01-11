@@ -46,7 +46,7 @@ namespace Nwazet.Commerce.Controllers.InventoryControl {
             if (quantity < 1) {
                 return Unauthorized(T("Quantity not valid: must be greater than 0."));
             }
-            var product = _contentManager.Get<ProductPart>(id);
+            var product = _contentManager.Get<ProductPart>(id, VersionOptions.Latest);
             if (product == null) {
                 return Unauthorized(T("Product not valid."));
             }
@@ -76,7 +76,7 @@ namespace Nwazet.Commerce.Controllers.InventoryControl {
             if (quantity < 1) {
                 return Unauthorized(T("Quantity not valid: must be greater than 0."));
             }
-            var product = _contentManager.Get<ProductPart>(id);
+            var product = _contentManager.Get<ProductPart>(id, VersionOptions.Latest);
             if (product == null) {
                 return Unauthorized(T("Product not valid."));
             }

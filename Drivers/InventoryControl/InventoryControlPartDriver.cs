@@ -37,7 +37,7 @@ namespace Nwazet.Commerce.Drivers.InventoryControl {
             var shapes = new List<DriverResult>();
 
             // shape for the InventoryPart
-            if (part.Is<InventoryPart>() && part.Id != 0) {
+            if (part.Is<InventoryPart>()) {
                 if (part.Id != 0) {
                     // We are going to use the ShapeTableCreated to alter the shape tables so that
                     // the default shape usually displayed for inventory isn't shown anymore.

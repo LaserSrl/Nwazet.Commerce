@@ -172,5 +172,11 @@
     "inputFiles": [
       "Styles/product-combinations.nwazet-commerce.css"
     ]
+  },
+  {
+    "outputFileName": "Styles/inventory-control-admin.min.css",
+    "inputFiles": [
+      "Styles/inventory-control-admin.css"
+    ]
   }
 ]
