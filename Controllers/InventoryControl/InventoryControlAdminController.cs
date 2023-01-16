@@ -62,7 +62,7 @@ namespace Nwazet.Commerce.Controllers.InventoryControl {
                     Data = new {
                         Result = "Error",
                         Sku = product.Sku,
-                        Message = T("Operation denied beceuse it would result in negative inventory.").Text
+                        Message = T("Operation denied because it would result in negative inventory.").Text
                     }
                 };
             }
