@@ -1,5 +1,5 @@
 ﻿# Orchard resource strings - it-IT
-# Copyright (c) 2022 Laser s.r.l.
+# Copyright (c) 2023 Laser s.r.l.
 
 
 # > #: msgctxt { contesto del messaggio - Originale }
@@ -1128,6 +1128,34 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/HierarchyVatConfi
 msgid "VAT Category"
 msgstr "Categoria IVA"
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.Configuration.cshtml"
+msgid "allow back order"
+msgstr "permetti ordini ad inventario 0"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.Configuration.cshtml"
+msgid "If unchecked, the add button won't be visible on the product page when the inventory is zero or less."
+msgstr "Se non selezionato, il pulsante per aggiungere il prodotto non sarà visibile quando l'inventario è zero o meno."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.Configuration.cshtml"
+msgid "Insert 0 (zero) to allow any quantity."
+msgstr "Inserisci 0 (zero) per consentire qualsiasi quantità."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.Configuration.cshtml"
+msgid "Maximum order quantity"
+msgstr "Quantità massima ordinabile"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.Configuration.cshtml"
+msgid "Minimum order quantity"
+msgstr "Minima quantità per l'ordine"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.Configuration.cshtml"
+msgid "Out of stock message"
+msgstr "Messaggio di fine inventario"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.Configuration.cshtml"
+msgid "This message will be displayed if the inventory is zero or less. Leave blank for the default message to be used."
+msgstr "Questo messaggio sarà mostrato se l'inventario è minore o uguale a zero. Lasciandolo vuoto verrà usato un messaggio di default."
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
 msgid "allow back order"
 msgstr "permetti ordini ad inventario 0"
@@ -1164,6 +1192,14 @@ msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.cshtml"
 msgid "This message will be displayed if the inventory is zero or less. Leave blank for the default message to be used."
 msgstr "Questo messaggio sarà mostrato se l'inventario è minore o uguale a zero. Lasciandolo vuoto verrà usato un messaggio di default."
 
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.Quantity.cshtml"
+msgid "Changes to the inventory value will propagate to other versions of this product."
+msgstr "Le modifiche al valore dell'inventario si propagheranno su altre versioni di questo prodotto."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/Inventory.Quantity.cshtml"
+msgid "Inventory"
+msgstr "Inventario"
+
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/InventoryBySKUProduct.cshtml"
 msgid "Changes to this product's inventory will be applied to the other products as well."
 msgstr "Le modifiche all'inventario di questo prodotto saranno applicate anche agli altri prodotti."
@@ -1171,6 +1207,34 @@ msgstr "Le modifiche all'inventario di questo prodotto saranno applicate anche a
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/InventoryBySKUProduct.cshtml"
 msgid "This product shares an inventory with the following:"
 msgstr "Questo prodotto condivide l'inventario con i seguenti:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/InventoryControl/Inventory.BaseQuantity.cshtml"
+msgid "Changes to the inventory value will propagate to other versions of this product."
+msgstr "Le modifiche al valore dell'inventario si propagheranno su altre versioni di questo prodotto."
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/InventoryControl/Inventory.BaseQuantity.cshtml"
+msgid "Inventory"
+msgstr "Inventario"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/InventoryControl/Inventory.Quantity.cshtml"
+msgid "Add"
+msgstr "Aggiungi"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/InventoryControl/Inventory.Quantity.cshtml"
+msgid "Current inventory:"
+msgstr "Inventario attuale:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/InventoryControl/Inventory.Quantity.cshtml"
+msgid "Inventory change:"
+msgstr "Modifica all'inventario:"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/InventoryControl/Inventory.Quantity.cshtml"
+msgid "Remove"
+msgstr "Rimuovi"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/InventoryControl/InventoryControl.cshtml"
+msgid "Prevent inventory for this item from being decreased automatically when the product is ordered."
+msgstr "Impedisci all'inventario per questo prodotto di essere decrementato automaticamente quando il prodotto viene ordinato."
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/EditorTemplates/Parts/NewFlexibleShippingMethodCriteria.cshtml"
 msgid "Save the shipping method to be able to add criteria."
@@ -4420,6 +4484,22 @@ msgctxt "Nwazet.Commerce.Controllers.HierarchyTerritoriesAdminController"
 msgid "Your content has been updated."
 msgstr "Il contenuto è stato aggiornato."
 
+msgctxt "Nwazet.Commerce.Controllers.InventoryControl.InventoryControlAdminController"
+msgid "Not authorized to manage products"
+msgstr "Non autorizzato a gestire i prodotti"
+
+msgctxt "Nwazet.Commerce.Controllers.InventoryControl.InventoryControlAdminController"
+msgid "Operation denied because it would result in negative inventory."
+msgstr "Operazione non consentita perché renderebbe l'inventario negativo."
+
+msgctxt "Nwazet.Commerce.Controllers.InventoryControl.InventoryControlAdminController"
+msgid "Product not valid."
+msgstr "Prodotto non valido."
+
+msgctxt "Nwazet.Commerce.Controllers.InventoryControl.InventoryControlAdminController"
+msgid "Quantity not valid: must be greater than 0."
+msgstr "Quantità non valida: deve essere maggiore di 0."
+
 msgctxt "Nwazet.Commerce.Controllers.OrderAdminController"
 msgid "Cannot add order events"
 msgstr "Impossibile aggiungere eventi all'ordine"
@@ -4767,6 +4847,14 @@ msgstr "Ci sono problemi con le gerarchie configurate per questa IVA:"
 msgctxt "Nwazet.Commerce.Drivers.VatConfigurationSiteSettingsPartDriver"
 msgid "None"
 msgstr "Nessuno"
+
+msgctxt "Nwazet.Commerce.Events.WorkflowOrderEventHandler"
+msgid "OnOrderError Event: Impossible to add tokens to context: duplicate key. Key: {0}. Error Message: {1}"
+msgstr "Evento OnOrderError: Impossibile aggiungere token al contesto: chiave duplicata. Chiave: {0}. Messaggio di Errore: {1}"
+
+msgctxt "Nwazet.Commerce.Events.WorkflowOrderEventHandler"
+msgid "OnOrderStatusChangedProduct Event: Attempt to invoke event with null product."
+msgstr "Evento OnOrderStatusChangedProduct: Tentativo di invocare l'evento con prodotto null."
 
 msgctxt "Nwazet.Commerce.Extensions.ProductUtilities"
 msgid "Couldn't create product"
