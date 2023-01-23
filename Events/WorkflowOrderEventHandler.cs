@@ -100,7 +100,7 @@ namespace Nwazet.Commerce.Events {
                     });
             }
             else {
-                Logger.Error(T("OnOrderStatusChangedProduct Event: Attemtp to invoke event with null product.").Text);
+                Logger.Error(T("OnOrderStatusChangedProduct Event: Attempt to invoke event with null product.").Text);
             }
         }
 
