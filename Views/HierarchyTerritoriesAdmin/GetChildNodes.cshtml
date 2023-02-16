@@ -13,7 +13,7 @@
 
 @helper RenderTerritories(IList<TerritoryHierarchyTreeNode> nodes, int parent, int index, List<TerritoryHierarchyTreeNode> nodesList) {
     @:<ol>
-        bool first = true;
+
         foreach (var node in nodes) {
 
             var jsNodeId = "territory-node-" + node.Id;

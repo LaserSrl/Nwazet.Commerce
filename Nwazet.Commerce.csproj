@@ -966,7 +966,6 @@
     <Content Include="placement.info">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Views\EditorTemplates\Parts\GoogleCheckoutSettings.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\Product.cshtml" />
     <Content Include="Views\Parts\Product.cshtml" />
   </ItemGroup>
