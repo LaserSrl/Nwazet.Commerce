@@ -717,6 +717,7 @@
     <Compile Include="Services\Combinations\PricePartDetailProvider.cs" />
     <Compile Include="Services\Combinations\ProductCombinationService.cs" />
     <Compile Include="Services\Combinations\ProductCombinationsGroupInventoryProvider.cs" />
+    <Compile Include="Services\Combinations\ProductCombinationsValidityProvider.cs" />
     <Compile Include="Services\Combinations\ProductPartDetailProvider.cs" />
     <Compile Include="Services\Combinations\TermsPartDetailProvider.cs" />
     <Compile Include="Services\Combinations\VatConfigurationPartDetailProvider.cs" />
@@ -773,6 +774,7 @@
     <Compile Include="Services\Inventory\IProductInventoryService.cs" />
     <Compile Include="Services\IProductPriceService.cs" />
     <Compile Include="Services\IProductService.cs" />
+    <Compile Include="Services\IProductValidityProvider.cs" />
     <Compile Include="Services\ISKUGenerationServices.cs" />
     <Compile Include="Services\ISKUUniquenessHelper.cs" />
     <Compile Include="Services\ITaxComputationHelper.cs" />
@@ -822,6 +824,7 @@
     <Compile Include="Services\ProductAttributeService.cs" />
     <Compile Include="Services\ProductDiscountPriceProvider.cs" />
     <Compile Include="Services\ProductService.cs" />
+    <Compile Include="Services\ProductValidityProvider.cs" />
     <Compile Include="Services\ShippingOptionComputeContext.cs" />
     <Compile Include="Services\ShippingService.cs" />
     <Compile Include="Services\ShoppingCartInfosetPartStorage.cs" />
