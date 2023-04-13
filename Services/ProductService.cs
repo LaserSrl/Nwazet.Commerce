@@ -21,7 +21,7 @@ namespace Nwazet.Commerce.Services {
             }
 
             // Every validity provider has to confirm that current product can be added to cart.
-            // This means that, for instance, at least one ProductCombination can be added to cart.
+            // This to avoid a product that is not purchasable for some condition (e.g. no product combination in stock) is added to cart anyway.
             foreach (var provider in _validityProviders) {
                 if (!provider.MayAddToCart(product, quantity)) {
                     return false;
