@@ -6,11 +6,14 @@
 @using Nwazet.Commerce.Extensions;
 @using System.Linq;
 @{
+    ICurrencyProvider _currencyProvider;
+
     var title = Layout.Title = T("Order #{0}", Model.OrderId);
     var items = (Model.CheckoutItems as IEnumerable<CheckoutItem> ?? new CheckoutItem[] { }).ToList();
     Currency currencyInUse = Currency.Currencies[Model.CurrencyCode];
     CultureInfo cultureInUse = CultureInfo.GetCultureInfo(WorkContext.CurrentCulture);
 
+    _currencyProvider = WorkContext.Resolve<ICurrencyProvider>();
     var _attributeExtensionProviders = WorkContext.Resolve<IEnumerable<IProductAttributeExtensionProvider>>();
 }
 <h1>@title</h1>
