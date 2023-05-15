@@ -29,7 +29,7 @@ namespace Nwazet.Commerce.Menus {
                         .Caption(T("Orders"))
                         .Position("2.1")
                         .Action("List", "OrderAdmin", new { area = "Nwazet.Commerce" })
-                        .Permission(OrderPermissions.ViewOwnOrders)
+                        .Permission(OrderPermissions.ManageOrders)
                     )
                 );
         }
