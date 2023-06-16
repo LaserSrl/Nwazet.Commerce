@@ -4505,6 +4505,10 @@ msgid "Cannot add order events"
 msgstr "Impossibile aggiungere eventi all'ordine"
 
 msgctxt "Nwazet.Commerce.Controllers.OrderAdminController"
+msgid "Cannot manage orders"
+msgstr "Non puoi gestire gli ordini"
+
+msgctxt "Nwazet.Commerce.Controllers.OrderAdminController"
 msgid "Cannot view own orders"
 msgstr "Impossibile visualizzare i propri ordini"
 

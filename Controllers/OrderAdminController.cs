@@ -59,7 +59,15 @@ namespace Nwazet.Commerce.Controllers {
         }
 
         public ActionResult List(ListOrdersViewModel model, PagerParameters pagerParameters) {
-            if (!_orchardServices.Authorizer.Authorize(OrderPermissions.ViewOwnOrders, null, T("Cannot view own orders")))
+            // The checks in this method used to be made on the ViewOwnOrders and ViewAllOrders permissions.
+            // However:
+            // - A user without the ManageOrders permission would only see a "View" link for orders, pointing
+            //   to their frontend view. That view, for orders they didn't own, would ask the order's password,
+            //   which they normally wouldn't have.
+            // - A backoffice user with a role designed to only have content "scopes", would see the menu item
+            //   linking to this, because as an Authenticated user they would generally also have the ViewOwnOrders
+            //   permission.
+            if (!_orchardServices.Authorizer.Authorize(OrderPermissions.ManageOrders, null, T("Cannot manage orders")))
                 return new HttpUnauthorizedResult();
 
             var pager = new Pager(_siteService.GetSiteSettings(), pagerParameters);
@@ -104,11 +112,6 @@ namespace Nwazet.Commerce.Controllers {
             }
             model.Options.FilterOptions =
                 _orderService.StatusLabels.Select(kvp => new KeyValuePair<string, string>(kvp.Key.StatusName, kvp.Value.Text));
-
-            if (!_orchardServices.Authorizer.Authorize(OrderPermissions.ViewAllOrders)) {
-                Orchard.Security.IUser currentUser = _orchardServices.WorkContext.CurrentUser;                
-                query = query.Join<CommonPartRecord>().Where(c => c.OwnerId == currentUser.Id).Join<OrderPartRecord>();
-            }
 
             var pagerShape = Shape.Pager(pager).TotalItemCount(query.Count());
             var pageOfContentItems = query.Slice(pager.GetStartIndex(), pager.PageSize).ToList();

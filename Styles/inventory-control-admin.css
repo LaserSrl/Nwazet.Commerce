@@ -1,17 +1,22 @@
 ﻿.product-inventory .inventory-control-legend {
   font-size: larger;
-  display: block; }
-  .product-inventory .inventory-control-legend .value {
-    color: green; }
-    .product-inventory .inventory-control-legend .value.negative {
-      color: red; }
-
+  display: block;
+}
+.product-inventory .inventory-control-legend .value {
+  color: green;
+}
+.product-inventory .inventory-control-legend .value.negative {
+  color: red;
+}
 .product-inventory .product-inventory .inventory-variation .variation-action.button.action-remove {
-  background: grey; }
-  .product-inventory .product-inventory .inventory-variation .variation-action.button.action-remove:hover {
-    background: orange; }
-
+  background: grey;
+}
+.product-inventory .product-inventory .inventory-variation .variation-action.button.action-remove:hover {
+  background: orange;
+}
 .product-inventory .product-inventory .inventory-variation .variation-action.button.action-add {
-  background: grey; }
-  .product-inventory .product-inventory .inventory-variation .variation-action.button.action-add:hover {
-    background: orange; }
+  background: grey;
+}
+.product-inventory .product-inventory .inventory-variation .variation-action.button.action-add:hover {
+  background: orange;
+}
