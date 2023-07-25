@@ -1,0 +1,164 @@
+﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Web.UI.WebControls.WebParts;
+using Nwazet.Commerce.Models;
+using Orchard;
+using Orchard.ContentManagement;
+using Orchard.Core.Common.Models;
+using Orchard.OutputCache.Services;
+
+namespace Nwazet.Commerce.Services.Inventory {
+    public class ProductInventoryService : IProductInventoryService {
+        protected readonly IWorkContextAccessor _workContextAccessor;
+        protected readonly IContentManager _contentManager;
+        protected readonly IEnumerable<IProductGroupInventoryProvider> _productGroupInventoryProviders;
+        private readonly ICacheService _cacheService;
+
+        public ProductInventoryService(
+            IWorkContextAccessor workContextAccessor,
+            IContentManager contentManager,
+            IEnumerable<IProductGroupInventoryProvider> productGroupInventoryProviders,
+            ICacheService cacheService) {
+
+            _workContextAccessor = workContextAccessor;
+            _contentManager = contentManager;
+            _productGroupInventoryProviders = productGroupInventoryProviders;
+            _cacheService = cacheService;
+        }
+
+        public IEnumerable<ProductPart> GetProductsWithSameInventory(ProductPart part) {
+
+            var products = new List<ProductPart>();
+            foreach (var provider in _productGroupInventoryProviders) {
+                products.AddRange(provider.AddProductsWithSameInventory(part, products));
+                // TODO: should we handle duplicates?
+            }
+            foreach (var provider in _productGroupInventoryProviders) {
+                var toRemove = provider.FilterProductsWithSameInventory(part, products);
+                products.RemoveAll(p => 
+                    toRemove.Any(pp => 
+                        pp.Id == p.Id 
+                        && pp.ContentItem.VersionRecord.Id == p.ContentItem.VersionRecord.Id));
+            }
+
+            return products;
+        }
+
+        /// <summary>
+        /// Uses the inventory of the ProductPart parameter to update the ProductParts whose inventory
+        /// has to be kept in synch with the parameter's.
+        /// </summary>
+        /// <param name="part">The ProductPart whose inventory will be copied over.</param>
+        public void SynchronizeInventories(ProductPart part) {
+            // Synchronize inventory between Latest and Published versions
+            int inv = GetInventory(part);
+            foreach (var pp in
+               GetProductsWithSameInventory(part)
+                   .Where(pa => GetInventory(pa) != inv)) { //condition to avoid infinite recursion
+                SetInventory(pp, GetInventory(part)); //call methods from base class
+            }
+        }
+
+        private int SetInventory(ProductPart part, int inventoryValue) {
+            if (part.Is<InventoryPart>()) {
+                // if the inventory was or will be 0, invalidate cache entries for the
+                // product so users may now see that it's become available/unavailable.
+                var oldValue = part.As<InventoryPart>().Inventory;
+                if ((oldValue == 0 || inventoryValue == 0) && oldValue != inventoryValue) {
+                    InvalidateCacheEntries(part);
+                }
+                part.As<InventoryPart>().Inventory = inventoryValue;
+            }
+            SynchronizeInventories(part);
+            return part.Inventory;
+        }
+
+        public int UpdateInventory(ProductPart part, int inventoryChange) {
+            if (part.Is<InventoryPart>()) {
+                // if the inventory was or will be 0, invalidate cache entries for the
+                // product so users may now see that it's become available/unavailable.
+                var oldValue = part.As<InventoryPart>().Inventory;
+                var newValue = oldValue + inventoryChange;
+                if ((oldValue == 0 || newValue == 0) && oldValue != newValue) {
+                    InvalidateCacheEntries(part);
+                }
+                part.As<InventoryPart>().Inventory += inventoryChange;
+            }
+            SynchronizeInventories(part);
+            return part.Inventory;
+        }
+
+        public int GetInventory(InventoryPart part) {
+            var inventory = part.Inventory;
+            // Since with this method we explicitly ask for the inventoy from the InventoryPart
+            // we don't do the computations to figure out availability based on bundles and what not.
+            return inventory;
+        }
+
+        public int GetInventory(ProductPart part) {
+            // Here we explicitly don't fallback to the implementation using only InventoryPart, because
+            // we invoke this to have the rest of the computations done.
+            IBundleService bundleService;
+            var inventory = part.As<InventoryPart>()?.Inventory ?? 0;
+            if (_workContextAccessor.GetContext().TryResolve(out bundleService) && part.Has<BundlePart>()) {
+                var bundlePart = part.As<BundlePart>();
+                inventory = GetInventoryForBundle(bundlePart, bundleService);
+            }
+            return inventory;
+        }
+                
+        private int GetInventoryForBundle(BundlePart bundlePart, IBundleService bundleService) {
+            var ids = bundlePart.ProductIds.ToList();
+            if (!ids.Any()) return 0;
+
+            var productQuantitiesFor =
+                bundleService
+                    .GetProductQuantitiesFor(bundlePart);
+            if (!productQuantitiesFor.Any()) return 0;
+
+            return productQuantitiesFor
+                .Min(p => p.Product.Inventory / p.Quantity);
+        }
+
+        public IEnumerable<ProductPart> GetProductsWithInventoryIssues() {
+            var productGroups = new List<IEnumerable<ProductPart>>();
+            foreach (var provider in _productGroupInventoryProviders) {
+                productGroups.AddRange(provider.AddProductsWithInventoryIssues());
+            }
+            foreach (var provider in _productGroupInventoryProviders) {
+                var toRemove = provider.FilterProductsWithInventoryIssues(productGroups);
+                productGroups.RemoveAll(group => GroupIsInGroups(toRemove, group));
+            }
+
+            return productGroups
+                .Select(group => group.First()); //get the first ProductPart as representative of each group
+        }
+
+        private bool GroupIsInGroups(
+            IEnumerable<IEnumerable<ProductPart>> collection, IEnumerable<ProductPart> group) {
+            var groupIds = group.Select(p => p.Id);
+            foreach (var parts in collection) {
+                var pIds = parts.Select(p => p.Id);
+                if (groupIds.All(i => pIds.Contains(i)) && groupIds.Count() == pIds.Count()) {
+                    // the two groups are the same
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void InvalidateCacheEntries(IContent content) {
+            // Remove any item tagged with this content item ID.
+            _cacheService.RemoveByTag(content.ContentItem.Id.ToString(CultureInfo.InvariantCulture));
+
+            // Search the cache for containers too.
+            var commonPart = content.As<CommonPart>();
+            if (commonPart != null) {
+                if (commonPart.Container != null) {
+                    _cacheService.RemoveByTag(commonPart.Container.Id.ToString(CultureInfo.InvariantCulture));
+                }
+            }
+        }
+    }
+}

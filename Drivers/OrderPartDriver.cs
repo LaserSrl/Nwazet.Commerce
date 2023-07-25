@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
+﻿using Nwazet.Commerce.Events;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services;
@@ -12,9 +9,13 @@ using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
-using Orchard.Workflows.Services;
+using Orchard.Logging;
 using Orchard.Security;
 using Orchard.UI;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.Orders")]
@@ -24,12 +25,12 @@ namespace Nwazet.Commerce.Drivers {
         private readonly IEnumerable<ICheckoutService> _checkoutServices;
         private readonly IWorkContextAccessor _wca;
         private readonly IOrchardServices _orchardServices;
-        private readonly IWorkflowManager _workflowManager;
         private readonly IMembershipService _membershipService;
         private readonly IEnumerable<IProductAttributeExtensionProvider> _extensionProviders;
         private readonly ICurrencyProvider _currencyProvider;
         private readonly IEnumerable<IOrderAdditionalInformationProvider> _orderAdditionalInformationProviders;
         private readonly IEnumerable<IOrderStatusProvider> _orderStatusProviders;
+        private readonly IEnumerable<IOrderEventHandler> _orderEventHandlers;
 
         public OrderPartDriver(
             IOrderService orderService,
@@ -37,25 +38,26 @@ namespace Nwazet.Commerce.Drivers {
             IEnumerable<ICheckoutService> checkoutServices,
             IWorkContextAccessor wca,
             IOrchardServices orchardServices,
-            IWorkflowManager workflowManager,
             IMembershipService membershipService,
             IEnumerable<IProductAttributeExtensionProvider> extensionProviders,
             ICurrencyProvider currencyProvider,
             IEnumerable<IOrderAdditionalInformationProvider> orderAdditionalInformationProviders,
-            IEnumerable<IOrderStatusProvider> orderStatusProviders) {
+            IEnumerable<IOrderStatusProvider> orderStatusProviders,
+            IEnumerable<IOrderEventHandler> orderEventHandlers) {
 
             _orderService = orderService;
             _addressFormatter = addressFormatter;
             _checkoutServices = checkoutServices;
             _wca = wca;
             _orchardServices = orchardServices;
-            _workflowManager = workflowManager;
             _membershipService = membershipService;
             _extensionProviders = extensionProviders;
             _currencyProvider = currencyProvider;
             _orderAdditionalInformationProviders = orderAdditionalInformationProviders;
             _orderStatusProviders = orderStatusProviders;
+            _orderEventHandlers = orderEventHandlers;
 
+            Logger = NullLogger.Instance;
             T = NullLocalizer.Instance;
         }
 
@@ -79,6 +81,7 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         public Localizer T { get; set; }
+        public ILogger Logger;
 
         protected override DriverResult Display(
             OrderPart part, string displayType, dynamic shapeHelper) {
@@ -249,35 +252,22 @@ namespace Nwazet.Commerce.Drivers {
                 else {
                     eventText += T("Tracking URL changed from {0} to {1}. ", previousTrackingUrl, part.TrackingUrl).Text;
                 }
-                _workflowManager.TriggerEvent("OrderTrackingUrlChanged", part,
-                    () => new Dictionary<string, object> {
-                        {"Content", part},
-                        {"Order", part}
-                    });
+                _orderEventHandlers.Invoke(
+                    h => h.OnOrderTrackingUrlChanged(part), Logger);
             }
 
             if (previousStatus != part.Status) {
                 eventText += T("Status changed from {0} to {1}. ",
                         _orderService.StatusLabels.FirstOrDefault(s => s.Key.StatusName == previousStatus).Value,
                         _orderService.StatusLabels.FirstOrDefault(s => s.Key.StatusName == part.Status).Value).Text;
-                _workflowManager.TriggerEvent("OrderStatusChanged", part,
-                    () => new Dictionary<string, object> {
-                        {"Content", part},
-                        {"Order", part},
-                        {"PreviousStatus", previousStatus},
-                        {"CurrentStatus", part.Status}
-                    });
+                _orderEventHandlers.Invoke(
+                    h => h.OnOrderStatusChanged(part, previousStatus), Logger);
 
                 foreach (var item in part.Items) {
                     var content = _orchardServices.ContentManager.Get(item.ProductId);
                     if (content != null) {
-                        _workflowManager.TriggerEvent("OrderStatusChangedProduct", content,
-                            () => new Dictionary<string, object> {
-                                {"Content", content},
-                                {"Order", part},
-                                {"PreviousStatus", previousStatus},
-                                {"CurrentStatus", part.Status}
-                            });
+                        _orderEventHandlers.Invoke(
+                            h => h.OnOrderStatusChangedProduct(part, content,previousStatus), Logger);
                     }
                 }
             }

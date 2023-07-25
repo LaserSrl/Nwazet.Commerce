@@ -1,11 +1,16 @@
 ﻿@if (Model.DiscountedPrice != Model.Price) {
     string price = Model.CurrencyProvider.GetPriceString((decimal?)Model.Price);
     string dPrice = Model.CurrencyProvider.GetPriceString((decimal?)Model.DiscountedPrice);
-    <b class="inactive-price" style="text-decoration:line-through" title="@T("Was {0}", price)">@price</b>
-    <b class="discounted-price" title="@T("Now {0}", dPrice)">@dPrice</b>
-    <span class="discount-comment">@Model.DiscountComment</span>
+    <div data-commerce-role="product-discounted-price">
+        <b class="inactive-price" style="text-decoration:line-through" title="@T("Was {0}", price)">@price</b>
+        <b class="discounted-price" title="@T("Now {0}", dPrice)">@dPrice</b>
+        <span class="discount-comment">@Model.DiscountComment</span>
+    </div>
+    <b data-commerce-role="product-price"></b>
 }
 else {
     string price = Model.CurrencyProvider.GetPriceString(Model.Price);
-    <b>@price</b>
+    <div data-commerce-role="product-discounted-price">
+    </div>
+    <b data-commerce-role="product-price">@price</b>
 }

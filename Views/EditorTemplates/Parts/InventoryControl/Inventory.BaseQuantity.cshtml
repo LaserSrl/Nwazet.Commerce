@@ -1,0 +1,10 @@
+﻿@using Nwazet.Commerce.Models
+@using Nwazet.Commerce.Services
+@using Orchard.ContentManagement
+@model Nwazet.Commerce.ViewModels.InventoryEditViewModel
+
+<fieldset>
+    <label class="sub" for="@Html.IdFor(m => m.Inventory)">@T("Inventory")</label>
+    @Html.TextBoxFor(m => m.Inventory, new { @class = "text", type="number", min="0", step="1", value="0" })
+    <span class="hint">@T("Changes to the inventory value will propagate to other versions of this product.")</span>
+</fieldset>

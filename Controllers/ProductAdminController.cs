@@ -1,41 +1,42 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
+using Nwazet.Commerce.Extensions;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Permissions;
 using Nwazet.Commerce.Services;
+using Nwazet.Commerce.Services.Inventory;
+using Nwazet.Commerce.ViewModels;
 using Orchard;
 using Orchard.ContentManagement;
+using Orchard.ContentManagement.Aspects;
+using Orchard.ContentManagement.MetaData;
+using Orchard.ContentManagement.MetaData.Models;
 using Orchard.ContentTypes.Services;
 using Orchard.Core.Common.Models;
+using Orchard.Core.Contents.Settings;
 using Orchard.Core.Contents.ViewModels;
+using Orchard.Core.Title.Models;
+using Orchard.Data;
 using Orchard.DisplayManagement;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
-using Orchard.UI.Admin;
-using Orchard.Security;
-using Orchard.Settings;
-using Orchard.UI.Navigation;
-using System;
-using Orchard.ContentManagement.MetaData.Models;
-using Orchard.ContentManagement.Aspects;
-using Orchard.Core.Contents.Settings;
-using Orchard.Mvc.Extensions;
-using System.Web.Routing;
-using Orchard.Security.Permissions;
-using Orchard.UI.Notify;
-using Nwazet.Commerce.Extensions;
-using Orchard.Data;
-using Orchard.ContentManagement.MetaData;
-using Nwazet.Commerce.ViewModels;
-using Orchard.Core.Title.Models;
-using Orchard.Localization.Services;
-using System.Globalization;
-using Orchard.Taxonomies.Settings;
-using Orchard.Taxonomies.Services;
 using Orchard.Localization.Models;
+using Orchard.Localization.Services;
+using Orchard.Mvc.Extensions;
+using Orchard.Security;
+using Orchard.Security.Permissions;
+using Orchard.Settings;
 using Orchard.Taxonomies.Helpers;
 using Orchard.Taxonomies.Models;
+using Orchard.Taxonomies.Services;
+using Orchard.Taxonomies.Settings;
+using Orchard.UI.Admin;
+using Orchard.UI.Navigation;
+using Orchard.UI.Notify;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Web.Mvc;
+using System.Web.Routing;
 using CorePermissions = Orchard.Core.Contents.Permissions;
 
 namespace Nwazet.Commerce.Controllers {
@@ -200,8 +201,15 @@ namespace Nwazet.Commerce.Controllers {
                         ? T("Your content has been created.")
                         : T("Your {0} has been created.", item.TypeDefinition.DisplayName));
 
-                    return this.RedirectLocal(returnUrl, () =>
-                        RedirectToAction("EditProduct", new RouteValueDictionary { { "Id", item.Id } }));
+                    return this.RedirectLocal(returnUrl,
+                        // fall back to edit action on default ContentItem controller
+                        () => RedirectToAction(
+                            "Edit",
+                            "Admin",
+                            new RouteValueDictionary {
+                                { "Area", "Contents" },
+                                { "Id", item.Id },
+                            }));
                 }
             });
         }
@@ -463,59 +471,6 @@ namespace Nwazet.Commerce.Controllers {
             return RedirectToAction("List", routeValues);
         }
 
-        [HttpPost]
-        public ActionResult RemoveOne(int id) {
-            if (!_orchardServices.Authorizer.Authorize(CommercePermissions.ManageProducts, null, T("Not authorized to manage products")))
-                return new HttpUnauthorizedResult();
-
-            var product = _contentManager.Get<ProductPart>(id);
-            _productInventoryService.UpdateInventory(product, -1);
-            Dictionary<string, int> newInventory;
-            IBundleService bundleService;
-            if (_wca.GetContext().TryResolve(out bundleService)) {
-                var affectedBundles = _contentManager.Query<BundlePart, BundlePartRecord>()
-                    .Where(b => b.Products.Any(p => p.ContentItemRecord.Id == product.Id))
-                    .WithQueryHints(new QueryHints().ExpandParts<ProductPart>())
-                    .List();
-                newInventory = affectedBundles.ToDictionary(
-                    b => b.As<ProductPart>().Sku,
-                    b => bundleService.GetProductQuantitiesFor(b).Min(p => _productInventoryService.GetInventory(p.Product) / p.Quantity));
-            }
-            else {
-                newInventory = new Dictionary<string, int>(1);
-            }
-            newInventory.Add(product.Sku, _productInventoryService.GetInventory(product));
-            return new JsonResult {
-                Data = newInventory
-            };
-        }
-
-        [HttpPost]
-        public ActionResult AddOne(int id) {
-            if (!_orchardServices.Authorizer.Authorize(CommercePermissions.ManageProducts, null, T("Not authorized to manage products")))
-                return new HttpUnauthorizedResult();
-
-            var product = _contentManager.Get<ProductPart>(id);
-            _productInventoryService.UpdateInventory(product, 1);
-            Dictionary<string, int> newInventory;
-            IBundleService bundleService;
-            if (_wca.GetContext().TryResolve(out bundleService)) {
-                var affectedBundles = _contentManager.Query<BundlePart, BundlePartRecord>()
-                    .Where(b => b.Products.Any(p => p.ContentItemRecord.Id == product.Id))
-                    .WithQueryHints(new QueryHints().ExpandParts<ProductPart>())
-                    .List();
-                newInventory = affectedBundles.ToDictionary(
-                    b => b.As<ProductPart>().Sku,
-                    b => bundleService.GetProductQuantitiesFor(b).Min(p => _productInventoryService.GetInventory(p.Product) / p.Quantity));
-            }
-            else {
-                newInventory = new Dictionary<string, int>(1);
-            }
-            newInventory.Add(product.Sku, _productInventoryService.GetInventory(product));
-            return new JsonResult {
-                Data = newInventory
-            };
-        }
 
         private Lazy<IEnumerable<ContentTypeDefinition>> _allowedProductType;
         private IEnumerable<ContentTypeDefinition> AllowedProductTypes {
@@ -540,12 +495,15 @@ namespace Nwazet.Commerce.Controllers {
                 .Where(ctd => ctd.Parts.Any(ctpd => ctpd
                     .PartDefinition.Name
                     .Equals(ProductPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
+                // Products with a CombinationPart should not be in this list
+                .Where(ctd => !ctd.Parts.Any(ctpd => ctpd
+                    .PartDefinition.Name
+                    .Equals("CombinationPart", StringComparison.InvariantCultureIgnoreCase)))
                 // We can edit ContentItems of that type
                 .Where(ctd => {
                     var dummyContent = _contentManager.New(ctd.Name);
                     return _authorizer.Authorize(CorePermissions.EditContent, dummyContent);
                 });
-
 
             return allowedTypes;
         }
@@ -563,6 +521,10 @@ namespace Nwazet.Commerce.Controllers {
                 .Where(ctd => ctd.Parts.Any(ctpd => ctpd
                     .PartDefinition.Name
                     .Equals(ProductPart.PartName, StringComparison.InvariantCultureIgnoreCase)))
+                // Products with a CombinationPart should not be in this list
+                .Where(ctd => !ctd.Parts.Any(ctpd => ctpd
+                    .PartDefinition.Name
+                    .Equals("CombinationPart", StringComparison.InvariantCultureIgnoreCase)))
                 // We can create ContentItems of that type
                 .Where(ctd => {
                     var dummyContent = _contentManager.New(ctd.Name);

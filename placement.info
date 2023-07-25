@@ -3,7 +3,10 @@
   <Place Parts_Product_Shipping_Edit="Content:3.1"/>
   <Place Parts_Product_Inventory_Edit="Content:3.1"/>
   <Place Parts_Product_Accessibility_Edit="Content:3.1"/>
-  <Place Parts_Inventory_Edit="Content:3.2"/>
+  <Place Parts_Inventory_Quantity_Edit="Content:3.2"/>
+  <Place Parts_InventoryControl_Quantity_Edit="Content:3.2"/>
+  <Place Parts_InventoryControl_Edit="Content:3.2"/>
+  <Place Parts_Inventory_Configuration_Edit="Content:3.2.1"/>
   <Place Part_Product_SKUEdit="Content:3.1"/>
   <Place Part_Product_InventoryBySKUEdit="Content:3.1"/>
   <Place Parts_Product="Content:3.1"/>
@@ -59,22 +62,31 @@
   <Place Parts_HierarchyVatConfiguration_Edit="Content:2.3"/>
   <Place Parts_TerritoryVatConfiguration_Edit="Content:2.3"/>
   <Place Parts_ProductVatConfiguration_Edit="Content:3.5" />
+  <Place Parts_CombinationContainerPart_Editor="Content:4.1" />
+  <Place Parts_CombinationContainerPart_Editor_New="Content:4.1" />
+  <Place Parts_CombinationContainerPart_Editor_Unauthorized="Content:4.1" />
+  <Place Parts_CombinationPart_Editor="Content:before.1" />
+  <Place Parts_LocalizedCombinationPart_Editor="Content:before.2" />
+  <Place Parts_AttributesCombinationPart_Editor="Content:before.3" />
   <Match DisplayType="SummaryAdmin">
     <Place Parts_Product="Content:2;Alternate=ProductSummaryAdmin"/>
-    <Place Parts_Inventory="Content:2.1;Alternate=InventorySummaryAdmin"/>
     <Place Parts_Product_AddButton="-"/>
     <Place Parts_Product_AddToWishlistButton="-"/>
     <Place Parts_Product_PriceTiers="-"/>
-    <Place Parts_Bundle="Content:3;Alternate=BundleSummaryAdmin"/>
     <Place Parts_ProductAttributes="-"/>
+    <Place Parts_CombinationContainer="-"/>
     <Place Parts_Order="Content:1;Alternate=OrderSummaryAdmin"/>
     <Match ContentType="Order">
       <Place
         Parts_Contents_Publish_SummaryAdmin="-"
         Parts_Contents_Clone_SummaryAdmin="-"
-        Parts_Common_Metadata_SummaryAdmin="-"/>
+        Parts_Common_Metadata_SummaryAdmin="-"
+        Content_DeleteButton="-" />
     </Match>
     <Place Parts_TerritoryHierarchy_SummaryAdmin="Content:2"/>
+  </Match>
+  <Match ContentType="Order">
+    <Place Content_DeleteButton="-" />
   </Match>
   <Match DisplayType="Thumbnail">
     <Place Parts_Title="Content:2;Alternate=TitleWithLink"/>
@@ -85,5 +97,6 @@
     <Place Parts_Product_PriceTiers="-"/>
     <Place Parts_Common_Body_Summary="-"/>
     <Place Parts_ProductAttributes="-"/>
+    <Place Parts_CombinationContainer="-"/>
   </Match>
 </Placement>

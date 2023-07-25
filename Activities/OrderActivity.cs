@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Nwazet.Commerce.Models;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Workflows.Models;
@@ -75,6 +77,33 @@ namespace Nwazet.Commerce.Activities {
         public override LocalizedString Description {
             get { return T("The status of an order has changed."); }
         }
+
+        public override string Form {
+            get {
+                return "SelectOrderStatus";
+            }
+        }
+
+        public override bool CanExecute(WorkflowContext workflowContext, ActivityContext activityContext) {
+            try {
+                var statusState = activityContext.GetState<string>("OrderStatus");
+
+                if (string.IsNullOrEmpty(statusState)) {
+                    return true;
+                }
+
+                string[] selectedStatus = statusState.Split(',');
+
+                var content = workflowContext.Content;
+                if (content == null) {
+                    return false;
+                }
+
+                return selectedStatus.Any(s => ((OrderPart)content).Status == s);
+            } catch {
+                return false;
+            }
+        }
     }
 
     [OrchardFeature("Nwazet.Orders")]
@@ -96,6 +125,37 @@ namespace Nwazet.Commerce.Activities {
 
         public override LocalizedString Description {
             get { return T("Triggered for each product in the order when the status changes."); }
+        }
+
+        public override string Form {
+            get {
+                return "SelectOrderStatus";
+            }
+        }
+
+        public override bool CanExecute(WorkflowContext workflowContext, ActivityContext activityContext) {
+            try {
+                var statusState = activityContext.GetState<string>("OrderStatus");
+
+                if (string.IsNullOrEmpty(statusState)) {
+                    return true;
+                }
+
+                string[] selectedStatus = statusState.Split(',');
+
+                if (!workflowContext.Tokens.ContainsKey("Order")) {
+                    return false;
+                }
+
+                var content = workflowContext.Tokens["Order"];
+                if (content == null) {
+                    return false;
+                }
+
+                return selectedStatus.Any(s => ((OrderPart)content).Status == s);
+            } catch {
+                return false;
+            }
         }
     }
 }

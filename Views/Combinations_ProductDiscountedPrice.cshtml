@@ -1,0 +1,12 @@
+﻿@{ 
+
+    string price = Model.CurrencyProvider.GetPriceString((decimal?)Model.Price);
+    string dPrice = Model.CurrencyProvider.GetPriceString((decimal?)Model.DiscountedPrice);
+    string discountComment = Model.DiscountComment;
+}
+
+@if (Model.DiscountedPrice != Model.Price) {
+    <b class="inactive-price" style="text-decoration:line-through" title="@T("Was {0}", price)">@price</b>
+    <b class="discounted-price" title="@T("Now {0}", dPrice)">@dPrice</b>
+    <span class="discount-comment">@discountComment</span>
+}

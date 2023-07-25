@@ -365,6 +365,10 @@ namespace Nwazet.Commerce.Models {
             get {
                 return CustomerDocument.Attr(PhoneName);
             }
+            set {
+                CustomerDocument.SetAttributeValue(PhoneName, value);
+                PersistCustomer();
+            }
         }
 
         public string SpecialInstructions {

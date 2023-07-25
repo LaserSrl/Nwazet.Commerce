@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using Nwazet.Commerce.Models;
-using Nwazet.Commerce.Services;
-using Nwazet.Commerce.ViewModels;
+﻿using Nwazet.Commerce.Services;
+using Nwazet.Commerce.Services.Inventory;
 using Orchard.ContentManagement;
-using Orchard.Core.Title.Models;
 using Orchard.Environment.Extensions;
 using Orchard.UI.Admin;
+using System.Collections.Generic;
+using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Controllers {
     [OrchardFeature("Nwazet.Bundles")]
@@ -28,21 +25,6 @@ namespace Nwazet.Commerce.Controllers {
             _bundleAutocompleteService = bundleAutocompleteService;
             _contentManager = contentManager;
             _productInventoryService = productInventoryService;
-        }
-
-        [HttpPost]
-        public ActionResult RemoveOne(int id) {
-            var bundle = _contentManager.Get<BundlePart>(id);
-            var products = _bundleService.GetProductQuantitiesFor(bundle).ToList();
-            foreach (var productPartQuantity in products) {
-                //These calls will also update the inventory for the bundle
-                _productInventoryService.UpdateInventory(productPartQuantity.Product, -productPartQuantity.Quantity);
-            }
-            var newInventory = products.ToDictionary(p => p.Product.Sku, p => _productInventoryService.GetInventory(p.Product));
-            newInventory.Add(bundle.As<ProductPart>().Sku, products.Min(p => _productInventoryService.GetInventory(p.Product) / p.Quantity));
-            return new JsonResult {
-                Data = newInventory
-            };
         }
 
         [HttpPost]

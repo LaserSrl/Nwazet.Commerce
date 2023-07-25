@@ -7,21 +7,22 @@ namespace Nwazet.Commerce.ApplicabilityCriteria {
     [OrchardFeature("Nwazet.FlexibleShippingImplementations")]
     public class ApplicabilityContext {
 
-        public ApplicabilityContext(
-            IEnumerable<ShoppingCartQuantityProduct> productQuantities,
-            IEnumerable<IShippingMethod> shippingMethods,
-            string country,
-            string zipCode) {
+        public ApplicabilityContext (
+            ShippingOptionComputeContext originalContext) {
 
-            ProductQuantities = productQuantities;
-            ShippingMethods = shippingMethods;
-            Country = country;
-            ZipCode = zipCode;
+            ProductQuantities = originalContext.ProductQuantities;
+            ShippingMethods = originalContext.ShippingMethods;
+            Country = originalContext.Country;
+            ZipCode = originalContext.PostalCode;
+
+            ShippingContext = originalContext;
         }
 
         public IEnumerable<ShoppingCartQuantityProduct> ProductQuantities { get; set; }
         public IEnumerable<IShippingMethod> ShippingMethods { get; set; }
         public string Country { get; set; }
         public string ZipCode { get; set; }
+
+        public ShippingOptionComputeContext ShippingContext { get; set; }
     }
 }

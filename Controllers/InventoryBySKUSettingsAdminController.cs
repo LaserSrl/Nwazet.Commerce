@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Nwazet.Commerce.Models;
 using Nwazet.Commerce.Services;
+using Nwazet.Commerce.Services.Inventory;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;

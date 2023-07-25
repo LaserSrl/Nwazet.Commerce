@@ -31,11 +31,24 @@ namespace Nwazet.Commerce.Drivers {
         }
 
         protected override DriverResult Editor(InventoryPart part, dynamic shapeHelper) {
-            return ContentShape("Parts_Inventory_Edit",
+            var shapes = new List<DriverResult>();
+
+            shapes.Add(ContentShape("Parts_Inventory_Quantity_Edit",
                 () => shapeHelper.EditorTemplate(
-                    TemplateName: "Parts/Inventory",
+                    // template to edit the number of items in the inventory
+                    TemplateName: "Parts/Inventory.Quantity",
                     Model: new InventoryEditViewModel(part),
-                    Prefix: Prefix));
+                    Prefix: Prefix)));
+            shapes.Add(ContentShape("Parts_Inventory_Configuration_Edit",
+                () => shapeHelper.EditorTemplate(
+                    // template to edit the other properties of InventoryPart
+                    TemplateName: "Parts/Inventory.Configuration",
+                    Model: new InventoryEditViewModel(part),
+                    Prefix: Prefix)));
+
+
+            return Combined(shapes.ToArray());
+
         }
 
         protected override DriverResult Editor(InventoryPart part, IUpdateModel updater, dynamic shapeHelper) {
@@ -43,7 +56,11 @@ namespace Nwazet.Commerce.Drivers {
                 var viewModel = new InventoryEditViewModel();
                 updater.TryUpdateModel(viewModel, Prefix, null, null);
 
-                part.Inventory = viewModel.Inventory;
+                // only update inventory if a value is coming from the VM. Otherwise, it's likely we
+                // are skipping updating the inventory here, because we are managing it some other way
+                if (viewModel.Inventory.HasValue) {
+                    part.Inventory = viewModel.Inventory.Value;
+                }
                 part.OutOfStockMessage = viewModel.OutOfStockMessage;
                 part.AllowBackOrder = viewModel.AllowBackOrder;
                 part.MinimumOrderQuantity = viewModel.MinimumOrderQuantity;

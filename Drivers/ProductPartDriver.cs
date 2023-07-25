@@ -10,6 +10,7 @@ using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Environment.Extensions;
 using Nwazet.Commerce.ViewModels;
+using Nwazet.Commerce.Services.Inventory;
 
 namespace Nwazet.Commerce.Drivers {
     [OrchardFeature("Nwazet.Commerce")]
@@ -123,13 +124,16 @@ namespace Nwazet.Commerce.Drivers {
             var vm = new ProductEditorViewModel {
                 Product = part,
                 AllowProductOverrides = allowTieredPricingOverride,
-                PriceTiers = part.PriceTiers
+                PriceTiers = new List<PriceTierViewModel>()
+            };
+            if (part.PriceTiers != null) {
+                vm.PriceTiers = part.PriceTiers
                     .Select(t => new PriceTierViewModel() {
                         Quantity = t.Quantity,
                         Price = (t.PricePercent != null ? t.PricePercent.ToString() + "%" : t.Price.ToString())
                     })
-                    .ToList()
-            };
+                    .ToList();
+            }
             return Combined(
                 ContentShape("Parts_Product_Edit",
                     () => shapeHelper.EditorTemplate(
@@ -162,7 +166,7 @@ namespace Nwazet.Commerce.Drivers {
                 Product = part
             };
             updater.TryUpdateModel(model, Prefix, null, null);
-            if (model.PriceTiers != null) {
+            if (model.PriceTiers != null && model.PriceTiers.Any()) {
                 part.PriceTiers = model.PriceTiers.Select(t => new PriceTier() {
                     Quantity = t.Quantity,
                     Price = (!t.Price.EndsWith("%") ? t.Price.ToDecimal() : null),

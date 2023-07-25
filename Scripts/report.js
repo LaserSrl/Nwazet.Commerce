@@ -1,6 +1,10 @@
 ﻿$(function() {
     var cutoff = 31;
     var ctx = $("#report-chart").get(0).getContext("2d");
+
+    // Width of the canvas is set to the width of its container.
+    $("#report-chart").attr("width", $("#report-chart").parent().width());
+
     var dataTable = $("#commerce-report-data-table");
     var labels = dataTable
         .find("tbody tr td.description")
@@ -45,7 +49,7 @@
         }
         return s;
     };
-    var appendIfHasValue = function(array, item) {
+    var appendIfHasValue = function (array, item) {
         if (item.value) {
             array.push(item);
         }
@@ -96,7 +100,7 @@
                 };
             })
         };
-    new Chart(ctx)[chartType](data, { bezierCurve: false });
+    var mainChart = new Chart(ctx)[chartType](data, { bezierCurve: false });
     dataTable
         .find("thead tr th.series-description")
         .each(function(index) {
@@ -118,4 +122,11 @@
             month: "<div class='ui-datepicker-group'><div class='ui-datepicker-month ui-helper-clearfix'>{monthHeader:MM yyyy}</div><table class='ui-datepicker-calendar'><thead>{weekHeader}</thead><tbody>{weeks}</tbody></table></div>"
         })
     });
+
+    $(window).resize(function () {
+        // Width of the canvas is set to the width of its container.
+        $("#report-chart").attr("width", $("#report-chart").parent().width());
+        mainChart.destroy();
+        mainChart = new Chart(ctx)[chartType](data, { bezierCurve: false });
+    })
 });
