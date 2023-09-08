@@ -1,19 +1,14 @@
 ﻿using Nwazet.Commerce.Models;
-using Orchard.ContentManagement;
-using Orchard.ContentManagement.MetaData;
-using Orchard.ContentManagement.MetaData.Models;
 using Orchard.Environment.Extensions;
-using Orchard.Security;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using CorePermissions = Orchard.Core.Contents.Permissions;
 
 namespace Nwazet.Commerce.Services {
     [OrchardFeature("Nwazet.Commerce")]
     public class ProductService : IProductService {
+        private readonly IEnumerable<IProductValidityProvider> _validityProviders;
 
-        public ProductService() {
+        public ProductService(IEnumerable<IProductValidityProvider> validityProviders) {
+            _validityProviders = validityProviders;
         }
 
         public bool MayAddToCart(ProductPart product) {
@@ -24,8 +19,16 @@ namespace Nwazet.Commerce.Services {
             if (product == null) {
                 return false;
             }
-            return (product.Inventory > 0 && product.Inventory >= quantity) || product.AllowBackOrder
-                || (product.IsDigital && !product.ConsiderInventory);
+
+            // Every validity provider has to confirm that current product can be added to cart.
+            // This to avoid a product that is not purchasable for some condition (e.g. no product combination in stock) is added to cart anyway.
+            foreach (var provider in _validityProviders) {
+                if (!provider.MayAddToCart(product, quantity)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
     }
