@@ -1,5 +1,6 @@
 ﻿using Nwazet.Commerce.Services;
 using Orchard.DisplayManagement;
+using Orchard.Environment.Extensions;
 using Orchard.Forms.Services;
 using Orchard.Localization;
 using System;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace Nwazet.Commerce.Forms {
+    [OrchardFeature("Nwazet.Orders")]
     public class OrderStatusForm : IFormProvider {
         private readonly IOrderService _orderService;
         protected dynamic Shape { get; set; }

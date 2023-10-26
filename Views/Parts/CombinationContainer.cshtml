@@ -77,14 +77,39 @@
     foreach (var ap in attributeParts) {
         attributeIndexes.Add(ap.Id, cIndex++);
     }
-    // Build the array of enabled combinations
+
+
+    // Build the array of enabled combinations.
+    // Also build a js object with the values that should be enabled for each attribute
+    // This will be used by the script when it will re-enable the values of the
+    // combo that is currently being modified.The object that will result from this code
+    // is basically a more readable version of enabledCombinations without the -1 for the disabled options.    
+
+    var attributesMap = new Dictionary<int, List<int>>();
+    foreach (var ap in attributeParts) {
+        attributesMap.Add(ap.Id, new List<int>());
+    }
+
     foreach (var combo in availableCombinations) {
         foreach (var ap in attributeParts) {
             var attValue = combo.ProductAttributeValues
                 .FirstOrDefault(atc => atc.AttributeId == ap.Id)?.AttributeValue ?? -1;
             enabledCombinations.Add(attValue);
+
+            if (attValue > 0) {
+                // TODO: this doesn't check if attVaue has already been added to the list so there will be duplicate values.
+                // This means the js script will perform some useless iterations over these values.
+                attributesMap[ap.Id].Add(attValue);
+            }
         }
     }
+
+    // Convert the values in the dictionary to a json object
+    List<String> attributesObjects = new List<string>();
+    foreach (int key in attributesMap.Keys) {
+        attributesObjects.Add("{attributeId:" + key + ", values:[" + String.Join(",", attributesMap[key]) + "]}");
+    }
+    var enabledValues = "const enabledValues = [" + String.Join(",", attributesObjects) + "];";
 
     var comboElementId = "product_combination_id_" + productCi.Id;
     var radioName = "radio-combination-" + shortGuid;
@@ -142,9 +167,10 @@
     }
 
     using (Script.Foot()) {
-        <script type="text/javascript">
+<script type="text/javascript">
             $(document).ready(function () {
 
+				@enabledValues			  
                 const attributeIndexes = { @Html.Raw(string.Join(", ", attributeIndexes.Select(kvp => kvp.Key + ": " + kvp.Value))) };
                 const attributeIds = [ @Html.Raw(string.Join(", ", attributeParts.Select(ap => ap.Id))) ];
                 const combinationsMap = [ @Html.Raw(string.Join(", ", enabledCombinations.Select(v => "\"" + v + "\""))) ];
@@ -202,10 +228,32 @@
                             }
                         }
                     }
-                    // We should also enable all options for the attribute for which we've just selected
-                    // a value.
-                    $('#@(htmlContainerId).combination-container select.product-attribute[data-for-combination-attribute="' + attributeIds[cIndex] + '"]')
-                        .find('option').removeAttr('disabled');
+
+                    // Previously all the options for the attribute which we've just selected were being enabled, since later the change will be retriggered
+                    // on all the other dropdowns the unavailable options would be disabled anyway.
+                    // This doesn't work if there is only one dropdown since there is no other dropdown that will disable its options.
+                    // To fix this we can look into the json object created server side, get the list of the available options and enable only those.
+
+                    // Get the object that contains the list of the options to anable
+                    var currentEV;
+                    for (var i = 0; i < enabledValues.length; i++) {
+                        if (enabledValues[i].attributeId == attributeIds[cIndex]) {
+                            currentEV = enabledValues[i];
+                            break;
+                        }
+                    }
+
+                    if (currentEV != null) {
+                        // Disable every option
+                        $('#@(htmlContainerId).combination-container select.product-attribute[data-for-combination-attribute="' + attributeIds[cIndex] + '"]')
+                            .find('option').attr('disabled', 'disabled');
+                        // Re-enable the options we need to enable
+                        for (i = 0; i < currentEV.values.length; i++) {
+                            $('#@(htmlContainerId).combination-container select.product-attribute[data-for-combination-attribute="' + currentEV.attributeId + '"]')
+                                .find('option[value="' + currentEV.values[i] + '"]').removeAttr('disabled');
+                        }
+                    }
+
                     // Update the selected combination based on the values for each attribute
                     var $allSelects = $('#@(htmlContainerId).combination-container select.product-attribute[data-for-combination-attribute]');
                     var selectedValues = [];
@@ -234,6 +282,6 @@
                 // trigger this so the enabled/disabled stuff is ok
                 $('#@(htmlContainerId).combination-container select.product-attribute[data-for-combination-attribute="'+attributeIds[0]+'"]').change();
             });
-        </script>
+</script>
     }
 }
