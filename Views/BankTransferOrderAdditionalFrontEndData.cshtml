@@ -1,8 +1,12 @@
 ﻿@if (Model.Status.Equals("Payment Pending", StringComparison.InvariantCultureIgnoreCase)) {
+    var iban = !string.IsNullOrWhiteSpace(Model.Iban) ? Model.Iban : "";
+    var reason = !string.IsNullOrWhiteSpace(Model.Reason) ? Model.Reason : "";
+    var email = !string.IsNullOrWhiteSpace(Model.Email) ? Model.Email : "";
+
     <fieldset>
         <legend>@T("Bank Transfer payment")</legend>
-        <p>@T("You need to send the money at the following account number: {0}", Model.Iban)</p>
-        <p>@T("Payment reason: {0}", Model.Reason)</p>
-        <p>@T("Please send the transfer code via email at <a href='mailto:{0}'>{0}</a> in order to confirm your payment.", Model.Email)</p>
+        <p>@T("You need to send the money at the following account number: {0}", iban)</p>
+        <p>@T("Payment reason: {0}", reason)</p>
+        <p>@T("Please send the transfer code via email at <a href='mailto:{0}'>{0}</a> in order to confirm your payment.", email)</p>
     </fieldset>
 }
