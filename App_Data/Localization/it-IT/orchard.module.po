@@ -1,5 +1,5 @@
 ﻿# Orchard resource strings - it-IT
-# Copyright (c) 2023 Laser s.r.l.
+# Copyright (c) 2024 Laser s.r.l.
 
 
 # > #: msgctxt { contesto del messaggio - Originale }
@@ -23,6 +23,10 @@ msgstr "Pagamento tramite Bonifico Bancario"
 msgctxt "~/Modules/Nwazet.Commerce/Views/BankTransferOrderAdditionalFrontEndData.cshtml"
 msgid "Payment reason: {0}"
 msgstr "Causale pagamento: {0}"
+
+msgctxt "~/Modules/Nwazet.Commerce/Views/BankTransferOrderAdditionalFrontEndData.cshtml"
+msgid "Payment via {0}"
+msgstr "Pagamento tramite {0}"
 
 msgctxt "~/Modules/Nwazet.Commerce/Views/BankTransferOrderAdditionalFrontEndData.cshtml"
 msgid "Please send the transfer code via email at <a href='mailto:{0}'>{0}</a> in order to confirm your payment."
