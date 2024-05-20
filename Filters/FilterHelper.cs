@@ -49,7 +49,12 @@ namespace Nwazet.Commerce.Filters {
             }
         }
 
-        public static Action<IHqlExpressionFactory> GetFilterPredicateString(StringOperator op, string property, string value) {
+        public static Action<IHqlExpressionFactory> GetFilterPredicateString(StringOperator op, string property, string value, string ignoreFilterIfValueIsEmpty) {
+            if (bool.TryParse(ignoreFilterIfValueIsEmpty?.ToString() ?? "", out bool ignoreIfEmpty)
+                && ignoreIfEmpty
+                && string.IsNullOrWhiteSpace(value as string))
+                return (ex) => { };
+
             switch (op) {
                 case StringOperator.Equals:
                     return x => x.Eq(property, value);
@@ -77,20 +82,20 @@ namespace Nwazet.Commerce.Filters {
                     return y => y.Not(x => x.Like(property, Convert.ToString(value), HqlMatchMode.End));
                 case StringOperator.NotContains:
                     return y => y.Not(x => x.Like(property, Convert.ToString(value), HqlMatchMode.Anywhere));
-                case StringOperator.ContainsAnyIfProvided:
-                    if (string.IsNullOrWhiteSpace((string)value))
-                        return x => x.IsNotEmpty("Id"); // basically, return every possible ContentItem
-                    var values3 = Convert.ToString(value)
-                        .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    var predicates3 = values3.Skip(1)
-                        .Select<string, Action<IHqlExpressionFactory>>(x => y => y.Like(property, x, HqlMatchMode.Anywhere)).ToArray();
-                    return x => x.Disjunction(y => y.Like(property, values3[0], HqlMatchMode.Anywhere), predicates3);
-                case StringOperator.ContainsAllIfProvided:
-                    if (string.IsNullOrWhiteSpace((string)value))
-                        return x => x.IsNotEmpty("Id"); // basically, return every possible ContentItem
-                    var values4 = Convert.ToString(value).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    var predicates4 = values4.Skip(1).Select<string, Action<IHqlExpressionFactory>>(x => y => y.Like(property, x, HqlMatchMode.Anywhere)).ToArray();
-                    return x => x.Conjunction(y => y.Like(property, values4[0], HqlMatchMode.Anywhere), predicates4);
+                //case StringOperator.ContainsAnyIfProvided:
+                //    if (string.IsNullOrWhiteSpace((string)value))
+                //        return x => x.IsNotEmpty("Id"); // basically, return every possible ContentItem
+                //    var values3 = Convert.ToString(value)
+                //        .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                //    var predicates3 = values3.Skip(1)
+                //        .Select<string, Action<IHqlExpressionFactory>>(x => y => y.Like(property, x, HqlMatchMode.Anywhere)).ToArray();
+                //    return x => x.Disjunction(y => y.Like(property, values3[0], HqlMatchMode.Anywhere), predicates3);
+                //case StringOperator.ContainsAllIfProvided:
+                //    if (string.IsNullOrWhiteSpace((string)value))
+                //        return x => x.IsNotEmpty("Id"); // basically, return every possible ContentItem
+                //    var values4 = Convert.ToString(value).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                //    var predicates4 = values4.Skip(1).Select<string, Action<IHqlExpressionFactory>>(x => y => y.Like(property, x, HqlMatchMode.Anywhere)).ToArray();
+                //    return x => x.Conjunction(y => y.Like(property, values4[0], HqlMatchMode.Anywhere), predicates4);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -148,16 +153,16 @@ namespace Nwazet.Commerce.Filters {
                     return T("{0} does not end with '{1}'", property, value);
                 case StringOperator.NotContains:
                     return T("{0} does not contain '{1}'", property, value);
-                case StringOperator.ContainsAnyIfProvided:
-                    return T("{0} contains any of '{1}' (or '{1}' is empty)",
-                        property,
-                        new LocalizedString(string.Join("', '",
-                            value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))));
-                case StringOperator.ContainsAllIfProvided:
-                    return T("{0} contains all '{1}' (or '{1}' is empty)",
-                        property,
-                        new LocalizedString(string.Join("', '",
-                            value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))));
+                //case StringOperator.ContainsAnyIfProvided:
+                //    return T("{0} contains any of '{1}' (or '{1}' is empty)",
+                //        property,
+                //        new LocalizedString(string.Join("', '",
+                //            value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))));
+                //case StringOperator.ContainsAllIfProvided:
+                //    return T("{0} contains all '{1}' (or '{1}' is empty)",
+                //        property,
+                //        new LocalizedString(string.Join("', '",
+                //            value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))));
                 default:
                     throw new ArgumentOutOfRangeException();
             }

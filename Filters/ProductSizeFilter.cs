@@ -28,7 +28,8 @@ namespace Nwazet.Commerce.Filters {
         public void ApplyFilter(dynamic context) {
             string value = context.State.ProductFormSize;
             var op = (StringOperator)Enum.Parse(typeof(StringOperator), Convert.ToString(context.State.Operator));
-            var filterExpression = FilterHelper.GetFilterPredicateString(op, "Size", value);
+            string ignoreIfEmpty = context.State.IgnoreFilterIfValueIsEmpty?.ToString() ?? "";
+            var filterExpression = FilterHelper.GetFilterPredicateString(op, "Size", value, ignoreIfEmpty);
             var query = (IHqlQuery)context.Query;
             context.Query = query
                 .Where(x => x.ContentPartRecord<ProductPartVersionRecord>(), filterExpression);
