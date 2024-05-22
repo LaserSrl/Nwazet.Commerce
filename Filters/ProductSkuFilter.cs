@@ -6,6 +6,7 @@ using Orchard.Projections.Descriptors.Filter;
 using Orchard.Projections.FilterEditors.Forms;
 using Orchard.Projections.Services;
 using Nwazet.Commerce.Extensions;
+using Orchard.Tokens.Providers;
 
 namespace Nwazet.Commerce.Filters {
     public class ProductSkuFilter : IFilterProvider {
@@ -28,7 +29,8 @@ namespace Nwazet.Commerce.Filters {
         public void ApplyFilter(dynamic context) {
             string value = context.State.Value;
             var op = (StringOperator)Enum.Parse(typeof(StringOperator), Convert.ToString(context.State.Operator));
-            var filterExpression = FilterHelper.GetFilterPredicateString(op, "Sku", value);
+            string ignoreIfEmpty = context.State.IgnoreFilterIfValueIsEmpty?.ToString() ?? "";
+            var filterExpression = FilterHelper.GetFilterPredicateString(op, "Sku", value, ignoreIfEmpty);
             var query = (IHqlQuery)context.Query;
             context.Query = query
               .Where(x => x.ContentPartRecord<ProductPartVersionRecord>(), filterExpression);
