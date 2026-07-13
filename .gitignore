@@ -3,3 +3,5 @@ obj
 bin
 *.csproj.user
 *.orig
+/.vs
+/Nwazet.Commerce.Tests/.vs
